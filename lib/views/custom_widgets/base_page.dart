@@ -92,16 +92,17 @@ class _BasePageState extends State<BasePage> {
                   ),
                 )
             : null,
-        body: VStack(
-          [
-            //
-            widget.isLoading
-                ? LinearProgressIndicator()
-                : UiSpacer.emptySpace(),
-            //
-            widget.body.expand(),
-          ],
-        ),
+        body: widget.body,
+        // VStack(
+        //   [
+        //     //
+        //     widget.isLoading
+        //         ? LinearProgressIndicator()
+        //         : UiSpacer.emptySpace(),
+        //     //
+        //     widget.body.expand(),
+        //   ],
+        // ),
         bottomNavigationBar: widget.bottomNavigationBar,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomSheet: widget.bottomSheet,

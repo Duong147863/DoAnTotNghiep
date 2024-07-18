@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -9,23 +10,20 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // storing index for managing colors
-  int selectedIndex = 0;
   Image avatar = Image.asset('assets/images/male_avatar.png');
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
+      showLeadingAction: true,
       appBar: AppBar(
         elevation: 0,
         surfaceTintColor: Colors.transparent,
         foregroundColor: Colors.white,
         backgroundColor: Colors.transparent,
-        actions: const [
-          Icon(Icons.edit_outlined),
-          SizedBox(
-            width: 10,
-          )
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.edit_outlined)),
+          IconButton(onPressed: () {}, icon: Icon(Icons.delete_outline)),
         ],
       ),
       extendBodyBehindAppBar: true,
@@ -46,65 +44,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     borderRadius: const BorderRadius.vertical(
                         bottom: Radius.circular(30))),
                 alignment: Alignment.center,
-                child: Text(
-                  "",
-                ),
+                child: UiSpacer.emptySpace(),
               ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    height: 110,
-                    width: 100,
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        gradient: const LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Color(0xff1c1c1c), Color(0xff222222)])),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Icon(
-                          Icons.date_range_outlined,
-                          size: 35,
-                          color: Colors.red,
-                        ),
-                        Text(
-                          "",
-                          style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              const SizedBox(
-                height: 50,
-              )
             ],
           ),
           // PageView to display avatar on top of everything using stack
           PageView(
             children: [
               Center(
-                child: SizedBox(
-                  height: MediaQuery.sizeOf(context).height * 0.5,
+                child: Container(
+                  height: MediaQuery.sizeOf(context).height * 0.4,
                   width: 250,
+                  decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(30))),
+                  alignment: Alignment.center,
                   child: avatar,
                 ),
-              )
+              ),
             ],
           ),
         ],
