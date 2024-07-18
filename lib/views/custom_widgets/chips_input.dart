@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 
 class ChipInput {
   final String label;
   final Function? onDeleted;
-  final Function(bool)? onSelected;
 
-  ChipInput({required this.label, this.onDeleted, this.onSelected});
+  ChipInput({required this.label, this.onDeleted});
 
   @override
   Widget build(BuildContext context) {
-    return InputChip(
+    return Chip(
       label: Text(label),
-      onDeleted: onDeleted != null
-          ? () {
-              onDeleted!();
-            }
-          : null,
-      onSelected: onSelected,
+      avatar: CircleAvatar() ?? UiSpacer.emptySpace(),
+      onDeleted: () {
+            onDeleted!();
+          } ??
+          () {},
     );
   }
 }
