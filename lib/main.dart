@@ -48,7 +48,7 @@ class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: AppTheme.lightTheme,
       dark: AppTheme.darkTheme,
