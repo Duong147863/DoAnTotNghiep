@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "C:/Users/LAM TCN/Desktop/Do_An_Tot_Nghiep/windows/flutter"
+  "cmake.sourceDirectory": "C:/Users/LAM TCN/Desktop/Do_An_Tot_Nghiep/windows/flutter",
+  "dart.flutterSdkPath": ".fvm/versions/stable"
 }
