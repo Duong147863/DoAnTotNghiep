@@ -10,6 +10,9 @@ import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
+import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
+import 'package:nloffice_hrm/views/screen/home_screen.dart';
+import 'package:nloffice_hrm/views/screen/menu_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -48,7 +51,7 @@ class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: AppTheme.lightTheme,
       dark: AppTheme.darkTheme,
@@ -65,7 +68,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: WelcomeScreen(),
+          home:MenuScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
