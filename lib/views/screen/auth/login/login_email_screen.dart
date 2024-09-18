@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:validators/validators.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class LoginEmail extends StatefulWidget {
   final String title;
@@ -58,10 +60,9 @@ class _LoginEmailState extends State<LoginEmail> {
                                 filled: true,
                               ),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (value.isEmptyOrNull) {
                                   return 'Please enter your email';
-                                } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                                    .hasMatch(value)) {
+                                } else if (isEmail(value!) == false) {
                                   return 'Please enter a valid email address';
                                 }
                                 return null;
@@ -98,9 +99,9 @@ class _LoginEmailState extends State<LoginEmail> {
                                 filled: true,
                               ),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (value.isEmptyOrNull) {
                                   return 'Please enter your password';
-                                } else if (value.length < 6) {
+                                } else if (value!.length < 6) {
                                   return 'Password must be at least 6 characters long';
                                 }
                                 return null;

@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_route.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/account/accounts_model.dart';
 import 'package:nloffice_hrm/services/account_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -34,23 +36,18 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {
-            // return CustomListView(
-            //   dataSet: snapshot.data!,
-            //   itemBuilder: (context, index) {
-            //     return ListTile(
-            //       title: Text(snapshot.data![index].username.toString()),
-            //       subtitle: Text(snapshot.data![index].password.toString()),
-            //     );
-            //   },
-            // );
-            return ListView.builder(
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(snapshot.data![index].username.toString()),
-                    subtitle: Text(snapshot.data![index].password.toString()),
-                  );
-                });
+            return CustomListView(
+              dataSet: snapshot.data!.toList(),
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(snapshot.data![index].username.toString()),
+                  subtitle: Text(snapshot.data![index].password.toString()),
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRoutes.profileRoute);
+                  },
+                );
+              },
+            );
           }
         },
       ),

@@ -47,7 +47,7 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
     return BasePage(
       showAppBar: true,
       appBar: AppBar(
-        title: const Text('Danh sách doanh nghiệp'),
+        title: Text('Danh sách doanh nghiệp'),
       ),
       body: Column(
         children: [

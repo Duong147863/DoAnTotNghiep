@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:validators/validators.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class LoginPhone extends StatefulWidget {
   final String title;
@@ -50,10 +52,9 @@ class _LoginPhoneState extends State<LoginPhone> {
                                 filled: true,
                               ),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (value.isEmptyOrNull) {
                                   return 'Please enter your phone number';
-                                } else if (!RegExp(r'^\d{10}$')
-                                    .hasMatch(value)) {
+                                } else if (isNumeric(value!) == false) {
                                   return 'Please enter a valid phone number';
                                 }
                                 return null;
