@@ -11,8 +11,6 @@ import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
-import 'package:nloffice_hrm/views/screen/home_screen.dart';
-import 'package:nloffice_hrm/views/screen/menu_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -20,17 +18,16 @@ import 'package:velocity_x/velocity_x.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 //ssll handshake error
-class MyHttpOverrides extends HttpOverrides {
-  @override
-  HttpClient createHttpClient(SecurityContext? context) {
-    return super.createHttpClient(context)
-      ..badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-  }
-}
+// class MyHttpOverrides extends HttpOverrides {
+//   @override
+//   HttpClient createHttpClient(SecurityContext? context) {
+//     return super.createHttpClient(context)
+//       ..badCertificateCallback =
+//           (X509Certificate cert, String host, int port) => true;
+//   }
+// }
 
 void main() async {
-  // await connectSQL();
   await runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     await translator.init(
@@ -41,7 +38,7 @@ void main() async {
     // await NotificationService.initializeAwesomeNotification();
     // await NotificationService.listenToActions();
     //prevent ssl error
-    HttpOverrides.global = new MyHttpOverrides();
+    // HttpOverrides.global = new MyHttpOverrides();
     // Run app!
     runApp(LocalizedApp(child: MainApp()));
   }, (error, stack) {});
@@ -68,7 +65,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home:MenuScreen(),
+          home: LoginScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
@@ -77,22 +74,22 @@ class MainApp extends StatelessWidget {
   }
 }
 
-Future<void> getDeviceId() async {
-  var deviceInfo = DeviceInfoPlugin();
-  if (Platform.isIOS) {
-    // import 'dart:io'
-    var iosDeviceInfo = await deviceInfo.iosInfo;
-    final result =
-        '${iosDeviceInfo.name}-${iosDeviceInfo.model}-${iosDeviceInfo.identifierForVendor}';
-    SPUtill.setValue(SPUtill.keyIosDeviceToken, result);
-    // return iosDeviceInfo.identifierForVendor; // unique ID on iOS
-  } else {
-    final androidDeviceInfo = await deviceInfo.androidInfo;
-    final result =
-        '${androidDeviceInfo.brand}-${androidDeviceInfo.device}-${androidDeviceInfo.id}';
-    SPUtill.setValue(SPUtill.keyAndroidDeviceToken, result);
-    final map = androidDeviceInfo.toMap();
-    print('Device Map: $map');
-    // return androidDeviceInfo.androidId; // unique ID on Android
-  }
-}
+// Future<void> getDeviceId() async {
+//   var deviceInfo = DeviceInfoPlugin();
+//   if (Platform.isIOS) {
+//     // import 'dart:io'
+//     var iosDeviceInfo = await deviceInfo.iosInfo;
+//     final result =
+//         '${iosDeviceInfo.name}-${iosDeviceInfo.model}-${iosDeviceInfo.identifierForVendor}';
+//     SPUtill.setValue(SPUtill.keyIosDeviceToken, result);
+//     // return iosDeviceInfo.identifierForVendor; // unique ID on iOS
+//   } else {
+//     final androidDeviceInfo = await deviceInfo.androidInfo;
+//     final result =
+//         '${androidDeviceInfo.brand}-${androidDeviceInfo.device}-${androidDeviceInfo.id}';
+//     SPUtill.setValue(SPUtill.keyAndroidDeviceToken, result);
+//     final map = androidDeviceInfo.toMap();
+//     print('Device Map: $map');
+//     // return androidDeviceInfo.androidId; // unique ID on Android
+//   }
+// }

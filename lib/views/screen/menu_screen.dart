@@ -84,14 +84,6 @@ class _MenuScreenState extends State<MenuScreen> {
         'text': 'Quyết định',
         'route': AppRoutes.decisionListRoute
       },
-      {
-        'icon': Icons.coffee, 'text': 'Break',
-        //  'route': AppRoutes.breakRoute
-      },
-      {
-        'icon': Icons.report, 'text': 'Report',
-        // 'route': AppRoutes.reportRoute
-      },
     ];
   }
 

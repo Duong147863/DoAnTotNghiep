@@ -64,34 +64,30 @@ class CustomListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        showSearchBar
-            ? CustomTextFormField(
-                maxLines: 3,
-                hintText: 'search'.tr(),
-                prefixIcon: Icon(Icons.search),
-              )
-            //  border: OutlineInputBorder(
-            //           borderRadius: BorderRadius.circular(20),
-            //         ),
-            : UiSpacer.emptySpace(),
-        showTabBar ? tabView() : UiSpacer.emptySpace(),
-        ListView.separated(
-          controller: this.scrollController,
-          padding: this.padding,
-          shrinkWrap: true,
-          reverse: this.reversed,
-          physics: this.noScrollPhysics ? NeverScrollableScrollPhysics() : null,
-          scrollDirection: this.scrollDirection,
-          itemBuilder: this.itemBuilder,
-          itemCount: this.dataSet.length,
-          separatorBuilder: this.separatorBuilder ??
-              (context, index) => this.scrollDirection == Axis.vertical
-                  ? UiSpacer.verticalSpace(space: separator ?? 20.0)
-                  : UiSpacer.horizontalSpace(space: separator ?? 20.0),
-        )
-      ],
+    // showSearchBar
+    //     ? CustomTextFormField(
+    //         maxLines: 3,
+    //         hintText: 'search'.tr(),
+    //         prefixIcon: Icon(Icons.search),
+    //       )
+    //  border: OutlineInputBorder(
+    //           borderRadius: BorderRadius.circular(20),
+    //         ),
+    //     : UiSpacer.emptySpace(),
+    // showTabBar ? tabView() : UiSpacer.emptySpace(),
+    return ListView.separated(
+      controller: this.scrollController,
+      padding: this.padding,
+      shrinkWrap: true,
+      reverse: this.reversed,
+      physics: this.noScrollPhysics ? NeverScrollableScrollPhysics() : null,
+      scrollDirection: this.scrollDirection,
+      itemBuilder: this.itemBuilder,
+      itemCount: this.dataSet.length,
+      separatorBuilder: this.separatorBuilder ??
+          (context, index) => this.scrollDirection == Axis.vertical
+              ? UiSpacer.verticalSpace(space: separator ?? 20.0)
+              : UiSpacer.horizontalSpace(space: separator ?? 20.0),
     );
   }
 

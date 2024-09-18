@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/bottom_nav_controller.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -53,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             height: 300,
             width: double.infinity,
-            padding: EdgeInsets.only(top: 60, right: 25, left: 20),
+            padding: EdgeInsets.only(right: 20, left: 20),
             decoration: BoxDecoration(
               color: Color(0xFF0B258A),
               borderRadius:
@@ -87,29 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   )
                 ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-              // SizedBox(
-              //   height: 10,
-              // ),
-              Flash(
-                child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [],
-                  ),
-                ),
-              ),
             ]),
           ),
           SizedBox(
-            height: 10,
-          ),
-          Container(
-            height: 50,
-            child: ListView(),
+            height: 60,
           ),
           Expanded(
             child: Container(

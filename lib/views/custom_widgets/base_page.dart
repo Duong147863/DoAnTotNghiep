@@ -57,7 +57,8 @@ class _BasePageState extends State<BasePage> {
     // context.watch<ConnectivityProvider>().initialise(context);
 
     // final isConnected = context.watch<ConnectivityProvider>().isConnected;
-    return SafeArea(
+    return 
+    SafeArea(
       child:
           // isConnected != true
           // ?
