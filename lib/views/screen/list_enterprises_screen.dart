@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/model/enterprise/enterprises_model.dart';
 import 'package:nloffice_hrm/services/enterprise_service.dart';
@@ -17,7 +18,20 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
   @override
   void initState() {
     super.initState();
-    filteredEnterprisesList = enterprisesList;
+    _fetchEnterprises(); // Fetch enterprises when the screen is initialized
+  }
+
+  Future<void> _fetchEnterprises() async {
+    try {
+      List<Enterprises> fetchedEnterprises = await fetchListData();
+      setState(() {
+        enterprisesList = fetchedEnterprises;
+        filteredEnterprisesList = fetchedEnterprises; // Initialize filtered list
+      });
+    } catch (error) {
+      print('Error fetching enterprises: $error');
+      // Optionally, show an error message to the user
+    }
   }
 
   void _addEnterprise(Enterprises newEnterprise) {
@@ -61,18 +75,30 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
             ),
           ),
           Expanded(
-              child: FutureBuilder<List<Enterprises>>(
-            future: fetchListData(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return ListTile(title: Text(''));
-              }
-            },
-          )),
+            child: FutureBuilder<List<Enterprises>>(
+              future: fetchListData(), // Load data using the fetch function
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                  return ListView.builder(
+                    itemCount: filteredEnterprisesList.length,
+                    itemBuilder: (context, index) {
+                      final enterprise = filteredEnterprisesList[index];
+                      return ListTile(
+                        title: Text(enterprise.name ?? ''),
+                        subtitle: Text(enterprise.licenseNum ?? ''),
+                        onTap: () {
+                        },
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
         ],
       ),
       fab: FloatingActionButton(

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/model/profile/profiles_model.dart';
 import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
@@ -68,10 +69,19 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                         label: 'Số điện thoại',
                         value: relative.relativesPhone ?? 'Unknown',
                       ),
+                      // InfoTile(
+                      //   icon: Icons.cake,
+                      //   label: 'Ngày sinh',
+                      //   value: relative.relativesBirthday ?? 'Unknown',
+                      // ),
                       InfoTile(
                         icon: Icons.cake,
                         label: 'Ngày sinh',
-                        value: relative.relativesBirthday ?? 'Unknown',
+                        // Nếu relativesBirthday không null, định dạng ngày thành chuỗi. Nếu null, hiển thị 'Unknown'
+                        value: relative.relativesBirthday != null
+                            ? DateFormat('dd/MM/yyyy')
+                                .format(relative.relativesBirthday!)
+                            : 'Unknown',
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,

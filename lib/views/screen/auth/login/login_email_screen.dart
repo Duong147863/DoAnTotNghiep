@@ -1,9 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/model/account/accounts_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:validators/validators.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:http/http.dart' as http;
 
 class LoginEmail extends StatefulWidget {
   final String title;
@@ -48,7 +53,8 @@ class _LoginEmailState extends State<LoginEmail> {
                             TextFormField(
                               controller: usernameController,
                               scrollPadding: EdgeInsets.only(bottom: 150),
-                              style: TextStyle(fontSize: 18),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.black),
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.email_outlined),
                                 labelText: "Email",
@@ -74,7 +80,8 @@ class _LoginEmailState extends State<LoginEmail> {
                             TextFormField(
                               controller: passwordController,
                               scrollPadding: EdgeInsets.only(bottom: 150),
-                              style: TextStyle(fontSize: 18),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.black),
                               obscureText: !_passwordVisible,
                               decoration: InputDecoration(
                                 prefixIcon: Icon(Icons.lock_outline),
@@ -148,17 +155,70 @@ class _LoginEmailState extends State<LoginEmail> {
     );
   }
 
+  Future<ResponseLogin> login(String username, String password) async {
+    final response = await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}/accounts'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final data = jsonDecode(response.body);
+      print('Dữ liệu phản hồi: $data');
+
+      if (data['account_status'] == 1) {
+        return ResponseLogin.fromJson(data);
+      } else {
+        throw Exception('Tài khoản không hợp lệ hoặc bị khóa');
+      }
+    } else {
+      print('Lỗi: ${response.body}');
+      throw Exception(
+          'Đăng nhập thất bại: ${response.statusCode} - ${response.body}');
+    }
+  }
+
   Widget _logInButton() {
     return InkWell(
-      onTap: () {
+      // onTap: () {
+      //   if (_formKey.currentState!.validate()) {
+      //     // Process the login with email and password
+      //     print('Email: ${usernameController.text}');
+      //     print('Password: ${passwordController.text}');
+      //   } else {
+      //     Navigator.of(context).pushNamed(AppRoutes.homeRoute);
+      //   }
+      // },
+      onTap: () async {
         if (_formKey.currentState!.validate()) {
-          // Process the login with email and password
-          print('Email: ${usernameController.text}');
-          print('Password: ${passwordController.text}');
-        } else {
-          Navigator.of(context).pushNamed(AppRoutes.homeRoute);
+          String username = usernameController.text;
+          String password = passwordController.text;
+
+          try {
+            final response = await login(username, password);
+            if (response.result == true) {
+              Navigator.of(context).pushNamed(AppRoutes.homeRoute);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(
+                        'Đăng nhập không thành công: ${response.message}')),
+              );
+            }
+          } catch (e) {
+            print('Error: $e'); // In thông tin lỗi
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Lỗi kết nối')),
+            );
+          }
         }
       },
+
       child: Container(
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,

@@ -32,15 +32,38 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     super.dispose();
   }
 
+  // void addRelative() {
+  //   final newRelative = Relatives(
+  //     relativesName: relativesNameController.text,
+  //     relativesPhone: relativesPhoneController.text,
+  //     relativesBirthday: relativesBirthdayController.text,
+  //   );
+  //   widget.onAddRelative(newRelative);
+  //   Navigator.pop(context);
+  // }
   void addRelative() {
-    final newRelative = Relatives(
-      relativesName: relativesNameController.text,
-      relativesPhone: relativesPhoneController.text,
-      relativesBirthday: relativesBirthdayController.text,
-    );
-    widget.onAddRelative(newRelative);
-    Navigator.pop(context);
+  // Chuyển đổi chuỗi thành DateTime
+  DateTime? birthday;
+  if (relativesBirthdayController.text.isNotEmpty) {
+    birthday = DateTime.tryParse(relativesBirthdayController.text);
+    if (birthday == null) {
+      // Xử lý khi chuyển đổi không thành công (ví dụ: hiển thị thông báo lỗi)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ngày sinh không hợp lệ')),
+      );
+      return; // Ngừng thực hiện nếu ngày sinh không hợp lệ
+    }
   }
+
+  final newRelative = Relatives(
+    relativesName: relativesNameController.text,
+    relativesPhone: relativesPhoneController.text,
+    relativesBirthday: birthday, // Gán giá trị đã chuyển đổi
+  );
+  
+  widget.onAddRelative(newRelative);
+  Navigator.pop(context);
+}
 
   @override
   Widget build(BuildContext context) {

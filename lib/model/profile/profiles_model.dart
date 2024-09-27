@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Profiles {
   Profiles(
       {this.profileName,
@@ -12,7 +14,8 @@ class Profiles {
       this.profileId,
       this.salaryId,
       this.birthday,
-      this.positionId});
+      this.positionId,
+      this.diplomaId});
   String? profileName;
   int profileStatus;
   String? identifiNum;
@@ -22,15 +25,20 @@ class Profiles {
   String? email;
   String? departmentId;
   int? enterpriseId;
-  String? profileId;
+  int? profileId;
   String? salaryId;
   DateTime? birthday;
   String? positionId;
+  String? diplomaId;
 
-  factory Profiles.fromJson(Map<String, dynamic> json) => Profiles(
+  factory Profiles.fromJson(Map<String, dynamic> json) {
+    return Profiles(
       profileName: json["profile_name"],
       profileStatus: json["profile_status"],
-      identifiNum: json["identifi_num"],
+      identifiNum: json["identify_num"],
+      idExpireDay: json["id_expire_day"] != null
+          ? DateTime.parse(json["id_expire_day"])
+          : null,
       gender: json["gender"],
       phone: json["phone"],
       email: json["email"],
@@ -38,22 +46,31 @@ class Profiles {
       enterpriseId: json["enterprise_id"],
       profileId: json["profile_id"],
       salaryId: json["salary_id"],
-      birthday: json["birthday"],
-      positionId: json["position_id"]);
-  Map<String, dynamic> toJson() => {
-        "profile_name": profileName,
-        "profile_status": profileStatus,
-        "identifi_num": identifiNum,
-        "gender": gender,
-        "phone": phone,
-        "email": email,
-        "department_id": departmentId,
-        "enterprise_id": enterpriseId,
-        "profile_id": profileId,
-        "salary_id": salaryId,
-        "birthday": birthday,
-        "position_id": positionId
-      };
+      birthday:
+          json["birthday"] != null ? DateTime.parse(json["birthday"]) : null,
+      positionId: json["position_id"],
+      diplomaId: json["diploma_id"],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map["profile_name"] = profileName;
+    map["profile_status"] = profileStatus;
+    map["identify_num"] = identifiNum;
+    map["id_expire_day"] = idExpireDay?.toIso8601String();
+    map["gender"] = gender;
+    map["phone"] = phone;
+    map["email"] = email;
+    map["department_id"] = departmentId;
+    map["enterprise_id"] = enterpriseId;
+    map["profile_id"] = profileId;
+    map["salary_id"] = salaryId;
+    map["birthday"] = birthday?.toIso8601String();
+    map["position_id"] = positionId;
+    map["diploma_id"] = positionId;
+    return map;
+  }
+
   void deactivate() {
     profileStatus = 0;
   }

@@ -6,13 +6,18 @@ class Positions {
   String? positionName;
   int? enterpriseId;
 
-  factory Positions.fromJson(Map<String, dynamic> json) => Positions(
+  factory Positions.fromJson(Map<String,dynamic>json){
+    return Positions(
       positionId: json["position_id"],
       positionName: json["position_name"],
-      enterpriseId: json["enterprise_id"]);
-  Map<String, dynamic> toJson() => {
-        "position_id": positionId,
-        "position_name": positionName,
-        "enterprise_id": enterpriseId,
-      };
+      enterpriseId: json["enterprise_id"],
+    );
+  }
+  Map<String,dynamic> toJson(){
+    final map= <String,dynamic>{};
+    map["position_id"] = positionId;
+    map["position_name"] = positionName;
+    map["enterprise_id"] = enterpriseId;
+    return map;
+  }
 }

@@ -11,6 +11,7 @@ import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
+import 'package:nloffice_hrm/views/screen/menu_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -65,7 +66,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: LoginScreen(),
+          home: MenuScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
@@ -74,7 +75,7 @@ class MainApp extends StatelessWidget {
   }
 }
 
-// Future<void> getDeviceId() async {
+// Future<void> getDeviceId() async {R
 //   var deviceInfo = DeviceInfoPlugin();
 //   if (Platform.isIOS) {
 //     // import 'dart:io'

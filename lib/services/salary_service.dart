@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/salary/salaries_model.dart';
 
-Future<List<Salaries>> fetchListData() async {
+Future<List<Salaries>> fetchSalary() async {
   final response =
       await http.get(Uri.parse('${AppStrings.baseUrlApi}/salaries'));
   if (response.statusCode == 200) {

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/profile/profiles_model.dart';
 import 'package:nloffice_hrm/model/salary/salaries_model.dart';
+import 'package:nloffice_hrm/services/profile_service.dart';
+import 'package:nloffice_hrm/services/salary_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/info_salari_sceen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class SalaryListScreen extends StatefulWidget {
   @override
@@ -11,38 +16,35 @@ class SalaryListScreen extends StatefulWidget {
 }
 
 class _SalaryListScreenState extends State<SalaryListScreen> {
-  List<Profiles> profiles = [
-    Profiles(
-      profileName: 'Lê Khánh Dương',
-      profileStatus: 1,
-      phone: '0979889678',
-      email: 'khanhduong.le@vtcmobile.vn',
-      departmentId: 'HR',
-      birthday: DateTime.parse('2000-01-01'),
-      enterpriseId: 63,
-      salaryId: '1',
-    ),
-    // Add more profiles as needed
-  ];
-
+  List<Profiles> profiles = []; // Khai báo danh sách profiles
   List<Profiles> filteredProfiles = [];
-
-  final List<Salaries> salaries = [
-    Salaries(
-      salaryId: 1,
-      salaryName: 'Base Salary',
-      salary: 2.5,
-      allowance: 1.2,
-      enterpriseId: 63,
-      status: 1,
-    ),
-    // Add more salaries as needed
-  ];
-
+  List<Salaries> salaries = []; // Khai báo danh sách salaries
   @override
   void initState() {
     super.initState();
-    filteredProfiles = profiles;
+    _fetchProfile();
+    _fetchSalary();
+  }
+   Future<void> _fetchProfile() async {
+    try {
+      List<Profiles> fetchedProfiles = await fetchProfile();
+      setState(() {
+        profiles = fetchedProfiles;
+        filteredProfiles = fetchedProfiles; 
+      });
+    } catch (error) {
+      print('Error fetching profiles: $error');
+    }
+  }
+  Future<void> _fetchSalary() async {
+    try {
+      List<Salaries> fetchedSalaries = await fetchSalary();
+      setState(() {
+        salaries = fetchedSalaries;
+      });
+    } catch (error) {
+      print('Error fetching salaries: $error');
+    }
   }
 
   void _handleSearch(String query) {
@@ -58,8 +60,6 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
       }
     });
   }
-
-  @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
@@ -71,8 +71,7 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
-              suggestions:
-                  profiles.map((profile) => profile.profileName!).toList(),
+              suggestions: profiles.map((profile) => profile.profileName!).toList(),
               onTextChanged: _handleSearch,
             ),
           ),
@@ -87,9 +86,9 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
                 );
 
                 return ListTile(
-                  title: Text(profile.profileName ?? ''),
+                  title: Text(profile.profileName ?? 'Chưa có tên'),
                   subtitle: Text(
-                      '${profile.departmentId}\nLương: ${salary.salary ?? 0.0}'),
+                      'Phòng: ${profile.departmentId ?? 'Chưa có phòng'}\nLương: ${salary.salary ?? 0.0}'),
                   onTap: () {
                     Navigator.push(
                       context,
