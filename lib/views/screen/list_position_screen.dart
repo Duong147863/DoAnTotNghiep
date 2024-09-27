@@ -1,5 +1,7 @@
+
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/model/position/position_model.dart';
+import 'package:nloffice_hrm/services/position_service.dart'; // Import service
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
@@ -10,26 +12,25 @@ class PositionsListScreen extends StatefulWidget {
 }
 
 class _PositionsListScreenState extends State<PositionsListScreen> {
-  List<Positions> positions = [
-    Positions(
-      positionId: '1',
-      positionName: 'Manager',
-      enterpriseId: 1,
-    ),
-    Positions(
-      positionId: '2',
-      positionName: 'Developer',
-      enterpriseId: 1,
-    ),
-    // Add more positions as needed
-  ];
-
+  List<Positions> positions = [];
   List<Positions> filteredPositions = [];
 
   @override
   void initState() {
     super.initState();
-    filteredPositions = positions;
+    _fetchPositions(); // Fetch positions when the screen is initialized
+  }
+
+  Future<void> _fetchPositions() async {
+    try {
+      List<Positions> fetchedPositions = await fetchPositions();
+      setState(() {
+        positions = fetchedPositions;
+        filteredPositions = fetchedPositions; 
+      });
+    } catch (error) {
+      print('Error fetching positions: $error');
+    }
   }
 
   void _handleSearch(String query) {
@@ -49,7 +50,7 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
   void _handleAdd(Positions newPosition) {
     setState(() {
       positions.add(newPosition);
-      _handleSearch(''); // Reapply search to update filtered positions
+      _handleSearch(''); 
     });
   }
 
@@ -65,24 +66,35 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
-              suggestions:
-                  positions.map((position) => position.positionName!).toList(),
+              suggestions: positions.map((position) => position.positionName!).toList(),
               onTextChanged: _handleSearch,
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredPositions.length,
-              itemBuilder: (context, index) {
-                final position = filteredPositions[index];
+            child: FutureBuilder<List<Positions>>(
+              future: fetchPositions(), 
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                } else {
+                 
+                  return ListView.builder(
+                    itemCount: filteredPositions.length,
+                    itemBuilder: (context, index) {
+                      final position = filteredPositions[index];
 
-                return ListTile(
-                  title: Text(position.positionName ?? ''),
-                  subtitle: Text('Enterprise ID: ${position.enterpriseId}'),
-                  onTap: () {
-                    // Handle tap if necessary, e.g., navigate to a details screen
-                  },
-                );
+                      return ListTile(
+                        title: Text(position.positionName ?? ''),
+                        subtitle: Text('Enterprise ID: ${position.enterpriseId}'),
+                        onTap: () {
+                          
+                        },
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
@@ -90,7 +102,6 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
       ),
       fab: FloatingActionButton(
         onPressed: () {
-          // Implement adding a new position
           Navigator.push(
             context,
             MaterialPageRoute(

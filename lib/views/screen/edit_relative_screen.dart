@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -23,8 +24,13 @@ class _EditRelativeScreenState extends State<EditRelativeScreen> {
         TextEditingController(text: widget.relative.relativesName);
     relativesPhoneController =
         TextEditingController(text: widget.relative.relativesPhone);
-    relativesBirthdayController =
-        TextEditingController(text: widget.relative.relativesBirthday);
+    //  relativesBirthdayController =
+    //     TextEditingController(text: widget.relative.relativesBirthday);
+    relativesBirthdayController = TextEditingController(
+    text: widget.relative.relativesBirthday != null
+        ? DateFormat('dd/MM/yyyy').format(widget.relative.relativesBirthday!)
+        : ''
+);
   }
 
   @override
@@ -34,12 +40,12 @@ class _EditRelativeScreenState extends State<EditRelativeScreen> {
     relativesBirthdayController.dispose();
     super.dispose();
   }
-
   void saveRelative() {
     setState(() {
       widget.relative.relativesName = relativesNameController.text;
       widget.relative.relativesPhone = relativesPhoneController.text;
-      widget.relative.relativesBirthday = relativesBirthdayController.text;
+      // widget.relative.relativesBirthday = relativesBirthdayController.text;
+      widget.relative.relativesBirthday = DateTime.tryParse(relativesBirthdayController.text);
     });
     Navigator.pop(context, widget.relative);
   }

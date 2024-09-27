@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
 
-Future<List<Relatives>> fetchListData() async {
+Future<List<Relatives>> fetchRelatives() async {
   final response =
       await http.get(Uri.parse('${AppStrings.baseUrlApi}/relatives'));
   if (response.statusCode == 200) {

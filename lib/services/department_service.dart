@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/department/department_model.dart';
 
-Future<List<Departments>> fetchListData() async {
+Future<List<Departments>> fetchDepartmentsData() async {
   final response =
       await http.get(Uri.parse('${AppStrings.baseUrlApi}/departments'));
   if (response.statusCode == 200) {

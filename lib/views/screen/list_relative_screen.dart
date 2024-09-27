@@ -4,6 +4,8 @@ import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
+import 'package:nloffice_hrm/services/profile_service.dart';
+import 'package:nloffice_hrm/services/relative_service.dart'; 
 
 class RelativeListScreen extends StatefulWidget {
   @override
@@ -11,35 +13,28 @@ class RelativeListScreen extends StatefulWidget {
 }
 
 class _RelativeListScreenState extends State<RelativeListScreen> {
-  List<Profiles> profiles = [
-    Profiles(
-      profileId: '1',
-      profileName: 'Lê Khánh Dương',
-      profileStatus: 1,
-      phone: '0979889678',
-      email: 'khanhduong.le@vtcmobile.vn',
-      departmentId: 'HR',
-      birthday: DateTime.parse('2000-01-01'),
-      enterpriseId: 63,
-    ),
-    // Add more profiles if needed
-  ];
-  List<Relatives> relatives = [
-    Relatives(
-      profileId: '1',
-      relativesName: 'Nguyen Van A',
-      relativesPhone: '0987654321',
-      relativesBirthday: '1980-01-01',
-    ),
-    // Add more relatives if needed
-  ];
-
+  List<Profiles> profiles = [];
+  List<Relatives> relatives = [];
   List<Profiles> filteredProfiles = [];
 
   @override
   void initState() {
     super.initState();
-    filteredProfiles = profiles;
+    _fetchData();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      List<Profiles> fetchedProfiles = await fetchProfile();
+      List<Relatives> fetchedRelatives = await fetchRelatives();
+      setState(() {
+        profiles = fetchedProfiles;
+        relatives = fetchedRelatives;
+        filteredProfiles = fetchedProfiles; 
+      });
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
   }
 
   void _handleSearch(String query) {
@@ -68,8 +63,7 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
-              suggestions:
-                  profiles.map((profile) => profile.profileName!).toList(),
+              suggestions: profiles.map((profile) => profile.profileName!).toList(),
               onTextChanged: _handleSearch,
             ),
           ),
@@ -79,11 +73,12 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
               itemBuilder: (context, index) {
                 final profile = filteredProfiles[index];
                 final relative = relatives.firstWhere(
-                  (s) => s.profileId.toString() == profile.profileId,
+                  (s) => s.profileId == profile.profileId,
                   orElse: () => Relatives(),
                 );
                 return ListTile(
                   title: Text(profile.profileName ?? ''),
+                  subtitle: Text(relative.relativesName ?? 'Chưa có thông tin'),
                   onTap: () {
                     Navigator.push(
                       context,

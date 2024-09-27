@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/department/department_model.dart';
+import 'package:nloffice_hrm/services/department_service.dart'; // Import service
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
@@ -12,28 +14,14 @@ class DepartmentsScreen extends StatefulWidget {
 }
 
 class _DepartmentsScreenState extends State<DepartmentsScreen> {
-  List<Departments> departments = [
-    Departments(
-      departmentID: "1",
-      departmentName: "HR",
-      enterpriseID: 101,
-      departmentStatus: 1,
-    ),
-    Departments(
-      departmentID: "2",
-      departmentName: "IT",
-      enterpriseID: 102,
-      departmentStatus: 1,
-    ),
-    // Add more departments as needed
-  ];
-
+  List<Departments> departments = [];
   String _title = 'Danh sách phòng ban';
 
   @override
   void initState() {
     super.initState();
     _loadTitle();
+    _fetchDepartments();
   }
 
   Future<void> _loadTitle() async {
@@ -41,6 +29,17 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
     setState(() {
       _title = prefs.getString('departmentsTitle') ?? 'Danh sách phòng ban';
     });
+  }
+
+  Future<void> _fetchDepartments() async {
+    try {
+      List<Departments> fetchedDepartments = await fetchDepartmentsData();
+      setState(() {
+        departments = fetchedDepartments;
+      });
+    } catch (error) {
+      print('Error fetching departments: $error');
+    }
   }
 
   Future<void> _saveTitle(String title) async {
@@ -103,8 +102,8 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
       if (query.isEmpty) {
         filteredDepartments = departments;
       } else {
-        filteredDepartments = departments.where((departments) {
-          return departments.departmentName!
+        filteredDepartments = departments.where((department) {
+          return department.departmentName!
               .toLowerCase()
               .contains(query.toLowerCase());
         }).toList();
@@ -113,68 +112,66 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BasePage(
-      showAppBar: true,
-      appBar: AppBar(
-        title: Text(_title),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit, color: Colors.black),
-            onPressed: _changeTitle,
+Widget build(BuildContext context) {
+  return BasePage(
+    showAppBar: true,
+    appBar: AppBar(
+      title: Text(_title),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.edit, color: Colors.black),
+          onPressed: _changeTitle,
+        ),
+      ],
+    ),
+    body: Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CustomSearchBar(
+            suggestions: departments
+                .map((department) => department.departmentName ?? 'Unnamed')
+                .toList(),
+            onTextChanged: _handleSearch,
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomSearchBar(
-              suggestions: departments
-                  .map((departments) => departments.departmentName!)
-                  .toList(),
-              onTextChanged: _handleSearch,
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: departments.length,
-              itemBuilder: (context, index) {
-                final department = departments[index];
-                if (department.departmentStatus == 0)
-                  return Container(); // Don't show inactive departments
-                return ListTile(
-                  title: Text(department.departmentName ?? ''),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DepartmentInfoScreen(
-                          department: department,
-                          onDelete: () => _handleDelete(department),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-      fab: FloatingActionButton(
-        onPressed: () {
+        ),
+        Expanded(
+  child: ListView.builder(
+    itemCount: filteredDepartments.isNotEmpty ? filteredDepartments.length : departments.length,
+    itemBuilder: (context, index) {
+      final department = filteredDepartments.isNotEmpty ? filteredDepartments[index] : departments[index];
+      if (department.departmentStatus == 0 || department.departmentName == null) return Container();
+      return ListTile(
+        title: Text(department.departmentName ?? 'Unnamed Department'),
+        onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => AddDepartmentScreen(onAdd: _handleAdd),
+              builder: (context) => DepartmentInfoScreen(
+                department: department,
+                onDelete: () => _handleDelete(department),
+              ),
             ),
           );
         },
-        child: Icon(Icons.add),
-        backgroundColor:
-            Colors.blue, // Change the color to your preferred color
-      ),
-    );
-  }
+      );
+    },
+  ),
+),
+      ],
+    ),
+    fab: FloatingActionButton(
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AddDepartmentScreen(onAdd: _handleAdd),
+          ),
+        );
+      },
+      child: Icon(Icons.add),
+      backgroundColor: Colors.blue,
+    ),
+  );
+}
 }
