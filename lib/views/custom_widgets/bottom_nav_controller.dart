@@ -42,7 +42,10 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
                   ),
                   IconButton(
                     icon: Icon(Icons.menu_rounded),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed(AppRoutes.moreSettingRoute);
+                    },
                   ),
                 ],
               ),

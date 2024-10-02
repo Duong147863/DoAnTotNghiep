@@ -40,45 +40,45 @@ class Accounts {
 }
 
 //
-ResponseLogin responseLoginFromJson(String str) =>
-    ResponseLogin.fromJson(json.decode(str));
+// ResponseLogin responseLoginFromJson(String str) =>
+//     ResponseLogin.fromJson(json.decode(str));
 
-String responseLoginToJson(ResponseLogin data) => json.encode(data.toJson());
+// String responseLoginToJson(ResponseLogin data) => json.encode(data.toJson());
 
-class ResponseLogin {
-  ResponseLogin(
-      {this.result, this.message, this.data, this.laravelValidationError});
+// class ResponseLogin {
+//   ResponseLogin(
+//       {this.result, this.message, this.data, this.laravelValidationError});
 
-  bool? result;
-  String? message;
-  Accounts? data;
-  LaravelValidationError? laravelValidationError;
+//   bool? result;
+//   String? message;
+//   Accounts? data;
+//   LaravelValidationError? laravelValidationError;
 
-  factory ResponseLogin.fromJson(Map<String, dynamic> json) => ResponseLogin(
-      result: json["result"],
-      message: json["message"],
-      data: json["data"] != null ? Accounts.fromJson(json["data"]) : null,
-      laravelValidationError: json["error"] != null
-          ? LaravelValidationError.fromJson(json["error"])
-          : null);
+//   factory ResponseLogin.fromJson(Map<String, dynamic> json) => ResponseLogin(
+//       result: json["result"],
+//       message: json["message"],
+//       data: json["data"] != null ? Accounts.fromJson(json["data"]) : null,
+//       laravelValidationError: json["error"] != null
+//           ? LaravelValidationError.fromJson(json["error"])
+//           : null);
 
-  Map<String, dynamic> toJson() => {
-        "result": result,
-        "message": message,
-        // "data": data!.toJson(),
-      };
-}
+//   Map<String, dynamic> toJson() => {
+//         "result": result,
+//         "message": message,
+//         // "data": data!.toJson(),
+//       };
+// }
 
-class LaravelValidationError {
-  // kiểm tra người dùng nhập đăng nhập với API
-  final String? username;
-  final String? password;
+// class LaravelValidationError {
+//   // kiểm tra người dùng nhập đăng nhập với API
+//   final String? username;
+//   final String? password;
 
-  LaravelValidationError({this.username, this.password});
+//   LaravelValidationError({this.username, this.password});
 
-  factory LaravelValidationError.fromJson(Map<String, dynamic> json) {
-    return LaravelValidationError(
-        username: json["username"] != null ? json["username"][0] : null,
-        password: json["password"] != null ? json["password"][0] : null);
-  }
-}
+//   factory LaravelValidationError.fromJson(Map<String, dynamic> json) {
+//     return LaravelValidationError(
+//         username: json["username"] != null ? json["username"][0] : null,
+//         password: json["password"] != null ? json["password"][0] : null);
+//   }
+// }

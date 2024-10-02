@@ -155,33 +155,33 @@ class _LoginEmailState extends State<LoginEmail> {
     );
   }
 
-  Future<ResponseLogin> login(String username, String password) async {
-    final response = await http.post(
-      Uri.parse('${AppStrings.baseUrlApi}/accounts'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'password': password,
-      }),
-    );
+  // Future<ResponseLogin> login(String username, String password) async {
+  //   final response = await http.post(
+  //     Uri.parse('${AppStrings.baseUrlApi}/accounts'),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; charset=UTF-8',
+  //     },
+  //     body: jsonEncode(<String, String>{
+  //       'username': username,
+  //       'password': password,
+  //     }),
+  //   );
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      final data = jsonDecode(response.body);
-      print('Dữ liệu phản hồi: $data');
+  //   if (response.statusCode == 200 || response.statusCode == 201) {
+  //     final data = jsonDecode(response.body);
+  //     print('Dữ liệu phản hồi: $data');
 
-      if (data['account_status'] == 1) {
-        return ResponseLogin.fromJson(data);
-      } else {
-        throw Exception('Tài khoản không hợp lệ hoặc bị khóa');
-      }
-    } else {
-      print('Lỗi: ${response.body}');
-      throw Exception(
-          'Đăng nhập thất bại: ${response.statusCode} - ${response.body}');
-    }
-  }
+  //     if (data['account_status'] == 1) {
+  //       return ResponseLogin.fromJson(data);
+  //     } else {
+  //       throw Exception('Tài khoản không hợp lệ hoặc bị khóa');
+  //     }
+  //   } else {
+  //     print('Lỗi: ${response.body}');
+  //     throw Exception(
+  //         'Đăng nhập thất bại: ${response.statusCode} - ${response.body}');
+  //   }
+  // }
 
   Widget _logInButton() {
     return InkWell(
@@ -200,16 +200,16 @@ class _LoginEmailState extends State<LoginEmail> {
           String password = passwordController.text;
 
           try {
-            final response = await login(username, password);
-            if (response.result == true) {
-              Navigator.of(context).pushNamed(AppRoutes.homeRoute);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(
-                        'Đăng nhập không thành công: ${response.message}')),
-              );
-            }
+            // final response = await login(username, password);
+            // if (response.result == true) {
+            //   Navigator.of(context).pushNamed(AppRoutes.homeRoute);
+            // } else {
+            //   ScaffoldMessenger.of(context).showSnackBar(
+            //     SnackBar(
+            //         content: Text(
+            //             'Đăng nhập không thành công: ${response.message}')),
+            //   );
+            // }
           } catch (e) {
             print('Error: $e'); // In thông tin lỗi
             ScaffoldMessenger.of(context).showSnackBar(
