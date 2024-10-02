@@ -17,6 +17,7 @@ import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/menu_screen.dart';
+import 'package:nloffice_hrm/views/screen/more_setting_screen.dart';
 import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/sign_up_screen.dart';
@@ -136,7 +137,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.salariListRoute: // Add this case
+    case AppRoutes.salariListRoute:
       return MaterialPageRoute(
           builder: (context) => SalaryListScreen(),
           settings: const RouteSettings(
@@ -144,7 +145,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.diplomaListRoute: // Add this case
+    case AppRoutes.diplomaListRoute:
       return MaterialPageRoute(
           builder: (context) => DiplomaListScreen(),
           settings: const RouteSettings(
@@ -152,7 +153,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.relativeListRoute: // Add this case
+    case AppRoutes.relativeListRoute:
       return MaterialPageRoute(
           builder: (context) => RelativeListScreen(),
           settings: const RouteSettings(
@@ -160,7 +161,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.enterpriseListRoute: // Add this case
+    case AppRoutes.enterpriseListRoute:
       return MaterialPageRoute(
           builder: (context) => EnterprisesListScreen(),
           settings: const RouteSettings(
@@ -168,7 +169,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.ponsitionListRoute: // Add this case
+    case AppRoutes.ponsitionListRoute:
       return MaterialPageRoute(
           builder: (context) => PositionsListScreen(),
           settings: const RouteSettings(
@@ -176,7 +177,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.projectListRoute: // Add this case
+    case AppRoutes.projectListRoute:
       return MaterialPageRoute(
           builder: (context) => ProjectsListScreen(),
           settings: const RouteSettings(
@@ -184,12 +185,22 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.decisionListRoute: // Add this case
+    case AppRoutes.decisionListRoute:
       return MaterialPageRoute(
           builder: (context) => DecisionsListScreen(),
           settings: const RouteSettings(
             name: AppRoutes.decisionListRoute,
           ));
+
+    ///
+    case AppRoutes.moreSettingRoute:
+      return MaterialPageRoute(
+          builder: (context) => MoreSettingScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.moreSettingRoute,
+          ));
+
+    ///
     default:
       return MaterialPageRoute(
           builder: ((context) => const CustomBottomNavBar()));
