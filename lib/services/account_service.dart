@@ -18,7 +18,7 @@ var _dio = Dio(BaseOptions(
 
 Future<List<Accounts>> fetchListData() async {
   final response =
-      await http.get(Uri.parse('${AppStrings.baseUrlApi}/accounts'));
+      await http.get(Uri.parse('${AppStrings.baseUrlApi}accounts/'));
   if (response.statusCode == 200) {
     List<dynamic> jsonData = json.decode(response.body);
     return jsonData.map((data) => Accounts.fromJson(data)).toList();
@@ -31,7 +31,7 @@ Future<Accounts?> createAccount({required Accounts accounts}) async {
   Accounts? retrievedAccount;
   try {
     Response response = await _dio.post(
-      '${AppStrings.baseUrlApi}/accounts',
+      '${AppStrings.baseUrlApi}accounts',
       // data: accounts.toJson(),
     );
 

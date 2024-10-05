@@ -12,11 +12,6 @@ class DecisionsListScreen extends StatefulWidget {
 }
 
 class _DecisionsListScreenState extends State<DecisionsListScreen> {
-  // final List<Decisions> decisions = [
-  //   Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
-  //   Decisions(decisionId: '2', decisionName: 'Decision B', enterpriseId: 2),
-  //   // Add more decisions here
-  // ];
   // List<Decisions> filteredDecisions = [];
   // void _handleSearch(String query) {
   //   setState(() {
@@ -35,19 +30,21 @@ class _DecisionsListScreenState extends State<DecisionsListScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
+        showAppBar: true,
+        showLeadingAction: true,
         body: Expanded(
             child: FutureBuilder<List<Decisions>>(
-      future: fetchListData(),
-      builder: (context, snapshot) {
-        return CustomGridView(
-          dataSet: snapshot.data,
-          itemBuilder: (context, index) {
-            final decision = snapshot.data![index];
-            return DecisionCard(decision: decision);
+          future: fetchListData(),
+          builder: (context, snapshot) {
+            return CustomGridView(
+              dataSet: snapshot.data,
+              itemBuilder: (context, index) {
+                final decision = snapshot.data![index];
+                return DecisionCard(decision: decision);
+              },
+            );
           },
-        );
-      },
-    )));
+        )));
 
     // return BasePage(
     //   showAppBar: true,

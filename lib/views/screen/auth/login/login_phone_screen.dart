@@ -2,6 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:validators/validators.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -9,7 +11,6 @@ class LoginPhone extends StatefulWidget {
   final String title;
 
   LoginPhone({Key? key, required this.title}) : super(key: key);
-
   @override
   State<LoginPhone> createState() => _LoginPhoneState();
 }
@@ -37,20 +38,20 @@ class _LoginPhoneState extends State<LoginPhone> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextFormField(
-                              controller: phoneController,
-                              scrollPadding: EdgeInsets.only(bottom: 150),
-                              style: TextStyle(fontSize: 18),
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.phone),
-                                labelText: "Enter your phone number",
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                                fillColor: Color(0xfff3f3f4),
-                                filled: true,
-                              ),
+                            CustomTextFormField(
+                              textEditingController: phoneController,
+                              prefixIcon: const Icon(Icons.phone),
+                              labelText: "Enter your phone number",
+                              // scrollPadding: EdgeInsets.only(bottom: 150),
+                              // style: TextStyle(fontSize: 18),
+                              // decoration: InputDecoration(
+                              //   border: OutlineInputBorder(
+                              //     borderRadius:
+                              //         BorderRadius.all(Radius.circular(10)),
+                              //   ),
+                              // ),
+                              fillColor: Color(0xfff3f3f4),
+                              filled: true,
                               validator: (value) {
                                 if (value.isEmptyOrNull) {
                                   return 'Please enter your phone number';
@@ -98,8 +99,8 @@ class _LoginPhoneState extends State<LoginPhone> {
   }
 
   Widget _logInButton() {
-    return InkWell(
-      onTap: () {
+    return CustomButton(
+      onPressed: () {
         if (_formKey.currentState!.validate()) {
           // Process the phone number
           print('Phone number: ${phoneController.text}');

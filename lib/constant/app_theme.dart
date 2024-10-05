@@ -16,7 +16,7 @@ class ThemeProvider extends ChangeNotifier {
 class AppTheme {
   //
   static final lightTheme = ThemeData(
-      primaryColor: AppColor.primaryColor,
+      primaryColor: AppColor.primaryLightColor,
       fontFamily: GoogleFonts.roboto().fontFamily,
       brightness: Brightness.light,
       textTheme: TextTheme(
@@ -31,14 +31,14 @@ class AppTheme {
       useMaterial3: true,
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith<Color>(
-            (states) => AppColor.accentColor),
+            (states) => AppColor.seaShell),
       ),
       appBarTheme: AppBarTheme());
 
   //
   static final darkTheme = ThemeData(
     fontFamily: GoogleFonts.roboto().fontFamily,
-    primaryColor: AppColor.primaryColor,
+    primaryColor: AppColor.primaryDarkColor,
     // primaryColorDark: AppColor.primaryColorDark,
     textSelectionTheme: TextSelectionThemeData(
       selectionColor: Colors.grey,
@@ -59,8 +59,8 @@ class AppTheme {
     ),
     colorScheme: ColorScheme.fromSwatch()
         .copyWith(
-          primary: AppColor.primaryColor,
-          secondary: AppColor.accentColor,
+          // primary: AppColor.primaryColor,
+          // secondary: AppColor.accentColor,
           brightness: Brightness.dark,
         )
         .copyWith(

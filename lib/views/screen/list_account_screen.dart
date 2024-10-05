@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/account/accounts_model.dart';
@@ -25,32 +26,36 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      showAppBar: true,
-      showLeadingAction: true,
-      title: "Accounts List",
-      body: FutureBuilder<List<Accounts>>(
-        future: fetchListData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return CustomListView(
-              dataSet: snapshot.data!.toList(),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data![index].username.toString()),
-                  subtitle: Text(snapshot.data![index].password.toString()),
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.profileRoute);
+        showAppBar: true,
+        showLeadingAction: true,
+        defaultBody: true,
+        appBarItemColor: AppColor.boneWhite,
+        // title: "Accounts List",
+        backgroundColor: AppColor.primaryLightColor,
+        bodyChildren: [
+          FutureBuilder<List<Accounts>>(
+            future: fetchListData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              } else {
+                return CustomListView(
+                  dataSet: snapshot.data!.toList(),
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      title: Text(snapshot.data![index].username.toString()),
+                      subtitle: Text(snapshot.data![index].password.toString()),
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.profileRoute);
+                      },
+                    );
                   },
                 );
-              },
-            );
-          }
-        },
-      ),
-    );
+              }
+            },
+          ),
+        ]);
   }
 }

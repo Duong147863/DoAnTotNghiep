@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/model/account/accounts_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:validators/validators.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:http/http.dart' as http;
@@ -50,21 +53,21 @@ class _LoginEmailState extends State<LoginEmail> {
                         key: _formKey,
                         child: Column(
                           children: [
-                            TextFormField(
-                              controller: usernameController,
-                              scrollPadding: EdgeInsets.only(bottom: 150),
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.black),
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.email_outlined),
-                                labelText: "Email",
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                                fillColor: Color(0xfff3f3f4),
-                                filled: true,
-                              ),
+                            CustomTextFormField(
+                              textEditingController: usernameController,
+                              // scrollPadding: EdgeInsets.only(bottom: 150),
+                              // style:
+                              //     TextStyle(fontSize: 18, color: Colors.black),
+                              // decoration: InputDecoration(
+                              //   prefixIcon: Icon(Icons.email_outlined),
+                              //   labelText: "Email",
+                              //   border: OutlineInputBorder(
+                              //     borderRadius:
+                              //         BorderRadius.all(Radius.circular(10)),
+                              //   ),
+                              // ),
+                              fillColor: Color(0xfff3f3f4),
+                              filled: true,
                               validator: (value) {
                                 if (value.isEmptyOrNull) {
                                   return 'Please enter your email';
@@ -73,38 +76,35 @@ class _LoginEmailState extends State<LoginEmail> {
                                 }
                                 return null;
                               },
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            TextFormField(
-                              controller: passwordController,
-                              scrollPadding: EdgeInsets.only(bottom: 150),
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.black),
+                            ).p(20),
+                            CustomTextFormField(
+                              textEditingController: passwordController,
                               obscureText: !_passwordVisible,
-                              decoration: InputDecoration(
-                                prefixIcon: Icon(Icons.lock_outline),
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _passwordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _passwordVisible = !_passwordVisible;
-                                    });
-                                  },
+                              prefixIcon: Icon(Icons.lock_outline),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
                                 ),
-                                labelText: "Password",
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                                fillColor: Color(0xfff3f3f4),
-                                filled: true,
+                                onPressed: () {
+                                  setState(() {
+                                    _passwordVisible = !_passwordVisible;
+                                  });
+                                },
                               ),
+                              // scrollPadding: EdgeInsets.only(bottom: 150),
+                              // style:
+                              //     TextStyle(fontSize: 18, color: Colors.black),
+                              // decoration: InputDecoration(
+                              //   border: OutlineInputBorder(
+                              //     borderRadius:
+                              //         BorderRadius.all(Radius.circular(10)),
+                              //   ),
+                              // ),
+                              labelText: "Password",
+                              filled: true,
+                              fillColor: Color(0xfff3f3f4),
                               validator: (value) {
                                 if (value.isEmptyOrNull) {
                                   return 'Please enter your password';
@@ -114,13 +114,7 @@ class _LoginEmailState extends State<LoginEmail> {
                                 return null;
                               },
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            _forgetPassword(),
-                            SizedBox(
-                              height: 10,
-                            ),
+                            _forgetPassword().py(10),
                             _logInButton(),
                             Padding(
                               padding:
@@ -166,11 +160,9 @@ class _LoginEmailState extends State<LoginEmail> {
   //       'password': password,
   //     }),
   //   );
-
   //   if (response.statusCode == 200 || response.statusCode == 201) {
   //     final data = jsonDecode(response.body);
   //     print('Dữ liệu phản hồi: $data');
-
   //     if (data['account_status'] == 1) {
   //       return ResponseLogin.fromJson(data);
   //     } else {
@@ -184,7 +176,7 @@ class _LoginEmailState extends State<LoginEmail> {
   // }
 
   Widget _logInButton() {
-    return InkWell(
+    return CustomButton(
       // onTap: () {
       //   if (_formKey.currentState!.validate()) {
       //     // Process the login with email and password
@@ -194,11 +186,10 @@ class _LoginEmailState extends State<LoginEmail> {
       //     Navigator.of(context).pushNamed(AppRoutes.homeRoute);
       //   }
       // },
-      onTap: () async {
+      onPressed: () async {
         if (_formKey.currentState!.validate()) {
           String username = usernameController.text;
           String password = passwordController.text;
-
           try {
             // final response = await login(username, password);
             // if (response.result == true) {
@@ -218,11 +209,12 @@ class _LoginEmailState extends State<LoginEmail> {
           }
         }
       },
-
+      title: 'login'.tr(),
+      titleStyle: TextStyle(fontSize: 20, color: Colors.white),
       child: Container(
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
-        padding: EdgeInsets.symmetric(vertical: 15),
+        // padding: EdgeInsets.symmetric(vertical: 15),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(5)),
           boxShadow: <BoxShadow>[
@@ -241,10 +233,6 @@ class _LoginEmailState extends State<LoginEmail> {
               Color.fromARGB(255, 255, 12, 4),
             ],
           ),
-        ),
-        child: Text(
-          'LogIn',
-          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
       ),
     );
@@ -295,8 +283,8 @@ class _LoginEmailState extends State<LoginEmail> {
   }
 
   Widget _loginGoogle() {
-    return InkWell(
-      onTap: () {},
+    return CustomButton(
+      onPressed: () {},
       child: Container(
         width: MediaQuery.of(context).size.width,
         alignment: Alignment.center,
