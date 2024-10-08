@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/position/position_model.dart';
-import 'package:nloffice_hrm/services/position_service.dart'; // Import service
+import 'package:nloffice_hrm/models/positions_model.dart';
+import 'package:nloffice_hrm/api_services/position_service.dart'; // Import service
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';

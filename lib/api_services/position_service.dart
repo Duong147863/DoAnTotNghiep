@@ -2,14 +2,14 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
+import 'package:nloffice_hrm/models/positions_model.dart';
 
-Future<List<Relatives>> fetchRelatives() async {
+Future<List<Positions>> fetchPositions() async {
   final response =
-      await http.get(Uri.parse('${AppStrings.baseUrlApi}/relatives'));
+      await http.get(Uri.parse('${AppStrings.baseUrlApi}/positions'));
   if (response.statusCode == 200) {
     List<dynamic> jsonData = json.decode(response.body);
-    return jsonData.map((data) => Relatives.fromJson(data)).toList();
+    return jsonData.map((data) => Positions.fromJson(data)).toList();
   } else {
     throw Exception('Failed to load data');
   }

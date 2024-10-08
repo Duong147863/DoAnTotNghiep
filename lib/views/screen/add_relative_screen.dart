@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
+import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 
 class AddRelativeScreen extends StatefulWidget {

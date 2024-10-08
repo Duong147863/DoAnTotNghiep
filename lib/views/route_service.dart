@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
-import 'package:nloffice_hrm/views/custom_widgets/bottom_nav_controller.dart';
 import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/auth/forgot_password/forgot_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
@@ -16,8 +15,8 @@ import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
-import 'package:nloffice_hrm/views/screen/menu_screen.dart';
 import 'package:nloffice_hrm/views/screen/more_setting_screen.dart';
+import 'package:nloffice_hrm/views/screen/no_connection_page.dart';
 import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/sign_up_screen.dart';
@@ -96,19 +95,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.languareRoute:
+    case AppRoutes.languageRoute:
       return MaterialPageRoute(
           builder: (context) => const LanguageScreen(),
           settings: const RouteSettings(
-            name: AppRoutes.languareRoute,
-          ));
-
-    ///
-    case AppRoutes.menuRoute:
-      return MaterialPageRoute(
-          builder: (context) => MenuScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.menuRoute,
+            name: AppRoutes.languageRoute,
           ));
 
     ///
@@ -193,16 +184,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.moreSettingRoute:
-      return MaterialPageRoute(
-          builder: (context) => MoreSettingScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.moreSettingRoute,
-          ));
-
-    ///
     default:
-      return MaterialPageRoute(
-          builder: ((context) => const CustomBottomNavBar()));
+      return MaterialPageRoute(builder: ((context) => NoInternetScreen()));
   }
 }

@@ -1,32 +1,16 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_languages.dart';
-import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_theme.dart';
-import 'package:nloffice_hrm/constant/shared_preferences.dart';
+import 'package:nloffice_hrm/view_models/accounts_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
-import 'package:nloffice_hrm/views/screen/menu_screen.dart';
-import 'package:nloffice_hrm/views/screen/profile_screen.dart';
-import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
-import 'package:velocity_x/velocity_x.dart';
+import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
-//ssll handshake error
-// class MyHttpOverrides extends HttpOverrides {
-//   @override
-//   HttpClient createHttpClient(SecurityContext? context) {
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback =
-//           (X509Certificate cert, String host, int port) => true;
-//   }
-// }
 
 void main() async {
   await runZonedGuarded(() async {
@@ -41,7 +25,9 @@ void main() async {
     //prevent ssl error
     // HttpOverrides.global = new MyHttpOverrides();
     // Run app!
-    runApp(LocalizedApp(child: MainApp()));
+    runApp(LocalizedApp(
+        child: ChangeNotifierProvider(
+            create: (context) => AccountsViewModel(), child: MainApp())));
   }, (error, stack) {});
 }
 
@@ -49,7 +35,7 @@ class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: AppTheme.lightTheme,
       dark: AppTheme.darkTheme,
@@ -66,7 +52,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: MenuScreen(),
+          home: LoginScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );

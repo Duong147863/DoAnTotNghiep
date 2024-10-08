@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/project/projects_model.dart';
+import 'package:nloffice_hrm/models/projects_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 
 class InfoProjectScreen extends StatelessWidget {

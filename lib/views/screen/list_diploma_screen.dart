@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/diploma/diplomas_model.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
-import 'package:nloffice_hrm/services/diploma_service.dart';
+import 'package:nloffice_hrm/models/diplomas_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/api_services/diploma_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';

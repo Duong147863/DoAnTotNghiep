@@ -5,7 +5,7 @@ import 'package:awesome_notifications/awesome_notifications.dart'
     hide NotificationModel;
 import 'package:flutter/services.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/notification.dart';
+import 'package:nloffice_hrm/models/notification.dart';
 
 import 'local_storage.service.dart';
 

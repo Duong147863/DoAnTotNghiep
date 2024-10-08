@@ -12,10 +12,7 @@ class ChipInput {
     return Chip(
       label: Text(label),
       avatar: CircleAvatar() ?? UiSpacer.emptySpace(),
-      onDeleted: () {
-            onDeleted!();
-          } ??
-          () {},
+      onDeleted: onDeleted!() ?? () {},
     );
   }
 }

@@ -6,8 +6,6 @@ import 'package:singleton/singleton.dart';
 import 'package:synchronized/synchronized.dart';
 
 class AppService {
-  //
-
   /// Factory method that reuse same instance automatically
   factory AppService() => Singleton.lazy(() => AppService._());
 
@@ -17,7 +15,6 @@ class AppService {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   BehaviorSubject<int> homePageIndex = BehaviorSubject<int>();
   BehaviorSubject<bool> refreshAssignedOrders = BehaviorSubject<bool>();
-
 
   Lock lock = new Lock();
 

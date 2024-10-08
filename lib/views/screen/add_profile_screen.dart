@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 
 class AddProfilePage extends StatefulWidget {
