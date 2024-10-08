@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
-import 'package:nloffice_hrm/model/enterprise/enterprises_model.dart';
-import 'package:nloffice_hrm/services/enterprise_service.dart';
+import 'package:nloffice_hrm/models/enterprises_model.dart';
+import 'package:nloffice_hrm/api_services/enterprise_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_enterprises_screen.dart';
@@ -88,7 +88,7 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
                     final enterprise = filteredEnterprisesList[index];
                     return ListTile(
                       title: Text(enterprise.name ?? ''),
-                      subtitle: Text(enterprise.licenseNum ?? ''),
+                      subtitle: Text(enterprise.phone ?? ''),
                       onTap: () {},
                     );
                   },
@@ -98,18 +98,19 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
           ),
         ),
       ],
-      fab: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEnterpriseScreen(onAdd: _addEnterprise),
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
-      ),
+      // fabl: FloatingActionButtonLocation.endDocked,
+      // fab: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => AddEnterpriseScreen(onAdd: _addEnterprise),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(Icons.add),
+      //   backgroundColor: Colors.blue,
+      // ),
     );
   }
 }

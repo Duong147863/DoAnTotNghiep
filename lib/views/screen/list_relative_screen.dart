@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
-import 'package:nloffice_hrm/model/relatives/relatives_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
-import 'package:nloffice_hrm/services/profile_service.dart';
-import 'package:nloffice_hrm/services/relative_service.dart'; 
+import 'package:nloffice_hrm/api_services/profile_service.dart';
+import 'package:nloffice_hrm/api_services/relative_service.dart'; 
 
 class RelativeListScreen extends StatefulWidget {
   @override

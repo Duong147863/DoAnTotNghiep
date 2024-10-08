@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/decision/decisions_model.dart';
-import 'package:nloffice_hrm/services/decision_service.dart';
+import 'package:nloffice_hrm/models/decisions_model.dart';
+import 'package:nloffice_hrm/api_services/decision_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';

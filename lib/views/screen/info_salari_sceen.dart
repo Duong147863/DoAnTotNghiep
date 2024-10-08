@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
-import 'package:nloffice_hrm/model/salary/salaries_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/screen/edit_salari_screen.dart';
 

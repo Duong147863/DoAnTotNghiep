@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/diploma/diplomas_model.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
+import 'package:nloffice_hrm/models/diplomas_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/edit_diploma_screen.dart';

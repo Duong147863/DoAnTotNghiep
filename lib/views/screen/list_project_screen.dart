@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/project/projects_model.dart';
-import 'package:nloffice_hrm/services/project_service.dart'; // Import service
+import 'package:nloffice_hrm/models/projects_model.dart';
+import 'package:nloffice_hrm/api_services/project_service.dart'; // Import service
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';

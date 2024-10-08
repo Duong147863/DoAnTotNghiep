@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/account/accounts_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
