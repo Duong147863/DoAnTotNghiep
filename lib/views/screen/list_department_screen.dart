@@ -21,7 +21,7 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   void initState() {
     super.initState();
     _loadTitle();
-    _fetchDepartments();
+    // _fetchDepartments();
   }
 
   Future<void> _loadTitle() async {
@@ -31,16 +31,16 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
     });
   }
 
-  Future<void> _fetchDepartments() async {
-    try {
-      List<Departments> fetchedDepartments = await fetchDepartmentsData();
-      setState(() {
-        departments = fetchedDepartments;
-      });
-    } catch (error) {
-      print('Error fetching departments: $error');
-    }
-  }
+  // Future<void> _fetchDepartments() async {
+  //   try {
+  //     List<Departments> fetchedDepartments = await fetchDepartmentsData();
+  //     setState(() {
+  //       departments = fetchedDepartments;
+  //     });
+  //   } catch (error) {
+  //     print('Error fetching departments: $error');
+  //   }
+  // }
 
   Future<void> _saveTitle(String title) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

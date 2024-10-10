@@ -23,11 +23,11 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
 
   Future<void> _fetchEnterprises() async {
     try {
-      List<Enterprises> fetchedEnterprises = await fetchListData();
+      // List<Enterprises> fetchedEnterprises = await fetchListData();
       setState(() {
-        enterprisesList = fetchedEnterprises;
-        filteredEnterprisesList =
-            fetchedEnterprises; // Initialize filtered list
+        // enterprisesList = fetchedEnterprises;
+        // filteredEnterprisesList =
+        //     fetchedEnterprises; 
       });
     } catch (error) {
       print('Error fetching enterprises: $error');
@@ -73,30 +73,7 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
             onTextChanged: _handleSearch,
           ),
         ),
-        Expanded(
-          child: FutureBuilder<List<Enterprises>>(
-            future: fetchListData(), // Load data using the fetch function
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Error: ${snapshot.error}'));
-              } else {
-                return ListView.builder(
-                  itemCount: filteredEnterprisesList.length,
-                  itemBuilder: (context, index) {
-                    final enterprise = filteredEnterprisesList[index];
-                    return ListTile(
-                      title: Text(enterprise.name ?? ''),
-                      subtitle: Text(enterprise.phone ?? ''),
-                      onTap: () {},
-                    );
-                  },
-                );
-              }
-            },
-          ),
-        ),
+       
       ],
       // fabl: FloatingActionButtonLocation.endDocked,
       // fab: FloatingActionButton(

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/api_services/position_service.dart'; // Import service
@@ -23,11 +22,11 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
 
   Future<void> _fetchPositions() async {
     try {
-      List<Positions> fetchedPositions = await fetchPositions();
-      setState(() {
-        positions = fetchedPositions;
-        filteredPositions = fetchedPositions; 
-      });
+      // List<Positions> fetchedPositions = await fetchPositions();
+      // setState(() {
+      //   positions = fetchedPositions;
+      //   filteredPositions = fetchedPositions;
+      // });
     } catch (error) {
       print('Error fetching positions: $error');
     }
@@ -50,7 +49,7 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
   void _handleAdd(Positions newPosition) {
     setState(() {
       positions.add(newPosition);
-      _handleSearch(''); 
+      _handleSearch('');
     });
   }
 
@@ -66,36 +65,9 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
-              suggestions: positions.map((position) => position.positionName!).toList(),
+              suggestions:
+                  positions.map((position) => position.positionName!).toList(),
               onTextChanged: _handleSearch,
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<Positions>>(
-              future: fetchPositions(), 
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                 
-                  return ListView.builder(
-                    itemCount: filteredPositions.length,
-                    itemBuilder: (context, index) {
-                      final position = filteredPositions[index];
-
-                      return ListTile(
-                        title: Text(position.positionName ?? ''),
-                        subtitle: Text('Enterprise ID: ${position.enterpriseId}'),
-                        onTap: () {
-                          
-                        },
-                      );
-                    },
-                  );
-                }
-              },
             ),
           ),
         ],

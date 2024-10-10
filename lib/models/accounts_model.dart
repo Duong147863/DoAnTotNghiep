@@ -3,14 +3,14 @@ class Accounts {
   int? enterpriseId;
   int? permission; // mặc định 0 là superadmin, 1 là admin, 2 là nhân viên
   int? accountStatus;
-  String? username;
+  String? email_or_phone;
   String? password;
   Accounts(
       {this.accountId,
       this.enterpriseId,
       this.permission,
       this.accountStatus,
-      this.username,
+      this.email_or_phone,
       this.password});
 
   factory Accounts.fromJson(Map<String, dynamic> json) {
@@ -19,7 +19,7 @@ class Accounts {
       enterpriseId: json["enterprise_id"],
       permission: json["permission"],
       accountStatus: json["account_status"],
-      username: json["username"].toString(),
+      email_or_phone: json["email_or_phone"].toString(),
       password: json["password"].toString(),
     );
   }
@@ -30,7 +30,7 @@ class Accounts {
     map["enterprise_id"] = enterpriseId;
     map["permission"] = permission;
     map["account_status"] = accountStatus;
-    map["username"] = username;
+    map["email_or_phone"] = email_or_phone;
     map["password"] = password;
     return map;
   }
@@ -68,14 +68,14 @@ class Accounts {
 
 // class LaravelValidationError {
 //   // kiểm tra người dùng nhập đăng nhập với API
-//   final String? username;
+//   final String? email_or_phone;
 //   final String? password;
 
-//   LaravelValidationError({this.username, this.password});
+//   LaravelValidationError({this.email_or_phone, this.password});
 
 //   factory LaravelValidationError.fromJson(Map<String, dynamic> json) {
 //     return LaravelValidationError(
-//         username: json["username"] != null ? json["username"][0] : null,
+//         email_or_phone: json["email_or_phone"] != null ? json["email_or_phone"][0] : null,
 //         password: json["password"] != null ? json["password"][0] : null);
 //   }
 // }

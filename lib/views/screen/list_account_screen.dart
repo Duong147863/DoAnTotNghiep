@@ -38,8 +38,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         bodyChildren: [
           Consumer<AccountsViewModel>(builder: (context, viewModel, child) {
             if (!viewModel.fetchingData && viewModel.listAccounts.isEmpty) {
-              Provider.of<AccountsViewModel>(context, listen: false)
-                  .fetchAdminAccounts();
+              // Provider.of<AccountsViewModel>(context, listen: false)
+              //     .fetchAdminAccounts();
             }
             if (viewModel.fetchingData) {
               // While data is being fetched
@@ -51,7 +51,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                 dataSet: accounts,
                 itemBuilder: (context, index) {
                   return ListTile(
-                    title: Text(accounts[index].username.toString()),
+                    title: Text(accounts[index].email_or_phone.toString()),
                     onTap: () {
                       Navigator.pushNamed(context, AppRoutes.profileRoute);
                     },
