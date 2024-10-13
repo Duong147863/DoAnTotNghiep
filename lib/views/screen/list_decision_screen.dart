@@ -12,25 +12,25 @@ class DecisionsListScreen extends StatefulWidget {
 }
 
 class _DecisionsListScreenState extends State<DecisionsListScreen> {
-  // final List<Decisions> decisions = [
-  //   Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
-  //   Decisions(decisionId: '2', decisionName: 'Decision B', enterpriseId: 2),
-  //   // Add more decisions here
-  // ];
-  // List<Decisions> filteredDecisions = [];
-  // void _handleSearch(String query) {
-  //   setState(() {
-  //     if (query.isEmpty) {
-  //       filteredDecisions = decisions;
-  //     } else {
-  //       filteredDecisions = decisions.where((decisions) {
-  //         return decisions.decisionName!
-  //             .toLowerCase()
-  //             .contains(query.toLowerCase());
-  //       }).toList();
-  //     }
-  //   });
-  // }
+  final List<Decisions> decisions = [
+    Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
+    Decisions(decisionId: '2', decisionName: 'Decision B', enterpriseId: 2),
+    // Add more decisions here
+  ];
+  List<Decisions> filteredDecisions = [];
+  void _handleSearch(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        filteredDecisions = decisions;
+      } else {
+        filteredDecisions = decisions.where((decisions) {
+          return decisions.decisionName!
+              .toLowerCase()
+              .contains(query.toLowerCase());
+        }).toList();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

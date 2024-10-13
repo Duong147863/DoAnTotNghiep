@@ -1,7 +1,7 @@
 class AppStrings {
   AppStrings._();
 
-  static const String baseUrlApi = "http://192.168.1.15:8000/api";
+  static const String baseUrlApi = "http://192.168.1.30:8000/api";
 
   // static String appColors = "colors";
   static String notificationsKey = "notifications";
