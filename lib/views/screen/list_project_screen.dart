@@ -63,6 +63,7 @@ class _ProjectsListScreenState extends State<ProjectsListScreen> {
               suggestions:
                   projects.map((project) => project.projectName!).toList(),
               onTextChanged: _handleSearch,
+              hintText: '',
             ),
           ),
         ],

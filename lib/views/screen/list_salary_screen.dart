@@ -75,6 +75,7 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: CustomSearchBar(
+            hintText: '',
             suggestions:
                 profiles.map((profile) => profile.profileName!).toList(),
             onTextChanged: _handleSearch,

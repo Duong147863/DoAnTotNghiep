@@ -71,6 +71,7 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
             suggestions:
                 enterprisesList.map((enterprise) => enterprise.name!).toList(),
             onTextChanged: _handleSearch,
+            hintText: '',
           ),
         ),
        

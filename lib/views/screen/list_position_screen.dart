@@ -65,6 +65,7 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
+              hintText: '',
               suggestions:
                   positions.map((position) => position.positionName!).toList(),
               onTextChanged: _handleSearch,

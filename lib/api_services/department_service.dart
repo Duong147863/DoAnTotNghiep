@@ -9,4 +9,13 @@ class DepartmentService{
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}departments/$enterpriseID'));
   }
+
+  Future<http.Response> createNewDepartment() async {
+    return await http.post(Uri.parse(''));
+  }
+
+  Future<http.Response> updateExistedDepartment() async {
+    return await http.put(Uri.parse(''));
+  }
+
 }

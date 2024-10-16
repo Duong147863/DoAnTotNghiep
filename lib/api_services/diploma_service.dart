@@ -7,4 +7,12 @@ class DiplomaService{
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}diplomas/$enterprisesID'));
   }
+
+  Future<http.Response> createNewDiploma() async {
+    return await http.post(Uri.parse(''));
+  }
+
+  Future<http.Response> updatExistedDiploma() async {
+    return await http.put(Uri.parse(''));
+  }
 }

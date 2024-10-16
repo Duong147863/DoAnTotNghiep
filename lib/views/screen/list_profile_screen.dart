@@ -78,6 +78,7 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
               suggestions:
                   profiles.map((profile) => profile.profileName!).toList(),
               onTextChanged: _handleSearch,
+              hintText: '',
             ),
           ),
         ],

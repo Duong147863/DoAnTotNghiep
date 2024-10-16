@@ -129,6 +129,7 @@ Widget build(BuildContext context) {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: CustomSearchBar(
+            hintText: '',
             suggestions: departments
                 .map((department) => department.departmentName ?? 'Unnamed')
                 .toList(),

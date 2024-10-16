@@ -65,6 +65,7 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
             child: CustomSearchBar(
               suggestions: profiles.map((profile) => profile.profileName!).toList(),
               onTextChanged: _handleSearch,
+              hintText: '',
             ),
           ),
           Expanded(
