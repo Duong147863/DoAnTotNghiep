@@ -8,6 +8,7 @@ import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/view_models/accounts_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
+import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -52,7 +53,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: LoginScreen(),
+          home: HomeScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );

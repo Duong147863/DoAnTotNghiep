@@ -13,8 +13,8 @@ class DecisionsListScreen extends StatefulWidget {
 
 class _DecisionsListScreenState extends State<DecisionsListScreen> {
   final List<Decisions> decisions = [
-    Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
-  decisionName: 'Decision B', enterpriseId: 2),
+  //   Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
+  // decisionName: 'Decision B', enterpriseId: 2),
     // Add more decisions here
   ];
   List<Decisions> filteredDecisions = [];
