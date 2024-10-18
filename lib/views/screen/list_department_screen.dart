@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/department/department_model.dart';
-import 'package:nloffice_hrm/services/department_service.dart'; // Import service
+import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/api_services/department_service.dart'; // Import service
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';

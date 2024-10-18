@@ -33,17 +33,6 @@ class _CreateAcountState extends State<CreateAcount> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      // showAppBar: true,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: Icon(Icons.arrow_back),
-      //     onPressed: () {
-      //       Navigator.pop(context);
-      //     },
-      //   ),
-      // ),
       body: Container(
         height: MediaQuery.of(context).size.height,
         child: Stack(

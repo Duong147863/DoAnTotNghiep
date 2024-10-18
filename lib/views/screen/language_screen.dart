@@ -2,10 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-// import 'package:nloffice_hrm/screens/appFlow/navigation_bar/buttom_navigation_bar.dart';
 import 'package:lottie/lottie.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
-import 'package:nloffice_hrm/views/custom_widgets/bottom_nav_controller.dart';
+import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 
 class LanguageScreen extends StatefulWidget {
   const LanguageScreen({Key? key}) : super(key: key);
@@ -88,19 +87,12 @@ class _LanguageScreenState extends State<LanguageScreen> {
         //     (Route<dynamic> route) => true);
         return true;
       },
-      child: Scaffold(
+      child: BasePage(
         body: SafeArea(
           child: Stack(
             children: [
               InkWell(
-                onTap: () {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (context) => const CustomBottomNavBar(
-                              // bottomNavigationIndex: 0
-                              )),
-                      (Route<dynamic> route) => true);
-                },
+                onTap: () => Navigator.of(context).pop(),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 16),
                   child: Icon(Icons.arrow_back),
@@ -119,7 +111,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     const SizedBox(
                       height: 25,
                     ),
-                    const Text('choose_your_preferred_language',
+                    Text("choose_your_preferred_language".tr(),
                             style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

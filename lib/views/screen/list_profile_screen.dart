@@ -141,8 +141,8 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
-import 'package:nloffice_hrm/services/profile_service.dart'; // Import service
+import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/api_services/profile_service.dart'; // Import service
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';

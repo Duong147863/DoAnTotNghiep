@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/enterprise/enterprises_model.dart';
-import 'package:nloffice_hrm/services/enterprise_service.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/models/enterprises_model.dart';
+import 'package:nloffice_hrm/api_services/enterprise_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_enterprises_screen.dart';
@@ -26,7 +26,8 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
       List<Enterprises> fetchedEnterprises = await fetchListData();
       setState(() {
         enterprisesList = fetchedEnterprises;
-        filteredEnterprisesList = fetchedEnterprises; // Initialize filtered list
+        filteredEnterprisesList =
+            fetchedEnterprises; // Initialize filtered list
       });
     } catch (error) {
       print('Error fetching enterprises: $error');
@@ -60,59 +61,56 @@ class _EnterprisesListScreenState extends State<EnterprisesListScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      appBar: AppBar(
-        title: Text('Danh sách doanh nghiệp'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomSearchBar(
-              suggestions: enterprisesList
-                  .map((enterprise) => enterprise.name!)
-                  .toList(),
-              onTextChanged: _handleSearch,
-            ),
+      showLeadingAction: true,
+      defaultBody: true,
+      backgroundColor: AppColor.primaryLightColor,
+      bodyChildren: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CustomSearchBar(
+            suggestions:
+                enterprisesList.map((enterprise) => enterprise.name!).toList(),
+            onTextChanged: _handleSearch,
           ),
-          Expanded(
-            child: FutureBuilder<List<Enterprises>>(
-              future: fetchListData(), // Load data using the fetch function
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                  return ListView.builder(
-                    itemCount: filteredEnterprisesList.length,
-                    itemBuilder: (context, index) {
-                      final enterprise = filteredEnterprisesList[index];
-                      return ListTile(
-                        title: Text(enterprise.name ?? ''),
-                        subtitle: Text(enterprise.licenseNum ?? ''),
-                        onTap: () {
-                        },
-                      );
-                    },
-                  );
-                }
-              },
-            ),
+        ),
+        Expanded(
+          child: FutureBuilder<List<Enterprises>>(
+            future: fetchListData(), // Load data using the fetch function
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              } else {
+                return ListView.builder(
+                  itemCount: filteredEnterprisesList.length,
+                  itemBuilder: (context, index) {
+                    final enterprise = filteredEnterprisesList[index];
+                    return ListTile(
+                      title: Text(enterprise.name ?? ''),
+                      subtitle: Text(enterprise.phone ?? ''),
+                      onTap: () {},
+                    );
+                  },
+                );
+              }
+            },
           ),
-        ],
-      ),
-      fab: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddEnterpriseScreen(onAdd: _addEnterprise),
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
-      ),
+        ),
+      ],
+      // fabl: FloatingActionButtonLocation.endDocked,
+      // fab: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => AddEnterpriseScreen(onAdd: _addEnterprise),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(Icons.add),
+      //   backgroundColor: Colors.blue,
+      // ),
     );
   }
 }

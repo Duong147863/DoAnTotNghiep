@@ -87,7 +87,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         hintStyle: widget.colorHintText == null
             ? AppTextStyle.hintStyle()
             : AppTextStyle.hintStyle().copyWith(color: widget.colorHintText),
-        //wi
+
         errorText: widget.errorText,
         enabledBorder: widget.underline
             ? InputStyles.inputUnderlineEnabledBorder()

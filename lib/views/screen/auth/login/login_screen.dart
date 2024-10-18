@@ -16,17 +16,7 @@ class _TapBarState extends State<LoginScreen> {
     return DefaultTabController(
       length: 2,
       child: BasePage(
-        showAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-        ),
+        showAppBar: false,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -60,7 +50,6 @@ class _TapBarState extends State<LoginScreen> {
                             offset: Offset(0.0, 2.0))
                       ]),
                   indicatorSize: TabBarIndicatorSize.tab,
-                  //labelPadding: EdgeInsets.symmetric(horizontal: 10),
                   tabs: const [
                     Tab(
                       text: 'Email Address',

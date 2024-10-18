@@ -1,11 +1,15 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/account/accounts_model.dart';
-import 'package:nloffice_hrm/services/account_service.dart';
+import 'package:nloffice_hrm/api_services/account_service.dart';
+import 'package:nloffice_hrm/models/accounts_model.dart';
+import 'package:nloffice_hrm/view_models/accounts_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
+import 'package:provider/provider.dart';
 
 class EmployeeListScreen extends StatefulWidget {
   const EmployeeListScreen({super.key});
@@ -16,41 +20,46 @@ class EmployeeListScreen extends StatefulWidget {
 
 class _EmployeeListScreenState extends State<EmployeeListScreen> {
   // late Future<Accounts> futureAccount;
+
   @override
   void initState() {
     super.initState();
-    // futureAccount = fetchListData();
   }
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      showAppBar: true,
-      showLeadingAction: true,
-      title: "Accounts List",
-      body: FutureBuilder<List<Accounts>>(
-        future: fetchListData(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            return CustomListView(
-              dataSet: snapshot.data!.toList(),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(snapshot.data![index].username.toString()),
-                  subtitle: Text(snapshot.data![index].password.toString()),
-                  onTap: () {
-                    Navigator.pushNamed(context, AppRoutes.profileRoute);
-                  },
-                );
-              },
-            );
-          }
-        },
-      ),
-    );
+        showAppBar: true,
+        showLeadingAction: true,
+        defaultBody: true,
+        appBarItemColor: AppColor.boneWhite,
+        // title: "Accounts List",
+        backgroundColor: AppColor.primaryLightColor,
+        bodyChildren: [
+          Consumer<AccountsViewModel>(builder: (context, viewModel, child) {
+            if (!viewModel.fetchingData && viewModel.listAccounts.isEmpty) {
+              Provider.of<AccountsViewModel>(context, listen: false)
+                  .fetchAdminAccounts();
+            }
+            if (viewModel.fetchingData) {
+              // While data is being fetched
+              return CircularProgressIndicator();
+            } else {
+              // If data is successfully fetched
+              List<Accounts> accounts = viewModel.listAccounts;
+              return CustomListView(
+                dataSet: accounts,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(accounts[index].username.toString()),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.profileRoute);
+                    },
+                  );
+                },
+              );
+            }
+          }),
+        ]);
   }
 }

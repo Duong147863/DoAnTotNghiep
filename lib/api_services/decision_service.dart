@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/decision/decisions_model.dart';
+import 'package:nloffice_hrm/models/decisions_model.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Decisions>> fetchListData() async {

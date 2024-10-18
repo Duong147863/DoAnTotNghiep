@@ -7,8 +7,7 @@ class AppRoutes {
   static const homeRoute = "home_screen";
   static const noconnetionRoute = "noconnet_screen";
   static const employeelistRoute = "employeelist_screen";
-  static const languareRoute = "languare_screen";
-  static const menuRoute = "menu_screen";
+  static const languageRoute = "language_screen";
   static const tokenRoute = "token_widget_item";
   static const profileListRoute = "list_profile_screen";
   static const departmentListRoute = "list_department_screen";
@@ -19,5 +18,4 @@ class AppRoutes {
   static const projectListRoute = "list_project_screen";
   static const ponsitionListRoute = "list_ponsition_screen";
   static const decisionListRoute = "list_decision_screen";
-  // static const scanenQRCodeRoute = "scanerQRcode_screen";
 }

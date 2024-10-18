@@ -57,12 +57,12 @@ class CustomButton extends StatelessWidget {
           elevation: this.elevation,
           foregroundColor: this.foregroundColor,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          backgroundColor: this.backgroundcolor ?? AppColor.primaryColor,
-          disabledBackgroundColor: this.loading
-              ? this.color == null
-                  ? AppColor.primaryColor
-                  : this.color
-              : null,
+          // backgroundColor: this.backgroundcolor ?? AppColor.primaryColor,
+          // disabledBackgroundColor: this.loading
+          //     ? this.color == null
+          //         ? AppColor.primaryColor
+          //         : this.color
+          //     : null,
           shape: this.shape ??
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),

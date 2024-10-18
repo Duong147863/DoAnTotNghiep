@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/decision/decisions_model.dart';
-import 'package:nloffice_hrm/services/decision_service.dart';
+import 'package:nloffice_hrm/models/decisions_model.dart';
+import 'package:nloffice_hrm/api_services/decision_service.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
@@ -14,7 +14,7 @@ class DecisionsListScreen extends StatefulWidget {
 class _DecisionsListScreenState extends State<DecisionsListScreen> {
   final List<Decisions> decisions = [
     Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
-    Decisions(decisionId: '2', decisionName: 'Decision B', enterpriseId: 2),
+  decisionName: 'Decision B', enterpriseId: 2),
     // Add more decisions here
   ];
   List<Decisions> filteredDecisions = [];
@@ -35,19 +35,21 @@ class _DecisionsListScreenState extends State<DecisionsListScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
+        showAppBar: true,
+        showLeadingAction: true,
         body: Expanded(
             child: FutureBuilder<List<Decisions>>(
-      future: fetchListData(),
-      builder: (context, snapshot) {
-        return CustomGridView(
-          dataSet: snapshot.data,
-          itemBuilder: (context, index) {
-            final decision = snapshot.data![index];
-            return DecisionCard(decision: decision);
+          future: fetchListData(),
+          builder: (context, snapshot) {
+            return CustomGridView(
+              dataSet: snapshot.data,
+              itemBuilder: (context, index) {
+                final decision = snapshot.data![index];
+                return DecisionCard(decision: decision);
+              },
+            );
           },
-        );
-      },
-    )));
+        )));
 
     // return BasePage(
     //   showAppBar: true,

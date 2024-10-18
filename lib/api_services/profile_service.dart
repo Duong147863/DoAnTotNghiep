@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/model/profile/profiles_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 
 Future<List<Profiles>> fetchProfile() async {
   final response =

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class BasePage extends StatefulWidget {
   final bool showAppBar;
   final bool showLeadingAction;
+  final bool defaultBody;
   final Function? onBackPressed;
-  final String? title;
-  final Widget body;
+  final String? titletext;
+  final Widget? body;
   final Widget? bottomSheet;
   final FloatingActionButtonLocation? fabl;
   final FloatingActionButton? fab;
@@ -21,6 +23,7 @@ class BasePage extends StatefulWidget {
   final Widget? leading;
   final Widget? bottomNavigationBar;
   final List<Widget>? actions;
+  final List<Widget>? bodyChildren;
   final AppBar? appBar;
   final Drawer? drawer;
 
@@ -28,10 +31,11 @@ class BasePage extends StatefulWidget {
     this.fabl,
     this.showAppBar = false,
     this.showLeadingAction = false,
+    this.defaultBody = false,
     this.leading,
     this.onBackPressed,
-    this.title = "",
-    required this.body,
+    this.titletext = "",
+    this.body,
     this.bottomSheet,
     this.fab,
     this.isLoading = false,
@@ -42,6 +46,7 @@ class BasePage extends StatefulWidget {
     this.backgroundColor,
     this.bottomNavigationBar,
     this.actions,
+    this.bodyChildren,
     this.drawer,
     this.appBar,
     Key? key,
@@ -55,10 +60,8 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     // context.watch<ConnectivityProvider>().initialise(context);
-
     // final isConnected = context.watch<ConnectivityProvider>().isConnected;
-    return 
-    SafeArea(
+    return SafeArea(
       child:
           // isConnected != true
           // ?
@@ -89,26 +92,28 @@ class _BasePageState extends State<BasePage> {
                           )
                       : null,
                   title: Text(
-                    "${widget.title}",
+                    "${widget.titletext}",
                   ),
                 )
             : null,
-        body: widget.body,
-        // VStack(
-        //   [
-        //     //
-        //     widget.isLoading
-        //         ? LinearProgressIndicator()
-        //         : UiSpacer.emptySpace(),
-        //     //
-        //     widget.body.expand(),
-        //   ],
-        // ),
+        body: widget.defaultBody
+            ? Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(40),
+                        topRight: Radius.circular(40))),
+                child: Column(
+                  children: widget.bodyChildren!,
+                ),
+              )
+            : widget.body,
         bottomNavigationBar: widget.bottomNavigationBar,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomSheet: widget.bottomSheet,
         floatingActionButton: widget.fab,
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
     );
   }

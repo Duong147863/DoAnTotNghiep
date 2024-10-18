@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/model/department/department_model.dart';
+import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 
 class EditDepartmentScreen extends StatefulWidget {
