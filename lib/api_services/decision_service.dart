@@ -1,16 +1,21 @@
-import 'dart:convert';
-
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/models/decisions_model.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<Decisions>> fetchListData() async {
-  final response =
-      await http.get(Uri.parse('${AppStrings.baseUrlApi}/decisions'));
-  if (response.statusCode == 200) {
-    List<dynamic> jsonData = json.decode(response.body);
-    return jsonData.map((data) => Decisions.fromJson(data)).toList();
-  } else {
-    throw Exception('Failed to load data');
+class DecisionService {
+  Future<http.Response> getAllDecisionsByEnterpriseID(int enterpriseID) async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}decisions/$enterpriseID'));
+  }
+
+  Future<http.Response> createNewDecision() async {
+    return await http.post(Uri.parse(''));
+  }
+
+  Future<http.Response> updateDecision() async {
+    return await http.put(Uri.parse(''));
+  }
+
+  Future<http.Response> deleteDecision() async {
+    return await http.delete(Uri.parse(''));
   }
 }

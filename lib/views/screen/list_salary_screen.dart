@@ -30,11 +30,11 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
 
   Future<void> _fetchProfile() async {
     try {
-      List<Profiles> fetchedProfiles = await fetchProfile();
-      setState(() {
-        profiles = fetchedProfiles;
-        filteredProfiles = fetchedProfiles;
-      });
+      // List<Profiles> fetchedProfiles = await fetchProfile();
+      // setState(() {
+      //   profiles = fetchedProfiles;
+      //   filteredProfiles = fetchedProfiles;
+      // });
     } catch (error) {
       print('Error fetching profiles: $error');
     }
@@ -42,10 +42,10 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
 
   Future<void> _fetchSalary() async {
     try {
-      List<Salaries> fetchedSalaries = await fetchSalary();
-      setState(() {
-        salaries = fetchedSalaries;
-      });
+      // List<Salaries> fetchedSalaries = await fetchSalary();
+      // setState(() {
+      //   salaries = fetchedSalaries;
+      // });
     } catch (error) {
       print('Error fetching salaries: $error');
     }
@@ -75,6 +75,7 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: CustomSearchBar(
+            hintText: '',
             suggestions:
                 profiles.map((profile) => profile.profileName!).toList(),
             onTextChanged: _handleSearch,

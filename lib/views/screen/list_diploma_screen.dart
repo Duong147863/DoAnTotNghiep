@@ -12,15 +12,7 @@ class DiplomaListScreen extends StatefulWidget {
 }
 
 class _DiplomaListScreenState extends State<DiplomaListScreen> {
-  final List<Diplomas> diplomas = [
-    Diplomas(
-      profileId: '1',
-      diplomaName: 'Dai hoc',
-      diplomaId: 'BSc-001',
-    ),
-    // Add more diplomas if needed
-  ];
-
+  
   @override
   void initState() {
     super.initState();
@@ -43,17 +35,6 @@ class _DiplomaListScreenState extends State<DiplomaListScreen> {
           //     onTextChanged: _handleSearch,
           //   ),
           // ),
-          Expanded(
-              child: FutureBuilder<List<Diplomas>>(
-            future: fetchListData(),
-            builder: (context, snapshot) {
-              return ListView.builder(itemBuilder: (context, index) {
-                return ListTile(
-                  
-                );
-              });
-            },
-          )),
         ],
       ),
     );

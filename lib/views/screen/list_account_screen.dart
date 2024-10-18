@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/api_services/account_service.dart';
-import 'package:nloffice_hrm/models/accounts_model.dart';
-import 'package:nloffice_hrm/view_models/accounts_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
@@ -36,30 +33,30 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         // title: "Accounts List",
         backgroundColor: AppColor.primaryLightColor,
         bodyChildren: [
-          Consumer<AccountsViewModel>(builder: (context, viewModel, child) {
-            if (!viewModel.fetchingData && viewModel.listAccounts.isEmpty) {
-              Provider.of<AccountsViewModel>(context, listen: false)
-                  .fetchAdminAccounts();
-            }
-            if (viewModel.fetchingData) {
-              // While data is being fetched
-              return CircularProgressIndicator();
-            } else {
-              // If data is successfully fetched
-              List<Accounts> accounts = viewModel.listAccounts;
-              return CustomListView(
-                dataSet: accounts,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(accounts[index].username.toString()),
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.profileRoute);
-                    },
-                  );
-                },
-              );
-            }
-          }),
+          // Consumer<AccountsViewModel>(builder: (context, viewModel, child) {
+          //   if (!viewModel.fetchingData && viewModel.listAccounts.isEmpty) {
+          //     // Provider.of<AccountsViewModel>(context, listen: false)
+          //     //     .fetchAdminAccounts();
+          //   }
+          //   if (viewModel.fetchingData) {
+          //     // While data is being fetched
+          //     return CircularProgressIndicator();
+          //   } else {
+          //     // If data is successfully fetched
+          //     List<Accounts> accounts = viewModel.listAccounts;
+          //     return CustomListView(
+          //       dataSet: accounts,
+          //       itemBuilder: (context, index) {
+          //         return ListTile(
+          //           title: Text(accounts[index].email_or_phone.toString()),
+          //           onTap: () {
+          //             Navigator.pushNamed(context, AppRoutes.profileRoute);
+          //           },
+          //         );
+          //       },
+          //     );
+          //   }
+          // }),
         ]);
   }
 }
