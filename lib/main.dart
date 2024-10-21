@@ -7,8 +7,14 @@ import 'package:nloffice_hrm/constant/app_languages.dart';
 import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
+import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_absents.dart';
+import 'package:nloffice_hrm/views/screen/list_account_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:provider/provider.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -53,7 +59,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: HomeScreen(),
+          home: EmployeeListScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
