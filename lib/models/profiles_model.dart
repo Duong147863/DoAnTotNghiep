@@ -6,6 +6,7 @@ class Profiles {
       this.profileStatus = 0,
       this.idExpireDay,
       this.identifiNum,
+      this.place_of_birth,
       this.gender,
       this.phone,
       this.email,
@@ -15,6 +16,7 @@ class Profiles {
       this.salaryId,
       this.birthday,
       this.positionId,
+      this.nation,
       this.diplomaId});
   String? profileName;
   int profileStatus;
@@ -30,7 +32,9 @@ class Profiles {
   DateTime? birthday;
   String? positionId;
   String? diplomaId;
-
+  //
+  String ? place_of_birth;
+  String ? nation;
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(
       profileName: json["profile_name"],
@@ -50,6 +54,8 @@ class Profiles {
           json["birthday"] != null ? DateTime.parse(json["birthday"]) : null,
       positionId: json["position_id"],
       diplomaId: json["diploma_id"],
+      place_of_birth: json["place_of_birth"],
+      nation: json["nation"]
     );
   }
   Map<String, dynamic> toJson() {
@@ -68,6 +74,8 @@ class Profiles {
     map["birthday"] = birthday?.toIso8601String();
     map["position_id"] = positionId;
     map["diploma_id"] = positionId;
+    map["place_of_birth"] = place_of_birth;
+    map["nation"] = nation;
     return map;
   }
 

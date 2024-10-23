@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/models/projects_model.dart';
 import 'package:nloffice_hrm/api_services/project_service.dart'; // Import service
@@ -20,16 +19,16 @@ class _ProjectsListScreenState extends State<ProjectsListScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchProjects(); 
+    _fetchProjects();
   }
 
   Future<void> _fetchProjects() async {
     try {
-      List<Projects> fetchedProjects = await fetchListData();
-      setState(() {
-        projects = fetchedProjects;
-        filteredProjects = fetchedProjects; 
-      });
+      // List<Projects> fetchedProjects = await fetchListData();
+      // setState(() {
+      //   projects = fetchedProjects;
+      //   filteredProjects = fetchedProjects;
+      // });
     } catch (error) {
       print('Error fetching projects: $error');
     }
@@ -41,7 +40,9 @@ class _ProjectsListScreenState extends State<ProjectsListScreen> {
         filteredProjects = projects;
       } else {
         filteredProjects = projects.where((project) {
-          return project.projectName!.toLowerCase().contains(query.toLowerCase());
+          return project.projectName!
+              .toLowerCase()
+              .contains(query.toLowerCase());
         }).toList();
       }
     });
@@ -59,37 +60,10 @@ class _ProjectsListScreenState extends State<ProjectsListScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
-              suggestions: projects.map((project) => project.projectName!).toList(),
+              suggestions:
+                  projects.map((project) => project.projectName!).toList(),
               onTextChanged: _handleSearch,
-            ),
-          ),
-          Expanded(
-            child: FutureBuilder<List<Projects>>(
-              future: fetchListData(), 
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
-                 
-                  filteredProjects = snapshot.data!; 
-                  return CustomGridView(
-                    padding: EdgeInsets.all(8.0),
-                    dataSet: filteredProjects,
-                    itemBuilder: (context, index) {
-                      final project = filteredProjects[index];
-                      return ProjectCard(
-                        project: project,
-                      );
-                    },
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.0,
-                    crossAxisSpacing: 2.0,
-                    mainAxisSpacing: 2.0,
-                  );
-                }
-              },
+              hintText: '',
             ),
           ),
         ],

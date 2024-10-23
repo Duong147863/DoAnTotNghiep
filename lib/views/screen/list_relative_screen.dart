@@ -25,13 +25,13 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
 
   Future<void> _fetchData() async {
     try {
-      List<Profiles> fetchedProfiles = await fetchProfile();
-      List<Relatives> fetchedRelatives = await fetchRelatives();
-      setState(() {
-        profiles = fetchedProfiles;
-        relatives = fetchedRelatives;
-        filteredProfiles = fetchedProfiles; 
-      });
+      // List<Profiles> fetchedProfiles = await fetchProfile();
+      // List<Relatives> fetchedRelatives = await fetchRelatives();
+      // setState(() {
+      //   profiles = fetchedProfiles;
+      //   relatives = fetchedRelatives;
+      //   filteredProfiles = fetchedProfiles; 
+      // });
     } catch (error) {
       print('Error fetching data: $error');
     }
@@ -65,6 +65,7 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
             child: CustomSearchBar(
               suggestions: profiles.map((profile) => profile.profileName!).toList(),
               onTextChanged: _handleSearch,
+              hintText: '',
             ),
           ),
           Expanded(

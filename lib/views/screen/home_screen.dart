@@ -47,11 +47,11 @@ class _HomeScreenState extends State<HomeScreen> {
         'text': 'your_enterprise'.tr(),
         'route': AppRoutes.enterpriseListRoute
       },
-      // {
-      //   'icon': Icons.business_center_rounded,
-      //   'text': 'Dự án',
-      //   'route': AppRoutes.projectListRoute
-      // },
+      {
+        'icon': Icons.business_center_rounded,
+        'text': 'Dự án',
+        'route': AppRoutes.projectListRoute
+      },
       // {
       //   'icon': Icons.assignment_ind_rounded,
       //   'text': 'Chức vụ',
@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (context, index) {
             final item = data[index];
             return Card(
-              color: Color(0xFFFCF6E6),
+              color: Color.fromARGB(255, 243, 243, 242),
               elevation: 1,
               margin: EdgeInsets.all(13),
               child: Wrap(
@@ -166,7 +166,44 @@ class _HomeScreenState extends State<HomeScreen> {
               ).p(13),
             ).onTap(
                 () => Navigator.of(context).pushNamed(item['route']));
-          }),]
+          }),
+          Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildMenuItem('Client Management', Icons.add_circle_outline),
+            SizedBox(height: 16.0),
+            _buildMenuItem('NOC/Ex Certificate', Icons.access_time),
+            SizedBox(height: 16.0),
+            _buildMenuItem('Notice Board', Icons.access_time),
+            SizedBox(height: 16.0),
+            _buildMenuItem('Award', Icons.folder),
+          ],
+        ),
+      ),]
+          
+    );
+  }
+  Widget _buildMenuItem(String title, IconData icon) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        trailing: Icon(Icons.arrow_forward_ios),
+      ),
     );
   }
 }
