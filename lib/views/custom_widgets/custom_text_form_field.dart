@@ -105,6 +105,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         suffixIcon: widget.suffixIcon ?? _getSuffixWidget(),
         contentPadding: EdgeInsets.all(10),
       ),
+      
       //Đổi màu cursor
       // cursorColor: AppColor.cursorColor,
       obscureText: (widget.obscureText) ? !makePasswordVisible : false,

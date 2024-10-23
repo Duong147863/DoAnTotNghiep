@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/constant/input.styles.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class EmployeeListScreen extends StatefulWidget {
   const EmployeeListScreen({super.key});
@@ -57,7 +59,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildMenuItem('Add Employee', Icons.add_circle_outline),
+            _buildMenuItem('Add Employee', Icons.add_circle_outline).onTap(()async{
+              await Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
+            }),
             SizedBox(height: 16.0),
             _buildMenuItem('Time Attendance', Icons.access_time),
             SizedBox(height: 16.0),

@@ -18,4 +18,5 @@ class AppRoutes {
   static const projectListRoute = "list_project_screen";
   static const ponsitionListRoute = "list_ponsition_screen";
   static const decisionListRoute = "list_decision_screen";
+  static const addprofileRoute = "add_profile_screen";
 }
