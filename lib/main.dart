@@ -10,8 +10,9 @@ import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_absents.dart';
+import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_account_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_checkin_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
@@ -59,7 +60,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: EmployeeListScreen(),
+          home: CheckinScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
