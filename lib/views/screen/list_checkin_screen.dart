@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:intl/intl.dart';
+import 'package:nloffice_hrm/views/screen/list_employee_attend_list_screen.dart';
 class CheckinScreen extends StatefulWidget {
   @override
   _CheckinScreenState createState() => _CheckinScreenState();
@@ -35,7 +36,7 @@ class _CheckinScreenState extends State<CheckinScreen>
           backgroundColor: Color(0xFF0B258A),
           elevation: 0,
           automaticallyImplyLeading: true,
-          title: Text('Checkin'),
+          title: Text('Time Attendance',style: TextStyle(color: Colors.white),),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
@@ -44,11 +45,10 @@ class _CheckinScreenState extends State<CheckinScreen>
                 controller: _tabController,
                 indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
                 labelColor: Colors.black, // Màu cho tab đang chọn
-                labelStyle: TextStyle(color: Colors.white),
                 tabs: [
                   Tab(text: 'Checkin'),
                   Tab(text: 'History'),
-                  Tab(text: 'Timesheet'),
+                  Tab(text: 'Employee Attend List'),
                 ],
               ),
             ),
@@ -61,7 +61,7 @@ class _CheckinScreenState extends State<CheckinScreen>
               children: [
                 Center(child: Text('Checkin')),
                 HistoryTab(),
-                Center(child: Text('Timesheet')),
+                EmployAttendListScreen()
               ],
             ),
           ),

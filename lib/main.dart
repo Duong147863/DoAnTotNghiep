@@ -14,6 +14,7 @@ import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_account_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_checkin_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_employee_attend_list_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:provider/provider.dart';
@@ -60,7 +61,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: CheckinScreen(),
+          home: HomeScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
