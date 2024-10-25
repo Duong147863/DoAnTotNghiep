@@ -55,14 +55,14 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     }
   }
 
-  final newRelative = Relatives(
-    relativesName: relativesNameController.text,
-    relativesPhone: relativesPhoneController.text,
-    relativesBirthday: birthday, // Gán giá trị đã chuyển đổi
-  );
+  // final newRelative = Relatives(
+  //   relativesName: relativesNameController.text,
+  //   relativesPhone: relativesPhoneController.text,
+  //   relativesBirthday: birthday, // Gán giá trị đã chuyển đổi
+  // );
   
-  widget.onAddRelative(newRelative);
-  Navigator.pop(context);
+  // widget.onAddRelative(newRelative);
+  // Navigator.pop(context);
 }
 
   @override

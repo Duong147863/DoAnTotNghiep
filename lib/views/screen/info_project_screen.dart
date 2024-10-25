@@ -36,21 +36,21 @@ class InfoProjectScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 16.0),
-            Text(
-              'Mã doanh nghiệp: ${project.enterpriseId ?? 'Không có'}',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 16.0),
-            Text(
-              'Phòng thực hiện: ${project.departmentId ?? 'Không có'}',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.grey,
-              ),
-            ),
+            // Text(
+            //   'Mã doanh nghiệp: ${project.enterpriseId ?? 'Không có'}',
+            //   style: TextStyle(
+            //     fontSize: 18.0,
+            //     color: Colors.grey,
+            //   ),
+            // ),
+            // SizedBox(height: 16.0),
+            // Text(
+            //   'Phòng thực hiện: ${project.departmentId ?? 'Không có'}',
+            //   style: TextStyle(
+            //     fontSize: 18.0,
+            //     color: Colors.grey,
+            //   ),
+            // ),
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

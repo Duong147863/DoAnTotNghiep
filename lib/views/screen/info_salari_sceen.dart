@@ -53,16 +53,16 @@ class InfoSalariScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 Divider(),
-                InfoTile(
-                  icon: Icons.monetization_on,
-                  label: 'Lương',
-                  value: salary.salary?.toString() ?? 'Không có',
-                ),
-                InfoTile(
-                  icon: Icons.attach_money,
-                  label: 'Phụ cấp',
-                  value: salary.allowance?.toString() ?? 'Không có',
-                ),
+                // InfoTile(
+                //   icon: Icons.monetization_on,
+                //   label: 'Lương',
+                //   value: salary.salary?.toString() ?? 'Không có',
+                // ),
+                // InfoTile(
+                //   icon: Icons.attach_money,
+                //   label: 'Phụ cấp',
+                //   value: salary.allowance?.toString() ?? 'Không có',
+                // ),
               ],
             ),
             SizedBox(height: 16),

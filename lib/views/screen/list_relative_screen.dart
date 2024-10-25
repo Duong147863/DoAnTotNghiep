@@ -75,7 +75,7 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
                 final profile = filteredProfiles[index];
                 final relative = relatives.firstWhere(
                   (s) => s.profileId == profile.profileId,
-                  orElse: () => Relatives(),
+                  // orElse: () => Relatives(),
                 );
                 return ListTile(
                   title: Text(profile.profileName ?? ''),

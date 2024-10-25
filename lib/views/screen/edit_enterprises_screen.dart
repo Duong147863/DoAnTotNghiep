@@ -46,8 +46,8 @@ class _EditEnterpriseScreenState extends State<EditEnterpriseScreen> {
       widget.enterprise.name = nameController.text;
       widget.enterprise.email = emailController.text;
       widget.enterprise.phone = phoneController.text;
-      widget.enterprise.assignDate =
-          DateTime.tryParse(assignDateController.text);
+      // widget.enterprise.assignDate =
+      //     DateTime.tryParse(assignDateController.text);
       // Không cập nhật thông tin đăng nhập ở đây
     });
     Navigator.pop(context, widget.enterprise);

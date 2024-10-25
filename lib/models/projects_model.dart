@@ -1,23 +1,18 @@
 class Projects {
   Projects(
-      {this.projectId,
-      this.projectName,
-      this.projectStatus,
-      this.enterpriseId,
-      this.departmentId});
-  String? projectId;
-  String? projectName;
-  int? projectStatus;
-  int? enterpriseId;
-  String? departmentId;
+      {required this.projectId,
+      required this.projectName,
+      required this.projectStatus,
+      });
+  String projectId;
+  String projectName;
+  String projectStatus;
 
   factory Projects.fromJson(Map<String, dynamic> json) {
     return Projects(
       projectId: json["project_id"],
       projectName: json["project_name"],
       projectStatus: json["project_status"],
-      departmentId: json["department_id"],
-      enterpriseId: json["enterprise_id"],
     );
   }
 
@@ -26,8 +21,6 @@ class Projects {
     map["project_id"] = projectId;
     map["profile_name"] = projectName;
     map["project_status"] = projectStatus;
-    map["department_id"] = departmentId;
-    map["enterprise_id"] = enterpriseId;
     return map;
   }
 }

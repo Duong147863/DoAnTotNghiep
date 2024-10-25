@@ -1,41 +1,39 @@
 class WorkingProcesses {
   WorkingProcesses(
-      {this.workingprocessId,
-      this.profileId,
-      this.workingprocessWorkplace,
+      {required this.workingprocessId,
+      required this.profileId,
+      this.workplaceName,
       this.workingprocessContent,
-      this.workingprocessStarttime,
+      required this.workingprocessStarttime,
       this.workingprocessEndtime,
-      this.enterpriseId,
-      this.workingprocessStatus});
-  String? workingprocessId;
-  String? profileId;
-  String? workingprocessWorkplace;
+      required this.workingprocessStatus});
+  String workingprocessId;
+  String profileId;
+  String? workplaceName;
   String? workingprocessContent;
-  DateTime? workingprocessStarttime;
+  DateTime workingprocessStarttime;
   DateTime? workingprocessEndtime;
-  int? enterpriseId;
-  int? workingprocessStatus;
-
-  factory WorkingProcesses.fromJson(Map<String, dynamic> json) =>
-      WorkingProcesses(
-        workingprocessId: json["workingprocess_id "],
-        profileId: json["profile_id "],
-        workingprocessWorkplace: json["workingprocess_workplace"],
-        workingprocessContent: json["workingprocess_content"],
-        workingprocessStarttime: json["workingprocess_starttime"],
-        workingprocessEndtime: json["workingprocess_endtime"],
-        enterpriseId: json["enterprise_id"],
-        workingprocessStatus: json["workingprocess_status"],
-      );
-  Map<String, dynamic> toJson() => {
-        "workingprocess_id ": workingprocessId,
-        "profile_id ": profileId,
-        "workingprocess_workplace": workingprocessWorkplace,
-        "workingprocess_content": workingprocessContent,
-        "workingprocess_starttime": workingprocessStarttime,
-        "workingprocess_endtime": workingprocessEndtime,
-        "enterprise_id": enterpriseId,
-        "workingprocess_status": workingprocessStatus,
-      };
+  int workingprocessStatus;
+  factory WorkingProcesses.fromJson(Map<String, dynamic> json) {
+    return WorkingProcesses(
+      workingprocessId: json["workingprocess_id "],
+      profileId: json["profile_id "],
+      workplaceName: json["workplace_name"],
+      workingprocessContent: json["workingprocess_content"],
+      workingprocessStarttime: json["workingprocess_starttime"],
+      workingprocessEndtime: json["workingprocess_endtime"],
+      workingprocessStatus: json["workingprocess_status"],
+    );
+  }
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map["workingprocess_id"] = workingprocessId;
+    map["profile_id"] = profileId;
+    map["workplace_name"] = workplaceName;
+    map["workingprocess_content"] = workingprocessContent;
+    map["workingprocess_starttime"] = workingprocessStarttime;
+    map["workingprocess_endtime"] = workingprocessEndtime;
+    map["workingprocess_status"] = workingprocessStatus;
+    return map;
+  }
 }

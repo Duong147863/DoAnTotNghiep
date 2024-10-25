@@ -17,7 +17,7 @@ class _AddEnterpriseScreenState extends State<AddEnterpriseScreen> {
   late TextEditingController enterprisesPhoneController;
   late TextEditingController enterprisesAssignDateController;
   final _formKey = GlobalKey<FormState>();
-  final _enterprise = Enterprises();
+  // final _enterprise = Enterprises();
 
   @override
   void initState() {

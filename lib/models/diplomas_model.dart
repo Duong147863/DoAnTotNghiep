@@ -9,33 +9,53 @@ class Diplomas {
       required this.grantedBy,
       required this.licenseDate,
       required this.diplomaImage,
-      this.ranking,
+      required this.ranking,
       this.major,
-      this.modeOfStudy});
+      required this.modeOfStudy,
+      required this.diplomaType,
+      required this.profileId});
 
   String diplomaId;
   String diplomaName;
-  String? modeOfStudy;
-  String grantedBy;
+  String diplomaImage;
+  String modeOfStudy;
+  String ranking;
   DateTime licenseDate;
-  File diplomaImage;
-  String? ranking;
   String? major;
-
-  factory Diplomas.fromJson(Map<String, dynamic> json) => Diplomas(
+  String grantedBy;
+  String diplomaType;
+  String profileId;
+  
+  
+  
+  factory Diplomas.fromJson(Map<String,dynamic>json){
+    return Diplomas(
         diplomaId: json["diploma_id"],
-        major: json["major"],
-        ranking: json["ranking"],
         diplomaName: json["diploma_degree_name"],
-        licenseDate: json["license_date"],
+        diplomaImage: json["diploma_image"],
         modeOfStudy: json["mode_of_study"],
-        diplomaImage: Io.File(base64Decode(json["diploma_image"]) as String),
+        ranking: json["ranking"],
+        licenseDate: json["license_date"],
+        major: json["major"],
         grantedBy: json["granted_by"],
-      );
-  Map<String, dynamic> toJson() => {
-        "major": major,
-        "diploma_id": diplomaId,
-        "license_date": licenseDate,
-        "diploma_image": base64Encode(diplomaImage.readAsBytesSync()),
-      };
+        diplomaType: json["diploma_type"],
+        profileId: json["profile_id"],
+        // diplomaImage: Io.File(base64Decode(json["diploma_image"]) as String),
+        
+    );
+  }
+  Map<String,dynamic> toJson(){
+    final map = <String,dynamic>{};
+    map["diploma_id"] = diplomaId;
+    map["diploma_degree_name"] = diplomaName;
+    map["diploma_image"] = diplomaImage;
+    map["mode_of_study"] = modeOfStudy;
+    map["ranking"] = ranking;
+    map["license_date"] = licenseDate;
+    map["major"] = major;
+    map["granted_by"] = grantedBy;
+    map["diploma_type"] = diplomaType;
+    map["profile_id"] = profileId;
+    return map;
+  }
 }

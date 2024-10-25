@@ -16,12 +16,17 @@ class ProfilesRepository {
     }
   }
   Future<bool> addProfile(Profiles profile) async {
+  try {
     final response = await service.addNewProfile(profile);
-
     if (response.statusCode == 201) {
       return true;
     } else {
-      throw Exception('Failed to add profile');
+      throw Exception('Failed to add profile: ${response.statusCode}');
     }
+  } catch (error) {
+    print('Error adding profile: $error');
+    throw Exception('Failed to add profile: $error');
   }
+}
+
 }

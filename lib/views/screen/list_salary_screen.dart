@@ -88,12 +88,12 @@ class _SalaryListScreenState extends State<SalaryListScreen> {
               final profile = filteredProfiles[index];
               final salary = salaries.firstWhere(
                 (s) => s.salaryId.toString() == profile.salaryId,
-                orElse: () => Salaries(),
+                // orElse: () => Salaries(),
               );
               return ListTile(
                 title: Text(profile.profileName ?? 'Chưa có tên'),
-                subtitle: Text(
-                    'Phòng: ${profile.departmentId ?? 'Chưa có phòng'}\nLương: ${salary.salary ?? 0.0}'),
+                // subtitle: Text(
+                //     'Phòng: ${profile.departmentId ?? 'Chưa có phòng'}\nLương: ${salary.salary ?? 0.0}'),
                 onTap: () {
                   Navigator.push(
                     context,

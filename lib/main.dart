@@ -28,8 +28,8 @@ import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_attend_list_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:provider/provider.dart';
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
@@ -61,6 +61,9 @@ Future<void> main() async {
           ),
           ChangeNotifierProvider<DeparmentsViewModel>(
             create: (context) => DeparmentsViewModel(),
+          ),
+          ChangeNotifierProvider<ProfilesViewModel>(
+            create: (context) => ProfilesViewModel(),
           )
         ],
         child: const LocalizedApp(

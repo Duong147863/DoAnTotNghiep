@@ -45,7 +45,7 @@ class _EditRelativeScreenState extends State<EditRelativeScreen> {
       widget.relative.relativesName = relativesNameController.text;
       widget.relative.relativesPhone = relativesPhoneController.text;
       // widget.relative.relativesBirthday = relativesBirthdayController.text;
-      widget.relative.relativesBirthday = DateTime.tryParse(relativesBirthdayController.text);
+      // widget.relative.relativesBirthday = DateTime.tryParse(relativesBirthdayController.text);
     });
     Navigator.pop(context, widget.relative);
   }
