@@ -1,6 +1,7 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -15,12 +16,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final MobileScannerController controller = MobileScannerController();
   List<Map<String, dynamic>> _getData() {
     return [
       {
         'icon': Icons.supervisor_account,
         'text': 'employee_management'.tr(),
-        'route': AppRoutes.profileListRoute
+        'route': AppRoutes.employeeListRoute
       },
       // {
       //   'icon': Icons.groups_rounded,
@@ -44,13 +46,13 @@ class _HomeScreenState extends State<HomeScreen> {
       // },
       {
         'icon': Icons.home_work_rounded,
-        'text': 'your_enterprise'.tr(),
-        'route': AppRoutes.enterpriseListRoute
+        'text': 'position_management'.tr(),
+        'route': AppRoutes.positionListRoute
       },
       {
         'icon': Icons.business_center_rounded,
-        'text': 'Dự án',
-        'route': AppRoutes.projectListRoute
+        'text': 'department'.tr(),
+        'route': AppRoutes.departmentListRoute
       },
       // {
       //   'icon': Icons.assignment_ind_rounded,
@@ -157,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius:
                 BorderRadius.circular(20.0), // Bo góc cho hiệu ứng nhấn
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
                 gradient: LinearGradient(
@@ -224,69 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ).p(13),
                 ).onTap(() => Navigator.of(context).pushNamed(item['route']));
               }),
-          SizedBox(height: 20),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Nhiệm vụ cần làm',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 10),
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: _tasks.length,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      padding: EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Colors.grey[300]!,
-                          ),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              _tasks[index],
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
+          
         ]);
   }
 }

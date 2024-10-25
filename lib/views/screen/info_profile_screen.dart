@@ -112,16 +112,16 @@ class InfoProfileScreen extends StatelessWidget {
             TextButton(
               child: Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text('Delete'),
               onPressed: () {
-                profile.deactivate();
+                // profile.deactivate();
                 onDelete();
-                Navigator.of(context).pop(); // Dismiss the dialog
-                Navigator.pop(context); // Go back to the previous screen
+                Navigator.of(context).pop();
+                Navigator.pop(context); 
               },
             ),
           ],

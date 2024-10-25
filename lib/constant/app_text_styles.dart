@@ -91,7 +91,7 @@ class AppTextStyle {
 
   static TextStyle hintStyle() {
     return AppTextStyle.h5TitleTextStyle(
-      // color: AppColor.cancelledColor,
+      color: AppColor.primaryDarkColor,
       fontWeight: FontWeight.w600,
     );
   }

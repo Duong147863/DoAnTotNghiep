@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:provider/provider.dart';
 
 class AddProfilePage extends StatefulWidget {
   @override
@@ -18,9 +20,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
   final _birthdayController = TextEditingController();
   final _place_of_birthController = TextEditingController();
   final _identifiNumController = TextEditingController();
-  final _idExpireDayController = TextEditingController();
-  DateTime ExpireDay = DateTime.now();
+  final _idLicenseDayController = TextEditingController();
+  DateTime idLicenseDay = DateTime.now();
   final _nationController = TextEditingController();
+  final _temporary_address_Controller = TextEditingController();
+  final _current_address_Controller = TextEditingController();
   String? _gender;
 
   @override
@@ -31,9 +35,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
     _departmentController.dispose();
     _birthdayController.dispose();
     _place_of_birthController.dispose();
-    _idExpireDayController.dispose();
+    _idLicenseDayController.dispose();
     _identifiNumController.dispose();
     _nationController.dispose();
+    _temporary_address_Controller.dispose();
+    _current_address_Controller.dispose();
     super.dispose();
   }
 
@@ -46,13 +52,17 @@ class _AddProfilePageState extends State<AddProfilePage> {
         email: _emailController.text,
         departmentId: _departmentController.text,
         birthday: _birthday,
-        place_of_birth: _place_of_birthController.text,
-        idExpireDay: ExpireDay,
+        temporary_address:_temporary_address_Controller.text ,
+        current_address: _current_address_Controller.text,
         identifiNum: _identifiNumController.text,
-        nation: _nationController.text,
+        idLicenseDay: idLicenseDay 
       );
 
-      Navigator.pop(context);
+      Provider.of<ProfilesViewModel>(context, listen: false).addProfile(newProfile).then((_) {
+        Navigator.pop(context);
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add profile: $error')));
+      });
     }
   }
 
@@ -73,14 +83,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
   Future<void> _selectExpireDay(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: ExpireDay,
+      initialDate: idLicenseDay,
       firstDate: DateTime(1900),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != ExpireDay)
+    if (picked != null && picked != idLicenseDay)
       setState(() {
-        ExpireDay = picked;
-        _idExpireDayController.text = "${ExpireDay.toLocal()}".split(' ')[0];
+        idLicenseDay = picked;
+        _idLicenseDayController.text = "${idLicenseDay.toLocal()}".split(' ')[0];
       });
   }
 
@@ -245,14 +255,14 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         child: AbsorbPointer(
                           child: TextField(
                             style: TextStyle(color: Colors.black),
-                            controller: _idExpireDayController,
+                            controller: _idLicenseDayController,
                             decoration: InputDecoration(
                               labelText: 'Ngày cấp cccd',
                               border: OutlineInputBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(10)),
                               ),
-                              hintText: "${ExpireDay.toLocal()}".split(' ')[0],
+                              hintText: "${idLicenseDay.toLocal()}".split(' ')[0],
                             ),
                           ),
                         ),
@@ -280,11 +290,49 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: TextFormField(
+                        controller: _departmentController,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          labelText: 'Công ty',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter department';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextFormField(
+                        controller: _departmentController,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          labelText: 'Tạm trú',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter department';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: TextFormField(
                         controller: _phoneController,
                         keyboardType: TextInputType.number,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
-                          labelText: 'Số điện thoại',
+                          labelText: 'Thường trú',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
@@ -335,25 +383,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: TextFormField(
-                        controller: _departmentController,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          labelText: 'Công ty',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter department';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
+                    
                     SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: _submit,

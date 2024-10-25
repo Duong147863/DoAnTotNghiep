@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/shared_preferences.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:validators/validators.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class ForgePasswordScreen extends StatelessWidget {
   const ForgePasswordScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final emailOrPhoneController = TextEditingController();
     return DefaultTabController(
       length: 2,
       child: BasePage(
@@ -19,82 +27,53 @@ class ForgePasswordScreen extends StatelessWidget {
             },
           ),
         ),
+        backgroundColor: AppColor.seaShell,
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20, top: 20, right: 20),
-              child: _title(),
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Container(
-                width: MediaQuery.of(context).size.width * 0.9,
-                height: 50,
-                //padding: EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(100),
-                  color: Colors.white,
-                  border: Border.all(color: Colors.blue),
+            //Title
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Forgot password",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 30,
+                    color: Colors.black,
+                  ),
                 ),
-                child: TabBar(
-                  labelColor: Colors.blue[800],
-                  dividerColor: Colors.transparent,
-                  unselectedLabelColor: Colors.blue[400],
-                  indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.blue,
-                            blurRadius: 1.3,
-                            spreadRadius: 1.5,
-                            offset: Offset(0.0, 2.0))
-                      ]),
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  //labelPadding: EdgeInsets.symmetric(horizontal: 10),
-                  tabs: const [
-                    Tab(
-                      text: 'Email Address',
-                    ),
-                    Tab(
-                      text: 'Phone Number',
-                    ),
-                  ],
+                Text(
+                  'Enter to retrieve password',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
-              ),
-            ),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  // Center(child: LoginEmail(title: 'Login')),
-                  // Center(child: LoginPhone(title: 'Login')),
-                ],
-              ),
-            ),
+              ],
+            ).p(20),
+            //Email/ Phone number text field
+            CustomTextFormField(
+              textEditingController: emailOrPhoneController,
+              prefixIcon: const Icon(Icons.person),
+              labelText: "Email or Phone number",
+              fillColor: AppColor.primaryDarkColor,
+              filled: true,
+              validator: (value) {
+                if (value.isEmptyOrNull) {
+                  return 'Please enter your email or phone number';
+                } else if (isEmail(value!) == false &&
+                    SPUtill.isPhoneNumber(value) == false) {
+                  return 'Please enter a valid email or phone number';
+                }
+                return null;
+              },
+            ).p(10),
+            //Submit button
+            CustomButton(
+              title: 'send'.tr(),
+              titleStyle: TextStyle(fontSize: 20, color: Colors.white),
+            ).p(10)
           ],
         ),
       ),
-    );
-  }
-
-  Widget _title() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Forgot password",
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 30,
-            color: Colors.black,
-          ),
-        ),
-        Text(
-          'Enter to retrieve password',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-      ],
     );
   }
 }

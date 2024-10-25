@@ -72,10 +72,6 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                     _formKey.currentState?.save();
                     Navigator.pop(
                       context,
-                      Diplomas(
-                        diplomaId: diplomaId,
-                        diplomaName: diplomaName,
-                      ),
                     );
                   }
                 },

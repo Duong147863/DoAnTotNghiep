@@ -124,4 +124,9 @@ class SPUtill {
   //     return MenuDatum.fromJson(item);
   //   }).toList();
   // }
+
+  static bool isPhoneNumber(String phoneNum) {
+    final regExp = RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
+    return regExp.hasMatch(phoneNum);
+  }
 }

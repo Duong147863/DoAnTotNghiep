@@ -6,8 +6,8 @@ import 'package:nloffice_hrm/models/departments_model.dart';
 class DepartmentsRepository {
   final DepartmentService service = DepartmentService();
 
-  Future<List<Departments>> fetchAllDepartmentsByEnterpriseID(int enterpriseID) async {
-    final response = await service.getAllDepartmentsByEnterpriseID(enterpriseID);
+  Future<List<Departments>> fetchAllDepartments() async {
+    final response = await service.getAllDepartments();
 
     if (response.statusCode == 200) {
       return List<Departments>.from(

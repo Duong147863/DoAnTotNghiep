@@ -6,8 +6,8 @@ import 'package:nloffice_hrm/models/positions_model.dart';
 class PositionsRepository {
   final PositionService service = PositionService();
 
-  Future<List<Positions>> getAllPositions(int enterpriseID) async {
-    final response = await service.getAllPositionsByEnterpriseID(enterpriseID);
+  Future<List<Positions>> getAllPositions() async {
+    final response = await service.getAllPositions();
 
     if (response.statusCode == 200) {
       return List<Positions>.from(
