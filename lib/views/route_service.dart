@@ -7,6 +7,7 @@ import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/language_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_checkin_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
@@ -198,6 +199,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             name: AppRoutes.departmentDetailRoute,
           ));
 
+     case AppRoutes.checkinListRoute:
+      return MaterialPageRoute(
+          builder: (context) => CheckinScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.checkinListRoute,
+          ));
     ///
     default:
       return MaterialPageRoute(builder: ((context) => LoginScreen()));

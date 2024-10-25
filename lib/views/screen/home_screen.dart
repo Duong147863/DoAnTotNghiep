@@ -173,39 +173,9 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildMenuItem('Client Management', Icons.add_circle_outline),
-                SizedBox(height: 16.0),
-                _buildMenuItem('NOC/Ex Certificate', Icons.access_time),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Notice Board', Icons.access_time),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Award', Icons.folder),
-              ],
+              children: [],
             ),
           ),
         ]);
-  }
-
-  Widget _buildMenuItem(String title, IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: Icon(Icons.arrow_forward_ios),
-      ),
-    );
   }
 }
