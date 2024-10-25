@@ -16,7 +16,9 @@ class AppRoutes {
   static const relativeListRoute = "list_relative_screen";
   static const enterpriseListRoute = "list_enterprise_screen";
   static const projectListRoute = "list_project_screen";
-  static const ponsitionListRoute = "list_ponsition_screen";
+  static const positionListRoute = "list_position_screen";
   static const decisionListRoute = "list_decision_screen";
+  static const departmentDetailRoute = "info_department_screen";
   static const addprofileRoute = "add_profile_screen";
+  static const checkinListRoute = "list_checkin_screen";
 }

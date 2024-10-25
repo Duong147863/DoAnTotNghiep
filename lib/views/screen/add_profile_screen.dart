@@ -39,19 +39,16 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final newProfile = Profiles(
-        profileName: _profileNameController.text,
-        profileStatus: 1,
-        phone: _phoneController.text,
-        email: _emailController.text,
-        departmentId: _departmentController.text,
-        birthday: _birthday,
-        place_of_birth: _place_of_birthController.text,
-        idExpireDay: ExpireDay,
-        identifiNum: _identifiNumController.text,
-        nation: _nationController.text,
-      );
+      // final newProfile = Profiles(
+      //   profileName: _profileNameController.text,
+      //   profileStatus: 1,
+      //   phone: _phoneController.text,
+      //   email: _emailController.text,
+      //   departmentId: _departmentController.text,
+      //   birthday: _birthday,
+      // );
 
+      // widget.onAdd(newProfile);
       Navigator.pop(context);
     }
   }

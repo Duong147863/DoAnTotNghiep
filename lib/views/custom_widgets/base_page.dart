@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/internet_connect.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
+import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class BasePage extends StatefulWidget {
   final bool showAppBar;
   final bool showLeadingAction;
   final bool defaultBody;
+  final bool showSearchBar;
   final Function? onBackPressed;
   final String? titletext;
   final Widget? body;
@@ -32,6 +35,7 @@ class BasePage extends StatefulWidget {
     this.showAppBar = false,
     this.showLeadingAction = false,
     this.defaultBody = false,
+    this.showSearchBar = false,
     this.leading,
     this.onBackPressed,
     this.titletext = "",
@@ -59,15 +63,8 @@ class BasePage extends StatefulWidget {
 class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
-    // context.watch<ConnectivityProvider>().initialise(context);
-    // final isConnected = context.watch<ConnectivityProvider>().isConnected;
     return SafeArea(
-      child:
-          // isConnected != true
-          // ?
-          // const NoInternetScreen()
-          // :
-          Scaffold(
+      child: Scaffold(
         drawer: widget.drawer,
         resizeToAvoidBottomInset: false,
         backgroundColor:
@@ -118,4 +115,3 @@ class _BasePageState extends State<BasePage> {
     );
   }
 }
-

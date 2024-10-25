@@ -4,10 +4,9 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/screen/edit_department_screen.dart';
 
 class DepartmentInfoScreen extends StatelessWidget {
-  final Departments department;
-  final VoidCallback onDelete;
+  late final Departments department;
+  late final VoidCallback onDelete;
 
-  DepartmentInfoScreen({required this.department, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +39,6 @@ class DepartmentInfoScreen extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      Text(
-                        'Enterprise ID: ${department.enterpriseID}',
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
                     ],
                   ),
                 ),
@@ -53,12 +48,6 @@ class DepartmentInfoScreen extends StatelessWidget {
                   icon: Icons.business,
                   label: 'Department ID',
                   value: department.departmentID ?? 'Không có',
-                ),
-                InfoTile(
-                  icon: Icons.check_circle,
-                  label: 'Status',
-                  value:
-                      department.departmentStatus == 1 ? 'Active' : 'Inactive',
                 ),
               ],
             ),
@@ -108,7 +97,6 @@ class DepartmentInfoScreen extends StatelessWidget {
             TextButton(
               child: Text('Delete'),
               onPressed: () {
-                department.departmentStatus = 0; // Set the status to Inactive
                 onDelete();
                 Navigator.of(context).pop(); // Dismiss the dialog
                 Navigator.pop(context); // Go back to the previous screen

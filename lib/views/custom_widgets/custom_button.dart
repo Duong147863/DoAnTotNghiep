@@ -57,7 +57,7 @@ class CustomButton extends StatelessWidget {
           elevation: this.elevation,
           foregroundColor: this.foregroundColor,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          // backgroundColor: this.backgroundcolor ?? AppColor.primaryColor,
+          backgroundColor: this.backgroundcolor ?? AppColor.primaryLightColor,
           // disabledBackgroundColor: this.loading
           //     ? this.color == null
           //         ? AppColor.primaryColor
@@ -87,7 +87,7 @@ class CustomButton extends StatelessWidget {
             ? BusyIndicator(color: Colors.white)
             : Container(
                 padding: this.padding,
-                width: null, //double.infinity,
+                width: double.infinity,
                 height: this.isFixedHeight ? Vx.dp48 : (this.height ?? Vx.dp48),
                 child: this.child ??
                     Row(
@@ -99,19 +99,10 @@ class CustomButton extends StatelessWidget {
                                 this.icon,
                                 color: this.iconColor ?? Colors.white,
                                 size: this.iconSize ?? 20,
-                                textDirection:
-                                    translator.activeLocale.languageCode == "ar"
-                                        ? TextDirection.rtl
-                                        : TextDirection.ltr,
+                                textDirection: TextDirection.ltr,
                               ).pOnly(
-                                right:
-                                    translator.activeLocale.languageCode == "ar"
-                                        ? Vx.dp0
-                                        : Vx.dp5,
-                                left:
-                                    translator.activeLocale.languageCode != "ar"
-                                        ? Vx.dp0
-                                        : Vx.dp5,
+                                right: Vx.dp5,
+                                left: Vx.dp5,
                               )
                             : UiSpacer.emptySpace(),
                         this.title.isNotEmptyAndNotNull

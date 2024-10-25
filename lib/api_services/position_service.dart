@@ -5,9 +5,9 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 
 class PositionService {
-  Future<http.Response> getAllPositionsByEnterpriseID(int enterpriseID) async {
+  Future<http.Response> getAllPositions() async {
     return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}positions/$enterpriseID'));
+        .get(Uri.parse('${AppStrings.baseUrlApi}positions'));
   }
 
   Future<http.Response> createNewPosition() async {

@@ -14,7 +14,6 @@ class EditDepartmentScreen extends StatefulWidget {
 class _EditDepartmentScreenState extends State<EditDepartmentScreen> {
   late TextEditingController idController;
   late TextEditingController nameController;
-  late TextEditingController enterpriseIdController;
   bool status = false;
 
   @override
@@ -22,25 +21,18 @@ class _EditDepartmentScreenState extends State<EditDepartmentScreen> {
     super.initState();
     nameController =
         TextEditingController(text: widget.department.departmentName);
-    enterpriseIdController =
-        TextEditingController(text: widget.department.enterpriseID?.toString());
-    status = widget.department.departmentStatus == 1;
   }
 
   @override
   void dispose() {
     idController.dispose();
     nameController.dispose();
-    enterpriseIdController.dispose();
     super.dispose();
   }
 
   void saveDepartment() {
     setState(() {
       widget.department.departmentName = nameController.text;
-      widget.department.enterpriseID =
-          int.tryParse(enterpriseIdController.text);
-      widget.department.departmentStatus = status ? 1 : 0;
     });
     Navigator.pop(context, widget.department);
   }
@@ -72,21 +64,6 @@ class _EditDepartmentScreenState extends State<EditDepartmentScreen> {
                               decoration: const InputDecoration(
                                 labelText: 'Tên',
                                 border: const OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: TextFormField(
-                              controller: enterpriseIdController,
-                              scrollPadding: const EdgeInsets.only(bottom: 150),
-                              style: const TextStyle(fontSize: 18),
-                              decoration: const InputDecoration(
-                                labelText: 'ID doanh nghiệp',
-                                border: OutlineInputBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(10)),
                                 ),

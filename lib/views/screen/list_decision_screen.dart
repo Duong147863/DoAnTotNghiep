@@ -17,8 +17,8 @@ class DecisionsListScreen extends StatefulWidget {
 
 class _DecisionsListScreenState extends State<DecisionsListScreen> {
   final List<Decisions> decisions = [
-  //   Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
-  // decisionName: 'Decision B', enterpriseId: 2),
+    //   Decisions(decisionId: '1', decisionName: 'Decision A', enterpriseId: 1),
+    // decisionName: 'Decision B', enterpriseId: 2),
     // Add more decisions here
   ];
   List<Decisions> filteredDecisions = [];
@@ -47,18 +47,18 @@ class _DecisionsListScreenState extends State<DecisionsListScreen> {
             return CircularProgressIndicator(); // While data is being fetched
           } else {
             // If data is successfully fetched
-              List<Decisions> decisions = viewModel.listDecisions;
-              return CustomListView(
-                dataSet: decisions,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(decisions[index].decisionName.toString()),
-                    onTap: () {
-                      // Navigator.pushNamed(context, AppRoutes.decisionListRoute);
-                    },
-                  );
-                },
-              );
+            List<Decisions> decisions = viewModel.listDecisions;
+            return CustomListView(
+              dataSet: decisions,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(decisions[index].decisionName.toString()),
+                  onTap: () {
+                    // Navigator.pushNamed(context, AppRoutes.decisionListRoute);
+                  },
+                );
+              },
+            );
           }
         })
       ],
@@ -146,21 +146,6 @@ class DecisionCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 8.0),
-            Text(
-              'Mã lương: ${decision.salaryId ?? 'Chưa xác định'}',
-              style: TextStyle(
-                fontSize: 16.0,
-                color: Colors.grey,
-              ),
-            ),
-            SizedBox(height: 8.0),
-            Text(
-              'Trạng thái: ${decision.decisionStatus ?? 'Chưa xác định'}',
-              style: TextStyle(
-                fontSize: 16.0,
-                color: Colors.grey,
-              ),
-            ),
           ],
         ),
       ),

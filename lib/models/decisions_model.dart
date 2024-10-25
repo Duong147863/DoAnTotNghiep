@@ -1,31 +1,33 @@
-import 'dart:ffi';
+import 'dart:ui';
 
 class Decisions {
   Decisions(
-      {this.decisionId,
-      this.salaryId,
-      this.decisionName,
-      this.enterpriseId,
-      this.decisionStatus});
+      {required this.decisionId,
+      required this.decisionContent,
+      required this.decisionName,
+      required this.assignDate,
+      required this.decisionImage,
+      this.profileId});
 
-  String? decisionId;
-  String? salaryId;
-  String? decisionName;
-  int? enterpriseId;
-  Int8? decisionStatus;
+  String decisionId;
+  String decisionContent;
+  String decisionName;
+  DateTime assignDate;
+  Image decisionImage;
+  String? profileId;
 
   factory Decisions.fromJson(Map<String, dynamic> json) => Decisions(
       decisionId: json["decision_id"],
-      salaryId: json["salary_id"],
+      decisionContent: json["decision_content"],
       decisionName: json["decision_name"],
-      enterpriseId: json["enterprise_id"],
-      decisionStatus: json["decision_status"]);
+      assignDate: json["assign_date"],
+      decisionImage: json["decision_image"]);
 
   Map<String, dynamic> toJson() => {
         "decision_id": decisionId,
-        "salary_id": salaryId,
+        "decision_content": decisionContent,
         "decision_name": decisionName,
-        "enterprise_id": enterpriseId,
-        "decision_status": decisionStatus
+        "assign_date": assignDate,
+        "decision_image": decisionImage
       };
 }

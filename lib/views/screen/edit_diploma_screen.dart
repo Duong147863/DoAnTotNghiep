@@ -19,7 +19,6 @@ class _EditDiplomaScreenState extends State<EditDiplomaScreen> {
   @override
   void initState() {
     super.initState();
-    profileIdController = TextEditingController(text: widget.diploma.profileId);
     diplomaNameController =
         TextEditingController(text: widget.diploma.diplomaName);
     diplomaIdController = TextEditingController(text: widget.diploma.diplomaId);
@@ -44,9 +43,10 @@ class _EditDiplomaScreenState extends State<EditDiplomaScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
+      defaultBody: true,
       showAppBar: true,
       appBar: AppBar(
-        title: Text('Bằng cấp'),
+        title: Text(''),
         actions: [
           IconButton(
             icon: Icon(Icons.save),
@@ -54,57 +54,9 @@ class _EditDiplomaScreenState extends State<EditDiplomaScreen> {
           ),
         ],
       ),
-      body: LayoutBuilder(builder: (context, constraints) {
-        return IntrinsicHeight(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                Expanded(
-                  child: Container(
-                    child: Form(
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: TextFormField(
-                              controller: diplomaNameController,
-                              scrollPadding: EdgeInsets.only(bottom: 150),
-                              style: TextStyle(fontSize: 18),
-                              decoration: InputDecoration(
-                                labelText: 'Loại bằng cấp',
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: TextFormField(
-                              controller: diplomaIdController,
-                              scrollPadding: EdgeInsets.only(bottom: 150),
-                              style: TextStyle(fontSize: 18),
-                              decoration: InputDecoration(
-                                labelText: 'ID bằng cấp',
-                                border: OutlineInputBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }),
+      bodyChildren: [
+     
+      ],
     );
   }
 }

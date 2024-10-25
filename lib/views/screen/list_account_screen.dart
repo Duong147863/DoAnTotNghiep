@@ -54,7 +54,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
           ),
         ),
         bodyChildren: [
-         Padding(
+        Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,15 +63,15 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
               await Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
             }),
             SizedBox(height: 16.0),
-            _buildMenuItem('Time Attendance', Icons.access_time),
+            _buildMenuItem('Time Attendance', Icons.access_time).onTap(()async{
+              await Navigator.of(context).pushNamed(AppRoutes.checkinListRoute);
+              }),
             SizedBox(height: 16.0),
             _buildMenuItem('Leave Management', Icons.calendar_today),
             SizedBox(height: 16.0),
             _buildMenuItem('Employees Overtime', Icons.access_time),
             SizedBox(height: 16.0),
             _buildMenuItem('Salary Statement', Icons.attach_money),
-            SizedBox(height: 16.0),
-            _buildMenuItem('Reference', Icons.folder),
           ],
         ),
       ),
