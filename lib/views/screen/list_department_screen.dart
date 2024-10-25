@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
-import 'package:nloffice_hrm/api_services/department_service.dart'; // Import service
+import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DepartmentsScreen extends StatefulWidget {
@@ -15,71 +17,10 @@ class DepartmentsScreen extends StatefulWidget {
 
 class _DepartmentsScreenState extends State<DepartmentsScreen> {
   List<Departments> departments = [];
-  String _title = 'Danh sách phòng ban';
 
   @override
   void initState() {
     super.initState();
-    _loadTitle();
-    // _fetchDepartments();
-  }
-
-  Future<void> _loadTitle() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _title = prefs.getString('departmentsTitle') ?? 'Danh sách phòng ban';
-    });
-  }
-
-  // Future<void> _fetchDepartments() async {
-  //   try {
-  //     List<Departments> fetchedDepartments = await fetchDepartmentsData();
-  //     setState(() {
-  //       departments = fetchedDepartments;
-  //     });
-  //   } catch (error) {
-  //     print('Error fetching departments: $error');
-  //   }
-  // }
-
-  Future<void> _saveTitle(String title) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('departmentsTitle', title);
-  }
-
-  void _changeTitle() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        TextEditingController titleController =
-            TextEditingController(text: _title);
-        return AlertDialog(
-          title: Text('Đổi tên tiêu đề'),
-          content: TextField(
-            controller: titleController,
-            decoration: InputDecoration(hintText: 'Nhập tên tiêu đề mới'),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Hủy'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text('Lưu'),
-              onPressed: () {
-                setState(() {
-                  _title = titleController.text;
-                });
-                _saveTitle(titleController.text);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   void _handleDelete(Departments department) {
@@ -112,67 +53,88 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return BasePage(
-    showAppBar: true,
-    appBar: AppBar(
-      title: Text(_title),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.edit, color: Colors.black),
-          onPressed: _changeTitle,
+  Widget build(BuildContext context) {
+    return BasePage(
+      showAppBar: true,
+      showLeadingAction: true,
+      defaultBody: true,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.primaryLightColor,
+      appBar: AppBar(
+        backgroundColor: Color(0xFF0B258A),
+        elevation: 0,
+        automaticallyImplyLeading: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Departments Management",
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFFEFF8FF),
+                    fontWeight: FontWeight.w600),
+              ),
+            )
+          ],
         ),
-      ],
-    ),
-    body: Column(
-      children: [
+      ),
+      bodyChildren: [
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: CustomSearchBar(
             hintText: '',
             suggestions: departments
-                .map((department) => department.departmentName ?? 'Unnamed')
+                .map(
+                  (department) => department.departmentName!,
+                )
                 .toList(),
             onTextChanged: _handleSearch,
           ),
         ),
         Expanded(
-  child: ListView.builder(
-    itemCount: filteredDepartments.isNotEmpty ? filteredDepartments.length : departments.length,
-    itemBuilder: (context, index) {
-      final department = filteredDepartments.isNotEmpty ? filteredDepartments[index] : departments[index];
-      if (department.departmentStatus == 0 || department.departmentName == null) return Container();
-      return ListTile(
-        title: Text(department.departmentName ?? 'Unnamed Department'),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DepartmentInfoScreen(
-                department: department,
-                onDelete: () => _handleDelete(department),
-              ),
-            ),
-          );
-        },
-      );
-    },
-  ),
-),
+
+          child: Consumer<DeparmentsViewModel>(
+              builder: (context, viewModel, child) {
+            if (!viewModel.fetchingData && viewModel.listDepartments.isEmpty) {
+              Provider.of<DeparmentsViewModel>(context, listen: false)
+                  .fetchAllDepartments();
+            }
+            if (viewModel.fetchingData) {
+              // While data is being fetched
+              return Center(child: CircularProgressIndicator());
+            } else {
+              // If data is successfully fetched
+              List<Departments> departments = viewModel.listDepartments;
+              return CustomListView(
+                dataSet: departments,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(departments[index].departmentName.toString()),
+                    leading: Text(departments[index].departmentID.toString()),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.departmentDetailRoute);
+                    },
+                  );
+                },
+              );
+            }
+          }),
+        ),
       ],
-    ),
-    fab: FloatingActionButton(
-      onPressed: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => AddDepartmentScreen(onAdd: _handleAdd),
-          ),
-        );
-      },
-      child: Icon(Icons.add),
-      backgroundColor: Colors.blue,
-    ),
-  );
-}
+      // fab: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => AddDepartmentScreen(onAdd: _handleAdd),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(Icons.add),
+      //   backgroundColor: Colors.blue,
+      // ),
+    );
+  }
 }

@@ -30,7 +30,6 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
       final newPosition = Positions(
         positionId: _positionIdController.text,
         positionName: _positionNameController.text,
-        enterpriseId: int.tryParse(_enterpriseIdController.text),
       );
 
       widget.onAdd(newPosition);

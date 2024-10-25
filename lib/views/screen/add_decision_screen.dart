@@ -23,11 +23,9 @@ class _AddDecisionScreenState extends State<AddDecisionScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final newDecision = Decisions(
-        decisionName: _decisionNameController.text,
-        salaryId: _salaryIdController.text,
-        enterpriseId: int.parse(_enterpriseIdController.text),
-      );
+      // final newDecision = Decisions(
+      //   decisionName: _decisionNameController.text,
+      // );
       Navigator.pop(context);
     }
   }

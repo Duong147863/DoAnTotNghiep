@@ -5,9 +5,9 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 
 class DepartmentService{
-  Future<http.Response> getAllDepartmentsByEnterpriseID(int enterpriseID) async {
+  Future<http.Response> getAllDepartments() async {
     return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}departments/$enterpriseID'));
+        .get(Uri.parse('${AppStrings.baseUrlApi}departments'));
   }
 
   Future<http.Response> createNewDepartment() async {

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/api_services/position_service.dart'; // Import service
+import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
+import 'package:provider/provider.dart';
+import '../../constant/app_route.dart';
+import '../custom_widgets/custom_list_view.dart';
 
 class PositionsListScreen extends StatefulWidget {
   @override
@@ -13,12 +18,6 @@ class PositionsListScreen extends StatefulWidget {
 class _PositionsListScreenState extends State<PositionsListScreen> {
   List<Positions> positions = [];
   List<Positions> filteredPositions = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchPositions(); // Fetch positions when the screen is initialized
-  }
 
   Future<void> _fetchPositions() async {
     try {
@@ -57,34 +56,82 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
+      showLeadingAction: true,
+      defaultBody: true,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.primaryLightColor,
       appBar: AppBar(
-        title: Text('Danh sách chức vụ'),
+        backgroundColor: Color(0xFF0B258A),
+        elevation: 0,
+        automaticallyImplyLeading: true,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "Positions Management",
+                style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFFEFF8FF),
+                    fontWeight: FontWeight.w600),
+              ),
+            )
+          ],
+        ),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomSearchBar(
-              hintText: '',
-              suggestions:
-                  positions.map((position) => position.positionName!).toList(),
-              onTextChanged: _handleSearch,
-            ),
+      bodyChildren: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CustomSearchBar(
+            hintText: '',
+            suggestions:
+                positions.map((position) => position.positionName!).toList(),
+            onTextChanged: _handleSearch,
           ),
-        ],
-      ),
-      fab: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddPositionScreen(onAdd: _handleAdd),
-            ),
-          );
-        },
-        child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
-      ),
+        ),
+        Expanded(
+          child: Consumer<PositionsViewModel>(
+              builder: (context, viewModel, child) {
+            if (!viewModel.fetchingData && viewModel.listPositions.isEmpty) {
+              Provider.of<PositionsViewModel>(context, listen: false)
+                  .fetchPositions();
+            }
+            if (viewModel.fetchingData) {
+              // While data is being fetched
+              return Center(child: CircularProgressIndicator());
+            } else {
+              // If data is successfully fetched
+              List<Positions> positions = viewModel.listPositions;
+              return CustomListView(
+                dataSet: positions,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(positions[index].positionName.toString()),
+                    trailing: Text(positions[index].positionId.toString()),
+                    // leading: Text(accounts[index].positionId.toString()),
+                    onTap: () {
+                      // Navigator.pushNamed(context, AppRoutes.ponsitionListRoute);
+                    },
+                  );
+                },
+              );
+            }
+          }),
+        ),
+      ],
+      // fab: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => AddPositionScreen(onAdd: _handleAdd),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(Icons.add),
+      //   backgroundColor: Colors.blue,
+      // ),
     );
   }
 }

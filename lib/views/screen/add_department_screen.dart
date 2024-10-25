@@ -30,8 +30,6 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
       final newDepartment = Departments(
         departmentID: _departmentIdController.text,
         departmentName: _departmentNameController.text,
-        enterpriseID: int.parse(_enterpriseIdController.text),
-        departmentStatus: 1,
       );
 
       widget.onAdd(newDepartment);

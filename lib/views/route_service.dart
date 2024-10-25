@@ -4,11 +4,12 @@ import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/auth/forgot_password/forgot_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/language_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_account_screen.dart';
+import 'package:nloffice_hrm/views/screen/employee_managment_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
@@ -16,7 +17,6 @@ import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/more_setting_screen.dart';
-import 'package:nloffice_hrm/views/screen/no_connection_page.dart';
 import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/sign_up_screen.dart';
@@ -160,11 +160,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.ponsitionListRoute:
+    case AppRoutes.positionListRoute:
       return MaterialPageRoute(
           builder: (context) => PositionsListScreen(),
           settings: const RouteSettings(
-            name: AppRoutes.ponsitionListRoute,
+            name: AppRoutes.positionListRoute,
           ));
 
     ///
@@ -184,7 +184,15 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
+    case AppRoutes.departmentDetailRoute:
+      return MaterialPageRoute(
+          builder: (context) => DepartmentInfoScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.departmentDetailRoute,
+          ));
+
+    ///
     default:
-      return MaterialPageRoute(builder: ((context) => NoInternetScreen()));
+      return MaterialPageRoute(builder: ((context) => LoginScreen()));
   }
 }

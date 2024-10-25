@@ -74,13 +74,13 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
     return TextFormField(
       style: AppTextStyle.h5TitleTextStyle(
         fontWeight: FontWeight.w600,
-        color: Theme.of(context).textTheme.bodyLarge!.color,
+        // color: Theme.of(context).textTheme.bodyLarge!.color,
       ),
       decoration: InputDecoration(
         labelText: widget.labelText,
         labelStyle: AppTextStyle.h5TitleTextStyle(
           fontWeight: FontWeight.w600,
-          color: Theme.of(context).textTheme.bodyLarge!.color,
+          // color: Theme.of(context).textTheme.bodyLarge!.color,
         ),
         hintText: widget.hintText,
         //Chỉnh style hintText
