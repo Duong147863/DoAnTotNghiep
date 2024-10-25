@@ -8,6 +8,7 @@ class Profiles {
       required this.identifiNum,
       this.gender = false,
       required this.phone,
+      this.place_of_birth,
       this.email,
       this.departmentId,
       this.profileId,
@@ -15,6 +16,7 @@ class Profiles {
       required this.birthday,
        required this.password,
       this.positionId,
+      this.nation,
       this.diplomaId});
 
   String profileName;
@@ -32,6 +34,9 @@ class Profiles {
   String? diplomaId;
   String password;
 
+  //
+  String ? place_of_birth;
+  String ? nation;
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(
       profileName: json["profile_name"],
@@ -48,6 +53,8 @@ class Profiles {
       birthday: json["birthday"],
       positionId: json["position_id"],
       diplomaId: json["diploma_id"],
+      place_of_birth: json["place_of_birth"],
+      nation: json["nation"]
     );
   }
   Map<String, dynamic> toJson() {
@@ -65,6 +72,8 @@ class Profiles {
     map["birthday"] = birthday;
     map["position_id"] = positionId;
     map["diploma_id"] = positionId;
+    map["place_of_birth"] = place_of_birth;
+    map["nation"] = nation;
     return map;
   }
 }
