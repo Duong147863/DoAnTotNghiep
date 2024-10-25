@@ -65,6 +65,11 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
   }
 
+  final List<String> _tasks = [
+    "Dọn dẹp sảnh nhà hàng, ủ trà Olong",
+    "Dọn dẹp sảnh nhà hàng, ủ trà Olong, lau bàn...",
+  ];
+
   bool light = true;
   @override
   Widget build(BuildContext context) {
@@ -152,7 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
             borderRadius:
                 BorderRadius.circular(20.0), // Bo góc cho hiệu ứng nhấn
             child: Container(
-             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
                 gradient: LinearGradient(
@@ -219,7 +224,69 @@ class _HomeScreenState extends State<HomeScreen> {
                   ).p(13),
                 ).onTap(() => Navigator.of(context).pushNamed(item['route']));
               }),
-          
+          SizedBox(height: 20),
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Nhiệm vụ cần làm',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: _tasks.length,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      padding: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Colors.grey[300]!,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Text(
+                              _tasks[index],
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
         ]);
   }
 }

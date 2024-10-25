@@ -100,7 +100,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Thêm nhân viên',
+                'Add Employment',
                 style: TextStyle(
                   fontSize: 16,
                   color: Color(0xFFEFF8FF),

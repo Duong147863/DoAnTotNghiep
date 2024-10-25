@@ -61,7 +61,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: HomeScreen(),
+          home: LeaveRequestForm(),
           theme: theme,
           darkTheme: darkTheme,
         );
