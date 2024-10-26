@@ -15,18 +15,31 @@ class ProfilesRepository {
       throw Exception('Failed to load data');
     }
   }
+
   Future<bool> addProfile(Profiles profile) async {
-  try {
     final response = await service.addNewProfile(profile);
     if (response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
-  } catch (error) {
-    print('Error adding profile: $error');
-    throw Exception('Failed to add profile: $error');
   }
-}
 
+  Future<bool> emailLogin(String email, String password) async {
+    final response = await service.emailLogin(email, password);
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Failed to login: ${response.statusCode}');
+    }
+  }
+
+  Future<bool> phoneLogin(String phone, String password) async {
+    final response = await service.phoneLogin(phone, password);
+    if (response.statusCode == 201) {
+      return true;
+    } else {
+      throw Exception('Failed to login: ${response.statusCode}');
+    }
+  }
 }

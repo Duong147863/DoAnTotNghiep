@@ -6,12 +6,16 @@ import 'package:nloffice_hrm/models/positions_model.dart';
 
 class PositionService {
   Future<http.Response> getAllPositions() async {
-    return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}positions'));
+    return await http.get(Uri.parse('${AppStrings.baseUrlApi}positions'));
   }
 
-  Future<http.Response> createNewPosition() async {
-    return await http.post(Uri.parse(''));
+  Future<http.Response> createNewPosition(Positions position) async {
+    return await http.post(Uri.parse('${AppStrings.baseUrlApi}position/create'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json.encode(position.toJson()));
   }
 
   Future<http.Response> updateExistedPosition() async {

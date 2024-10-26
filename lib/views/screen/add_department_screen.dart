@@ -86,27 +86,6 @@ class _AddDepartmentScreenState extends State<AddDepartmentScreen> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _enterpriseIdController,
-                  decoration: InputDecoration(
-                    labelText: 'Enterprise ID',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter enterprise ID';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-              ),
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submit,

@@ -6,8 +6,8 @@ import 'package:nloffice_hrm/models/decisions_model.dart';
 class DecisionsRepository {
   final DecisionService service = DecisionService();
 
-  Future<List<Decisions>> fetchAllDecisionsByEnterpriseID(int enterpriseID) async {
-    final response = await service.getAllDecisionsByEnterpriseID(enterpriseID);
+  Future<List<Decisions>> fetchAllDecisions() async {
+    final response = await service.getAllDecisions();
 
     if (response.statusCode == 200) {
       return List<Decisions>.from(

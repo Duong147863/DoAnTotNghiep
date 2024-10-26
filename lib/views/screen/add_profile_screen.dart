@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
@@ -24,7 +25,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
   final _temporaryAddressController = TextEditingController();
   final _currentAddressController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   DateTime _birthday = DateTime.now();
   DateTime _idLicenseDay = DateTime.now();
   int _permission = 0;
@@ -56,17 +57,16 @@ class _AddProfilePageState extends State<AddProfilePage> {
         email: _emailController.text,
         departmentId: _departmentController.text,
         birthday: _birthday,
-        temporary_address: _temporaryAddressController.text,
-        current_address: _currentAddressController.text,
+        temporaryAddress: _temporaryAddressController.text,
+        currentAddress: _currentAddressController.text,
         identifiNum: _identifiNumController.text,
         idLicenseDay: _idLicenseDay,
         password: _passwordController.text,
-        place_of_birth: _placeOfBirthController.text,
+        placeOfBirth: _placeOfBirthController.text,
         nation: _nationController.text,
-        permission: _permission,
         gender: _gender,
+        profileId: 'DEV-01',
       );
-
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile)
           .then((_) {
