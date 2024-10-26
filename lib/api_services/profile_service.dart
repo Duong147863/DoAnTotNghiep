@@ -9,4 +9,16 @@ class ProfileService{
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}profiles/$enterpriseID'));
   }
+  Future<http.Response> getAllProfile() async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}profiles'));
+  }
+  Future<http.Response> addNewProfile(Profiles profile) async {
+  final url = Uri.parse('${AppStrings.baseUrlApi}auth/register');
+  return await http.post(
+    url,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(profile.toJson()),
+  );
+}
 }

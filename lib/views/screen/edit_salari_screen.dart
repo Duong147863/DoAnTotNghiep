@@ -15,14 +15,14 @@ class _EditSalaryScreenState extends State<EditSalaryScreen> {
   late TextEditingController salaryAmountController;
   late TextEditingController allowanceController;
 
-  @override
-  void initState() {
-    super.initState();
-    salaryAmountController =
-        TextEditingController(text: widget.salary.salary.toString());
-    allowanceController =
-        TextEditingController(text: widget.salary.allowance.toString());
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   salaryAmountController =
+  //       TextEditingController(text: widget.salary.salary.toString());
+  //   allowanceController =
+  //       TextEditingController(text: widget.salary.allowance.toString());
+  // }
 
   @override
   void dispose() {
@@ -31,15 +31,15 @@ class _EditSalaryScreenState extends State<EditSalaryScreen> {
     super.dispose();
   }
 
-  void saveSalary() {
-    setState(() {
-      widget.salary.salary =
-          double.tryParse(salaryAmountController.text) ?? 0.0;
-      widget.salary.allowance =
-          double.tryParse(allowanceController.text) ?? 0.0;
-    });
-    Navigator.pop(context, widget.salary);
-  }
+  // void saveSalary() {
+  //   setState(() {
+  //     widget.salary.salary =
+  //         double.tryParse(salaryAmountController.text) ?? 0.0;
+  //     widget.salary.allowance =
+  //         double.tryParse(allowanceController.text) ?? 0.0;
+  //   });
+  //   Navigator.pop(context, widget.salary);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +48,10 @@ class _EditSalaryScreenState extends State<EditSalaryScreen> {
       appBar: AppBar(
         title: Text('Edit Salary'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.save),
-            onPressed: saveSalary,
-          ),
+          // IconButton(
+          //   icon: Icon(Icons.save),
+          //   onPressed: saveSalary,
+          // ),
         ],
       ),
       body: LayoutBuilder(builder: (context, constraints) {

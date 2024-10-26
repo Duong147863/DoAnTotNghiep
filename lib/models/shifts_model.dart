@@ -13,20 +13,22 @@ class Shifts {
   DateTime endTime;
   String shiftName;
   Int8? status;
-
-  factory Shifts.fromJson(Map<String, dynamic> json) => Shifts(
-        shiftId: json["shift_id"],
-        startTime: json["start_time"],
-        endTime: json["end_time"],
-        shiftName: json["shift_name"],
-        status: json["status"],
-      );
-
-  Map<String, dynamic> toJson() => {
-        "shift_id": shiftId,
-        "shift_name": shiftName,
-        "start_time": startTime,
-        "end_time": endTime,
-        "status": status
-      };
+  factory Shifts.fromJson(Map<String, dynamic> json) {
+    return Shifts(
+      shiftId: json["shift_id"],
+      startTime: json["start_time"],
+      endTime: json["end_time"],
+      shiftName: json["shift_name"],
+      status: json["status"],
+    );
+  }
+   Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map["shift_id"] = shiftId;
+    map["start_time"] = startTime;
+    map["end_time"] = endTime;
+    map["shift_name"] = shiftName;
+    map["status"] = status;
+    return map;
+  }
 }

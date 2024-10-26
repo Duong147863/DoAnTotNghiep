@@ -10,14 +10,14 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class EmployeeListScreen extends StatefulWidget {
-  const EmployeeListScreen({super.key});
+class EmployeeManagementListScreen extends StatefulWidget {
+  const EmployeeManagementListScreen({super.key});
 
   @override
-  State<EmployeeListScreen> createState() => _EmployeeListScreenState();
+  State<EmployeeManagementListScreen> createState() => _EmployeeManagementListScreenState();
 }
 
-class _EmployeeListScreenState extends State<EmployeeListScreen> {
+class _EmployeeManagementListScreenState extends State<EmployeeManagementListScreen> {
   // late Future<Accounts> futureAccount;
 
   @override

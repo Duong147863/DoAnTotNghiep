@@ -21,4 +21,5 @@ class AppRoutes {
   static const departmentDetailRoute = "info_department_screen";
   static const addprofileRoute = "add_profile_screen";
   static const checkinListRoute = "list_checkin_screen";
+  static const employeeListRoute = "list_employee_screen";
 }

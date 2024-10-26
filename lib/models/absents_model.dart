@@ -2,35 +2,45 @@ import 'dart:convert';
 import 'dart:ffi';
 
 class Absents {
-  Absents(
-      {this.ID,
-      required this.from,
-      this.to,
-      this.daysOff,
-      required this.profileID,
-      this.status});
+  Absents({
+    this.ID,
+    this.reason,
+    required this.from,
+    this.to,
+    this.daysOff,
+    required this.profileID,
+    this.status = -1,
+  });
 
-  int? ID;
   DateTime from;
+  String? reason;
   DateTime? to;
+  int status;
+  String profileID;
   double? daysOff;
-  String? profileID;
-  Int8? status;
+  int? ID;
 
-  factory Absents.fromJson(Map<String, dynamic> json) => Absents(
+  factory Absents.fromJson(Map<String, dynamic> json) {
+    return Absents(
       ID: json["ID"],
-      from: json["from"],
+      reason: json["reason"],
       to: json["to"],
-      daysOff: json["days_off"],
-      profileID: json["enterprise_id"],
-      status: json["status"]);
+      status: json["status"],
+      profileID: json["profile_id"],
+      daysOff: json["days_Off"],
+      from: json["from"],
+    );
+  }
 
-  Map<String, dynamic> toJson() => {
-        "ID": ID,
-        "from": from,
-        "to": to,
-        "days_off": daysOff,
-        "enterprise_id": profileID,
-        "status": status
-      };
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map["from"] = from;
+    map["reason"] = reason;
+    map["to"] = to;
+    map["status"] = status;
+    map["profile_id"] = profileID;
+    map["days_Off"] = daysOff;
+    map["ID"] = ID;
+    return map;
+  }
 }

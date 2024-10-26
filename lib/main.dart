@@ -22,14 +22,14 @@ import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_account_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_employee_management_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_checkin_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_attend_list_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:provider/provider.dart';
-
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
@@ -61,6 +61,9 @@ Future<void> main() async {
           ),
           ChangeNotifierProvider<DeparmentsViewModel>(
             create: (context) => DeparmentsViewModel(),
+          ),
+          ChangeNotifierProvider<ProfilesViewModel>(
+            create: (context) => ProfilesViewModel(),
           )
         ],
         child: const LocalizedApp(
@@ -90,7 +93,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: LoginScreen(),
+          home: AddProfilePage(),
           theme: theme,
           darkTheme: darkTheme,
         );

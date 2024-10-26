@@ -206,6 +206,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             name: AppRoutes.checkinListRoute,
           ));
     ///
+      case AppRoutes.employeeListRoute:
+      return MaterialPageRoute(
+          builder: (context) => EmployeeListScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.employeeListRoute,
+          ));
+    ///
     default:
       return MaterialPageRoute(builder: ((context) => LoginScreen()));
   }

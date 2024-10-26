@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'icon': Icons.supervisor_account,
         'text': 'employee_management'.tr(),
-        'route': AppRoutes.profileListRoute
+        'route': AppRoutes.employeeListRoute
       },
       // {
       //   'icon': Icons.groups_rounded,
@@ -66,6 +66,11 @@ class _HomeScreenState extends State<HomeScreen> {
       // },
     ];
   }
+
+  final List<String> _tasks = [
+    "Dọn dẹp sảnh nhà hàng, ủ trà Olong",
+    "Dọn dẹp sảnh nhà hàng, ủ trà Olong, lau bàn...",
+  ];
 
   bool light = true;
   @override
@@ -145,6 +150,58 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: AppColor.primaryLightColor,
         defaultBody: true,
         bodyChildren: [
+          SizedBox(height: 20),
+          InkWell(
+            onTap: () {
+              Navigator.of(context).pushNamed(AppRoutes.checkinListRoute);
+              print("Button pressed!");
+            },
+            borderRadius:
+                BorderRadius.circular(20.0), // Bo góc cho hiệu ứng nhấn
+            child: Container(
+             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20.0),
+                gradient: LinearGradient(
+                  colors: [Color(0xFF7B42F6), Color(0xFF1CA9F4)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.touch_app,
+                    size: 40.0,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: 12.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Chấm công',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        'để bắt đầu công việc thôi nào!',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
           CustomGridView(
               crossAxisCount: 2,
               childAspectRatio: 2,
@@ -169,13 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ).p(13),
                 ).onTap(() => Navigator.of(context).pushNamed(item['route']));
               }),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [],
-            ),
-          ),
+          
         ]);
   }
 }
