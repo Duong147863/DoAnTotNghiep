@@ -7,7 +7,6 @@ class ProfilesViewModel extends ChangeNotifier {
 
   List<Profiles> _list = [];
   bool fetchingData = false;
-  bool addingProfile = false;
   List<Profiles> get listProfiles => _list;
 
   Future<void> fetchAllProfiles() async {
@@ -20,18 +19,28 @@ class ProfilesViewModel extends ChangeNotifier {
     }
     fetchingData = false;
   }
-   Future<void> addProfile(Profiles profile) async {
-    addingProfile = true;
-    notifyListeners();
+
+  Future<void> addProfile(Profiles profile) async {
     try {
-      final success = await repository.addProfile(profile);
-      if (success) {
-        _list.add(profile); // Optional: refresh the list from server instead
-        notifyListeners();
-      }
+      await repository.addProfile(profile);
     } catch (e) {
-      throw Exception('Failed to add profile: $e');
+      throw Exception('Failed to add datas: $e');
     }
-    addingProfile = false;
+  }
+
+  Future<void> loginEmail(String email, String password) async {
+    try {
+      await repository.emailLogin(email, password);
+    } catch (e) {
+      throw Exception('Failed to login: $e');
+    }
+  }
+
+  Future<void> loginPhone(String phone, String password) async {
+    try {
+      await repository.phoneLogin(phone, password);
+    } catch (e) {
+      throw Exception('Failed to login: $e');
+    }
   }
 }

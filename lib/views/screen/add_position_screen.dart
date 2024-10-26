@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
+import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:provider/provider.dart';
 
 class AddPositionScreen extends StatefulWidget {
-  final Function(Positions) onAdd;
-
-  AddPositionScreen({required this.onAdd});
-
   @override
   _AddPositionScreenState createState() => _AddPositionScreenState();
 }
@@ -31,9 +31,18 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
         positionId: _positionIdController.text,
         positionName: _positionNameController.text,
       );
-
-      widget.onAdd(newPosition);
-      Navigator.pop(context);
+      Provider.of<PositionsViewModel>(context, listen: false)
+          .addNewPosition(newPosition)
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Position added successfully!')),
+        );
+        Navigator.pop(context);
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add position: $error')),
+        );
+      });
     }
   }
 
@@ -42,7 +51,7 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
     return BasePage(
       showAppBar: true,
       appBar: AppBar(
-        title: Text('Thêm chức vụ'),
+        title: Text('add_new_position'.tr()),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -52,65 +61,33 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
             children: [
               Padding(
                 padding: EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _positionIdController,
-                  decoration: InputDecoration(
-                    labelText: 'Mã chức vụ',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
+                child: CustomTextFormField(
+                  textEditingController: _positionIdController,
+                  labelText: 'position_id'.tr(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter position ID';
+                      return 'please_enter_position_id'.tr();
                     }
                     return null;
                   },
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _positionNameController,
-                  decoration: InputDecoration(
-                    labelText: 'Tên chức vụ',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
+                padding: const EdgeInsets.all(10),
+                child: CustomTextFormField(
+                  textEditingController: _positionNameController,
+                  labelText: 'position_name'.tr(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter position name';
+                      return 'please_enter_position_name'.tr();
                     }
                     return null;
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _enterpriseIdController,
-                  decoration: InputDecoration(
-                    labelText: 'Id Công ty',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter enterprise ID';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Please enter a valid number';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text('Thêm chức vụ'),
+                child: Text('add_new_position'.tr()),
               ),
             ],
           ),

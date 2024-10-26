@@ -16,4 +16,13 @@ class PositionsRepository {
       throw Exception('Failed to load data');
     }
   }
+
+  Future<bool> addPosition(Positions position) async {
+    final response = await service.createNewPosition(position);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to add position: ${response.statusCode}');
+    }
+  }
 }
