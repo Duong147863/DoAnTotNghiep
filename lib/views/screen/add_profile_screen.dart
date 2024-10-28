@@ -1,22 +1,30 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class AddProfilePage extends StatefulWidget {
+  // final Profiles? profile;
+
+  const AddProfilePage({super.key});
+
   @override
   _AddProfilePageState createState() => _AddProfilePageState();
 }
 
 class _AddProfilePageState extends State<AddProfilePage> {
-  final _formKey = GlobalKey<FormState>();
+  final _profileIDController = TextEditingController();
   final _profileNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _departmentController = TextEditingController();
   final _birthdayController = TextEditingController();
   final _placeOfBirthController = TextEditingController();
   final _identifiNumController = TextEditingController();
@@ -28,15 +36,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   DateTime _birthday = DateTime.now();
   DateTime _idLicenseDay = DateTime.now();
-  int _permission = 0;
   bool _gender = false; // Assuming `false` is Male, `true` is Female
+  bool _marriage = false; // Assuming `false` is Male, `true` is Female
 
   @override
   void dispose() {
+    _profileIDController.dispose();
     _profileNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
-    _departmentController.dispose();
     _birthdayController.dispose();
     _placeOfBirthController.dispose();
     _identifiNumController.dispose();
@@ -49,37 +57,38 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final newProfile = Profiles(
-        profileName: _profileNameController.text,
-        profileStatus: 1,
-        phone: _phoneController.text,
-        email: _emailController.text,
-        departmentId: _departmentController.text,
-        birthday: _birthday,
-        temporaryAddress: _temporaryAddressController.text,
-        currentAddress: _currentAddressController.text,
-        identifiNum: _identifiNumController.text,
-        idLicenseDay: _idLicenseDay,
-        password: _passwordController.text,
-        placeOfBirth: _placeOfBirthController.text,
-        nation: _nationController.text,
-        gender: _gender,
-        profileId: 'DEV-01',
+    final newProfile = Profiles(
+      profileId: _profileIDController.text,
+      profileName: _profileNameController.text,
+      phone: _phoneController.text,
+      email: _emailController.text,
+      birthday: _birthday,
+      temporaryAddress: _temporaryAddressController.text,
+      currentAddress: _currentAddressController.text,
+      identifiNum: _identifiNumController.text,
+      idLicenseDay: _idLicenseDay,
+      password: _passwordController.text,
+      placeOfBirth: _placeOfBirthController.text,
+      nation: _nationController.text,
+      gender: _gender,
+      permission: 0,
+      marriage: _marriage,
+      profileImage: "abctest",
+      profileStatus: 1,
+    );
+    print(newProfile.marriage);
+    Provider.of<ProfilesViewModel>(context, listen: false)
+        .addProfile(newProfile)
+        .then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile added successfully!')),
       );
-      Provider.of<ProfilesViewModel>(context, listen: false)
-          .addProfile(newProfile)
-          .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile added successfully!')),
-        );
-        Navigator.pop(context);
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add profile: $error')),
-        );
-      });
-    }
+      Navigator.pop(context);
+    }).catchError((error) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      // SnackBar(content: Text('Failed to add profile: $error')),
+      // );
+    });
   }
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
@@ -98,118 +107,149 @@ class _AddProfilePageState extends State<AddProfilePage> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      showAppBar: true,
-      showLeadingAction: true,
-      defaultBody: true,
-      appBarItemColor: AppColor.boneWhite,
-      backgroundColor: AppColor.primaryLightColor,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF0B258A),
-        elevation: 0,
-        automaticallyImplyLeading: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Add Employment',
-              style: TextStyle(
-                fontSize: 16,
-                color: Color(0xFFEFF8FF),
-                fontWeight: FontWeight.w600,
-              ),
+        showAppBar: true,
+        showLeadingAction: true,
+        defaultBody: false,
+        appBarItemColor: AppColor.boneWhite,
+        backgroundColor: AppColor.aliceBlue,
+        actions: [
+          TextButton.icon(
+            onPressed: () {
+              _submit();
+            },
+            icon: Icon(
+              Icons.save_outlined,
+              color: AppColor.boneWhite,
             ),
-          ],
-        ),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
-      bodyChildren: [
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                shrinkWrap: true,
-                children: [
-                  _buildTextField(_profileNameController, 'Tên nhân viên',
-                      'Please enter profile name'),
-                  _buildDateField('Ngày sinh', _birthdayController, _birthday,
-                      (date) {
-                    setState(() {
-                      _birthday = date;
-                      _birthdayController.text =
-                          "${_birthday.toLocal()}".split(' ')[0];
-                    });
-                  }),
-                  _buildDropdownField('Chọn giới tính', _gender, (value) {
-                    setState(() {
-                      _gender = value!;
-                    });
-                  }),
-                  _buildTextField(_placeOfBirthController, 'Nơi Sinh',
-                      'Please enter place of birth'),
-                  _buildTextField(_identifiNumController, 'Căn Cước Công Dân',
-                      'Please enter identification number'),
-                  _buildDateField(
-                      'Ngày cấp cccd', _idLicenseDayController, _idLicenseDay,
-                      (date) {
-                    setState(() {
-                      _idLicenseDay = date;
-                      _idLicenseDayController.text =
-                          "${_idLicenseDay.toLocal()}".split(' ')[0];
-                    });
-                  }),
-                  _buildTextField(
-                      _nationController, 'Quê Quán', 'Please enter nation'),
-                  _buildTextField(_temporaryAddressController, 'Tạm trú',
-                      'Please enter temporary address'),
-                  _buildTextField(_currentAddressController, 'Thường trú',
-                      'Please enter current address'),
-                  _buildTextField(_phoneController, 'Số Điện Thoại',
-                      'Please enter phone number',
-                      keyboardType: TextInputType.number),
-                  _buildTextField(
-                      _emailController, 'Email', 'Please enter email'),
-                  _buildTextField(_departmentController, 'Công ty',
-                      'Please enter department'),
-                  _buildTextField(
-                      _passwordController, 'Password', 'Please enter password'),
-                  SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: _submit,
-                    child: Text('Thêm nhân viên'),
-                  ),
-                ],
-              ),
+            label: Text(
+              "save",
+              style: TextStyle(color: AppColor.boneWhite),
             ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _buildTextField(
-      TextEditingController controller, String label, String validationMsg,
-      {TextInputType keyboardType = TextInputType.text}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        style: TextStyle(color: Colors.black),
-        controller: controller,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        validator: (value) =>
-            value == null || value.isEmpty ? validationMsg : null,
-      ),
-    );
+          )
+        ],
+        resizeToAvoidBottomInset: true,
+        titletext: "add_new_profile",
+        appBarColor: AppColor.primaryLightColor,
+        body: SingleChildScrollView(
+          child: Column(children: [
+            //Profile id + full name
+            Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _profileIDController,
+                  labelText: 'profile_id'.tr(),
+                ).px8().w(150),
+                CustomTextFormField(
+                  textEditingController: _profileNameController,
+                  labelText: 'full_name'.tr(),
+                ).w(254),
+              ],
+            ).py16(),
+            //Birthday + Place of birth
+            Row(
+              children: [
+                _buildDateField('Ngày sinh', _birthdayController, _birthday,
+                    (date) {
+                  setState(() {
+                    _birthday = date;
+                    _birthdayController.text =
+                        "${_birthday.toLocal()}".split(' ')[0];
+                  });
+                }).px(8).w(150),
+                CustomTextFormField(
+                  textEditingController: _placeOfBirthController,
+                  labelText: 'place_of_birth'.tr(),
+                ).w(254),
+              ],
+            ),
+            //Gender + Marriage
+            Row(
+              children: [
+                Text('gender'.tr()).px(8),
+                _buildDropdownField('Chọn giới tính', _gender, (value) {
+                  setState(() {
+                    _gender = value!;
+                  });
+                }).p(8).w(130),
+                Text('marriage'.tr()),
+                Radio(
+                  value: true,
+                  onChanged: (value) {
+                    _marriage = value!;
+                  },
+                  groupValue: _marriage,
+                ),
+                Text('yes'.tr()),
+                Radio(
+                  value: false,
+                  onChanged: (value) {
+                    setState(() {
+                      _marriage = value!;
+                    });
+                  },
+                  groupValue: _marriage,
+                ),
+                Text('no'.tr()),
+              ],
+            ),
+            // ID number + license day
+            Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _identifiNumController,
+                  labelText: 'id_num'.tr(),
+                ).w(200).px8(),
+                _buildDateField('id_license_date'.tr(), _idLicenseDayController,
+                    _idLicenseDay, (date) {
+                  setState(() {
+                    _idLicenseDay = date;
+                    _idLicenseDayController.text =
+                        "${_idLicenseDay.toLocal()}".split(' ')[0];
+                  });
+                }).w(184),
+              ],
+            ).py8(),
+            //Nation
+            CustomTextFormField(
+              validator: (value) =>
+                  value.isEmptyOrNull ? 'Please enter nation' : null,
+              textEditingController: _nationController,
+              labelText: 'nation'.tr(),
+            ).p(8),
+            //Email + phone
+            Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _emailController,
+                  labelText: 'email'.tr(),
+                  maxLines: 1,
+                ).px4().w(258),
+                CustomTextFormField(
+                  validator: (value) =>
+                      value.isEmptyOrNull ? 'please_enter_phone_number' : null,
+                  textEditingController: _phoneController,
+                  labelText: 'phone'.tr(),
+                  maxLines: 1,
+                ).w(145),
+              ],
+            ).py(8),
+            //Password
+            CustomTextFormField(
+              labelText: "password".tr(),
+              textEditingController: _passwordController,
+            ).p8(),
+            //Address
+            CustomTextFormField(
+              textEditingController: _temporaryAddressController,
+              labelText: 'temp_address'.tr(),
+            ).p8(),
+            CustomTextFormField(
+              textEditingController: _currentAddressController,
+              labelText: 'current_address'.tr(),
+            ).p8(),
+            //
+          ]),
+        ));
   }
 
   Widget _buildDateField(String label, TextEditingController controller,
@@ -220,6 +260,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         onTap: () => _selectDate(context, initialDate, onDateSelected),
         child: AbsorbPointer(
           child: TextFormField(
+            readOnly: true,
             style: TextStyle(color: Colors.black),
             controller: controller,
             decoration: InputDecoration(

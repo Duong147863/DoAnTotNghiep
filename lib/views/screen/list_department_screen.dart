@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
@@ -7,6 +8,7 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +23,8 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   @override
   void initState() {
     super.initState();
+    Provider.of<DeparmentsViewModel>(context, listen: false)
+        .fetchAllDepartments();
   }
 
   void _handleDelete(Departments department) {
@@ -60,26 +64,7 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
       defaultBody: true,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.primaryLightColor,
-      appBar: AppBar(
-        backgroundColor: Color(0xFF0B258A),
-        elevation: 0,
-        automaticallyImplyLeading: true,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Departments Management",
-                style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFFEFF8FF),
-                    fontWeight: FontWeight.w600),
-              ),
-            )
-          ],
-        ),
-      ),
+      titletext: "Departments Management".tr(),
       bodyChildren: [
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -94,7 +79,6 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
           ),
         ),
         Expanded(
-
           child: Consumer<DeparmentsViewModel>(
               builder: (context, viewModel, child) {
             if (!viewModel.fetchingData && viewModel.listDepartments.isEmpty) {
@@ -112,9 +96,18 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     title: Text(departments[index].departmentName.toString()),
-                    leading: Text(departments[index].departmentID.toString()),
+                    trailing: Text(
+                      departments[index].departmentID.toString(),
+                      style: TextStyle(fontSize: 16),
+                    ),
                     onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.departmentDetailRoute);
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DepartmentInfoScreen(
+                              departments: departments[index],
+                            ),
+                          ));
                     },
                   );
                 },

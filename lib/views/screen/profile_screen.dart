@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final Profiles? profile;
+  const ProfileScreen({super.key, this.profile});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();

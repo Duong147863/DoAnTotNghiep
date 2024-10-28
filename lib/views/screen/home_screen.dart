@@ -4,19 +4,23 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  // final Profiles? profiles;
+  const HomeScreen({
+    super.key,
+    // this.profiles
+  });
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final MobileScannerController controller = MobileScannerController();
   List<Map<String, dynamic>> _getData() {
     return [
       {
@@ -24,26 +28,11 @@ class _HomeScreenState extends State<HomeScreen> {
         'text': 'employee_management'.tr(),
         'route': AppRoutes.employeeListRoute
       },
-      // {
-      //   'icon': Icons.groups_rounded,
-      //   'text': 'Phòng ban',
-      //   'route': AppRoutes.departmentListRoute
-      // },
       {
         'icon': Icons.currency_exchange,
         'text': 'payroll_managment'.tr(),
         'route': AppRoutes.salariListRoute,
       },
-      // {
-      //   'icon': Icons.menu_book_outlined,
-      //   'text': 'Bằng cấp',
-      //   'route': AppRoutes.diplomaListRoute
-      // },
-      // {
-      //   'icon': Icons.supervisor_account,
-      //   'text': 'Thân nhân',
-      //   'route': AppRoutes.relativeListRoute
-      // },
       {
         'icon': Icons.home_work_rounded,
         'text': 'position_management'.tr(),
@@ -54,22 +43,12 @@ class _HomeScreenState extends State<HomeScreen> {
         'text': 'department'.tr(),
         'route': AppRoutes.departmentListRoute
       },
-      // {
-      //   'icon': Icons.assignment_ind_rounded,
-      //   'text': 'Chức vụ',
-      //   'route': AppRoutes.ponsitionListRoute
-      // },
-      // {
-      //   'icon': Icons.description_rounded,
-      //   'text': 'Quyết định',
-      //   'route': AppRoutes.decisionListRoute
-      // },
     ];
   }
 
   final List<String> _tasks = [
-    "Dọn dẹp sảnh nhà hàng, ủ trà Olong",
-    "Dọn dẹp sảnh nhà hàng, ủ trà Olong, lau bàn...",
+    "Dọn dẹp sảnh nhà hàng",
+    "ủ trà Olong, lau bàn...",
   ];
 
   bool light = true;
@@ -136,7 +115,9 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Hi, Username",
+                  "hello_".tr()
+                  // + widget.profiles!.profileName
+                  ,
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEFF8FF),
@@ -153,13 +134,12 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(height: 20),
           InkWell(
             onTap: () {
-              Navigator.of(context).pushNamed(AppRoutes.checkinListRoute);
-              print("Button pressed!");
+              Navigator.of(context).pushNamed(AppRoutes.timeAttendanceRoute);
             },
             borderRadius:
                 BorderRadius.circular(20.0), // Bo góc cho hiệu ứng nhấn
             child: Container(
-             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20.0),
                 gradient: LinearGradient(
@@ -226,7 +206,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ).p(13),
                 ).onTap(() => Navigator.of(context).pushNamed(item['route']));
               }),
-          
         ]);
   }
 }

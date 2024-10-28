@@ -11,6 +11,7 @@ class BasePage extends StatefulWidget {
   final bool showLeadingAction;
   final bool defaultBody;
   final bool showSearchBar;
+  final bool resizeToAvoidBottomInset;
   final Function? onBackPressed;
   final String? titletext;
   final Widget? body;
@@ -46,6 +47,7 @@ class BasePage extends StatefulWidget {
     this.appBarColor,
     this.elevation,
     this.extendBodyBehindAppBar = false,
+    this.resizeToAvoidBottomInset = false,
     this.appBarItemColor,
     this.backgroundColor,
     this.bottomNavigationBar,
@@ -66,14 +68,16 @@ class _BasePageState extends State<BasePage> {
     return SafeArea(
       child: Scaffold(
         drawer: widget.drawer,
-        resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: widget.resizeToAvoidBottomInset,
         backgroundColor:
             widget.backgroundColor ?? Theme.of(context).colorScheme.surface,
         extendBodyBehindAppBar: widget.extendBodyBehindAppBar,
         appBar: widget.showAppBar
             ? widget.appBar ??
                 AppBar(
+                  centerTitle: true,
                   actions: widget.actions,
+                  foregroundColor: widget.appBarItemColor,
                   backgroundColor: widget.appBarColor ?? context.primaryColor,
                   automaticallyImplyLeading: widget.showLeadingAction,
                   elevation: widget.elevation,
