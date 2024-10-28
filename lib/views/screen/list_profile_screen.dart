@@ -5,7 +5,6 @@ import 'package:nloffice_hrm/api_services/profile_service.dart'; // Import servi
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_profile_screen.dart';
 
 class ProfileListScreen extends StatefulWidget {
   @override
@@ -82,7 +81,7 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Employee Attend List",
+                  "Employee List",
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEFF8FF),
@@ -112,71 +111,11 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    _buildTabButton("Request", 0),
-                    _buildTabButton("Approve", 1),
-                  ],
+                  children: [],
                 ),
               ),
             ],
           ),
         ]);
   }
-
-  Widget _buildTabButton(String text, int index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 5.0),
-      child: ElevatedButton(
-        onPressed: () {
-          setState(() {
-            _selectedTabIndex = index;
-          });
-        },
-        child: Text(text),
-        style: ElevatedButton.styleFrom(
-          backgroundColor:
-              _selectedTabIndex == index ? Colors.blue : Colors.grey[300],
-          foregroundColor:
-              _selectedTabIndex == index ? Colors.white : Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20.0),
-          ),
-        ),
-      ),
-    );
-    // return BasePage(
-    //   showAppBar: true,
-    //   appBar: AppBar(
-    //     title: Text('Danh sách nhân viên'),
-    //   ),
-    //   body: Column(
-    //     children: [
-    //       Padding(
-    //         padding: const EdgeInsets.all(16.0),
-    //         child: CustomSearchBar(
-    //           suggestions:
-    //               profiles.map((profile) => profile.profileName!).toList(),
-    //           onTextChanged: _handleSearch,
-    //           hintText: '',
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    //   fab: FloatingActionButton(
-    //     onPressed: () {
-    //       Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //           builder: (context) => AddProfilePage(onAdd: _handleAdd),
-    //         ),
-    //       );
-    //     },
-    //     child: Icon(Icons.add),
-    //     backgroundColor: Colors.blue,
-    //   ),
-    // );
-  }
 }
-
-
-

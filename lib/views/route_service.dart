@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
+import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/forgot_password/forgot_password_screen.dart';
@@ -7,7 +8,8 @@ import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/language_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_checkin_screen.dart';
+import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
+import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
@@ -21,7 +23,6 @@ import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/more_setting_screen.dart';
 import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
-import 'package:nloffice_hrm/views/screen/sign_up_screen.dart';
 import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
@@ -65,14 +66,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.signupRoute:
-      return MaterialPageRoute(
-          builder: (context) => const CreateAcount(),
-          settings: const RouteSettings(
-            name: AppRoutes.signupRoute,
-          ));
-
-    ///
     case AppRoutes.homeRoute:
       return MaterialPageRoute(
           builder: (context) => const HomeScreen(),
@@ -105,11 +98,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.tokenRoute:
+    case AppRoutes.leaveRequestList:
       return MaterialPageRoute(
-        builder: (context) => const MyDismissibleList(),
+        builder: (context) => const EmployAttendListScreen(),
         settings: const RouteSettings(
-          name: AppRoutes.tokenRoute,
+          name: AppRoutes.leaveRequestList,
         ),
       );
 
@@ -191,6 +184,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           settings: const RouteSettings(
             name: AppRoutes.addprofileRoute,
           ));
+
     ///
     case AppRoutes.departmentDetailRoute:
       return MaterialPageRoute(
@@ -199,19 +193,21 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             name: AppRoutes.departmentDetailRoute,
           ));
 
-     case AppRoutes.checkinListRoute:
+    case AppRoutes.timeAttendanceRoute:
       return MaterialPageRoute(
-          builder: (context) => CheckinScreen(),
+          builder: (context) => TimeAttendance(),
           settings: const RouteSettings(
-            name: AppRoutes.checkinListRoute,
+            name: AppRoutes.timeAttendanceRoute,
           ));
+
     ///
-      case AppRoutes.employeeListRoute:
+    case AppRoutes.employeeListRoute:
       return MaterialPageRoute(
           builder: (context) => EmployeeListScreen(),
           settings: const RouteSettings(
             name: AppRoutes.employeeListRoute,
           ));
+
     ///
     default:
       return MaterialPageRoute(builder: ((context) => LoginScreen()));

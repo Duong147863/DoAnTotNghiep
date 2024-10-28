@@ -6,13 +6,28 @@ class ProfilesViewModel extends ChangeNotifier {
   final ProfilesRepository repository = ProfilesRepository();
 
   List<Profiles> _list = [];
+  List<Profiles> listmembersOfDepartment = [];
+
   bool fetchingData = false;
   List<Profiles> get listProfiles => _list;
+  List<Profiles> get listMembersOfDepartment => listmembersOfDepartment;
 
   Future<void> fetchAllProfiles() async {
     fetchingData = true;
     try {
       _list = await repository.fetchAllProfiles();
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load datas: $e');
+    }
+    fetchingData = false;
+  }
+
+  Future<void> membersOfDepartment(String departmentID) async {
+    fetchingData = true;
+    try {
+      listmembersOfDepartment =
+          await repository.fetchMembersOfDepartment(departmentID);
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to load datas: $e');

@@ -2,6 +2,7 @@
   "NLOffice HRM\nPowered by NLOffice.vn": "",
   "login": "Login",
   "email": "Email",
+  "phone": "Phone",
   "password": "Password",
   "view_all": "View all",
   "home": "Home",
@@ -9,5 +10,9 @@
   "open": "Open",
   "close": "Close",
   "all": "All",
-  "update": "Update"
+  "update": "Update",
+  "gender":"Gender",
+  "marriage":"Marriage",
+  "yes":"Yes",
+  "no":"No"
 }

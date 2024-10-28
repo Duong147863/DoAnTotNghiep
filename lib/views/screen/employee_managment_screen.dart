@@ -4,9 +4,12 @@ import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
+import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class EmployeeListScreen extends StatefulWidget {
   const EmployeeListScreen({super.key});
@@ -23,6 +26,23 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> data = [
+      {
+        'icon': Icons.add_circle_outline,
+        'text': 'add_employee'.tr(),
+        'route': AppRoutes.addprofileRoute
+      },
+      {
+        'icon': Icons.supervisor_account,
+        'text': 'employee_management'.tr(),
+        'route': AppRoutes.employeeListRoute
+      },
+      {
+        'icon': Icons.calendar_month_outlined,
+        'text': 'leave_managment'.tr(),
+        'route': AppRoutes.leaveRequestList
+      },
+    ];
     return BasePage(
         showAppBar: true,
         showLeadingAction: true,
@@ -55,42 +75,41 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildMenuItem('Add Employee', Icons.add_circle_outline),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Time Attendance', Icons.access_time),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Leave Management', Icons.calendar_today),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Employees Overtime', Icons.access_time),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Salary Statement', Icons.attach_money),
-                SizedBox(height: 16.0),
-                _buildMenuItem('Reference', Icons.folder),
+                CustomGridView(
+                    crossAxisCount: 2,
+                    childAspectRatio: 2,
+                    dataSet: data,
+                    itemBuilder: (context, index) {
+                      final item = data[index];
+                      return Card(
+                        color: Color.fromARGB(255, 243, 243, 242),
+                        elevation: 1,
+                        margin: EdgeInsets.all(13),
+                        child: Wrap(
+                          clipBehavior: Clip.antiAlias,
+                          direction: Axis.vertical,
+                          children: [
+                            Icon(item['icon'], size: 16),
+                            Text(
+                              item['text'],
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                            ),
+                          ],
+                        ).p(13),
+                      ).onTap(
+                          () => Navigator.of(context).pushNamed(item['route']));
+                    }),
+
+                // _buildMenuItem('Time Attendance', Icons.access_time)
+                //     .onTap(() async {
+                //   await Navigator.of(context)
+                //       .pushNamed(AppRoutes.checkinListRoute);
+                // }),
+                // _buildMenuItem('Employees Overtime', Icons.access_time),
               ],
             ),
           ),
         ]);
-  }
-
-  Widget _buildMenuItem(String title, IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: Icon(icon),
-        title: Text(title),
-        trailing: Icon(Icons.arrow_forward_ios),
-      ),
-    );
   }
 }
