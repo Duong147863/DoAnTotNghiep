@@ -20,6 +20,7 @@ class AppRoutes {
   static const decisionListRoute = "list_decision_screen";
   static const departmentDetailRoute = "info_department_screen";
   static const addprofileRoute = "add_profile_screen";
-  static const checkinListRoute = "list_checkin_screen";
+  static const timeAttendanceRoute = "time_attendance_screen";
   static const employeeListRoute = "list_employee_screen";
+  static const leaveRequestList = "leave_request_list_screen";
 }

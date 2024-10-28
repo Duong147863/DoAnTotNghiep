@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:intl/intl.dart';
-import 'package:nloffice_hrm/views/screen/list_employee_attend_list_screen.dart';
-class CheckinScreen extends StatefulWidget {
+import 'package:nloffice_hrm/views/screen/qr_scan.dart';
+
+class TimeAttendance extends StatefulWidget {
   @override
-  _CheckinScreenState createState() => _CheckinScreenState();
+  _TimeAttendanceState createState() => _TimeAttendanceState();
 }
 
-class _CheckinScreenState extends State<CheckinScreen>
+class _TimeAttendanceState extends State<TimeAttendance>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -36,19 +36,21 @@ class _CheckinScreenState extends State<CheckinScreen>
           backgroundColor: Color(0xFF0B258A),
           elevation: 0,
           automaticallyImplyLeading: true,
-          title: Text('Time Attendance',style: TextStyle(color: Colors.white),),
+          title: Text(
+            'Time Attendance',
+            style: TextStyle(color: Colors.white),
+          ),
           bottom: PreferredSize(
             preferredSize: Size.fromHeight(kToolbarHeight),
             child: Container(
-              color: Colors.white, 
+              color: Colors.white,
               child: TabBar(
                 controller: _tabController,
                 indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
                 labelColor: Colors.black, // Màu cho tab đang chọn
                 tabs: [
-                  Tab(text: 'Checkin'),
+                  Tab(text: 'Check-in'),
                   Tab(text: 'History'),
-                  Tab(text: 'Employee Attend List'),
                 ],
               ),
             ),
@@ -59,17 +61,14 @@ class _CheckinScreenState extends State<CheckinScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                Center(child: Text('Checkin')),
+                Center(child: QrScan()),
                 HistoryTab(),
-                EmployAttendListScreen()
               ],
             ),
           ),
         ]);
   }
 }
-
-
 
 class HistoryTab extends StatefulWidget {
   @override
@@ -98,13 +97,16 @@ class _HistoryTabState extends State<HistoryTab> {
   }
 
   String get _monthYearText {
-    return DateFormat('MMMM yyyy').format(_selectedMonth); // Định dạng hiển thị tháng và năm
+    return DateFormat('MMMM yyyy')
+        .format(_selectedMonth); // Định dạng hiển thị tháng và năm
   }
 
   List<TableRow> _buildCalendar() {
     // Lấy ngày đầu và cuối của tháng hiện tại
-    int daysInMonth = DateTime(_selectedMonth.year, _selectedMonth.month + 1, 0).day;
-    int firstDayOfWeek = DateTime(_selectedMonth.year, _selectedMonth.month, 1).weekday;
+    int daysInMonth =
+        DateTime(_selectedMonth.year, _selectedMonth.month + 1, 0).day;
+    int firstDayOfWeek =
+        DateTime(_selectedMonth.year, _selectedMonth.month, 1).weekday;
 
     List<TableRow> rows = [];
 
@@ -139,7 +141,11 @@ class _HistoryTabState extends State<HistoryTab> {
             child: Text(
               '$day',
               style: TextStyle(
-                color: DateTime(_selectedMonth.year, _selectedMonth.month, day).weekday == 7 ? Colors.red : Colors.black,
+                color: DateTime(_selectedMonth.year, _selectedMonth.month, day)
+                            .weekday ==
+                        7
+                    ? Colors.red
+                    : Colors.black,
               ),
             ),
           ),

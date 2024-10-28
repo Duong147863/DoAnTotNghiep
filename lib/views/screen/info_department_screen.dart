@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:localize_and_translate/localize_and_translate.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
-import 'package:nloffice_hrm/views/screen/edit_department_screen.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
+import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class DepartmentInfoScreen extends StatelessWidget {
-  late final Departments department;
-  late final VoidCallback onDelete;
-
-
+  final Departments? departments;
+  DepartmentInfoScreen({super.key, this.departments});
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      appBar: AppBar(
-        title: Text('Thông tin'),
-      ),
+      titletext: 'department_info'.tr(),
+      showLeadingAction: true,
+      appBarItemColor: AppColor.offWhite,
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -26,29 +30,48 @@ class DepartmentInfoScreen extends StatelessWidget {
                 Center(
                   child: CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage(
-                        'assets/avatar_placeholder.png'), // Add an image asset for placeholder
+                    backgroundImage:
+                        AssetImage('assets/avatar_placeholder.png'),
                   ),
-                ),
-                SizedBox(height: 16),
+                ).p(16),
                 Center(
                   child: Column(
                     children: [
                       Text(
-                        department.departmentName ?? '',
+                        '',
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 16),
-                Divider(),
-                InfoTile(
-                  icon: Icons.business,
-                  label: 'Department ID',
-                  value: department.departmentID ?? 'Không có',
-                ),
+                Divider().py12(),
+                //Department members list
+                Consumer<ProfilesViewModel>(
+                    builder: (context, viewModel, child) {
+                  if (!viewModel.fetchingData &&
+                      viewModel.listMembersOfDepartment.isEmpty) {
+                    Provider.of<ProfilesViewModel>(context, listen: false)
+                        .membersOfDepartment(departments!.departmentID);
+                  }
+                  if (viewModel.fetchingData) {
+                    // While data is being fetched
+                    return Center(child: CircularProgressIndicator());
+                  } else {
+                    // If data is successfully fetched
+                    List<Profiles> members = viewModel.listMembersOfDepartment;
+                    return CustomListView(
+                      dataSet: members,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(members[index].profileName.toString()),
+                          leading: Text(members[index].profileId.toString()),
+                          onTap: () {},
+                        );
+                      },
+                    );
+                  }
+                }),
               ],
             ),
             SizedBox(height: 16),
@@ -58,80 +81,20 @@ class DepartmentInfoScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.blue),
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              EditDepartmentScreen(department: department),
-                        ));
+                    // Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           EditDepartmentScreen(department: department),
+                    //     ));
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context);
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete this department?'),
-          actions: [
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-            TextButton(
-              child: Text('Delete'),
-              onPressed: () {
-                onDelete();
-                Navigator.of(context).pop(); // Dismiss the dialog
-                Navigator.pop(context); // Go back to the previous screen
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class InfoTile extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  InfoTile({required this.icon, required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.brown),
-            Text('$label: ',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            Expanded(
-                child: Text(
-              value,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            )),
           ],
         ),
       ),

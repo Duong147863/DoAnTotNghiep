@@ -1,11 +1,11 @@
 class Departments // phòng ban
 {
   Departments({
-    this.departmentID,
-    this.departmentName,
+    required this.departmentID,
+    required this.departmentName,
   });
-  String? departmentID;
-  String? departmentName;
+  String departmentID;
+  String departmentName;
   factory Departments.fromJson(Map<String, dynamic> json) {
     return Departments(
         departmentID: json["department_id"],

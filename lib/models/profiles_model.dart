@@ -1,29 +1,28 @@
 import 'package:flutter/material.dart';
 
 class Profiles {
-  Profiles({
-    required this.profileId,
-    required this.profileName,
-    this.profileStatus = 1,
-    required this.birthday,
-    required this.placeOfBirth,
-    required this.identifiNum,
-    required this.idLicenseDay,
-    this.gender = false,
-    required this.phone,
-    this.email,
-    required this.nation,
-    this.departmentId,
-    this.salaryId,
-    this.positionId,
-    required this.password,
-    this.laborContractId,
-    this.marriage = false,
-    required this.temporaryAddress,
-    required this.currentAddress,
-    this.permission = 1, 
-    // required this.profile_image
-  });
+  Profiles(
+      {required this.profileId,
+      required this.profileName,
+      this.profileStatus = 1,
+      required this.birthday,
+      required this.placeOfBirth,
+      required this.identifiNum,
+      required this.idLicenseDay,
+      this.gender = false,
+      required this.phone,
+      this.email,
+      required this.nation,
+      this.departmentId,
+      this.salaryId,
+      this.positionId,
+      required this.password,
+      this.laborContractId,
+      this.marriage = false,
+      required this.temporaryAddress,
+      required this.currentAddress,
+      this.permission = 1,
+      required this.profileImage});
 
   String profileId;
   String profileName;
@@ -45,31 +44,31 @@ class Profiles {
   String currentAddress;
   String? laborContractId;
   int permission;
-  // String profile_image;
+  String profileImage;
 
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(
-      profileName: json["profile_name"],
-      profileStatus: json["profile_status"],
-      identifiNum: json["identify_num"],
-      idLicenseDay: DateTime.parse(json['idLicenseDay']),
-      gender: json["gender"],
-      phone: json["phone"],
-      email: json["email"],
-      password: json["password"],
-      departmentId: json["department_id"],
-      profileId: json["profile_id"],
-      salaryId: json["salary_id"],
-      birthday: DateTime.parse(json['birthday']),
-      positionId: json["position_id"],
-      placeOfBirth: json["place_of_birth"],
-      nation: json["nation"],
-      marriage: json["marriage"],
-      temporaryAddress: json["temporary_address"],
-      currentAddress: json["current_address"],
-      permission: json["permission"],
-      laborContractId:json["labor_contract_id"],
-    );
+        profileName: json["profile_name"],
+        profileStatus: json["profile_status"],
+        identifiNum: json["identify_num"],
+        idLicenseDay: DateTime.parse(json['idLicenseDay']),
+        gender: json["gender"],
+        phone: json["phone"],
+        email: json["email"],
+        password: json["password"],
+        departmentId: json["department_id"],
+        profileId: json["profile_id"],
+        salaryId: json["salary_id"],
+        birthday: DateTime.parse(json['birthday']),
+        positionId: json["position_id"],
+        placeOfBirth: json["place_of_birth"],
+        nation: json["nation"],
+        marriage: json["marriage"],
+        temporaryAddress: json["temporary_address"],
+        currentAddress: json["current_address"],
+        permission: json["permission"],
+        laborContractId: json["labor_contract_id"],
+        profileImage: json["profile_image"]);
   }
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -91,7 +90,7 @@ class Profiles {
     map["marriage"] = marriage;
     map["temporary_address"] = temporaryAddress;
     map["current_address"] = currentAddress;
-    map["profile_image"] = profileId;
+    map["profile_image"] = profileImage;
     map["permission"] = permission;
     map["labor_contract_id"] = laborContractId;
     return map;

@@ -5,13 +5,18 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 
 class ProfileService {
-  Future<http.Response> getAllProfilesByID(int profileID) async {
+  Future<http.Response> getProfileInfoByID(int profileID) async {
     return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}profile/$profileID'));
+        .get(Uri.parse('${AppStrings.baseUrlApi}profile/info/$profileID'));
   }
 
   Future<http.Response> getAllProfile() async {
     return await http.get(Uri.parse('${AppStrings.baseUrlApi}profiles'));
+  }
+
+  Future<http.Response> getDepartmentMembers(String departmentID) async {
+    return await http.get(
+        Uri.parse('${AppStrings.baseUrlApi}department/members/$departmentID'));
   }
 
   Future<http.Response> addNewProfile(Profiles profile) async {

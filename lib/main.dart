@@ -23,14 +23,14 @@ import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_employee_management_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_checkin_screen.dart';
+import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_employee_attend_list_screen.dart';
+import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:provider/provider.dart';
+
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 Future<void> main() async {
@@ -94,7 +94,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: AddProfilePage(),
+          home: HomeScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
