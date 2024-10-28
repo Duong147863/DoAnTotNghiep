@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/repository/positions_repo.dart';
 
@@ -17,5 +18,14 @@ class PositionsViewModel extends ChangeNotifier {
       throw Exception('Failed to load data: $e');
     }
     fetchingData = false;
+  }
+
+  Future<void> addNewPosition(Positions position) async {
+    try {
+      await repository.addPosition(position);
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to create data: $e');
+    }
   }
 }

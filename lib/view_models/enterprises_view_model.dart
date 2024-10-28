@@ -9,10 +9,10 @@ class EnterprisesViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Enterprises> get listEnterprises => _list;
 
-  Future<void> fetchAllEnterprises() async {
+  Future<void> fetchEnterpriseInfo() async {
     fetchingData = true;
     try {
-      _list = await repository.fetchAllEnterprises();
+      _list = await repository.fetchEnterpriseInfo();
     } catch (e) {
       throw Exception('Failed to load datas: $e');
     }

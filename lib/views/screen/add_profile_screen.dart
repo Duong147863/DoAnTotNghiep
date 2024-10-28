@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
@@ -24,7 +25,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
   final _temporaryAddressController = TextEditingController();
   final _currentAddressController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  final _idProfileController =TextEditingController();
   DateTime _birthday = DateTime.now();
   DateTime _idLicenseDay = DateTime.now();
   int _permission = 0;
@@ -44,6 +46,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
     _temporaryAddressController.dispose();
     _currentAddressController.dispose();
     _passwordController.dispose();
+    _idProfileController.dispose();
     super.dispose();
   }
 
@@ -56,17 +59,17 @@ class _AddProfilePageState extends State<AddProfilePage> {
         email: _emailController.text,
         departmentId: _departmentController.text,
         birthday: _birthday,
-        temporary_address: _temporaryAddressController.text,
-        current_address: _currentAddressController.text,
+        temporaryAddress: _temporaryAddressController.text,
+        currentAddress: _currentAddressController.text,
         identifiNum: _identifiNumController.text,
         idLicenseDay: _idLicenseDay,
         password: _passwordController.text,
-        place_of_birth: _placeOfBirthController.text,
+        placeOfBirth: _placeOfBirthController.text,
         nation: _nationController.text,
-        permission: _permission,
         gender: _gender,
+        profileId: _idProfileController.text,
+        permission: 1
       );
-
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile)
           .then((_) {
@@ -136,6 +139,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
+                  _buildTextField(_idProfileController, 'Mã Nhân Viên',
+                      'Please enter profile name'),
                   _buildTextField(_profileNameController, 'Tên nhân viên',
                       'Please enter profile name'),
                   _buildDateField('Ngày sinh', _birthdayController, _birthday,

@@ -12,7 +12,7 @@ class DecisionsViewModel extends ChangeNotifier {
   Future<void> fetchAllDecisions(int enterpriseID) async {
     fetchingData = true;
     try {
-      _list = await repository.fetchAllDecisionsByEnterpriseID(enterpriseID);
+      _list = await repository.fetchAllDecisions();
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }

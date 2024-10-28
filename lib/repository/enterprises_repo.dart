@@ -6,8 +6,8 @@ import 'package:nloffice_hrm/models/enterprises_model.dart';
 class EnterprisesRepository {
   final EnterpriseService service = EnterpriseService();
 
-  Future<List<Enterprises>> fetchAllEnterprises() async {
-    final response = await service.getAllEnterprises();
+  Future<List<Enterprises>> fetchEnterpriseInfo() async {
+    final response = await service.getEnterpriseInfo();
 
     if (response.statusCode == 200) {
       return List<Enterprises>.from(
