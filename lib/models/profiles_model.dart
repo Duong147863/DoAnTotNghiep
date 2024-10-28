@@ -17,11 +17,11 @@ class Profiles {
       this.salaryId,
       this.positionId,
       required this.password,
-      required this.permission,
       this.laborContractId,
       this.marriage = false,
       required this.temporaryAddress,
       required this.currentAddress,
+      this.permission = 1,
       required this.profileImage});
 
   String profileId;
@@ -38,60 +38,60 @@ class Profiles {
   String? salaryId;
   String? positionId;
   String password;
-  int permission;
   int profileStatus;
   bool marriage;
   String temporaryAddress;
   String currentAddress;
   String? laborContractId;
+  int permission;
   String profileImage;
 
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(
-      profileName: json["profile_name"],
-      profileStatus: json["profile_status"],
-      identifiNum: json["identify_num"],
-      idLicenseDay: DateTime.parse(json['idLicenseDay']).toLocal(),
-      gender: json["gender"],
-      phone: json["phone"],
-      email: json["email"],
-      password: json["password"],
-      permission: json["permission"],
-      departmentId: json["department_id"],
-      profileId: json["profile_id"],
-      salaryId: json["salary_id"],
-      birthday: DateTime.parse(json['birthday']).toLocal(),
-      positionId: json["position_id"],
-      placeOfBirth: json["place_of_birth"],
-      nation: json["nation"],
-      marriage: json["marriage"],
-      temporaryAddress: json["temporary_address"],
-      currentAddress: json["current_address"],
-      profileImage: json["profile_image"],
-    );
+        profileName: json["profile_name"],
+        profileStatus: json["profile_status"],
+        identifiNum: json["identify_num"],
+        idLicenseDay: DateTime.parse(json['idLicenseDay']),
+        gender: json["gender"],
+        phone: json["phone"],
+        email: json["email"],
+        password: json["password"],
+        departmentId: json["department_id"],
+        profileId: json["profile_id"],
+        salaryId: json["salary_id"],
+        birthday: DateTime.parse(json['birthday']),
+        positionId: json["position_id"],
+        placeOfBirth: json["place_of_birth"],
+        nation: json["nation"],
+        marriage: json["marriage"],
+        temporaryAddress: json["temporary_address"],
+        currentAddress: json["current_address"],
+        permission: json["permission"],
+        laborContractId: json["labor_contract_id"],
+        profileImage: json["profile_image"]);
   }
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map["profile_id"] = profileId;
     map["profile_name"] = profileName;
     map["profile_status"] = profileStatus;
     map["identify_num"] = identifiNum;
-    map["id_license_day"] = idLicenseDay.toString();
+    map["id_license_day"] = idLicenseDay.toIso8601String();
     map["gender"] = gender;
     map["phone"] = phone;
     map["email"] = email;
     map["password"] = password;
-    map["permission"] = permission;
-    map["birthday"] = birthday.toString();
+    map["department_id"] = departmentId;
+    map["profile_id"] = profileId;
+    map["salary_id"] = salaryId;
+    map["birthday"] = birthday.toIso8601String();
+    map["position_id"] = positionId;
     map["place_of_birth"] = placeOfBirth;
     map["nation"] = nation;
     map["marriage"] = marriage;
     map["temporary_address"] = temporaryAddress;
     map["current_address"] = currentAddress;
     map["profile_image"] = profileImage;
-    map["department_id"] = departmentId;
-    map["salary_id"] = salaryId;
-    map["position_id"] = positionId;
+    map["permission"] = permission;
     map["labor_contract_id"] = laborContractId;
     return map;
   }

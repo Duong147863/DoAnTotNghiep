@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
@@ -10,21 +12,19 @@ import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class AddProfilePage extends StatefulWidget {
-  final Profiles? profile;
+  // final Profiles? profile;
 
-  const AddProfilePage({super.key, this.profile});
+  const AddProfilePage({super.key});
 
   @override
   _AddProfilePageState createState() => _AddProfilePageState();
 }
 
 class _AddProfilePageState extends State<AddProfilePage> {
-  final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
   final _profileNameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
-  final _departmentController = TextEditingController();
   final _birthdayController = TextEditingController();
   final _placeOfBirthController = TextEditingController();
   final _identifiNumController = TextEditingController();
@@ -36,16 +36,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   DateTime _birthday = DateTime.now();
   DateTime _idLicenseDay = DateTime.now();
-  int _permission = 0;
   bool _gender = false; // Assuming `false` is Male, `true` is Female
   bool _marriage = false; // Assuming `false` is Male, `true` is Female
 
   @override
   void dispose() {
+    _profileIDController.dispose();
     _profileNameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
-    _departmentController.dispose();
     _birthdayController.dispose();
     _placeOfBirthController.dispose();
     _identifiNumController.dispose();
@@ -58,40 +57,38 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final newProfile = Profiles(
-        profileId: _profileIDController.text,
-        profileName: _profileNameController.text,
-        phone: _phoneController.text,
-        email: _emailController.text,
-        birthday: _birthday,
-        temporaryAddress: _temporaryAddressController.text,
-        currentAddress: _currentAddressController.text,
-        identifiNum: _identifiNumController.text,
-        idLicenseDay: _idLicenseDay,
-        password: _passwordController.text,
-        placeOfBirth: _placeOfBirthController.text,
-        nation: _nationController.text,
-        gender: _gender,
-        permission: _permission,
-        marriage: _marriage,
-        departmentId: _departmentController.text,
-        profileImage: 'image string test',
-        profileStatus: 1,
+    final newProfile = Profiles(
+      profileId: _profileIDController.text,
+      profileName: _profileNameController.text,
+      phone: _phoneController.text,
+      email: _emailController.text,
+      birthday: _birthday,
+      temporaryAddress: _temporaryAddressController.text,
+      currentAddress: _currentAddressController.text,
+      identifiNum: _identifiNumController.text,
+      idLicenseDay: _idLicenseDay,
+      password: _passwordController.text,
+      placeOfBirth: _placeOfBirthController.text,
+      nation: _nationController.text,
+      gender: _gender,
+      permission: 0,
+      marriage: _marriage,
+      profileImage: "abctest",
+      profileStatus: 1,
+    );
+    print(newProfile.marriage);
+    Provider.of<ProfilesViewModel>(context, listen: false)
+        .addProfile(newProfile)
+        .then((_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile added successfully!')),
       );
-      Provider.of<ProfilesViewModel>(context, listen: false)
-          .addProfile(newProfile)
-          .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile added successfully!')),
-        );
-        Navigator.pop(context);
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add profile: $error')),
-        );
-      });
-    }
+      Navigator.pop(context);
+    }).catchError((error) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      // SnackBar(content: Text('Failed to add profile: $error')),
+      // );
+    });
   }
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
@@ -117,7 +114,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
         backgroundColor: AppColor.aliceBlue,
         actions: [
           TextButton.icon(
-            onPressed: _submit,
+            onPressed: () {
+              _submit();
+            },
             icon: Icon(
               Icons.save_outlined,
               color: AppColor.boneWhite,
@@ -139,19 +138,17 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 CustomTextFormField(
                   textEditingController: _profileIDController,
                   labelText: 'profile_id'.tr(),
-                  validator: (value) {},
                 ).px8().w(150),
                 CustomTextFormField(
                   textEditingController: _profileNameController,
                   labelText: 'full_name'.tr(),
-                  validator: (value) {},
                 ).w(254),
               ],
             ).py16(),
             //Birthday + Place of birth
             Row(
               children: [
-                _buildDateField('birthday'.tr(), _birthdayController, _birthday,
+                _buildDateField('Ngày sinh', _birthdayController, _birthday,
                     (date) {
                   setState(() {
                     _birthday = date;
@@ -160,7 +157,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
                   });
                 }).px(8).w(150),
                 CustomTextFormField(
-                  validator: (value) => value.isEmptyOrNull ? '' : null,
                   textEditingController: _placeOfBirthController,
                   labelText: 'place_of_birth'.tr(),
                 ).w(254),
@@ -170,18 +166,16 @@ class _AddProfilePageState extends State<AddProfilePage> {
             Row(
               children: [
                 Text('gender'.tr()).px(8),
-                _buildDropdownField(_gender, (value) {
+                _buildDropdownField('Chọn giới tính', _gender, (value) {
                   setState(() {
                     _gender = value!;
                   });
-                }).p(8),
+                }).p(8).w(130),
                 Text('marriage'.tr()),
                 Radio(
                   value: true,
                   onChanged: (value) {
-                    setState(() {
-                      _marriage = value!;
-                    });
+                    _marriage = value!;
                   },
                   groupValue: _marriage,
                 ),
@@ -202,13 +196,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
             Row(
               children: [
                 CustomTextFormField(
-                  validator: (value) => value.isEmptyOrNull ? '' : null,
                   textEditingController: _identifiNumController,
                   labelText: 'id_num'.tr(),
                 ).w(200).px8(),
-                _buildDateField(
-                    'Ngày cấp cccd', _idLicenseDayController, _idLicenseDay,
-                    (date) {
+                _buildDateField('id_license_date'.tr(), _idLicenseDayController,
+                    _idLicenseDay, (date) {
                   setState(() {
                     _idLicenseDay = date;
                     _idLicenseDayController.text =
@@ -228,7 +220,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
             Row(
               children: [
                 CustomTextFormField(
-                  validator: (value) {},
                   textEditingController: _emailController,
                   labelText: 'email'.tr(),
                   maxLines: 1,
@@ -246,21 +237,16 @@ class _AddProfilePageState extends State<AddProfilePage> {
             CustomTextFormField(
               labelText: "password".tr(),
               textEditingController: _passwordController,
-              validator: (value) {
-
-              },
-            ),
+            ).p8(),
             //Address
             CustomTextFormField(
-              validator: (value) => value.isEmptyOrNull ? 'cant_null' : null,
               textEditingController: _temporaryAddressController,
               labelText: 'temp_address'.tr(),
-            ),
+            ).p8(),
             CustomTextFormField(
-              validator: (value) => value.isEmptyOrNull ? 'cant_null' : null,
               textEditingController: _currentAddressController,
               labelText: 'current_address'.tr(),
-            ),
+            ).p8(),
             //
           ]),
         ));
@@ -268,31 +254,44 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
   Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
-    return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, onDateSelected),
-      child: AbsorbPointer(
-        child: CustomTextFormField(
-          fillColor: Colors.black,
-          textEditingController: controller,
-          labelText: label,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: GestureDetector(
+        onTap: () => _selectDate(context, initialDate, onDateSelected),
+        child: AbsorbPointer(
+          child: TextFormField(
+            readOnly: true,
+            style: TextStyle(color: Colors.black),
+            controller: controller,
+            decoration: InputDecoration(
+              labelStyle: TextStyle(color: Colors.black),
+              labelText: label,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDropdownField(bool currentValue, Function(bool?) onChanged) {
-    return DropdownButtonFormField<bool>(
-      value: currentValue,
-      decoration: InputDecoration(
-        labelStyle: TextStyle(color: Colors.black),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+  Widget _buildDropdownField(
+      String label, bool currentValue, Function(bool?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<bool>(
+        value: currentValue,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(color: Colors.black),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        items: [
+          DropdownMenuItem(value: false, child: Text('Nam')),
+          DropdownMenuItem(value: true, child: Text('Nữ')),
+        ],
+        onChanged: onChanged,
+        validator: (value) => value == null ? 'Please select a gender' : null,
       ),
-      items: [
-        DropdownMenuItem(value: false, child: Text('Nam')),
-        DropdownMenuItem(value: true, child: Text('Nữ')),
-      ],
-      onChanged: onChanged,
-      validator: (value) => value == null ? 'Please select a gender' : null,
-    ).w(100);
+    );
   }
 }

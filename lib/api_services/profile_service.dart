@@ -23,7 +23,10 @@ class ProfileService {
     final url = Uri.parse('${AppStrings.baseUrlApi}profile/auth/register');
     return await http.post(
       url,
-      headers: {'Accept': 'application/json'},
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: json.encode(profile.toJson()),
     );
   }
