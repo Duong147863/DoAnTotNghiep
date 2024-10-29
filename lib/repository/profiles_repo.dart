@@ -36,22 +36,21 @@ class ProfilesRepository {
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
-
   Future<bool> emailLogin(String email, String password) async {
-    final response = await service.emailLogin(email, password);
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Failed to login: ${response.statusCode}');
-    }
+  final response = await service.emailLogin(email, password);  
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    return true;
+  } else {
+    throw Exception('Failed to login: ${response.statusCode} - ${response.body}');
   }
+}
 
-  Future<bool> phoneLogin(String phone, String password) async {
-    final response = await service.phoneLogin(phone, password);
-    if (response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Failed to login: ${response.statusCode}');
-    }
+Future<bool> phoneLogin(String phone, String password) async {
+  final response = await service.phoneLogin(phone, password);
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    return true;
+  } else {
+    throw Exception('Failed to login: ${response.statusCode} - ${response.body}');
   }
+}
 }
