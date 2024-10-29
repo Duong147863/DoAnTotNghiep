@@ -20,12 +20,11 @@ class ProfileService {
   }
 
   Future<http.Response> addNewProfile(Profiles profile) async {
-    final url = Uri.parse('${AppStrings.baseUrlApi}profile/auth/register');
     return await http.post(
-      url,
+      Uri.parse('${AppStrings.baseUrlApi}profile/auth/register'),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
       },
       body: json.encode(profile.toJson()),
     );
