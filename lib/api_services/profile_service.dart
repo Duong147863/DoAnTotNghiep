@@ -30,25 +30,50 @@ class ProfileService {
     );
   }
 
+  // Future<http.Response> emailLogin(String email, String password) async {
+  //   return await http
+  //       .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/email'), headers: {
+  //     'Content-Type': 'application/json',
+  //     'Accept': 'application/json'
+  //   }, body: <String, dynamic>{
+  //     "email": email,
+  //     "password": password
+  //   });
+  // }
   Future<http.Response> emailLogin(String email, String password) async {
-    return await http
-        .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/email'), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }, body: <String, dynamic>{
-      "email": email,
-      "password": password
-    });
+    return await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}auth/login/email'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: json.encode({
+        "email": email,
+        "password": password
+      }),
+    );
   }
-
-  Future<http.Response> phoneLogin(String phone, String password) async {
-    return await http
-        .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'), headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    }, body: <String, dynamic>{
-      "phone": phone,
-      "password": password
-    });
+  // Future<http.Response> phoneLogin(String phone, String password) async {
+  //   return await http
+  //       .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'), headers: {
+  //     'Content-Type': 'application/json',
+  //     'Accept': 'application/json'
+  //   }, body: <String, dynamic>{
+  //     "phone": phone,
+  //     "password": password
+  //   });
+  // }
+   Future<http.Response> phoneLogin(String phone, String password) async {
+    return await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'), 
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: json.encode({ 
+        "phone": phone,
+        "password": password
+      }),
+    );
   }
 }

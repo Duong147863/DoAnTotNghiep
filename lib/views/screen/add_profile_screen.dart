@@ -78,7 +78,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         marriage: _marriage,
         profileStatus: 1,
         //
-        profileImage: "Hehe",
+        profileImage: "huhu",
       );
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile)
