@@ -27,25 +27,6 @@ class DepartmentInfoScreen extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundImage:
-                        AssetImage('assets/avatar_placeholder.png'),
-                  ),
-                ).p(16),
-                Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        '',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-                Divider().py12(),
                 //Department members list
                 Consumer<ProfilesViewModel>(
                     builder: (context, viewModel, child) {
@@ -64,8 +45,8 @@ class DepartmentInfoScreen extends StatelessWidget {
                       dataSet: members,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(members[index].profileName.toString()),
-                          leading: Text(members[index].profileId.toString()),
+                          title: Text(members[index].profileName),
+                          leading: Text(members[index].profileId),
                           onTap: () {},
                         );
                       },

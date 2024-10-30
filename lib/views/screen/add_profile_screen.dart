@@ -74,7 +74,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         placeOfBirth: _placeOfBirthController.text,
         nation: _nationController.text,
         gender: _gender,
-        permission: 0,
+        roleID: 0,
         marriage: _marriage,
         profileStatus: 1,
         //
@@ -138,6 +138,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
             child: Form(
           key: _formKey,
           child: Column(children: [
+            CircleAvatar(),
+            Divider(),
             //Profile id + full name
             Row(
               children: [

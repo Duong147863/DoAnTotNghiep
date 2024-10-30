@@ -1,3 +1,5 @@
+import 'package:localize_and_translate/localize_and_translate.dart';
+
 class AppStrings {
   AppStrings._();
 
@@ -5,11 +7,11 @@ class AppStrings {
 
   static String notificationsKey = "notifications";
 
-  // static List<String> get Statuses {
-  //   return [
-  //     'pending',
-  //     'accepted',
-  //     'cancelled',
-  //   ];
-  // }
+  static List<String> get Statuses {
+    return [
+      'pending'.tr(),
+      'accepted'.tr(),
+      'cancelled'.tr(),
+    ];
+  }
 }

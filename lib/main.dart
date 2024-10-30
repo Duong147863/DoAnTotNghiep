@@ -27,7 +27,6 @@ import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +48,7 @@ Future<void> main() async {
     // Run app!
     runApp(MultiProvider(
         providers: [
-          ChangeNotifierProvider<EnterprisesViewModel>(
+          ChangeNotifierProvider<EnterprisesViewModel>( 
             create: (context) => EnterprisesViewModel(),
           ),
           ChangeNotifierProvider<ProjectsViewModel>(

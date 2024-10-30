@@ -24,23 +24,28 @@ class _EmployAttendListScreenState extends State<EmployAttendListScreen> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white, 
-      child: ListView(
-        shrinkWrap: true,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildTabButton("Request", 0),
-                _buildTabButton("Approve", 1),
-              ],
+    return BasePage(
+      titletext: "Absent Requests",
+      showAppBar: true,
+      showLeadingAction: true,
+      body: Container(
+        color: Colors.white,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildTabButton("Request", 0),
+                  _buildTabButton("Approve", 1),
+                ],
+              ),
             ),
-          ),
-          TimeCardList(timeCardData: timeCardData)
-        ],
+            AbsentRequestCard(timeCardData: timeCardData)
+          ],
+        ),
       ),
     );
   }
@@ -69,10 +74,10 @@ class _EmployAttendListScreenState extends State<EmployAttendListScreen> {
   }
 }
 
-class TimeCardList extends StatelessWidget {
+class AbsentRequestCard extends StatelessWidget {
   final List<Map<String, String>> timeCardData;
 
-  TimeCardList({required this.timeCardData});
+  AbsentRequestCard({required this.timeCardData});
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +126,8 @@ class TimeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(12), 
-        margin: EdgeInsets.only(bottom: 12), 
+        padding: EdgeInsets.all(12),
+        margin: EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -142,7 +147,7 @@ class TimeCard extends StatelessWidget {
                   radius: 20,
                   backgroundImage: NetworkImage(profileImage),
                 ),
-                SizedBox(width: 12), 
+                SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,8 +156,8 @@ class TimeCard extends StatelessWidget {
                         name,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 14),
-                        overflow: TextOverflow.ellipsis, 
-                        maxLines: 1, 
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
                       Text(
                         designation,
@@ -173,46 +178,41 @@ class TimeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Date',
-                        style: TextStyle(
-                            color: Colors.grey, fontSize: 12)), 
-                    Text(date, style: TextStyle(fontSize: 12)), 
+                        style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(date, style: TextStyle(fontSize: 12)),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('In Time',
-                        style: TextStyle(
-                            color: Colors.grey, fontSize: 12)), 
-                    Text(inTime,
-                        style: TextStyle(fontSize: 12)), 
+                        style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(inTime, style: TextStyle(fontSize: 12)),
                   ],
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('Out Time',
-                        style: TextStyle(
-                            color: Colors.grey, fontSize: 12)), 
-                    Text(outTime,
-                        style: TextStyle(fontSize: 12)), 
+                        style: TextStyle(color: Colors.grey, fontSize: 12)),
+                    Text(outTime, style: TextStyle(fontSize: 12)),
                   ],
                 ),
               ],
             ),
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                status,
-                style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12),
-              ),
-            ],
-          ),
+            SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  status,
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12),
+                ),
+              ],
+            ),
           ],
         ));
   }

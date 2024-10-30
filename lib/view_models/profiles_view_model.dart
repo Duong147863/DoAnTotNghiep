@@ -5,17 +5,17 @@ import 'package:nloffice_hrm/repository/profiles_repo.dart';
 class ProfilesViewModel extends ChangeNotifier {
   final ProfilesRepository repository = ProfilesRepository();
 
-  List<Profiles> _list = [];
+  List<Profiles> allProfiles = [];
   List<Profiles> listmembersOfDepartment = [];
 
   bool fetchingData = false;
-  List<Profiles> get listProfiles => _list;
+  List<Profiles> get listProfiles => allProfiles;
   List<Profiles> get listMembersOfDepartment => listmembersOfDepartment;
 
   Future<void> fetchAllProfiles() async {
     fetchingData = true;
     try {
-      _list = await repository.fetchAllProfiles();
+      allProfiles = await repository.fetchAllProfiles();
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to load datas: $e');
@@ -24,7 +24,6 @@ class ProfilesViewModel extends ChangeNotifier {
   }
 
   Future<void> membersOfDepartment(String departmentID) async {
-    fetchingData = true;
     try {
       listmembersOfDepartment =
           await repository.fetchMembersOfDepartment(departmentID);
@@ -32,7 +31,6 @@ class ProfilesViewModel extends ChangeNotifier {
     } catch (e) {
       throw Exception('Failed to load datas: $e');
     }
-    fetchingData = false;
   }
 
   Future<void> addProfile(Profiles profile) async {
