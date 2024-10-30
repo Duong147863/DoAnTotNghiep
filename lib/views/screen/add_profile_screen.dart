@@ -71,7 +71,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
       placeOfBirth: _placeOfBirthController.text,
       nation: _nationController.text,
       gender: _gender,
-      permission: 0,
+      roleID: 1,
       marriage: _marriage,
       profileImage: "abctest",
       profileStatus: 1,
@@ -132,6 +132,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
         appBarColor: AppColor.primaryLightColor,
         body: SingleChildScrollView(
           child: Column(children: [
+            CircleAvatar(),
+            Divider(),
             //Profile id + full name
             Row(
               children: [

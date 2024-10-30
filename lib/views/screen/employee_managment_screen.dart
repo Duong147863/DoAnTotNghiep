@@ -11,14 +11,15 @@ import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class EmployeeListScreen extends StatefulWidget {
-  const EmployeeListScreen({super.key});
+class EmployeeManagementScreen extends StatefulWidget {
+  const EmployeeManagementScreen({super.key});
 
   @override
-  State<EmployeeListScreen> createState() => _EmployeeListScreenState();
+  State<EmployeeManagementScreen> createState() =>
+      _EmployeeManagementScreenState();
 }
 
-class _EmployeeListScreenState extends State<EmployeeListScreen> {
+class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
   @override
   void initState() {
     super.initState();
@@ -100,13 +101,6 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                       ).onTap(
                           () => Navigator.of(context).pushNamed(item['route']));
                     }),
-
-                // _buildMenuItem('Time Attendance', Icons.access_time)
-                //     .onTap(() async {
-                //   await Navigator.of(context)
-                //       .pushNamed(AppRoutes.checkinListRoute);
-                // }),
-                // _buildMenuItem('Employees Overtime', Icons.access_time),
               ],
             ),
           ),

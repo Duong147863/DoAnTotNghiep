@@ -112,9 +112,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddRelativeScreen(
-                      onAddRelative: addRelative,
-                    ),
+                    builder: (context) => AddRelativeScreen(),
                   ),
                 );
               },

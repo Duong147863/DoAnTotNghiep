@@ -26,17 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
       {
         'icon': Icons.supervisor_account,
         'text': 'employee_management'.tr(),
-        'route': AppRoutes.employeeListRoute
+        'route': AppRoutes.employeeManagmentScreen
       },
       {
         'icon': Icons.currency_exchange,
         'text': 'payroll_managment'.tr(),
         'route': AppRoutes.salariListRoute,
-      },
-      {
-        'icon': Icons.home_work_rounded,
-        'text': 'position_management'.tr(),
-        'route': AppRoutes.positionListRoute
       },
       {
         'icon': Icons.business_center_rounded,
@@ -124,7 +119,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       fontWeight: FontWeight.w600),
                 ),
               ).p(10),
-              IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
+              IconButton(
+                  onPressed: () {
+                    // Navigator.pushNamed(context, AppRoutes.noconnetionRoute);
+                  },
+                  icon: Icon(Icons.notifications))
             ],
           ),
         ),
@@ -136,8 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               Navigator.of(context).pushNamed(AppRoutes.timeAttendanceRoute);
             },
-            borderRadius:
-                BorderRadius.circular(20.0), // Bo góc cho hiệu ứng nhấn
+            borderRadius: BorderRadius.circular(20.0),
             child: Container(
               padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
               decoration: BoxDecoration(
