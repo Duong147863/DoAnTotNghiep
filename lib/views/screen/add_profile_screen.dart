@@ -21,6 +21,7 @@ class AddProfilePage extends StatefulWidget {
 }
 
 class _AddProfilePageState extends State<AddProfilePage> {
+  final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
   final _profileNameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -38,6 +39,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
   DateTime _idLicenseDay = DateTime.now();
   bool _gender = false; // Assuming `false` is Male, `true` is Female
   bool _marriage = false; // Assuming `false` is Male, `true` is Female
+
 
   @override
   void dispose() {
@@ -57,38 +59,40 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   void _submit() {
-    final newProfile = Profiles(
-      profileId: _profileIDController.text,
-      profileName: _profileNameController.text,
-      phone: _phoneController.text,
-      email: _emailController.text,
-      birthday: _birthday,
-      temporaryAddress: _temporaryAddressController.text,
-      currentAddress: _currentAddressController.text,
-      identifiNum: _identifiNumController.text,
-      idLicenseDay: _idLicenseDay,
-      password: _passwordController.text,
-      placeOfBirth: _placeOfBirthController.text,
-      nation: _nationController.text,
-      gender: _gender,
-      roleID: 1,
-      marriage: _marriage,
-      profileImage: "abctest",
-      profileStatus: 1,
-    );
-    print(newProfile.marriage);
-    Provider.of<ProfilesViewModel>(context, listen: false)
-        .addProfile(newProfile)
-        .then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile added successfully!')),
+    if (_formKey.currentState!.validate()) {
+      final newProfile = Profiles(
+        profileId: _profileIDController.text,
+        profileName: _profileNameController.text,
+        phone: _phoneController.text,
+        email: _emailController.text,
+        birthday: _birthday,
+        temporaryAddress: _temporaryAddressController.text,
+        currentAddress: _currentAddressController.text,
+        identifiNum: _identifiNumController.text,
+        idLicenseDay: _idLicenseDay,
+        password: _passwordController.text,
+        placeOfBirth: _placeOfBirthController.text,
+        nation: _nationController.text,
+        gender: _gender,
+        roleID: 0,
+        marriage: _marriage,
+        profileStatus: 1,
+        //
+        profileImage: "huhu",
       );
-      Navigator.pop(context);
-    }).catchError((error) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      // SnackBar(content: Text('Failed to add profile: $error')),
-      // );
-    });
+      Provider.of<ProfilesViewModel>(context, listen: false)
+          .addProfile(newProfile)
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile added successfully!')),
+        );
+        Navigator.pop(context);
+      }).catchError((error) {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        // SnackBar(content: Text('Failed to add profile: $error')),
+        // );
+      });
+    }
   }
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
@@ -131,6 +135,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
         titletext: "add_new_profile",
         appBarColor: AppColor.primaryLightColor,
         body: SingleChildScrollView(
+            child: Form(
+          key: _formKey,
           child: Column(children: [
             CircleAvatar(),
             Divider(),
@@ -140,17 +146,29 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 CustomTextFormField(
                   textEditingController: _profileIDController,
                   labelText: 'profile_id'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_profile_id'.tr();
+                    }
+                    return null;
+                  },
                 ).px8().w(150),
                 CustomTextFormField(
                   textEditingController: _profileNameController,
                   labelText: 'full_name'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_full_name'.tr();
+                    }
+                    return null;
+                  },
                 ).w(254),
               ],
             ).py16(),
             //Birthday + Place of birth
             Row(
               children: [
-                _buildDateField('Ngày sinh', _birthdayController, _birthday,
+                _buildDateField('birthday', _birthdayController, _birthday,
                     (date) {
                   setState(() {
                     _birthday = date;
@@ -161,6 +179,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 CustomTextFormField(
                   textEditingController: _placeOfBirthController,
                   labelText: 'place_of_birth'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_place_of_birth'.tr();
+                    }
+                    return null;
+                  },
                 ).w(254),
               ],
             ),
@@ -176,20 +200,22 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 Text('marriage'.tr()),
                 Radio(
                   value: true,
-                  onChanged: (value) {
-                    _marriage = value!;
-                  },
                   groupValue: _marriage,
-                ),
-                Text('yes'.tr()),
-                Radio(
-                  value: false,
                   onChanged: (value) {
                     setState(() {
                       _marriage = value!;
                     });
                   },
+                ),
+                Text('yes'.tr()),
+                Radio(
+                  value: false,
                   groupValue: _marriage,
+                  onChanged: (value) {
+                    setState(() {
+                      _marriage = value!;
+                    });
+                  },
                 ),
                 Text('no'.tr()),
               ],
@@ -200,6 +226,17 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 CustomTextFormField(
                   textEditingController: _identifiNumController,
                   labelText: 'id_num'.tr(),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_phone_number'.tr();
+                    }
+                    if (value.length != 12) {
+                      return 'please_enter_valid_id_num'
+                          .tr(); // Thông báo nhập đúng 10 chữ số
+                    }
+                    return null;
+                  },
                 ).w(200).px8(),
                 _buildDateField('id_license_date'.tr(), _idLicenseDayController,
                     _idLicenseDay, (date) {
@@ -225,33 +262,71 @@ class _AddProfilePageState extends State<AddProfilePage> {
                   textEditingController: _emailController,
                   labelText: 'email'.tr(),
                   maxLines: 1,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_email'.tr();
+                    }
+                    final emailRegex =
+                        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                    if (!emailRegex.hasMatch(value)) {
+                      return 'please_enter_valid_email'.tr();
+                    }
+                    return null;
+                  },
                 ).px4().w(258),
                 CustomTextFormField(
-                  validator: (value) =>
-                      value.isEmptyOrNull ? 'please_enter_phone_number' : null,
-                  textEditingController: _phoneController,
-                  labelText: 'phone'.tr(),
-                  maxLines: 1,
-                ).w(145),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'please_enter_phone_number'.tr();
+                          }
+                          if (value.length != 10) {
+                            return 'please_enter_valid_phone_number'
+                                .tr(); // Thông báo nhập đúng 10 chữ số
+                          }
+                          return null;
+                        },
+                        textEditingController: _phoneController,
+                        labelText: 'phone'.tr(),
+                        maxLines: 1,
+                        keyboardType: TextInputType.number)
+                    .w(145),
               ],
             ).py(8),
             //Password
             CustomTextFormField(
               labelText: "password".tr(),
               textEditingController: _passwordController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'please_enter_password'.tr();
+                }
+                return null;
+              },
             ).p8(),
             //Address
             CustomTextFormField(
               textEditingController: _temporaryAddressController,
               labelText: 'temp_address'.tr(),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'please_enter_temp_address'.tr();
+                }
+                return null;
+              },
             ).p8(),
             CustomTextFormField(
               textEditingController: _currentAddressController,
               labelText: 'current_address'.tr(),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'please_enter_current_address'.tr();
+                }
+                return null;
+              },
             ).p8(),
             //
           ]),
-        ));
+        )));
   }
 
   Widget _buildDateField(String label, TextEditingController controller,
@@ -265,6 +340,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
             readOnly: true,
             style: TextStyle(color: Colors.black),
             controller: controller,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'please_id_license_date'.tr();
+              }
+              return null;
+            },
             decoration: InputDecoration(
               labelStyle: TextStyle(color: Colors.black),
               labelText: label,
@@ -288,8 +369,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         items: [
-          DropdownMenuItem(value: false, child: Text('Nam')),
-          DropdownMenuItem(value: true, child: Text('Nữ')),
+          DropdownMenuItem(value: false, child: Text('Man')),
+          DropdownMenuItem(value: true, child: Text('Woman')),
         ],
         onChanged: onChanged,
         validator: (value) => value == null ? 'Please select a gender' : null,

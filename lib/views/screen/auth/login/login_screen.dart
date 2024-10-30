@@ -3,9 +3,11 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:provider/provider.dart';
 import 'package:validators/validators.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -32,6 +34,7 @@ class _TapBarState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profilesViewModel = Provider.of<ProfilesViewModel>(context);
     return BasePage(
       backgroundColor: AppColor.seaShell,
       showAppBar: false,
@@ -130,16 +133,17 @@ class _TapBarState extends State<LoginScreen> {
                 String emailOrPhone = emailOrPhoneController.text;
                 String password = passwordController.text;
                 try {
-                  // final response = await login(username, password);
-                  // if (response.result == true) {
+                if (isEmail(emailOrPhone)) {
+                    // Đăng nhập bằng email
+                    await profilesViewModel.loginEmail(emailOrPhone, password);
+                  } else if (SPUtill.isPhoneNumber(emailOrPhone)) {
+                    // Đăng nhập bằng số điện thoại
+                    await profilesViewModel.loginPhone(emailOrPhone, password);
+                  } else {
+                    throw Exception('Please enter a valid email or phone number');
+                  }
                   Navigator.of(context).pushNamed(AppRoutes.homeRoute);
-                  // } else {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(
-                  //         content: Text(
-                  //             'Đăng nhập không thành công: ${response.message}')),
-                  //   );
-                  // }
+
                 } catch (e) {
                   print('Error: $e'); // In thông tin lỗi
                   ScaffoldMessenger.of(context).showSnackBar(
