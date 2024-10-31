@@ -46,11 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     ];
   }
 
-  final List<String> _tasks = [
-    "Dọn dẹp sảnh nhà hàng",
-    "ủ trà Olong, lau bàn...",
-  ];
-
   bool light = true;
   @override
   Widget build(BuildContext context) {
@@ -69,8 +64,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       bottomRight: Radius.circular(20)),
                   color: Colors.blueAccent,
                 ),
-                child: Row(
-                  children: [],
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 30, // Adjust size as needed
+                        backgroundImage: AssetImage(
+                            'assets/avatar.png'), // Replace with your image path
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Shaidul Islam', // Replace with your dynamic name
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Admin', // Replace with the dynamic position
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               ListTile(
