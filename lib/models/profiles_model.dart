@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Profiles {
   Profiles(
@@ -21,7 +22,7 @@ class Profiles {
       this.marriage = false,
       required this.temporaryAddress,
       required this.currentAddress,
-      this.permission = 1,
+      this.roleID = 1,
       required this.profileImage});
 
   String profileId;
@@ -43,7 +44,7 @@ class Profiles {
   String temporaryAddress;
   String currentAddress;
   String? laborContractId;
-  int permission;
+  int roleID;
   String profileImage;
 
   factory Profiles.fromJson(Map<String, dynamic> json) {
@@ -51,7 +52,7 @@ class Profiles {
         profileName: json["profile_name"],
         profileStatus: json["profile_status"],
         identifiNum: json["identify_num"],
-        idLicenseDay: DateTime.parse(json['idLicenseDay']),
+        idLicenseDay: DateFormat("dd-MM-yyyy").parse(json['idLicenseDay']),
         gender: json["gender"],
         phone: json["phone"],
         email: json["email"],
@@ -59,14 +60,14 @@ class Profiles {
         departmentId: json["department_id"],
         profileId: json["profile_id"],
         salaryId: json["salary_id"],
-        birthday: DateTime.parse(json['birthday']),
+        birthday: DateFormat("dd-MM-yyyy").parse(json['birthday']),
         positionId: json["position_id"],
         placeOfBirth: json["place_of_birth"],
         nation: json["nation"],
         marriage: json["marriage"],
         temporaryAddress: json["temporary_address"],
         currentAddress: json["current_address"],
-        permission: json["permission"],
+        roleID: json["role_id"],
         laborContractId: json["labor_contract_id"],
         profileImage: json["profile_image"]);
   }
@@ -91,7 +92,7 @@ class Profiles {
     map["temporary_address"] = temporaryAddress;
     map["current_address"] = currentAddress;
     map["profile_image"] = profileImage;
-    map["permission"] = permission;
+    map["role_id"] = roleID;
     map["labor_contract_id"] = laborContractId;
     return map;
   }

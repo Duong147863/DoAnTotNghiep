@@ -9,18 +9,15 @@ import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/language_screen.dart';
 import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/employee_managment_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_profile_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
-import 'package:nloffice_hrm/views/screen/more_setting_screen.dart';
 import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
@@ -82,11 +79,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.employeelistRoute:
+    case AppRoutes.employeeManagmentScreen:
       return MaterialPageRoute(
-          builder: (context) => const EmployeeListScreen(),
+          builder: (context) => const EmployeeManagementScreen(),
           settings: const RouteSettings(
-            name: AppRoutes.employeelistRoute,
+            name: AppRoutes.employeeManagmentScreen,
           ));
 
     ///
@@ -105,14 +102,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           name: AppRoutes.leaveRequestList,
         ),
       );
-
-    ///
-    case AppRoutes.profileListRoute:
-      return MaterialPageRoute(
-          builder: (context) => EmployeeListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.profileListRoute,
-          ));
 
     ///
     case AppRoutes.departmentListRoute:
@@ -147,27 +136,11 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.enterpriseListRoute:
-      return MaterialPageRoute(
-          builder: (context) => EnterprisesListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.enterpriseListRoute,
-          ));
-
-    ///
     case AppRoutes.positionListRoute:
       return MaterialPageRoute(
           builder: (context) => PositionsListScreen(),
           settings: const RouteSettings(
             name: AppRoutes.positionListRoute,
-          ));
-
-    ///
-    case AppRoutes.projectListRoute:
-      return MaterialPageRoute(
-          builder: (context) => ProjectsListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.projectListRoute,
           ));
 
     ///
