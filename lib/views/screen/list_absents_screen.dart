@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class LeaveRequestForm extends StatefulWidget {
+class AddAbsentsScreen extends StatefulWidget {
   @override
-  _LeaveRequestFormState createState() => _LeaveRequestFormState();
+  _AddAbsentsScreenState createState() => _AddAbsentsScreenState();
 }
 
-class _LeaveRequestFormState extends State<LeaveRequestForm> {
+class _AddAbsentsScreenState extends State<AddAbsentsScreen> {
   final List<Map<String, dynamic>> _leaveRequestData = [
     {
       "label": "Họ và tên",

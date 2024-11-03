@@ -11,11 +11,6 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeScreen extends StatefulWidget {
-  // final Profiles? profiles;
-  const HomeScreen({
-    super.key,
-    // this.profiles
-  });
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -63,27 +58,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircleAvatar(
-                        radius: 30, // Adjust size as needed
-                        backgroundImage: AssetImage(
-                            'assets/avatar.png'), // Replace with your image path
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'Shaidul Islam', // Replace with your dynamic name
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Admin', // Replace with the dynamic position
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
-                        ),
-                      ),
+                      // CircleAvatar(
+                      //   radius: 30,
+                      //    backgroundImage: NetworkImage(widget.profile.profileImage), 
+                      // ),
+                      // SizedBox(height: 8),
+                      // Text(
+                      //   widget.profile.profileName, 
+                      //   style: TextStyle(
+                      //     fontSize: 18,
+                      //     color: Colors.white,
+                      //     fontWeight: FontWeight.bold,
+                      //   ),
+                      // ),
+                      // Text(
+                      //  widget.profile.positionId.toString(), 
+                      //   style: TextStyle(
+                      //     fontSize: 14,
+                      //     color: Colors.white70,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),

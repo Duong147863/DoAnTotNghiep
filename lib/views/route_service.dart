@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/forgot_password/forgot_password_screen.dart';
@@ -26,7 +27,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case AppRoutes.homeRoute:
       return MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) =>  HomeScreen(),
           settings: const RouteSettings(
             name: AppRoutes.homeRoute,
           ));
@@ -60,14 +61,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           builder: (context) => const ProfileScreen(),
           settings: const RouteSettings(
             name: AppRoutes.profileRoute,
-          ));
-
-    ///
-    case AppRoutes.homeRoute:
-      return MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.homeRoute,
           ));
 
     ///

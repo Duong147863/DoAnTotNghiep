@@ -53,4 +53,14 @@ Future<bool> phoneLogin(String phone, String password) async {
     throw Exception('Failed to login: ${response.statusCode} - ${response.body}');
   }
 }
+
+ Future<Profiles> getProfileInfoByID(int profileID) async {
+    final response = await service.getProfileInfoByID(profileID);
+
+    if (response.statusCode == 200) {
+      return Profiles.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load profile info: ${response.statusCode} - ${response.body}');
+    }
+  }
 }
