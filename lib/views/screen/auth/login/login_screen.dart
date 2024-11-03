@@ -3,6 +3,7 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
@@ -23,15 +24,12 @@ class _TapBarState extends State<LoginScreen> {
   final passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
-
+  Profiles? userProfile;
   @override
   void initState() {
     super.initState();
     _passwordVisible = false;
   }
-
-  
-
   @override
   Widget build(BuildContext context) {
     final profilesViewModel = Provider.of<ProfilesViewModel>(context);
@@ -133,23 +131,24 @@ class _TapBarState extends State<LoginScreen> {
                 String emailOrPhone = emailOrPhoneController.text;
                 String password = passwordController.text;
                 try {
-                if (isEmail(emailOrPhone)) {
-                    // Đăng nhập bằng email
-                    await profilesViewModel.loginEmail(emailOrPhone, password);
-                  } else if (SPUtill.isPhoneNumber(emailOrPhone)) {
-                    // Đăng nhập bằng số điện thoại
-                    await profilesViewModel.loginPhone(emailOrPhone, password);
-                  } else {
-                    throw Exception('Please enter a valid email or phone number');
-                  }
-                  Navigator.of(context).pushNamed(AppRoutes.homeRoute);
+                  if (isEmail(emailOrPhone)) {
+                      // Đăng nhập bằng email
+                      await profilesViewModel.loginEmail(emailOrPhone, password);
+                    } else if (SPUtill.isPhoneNumber(emailOrPhone)) {
+                      // Đăng nhập bằng số điện thoại
+                      await profilesViewModel.loginPhone(emailOrPhone, password);
+                    } else {
+                      throw Exception('Please enter a valid email or phone number');
+                    }
+                    Navigator.of(context).pushNamed(AppRoutes.homeRoute);
 
-                } catch (e) {
-                  print('Error: $e'); // In thông tin lỗi
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Lỗi kết nối')),
-                  );
-                }
+                  } catch (e) {
+                    print('Error: $e'); // In thông tin lỗi
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Lỗi kết nối')),
+                    );
+                  }
+                 
               }
             },
             title: 'login'.tr(),

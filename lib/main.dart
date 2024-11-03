@@ -14,6 +14,7 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
+import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
@@ -24,6 +25,8 @@ import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
+import 'package:nloffice_hrm/views/screen/payslipscreen.dart';
+import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
@@ -94,7 +97,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: LoginScreen(),
+          home: ProfileScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );

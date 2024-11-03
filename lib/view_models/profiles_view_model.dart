@@ -11,7 +11,8 @@ class ProfilesViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Profiles> get listProfiles => allProfiles;
   List<Profiles> get listMembersOfDepartment => listmembersOfDepartment;
-
+  //
+  Profiles? selectedProfile;
   Future<void> fetchAllProfiles() async {
     fetchingData = true;
     try {
@@ -54,6 +55,16 @@ class ProfilesViewModel extends ChangeNotifier {
       await repository.phoneLogin(phone, password);
     } catch (e) {
       throw Exception('Failed to login: $e');
+    }
+  }
+
+
+   Future<void> getProfileInfoByID(int profileID) async {
+    try {
+      selectedProfile = await repository.getProfileInfoByID(profileID);
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load profile info: $e');
     }
   }
 }

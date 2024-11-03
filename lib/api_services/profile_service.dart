@@ -40,6 +40,7 @@ class ProfileService {
   //     "password": password
   //   });
   // }
+  //Duong 
   Future<http.Response> emailLogin(String email, String password) async {
     return await http.post(
       Uri.parse('${AppStrings.baseUrlApi}auth/login/email'),
@@ -53,6 +54,7 @@ class ProfileService {
       }),
     );
   }
+  
   // Future<http.Response> phoneLogin(String phone, String password) async {
   //   return await http
   //       .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'), headers: {
