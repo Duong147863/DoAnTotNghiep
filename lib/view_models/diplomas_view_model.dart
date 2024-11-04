@@ -19,4 +19,11 @@ class DiplomasViewModel extends ChangeNotifier {
     }
     fetchingData = false;
   }
+  Future<void> AddDiploma(Diplomas diploma) async {
+    try {
+      await repository.AddDiplomas(diploma);
+    } catch (e) {
+      throw Exception('Failed to add datas: $e');
+    }
+  }
 }

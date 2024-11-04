@@ -1,6 +1,16 @@
+
+import 'dart:io';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
+import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class AddDiplomaScreen extends StatefulWidget {
   @override
@@ -9,73 +19,260 @@ class AddDiplomaScreen extends StatefulWidget {
 
 class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? diplomaId;
-  String? diplomaName;
+  final _diplomaIDController = TextEditingController();
+  final _diplomaDegreeNameController = TextEditingController();
+  final _diplomaImageController = TextEditingController();
+  final _modeOfStudyController = TextEditingController();
+  final _rankingController = TextEditingController();
+  final _liscenseDateController = TextEditingController();
+  final _majorController = TextEditingController();
+  final _grantedByController = TextEditingController();
+  final _diplomaTypeController = TextEditingController();
+  final _profileIDController = TextEditingController();
+  DateTime _liscenseDate = DateTime.now();
+
+  //
+  File? _diplomaImageFile;
+  final ImagePicker _picker = ImagePicker();
+  @override
+  void dispose() {
+    _diplomaIDController.dispose();
+    _diplomaDegreeNameController.dispose();
+    _diplomaImageController.dispose();
+    _modeOfStudyController.dispose();
+    _rankingController.dispose();
+    _liscenseDateController.dispose();
+    _majorController.dispose();
+    _diplomaTypeController.dispose();
+    _profileIDController.dispose();
+    _diplomaImageController.dispose();
+    _grantedByController.dispose();
+    super.dispose();
+  }
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _diplomaImageFile = File(image.path);
+      });
+    }
+  }
+  Future<void> _selectDate(BuildContext context, DateTime initialDate, Function(DateTime) onDateSelected) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != initialDate) {
+      onDateSelected(picked);
+    }
+  }
+
+   Widget _buildDateField(String label, TextEditingController controller,
+      DateTime initialDate, Function(DateTime) onDateSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: GestureDetector(
+        onTap: () => _selectDate(context, initialDate, onDateSelected),
+        child: AbsorbPointer(
+          child: TextFormField(
+            readOnly: true,
+            style: TextStyle(color: Colors.black),
+            controller: controller,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'please_id_license_date'.tr();
+              }
+              return null;
+            },
+            decoration: InputDecoration(
+              labelStyle: TextStyle(color: Colors.black),
+              labelText: label,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+    void _submit() {
+    if (_formKey.currentState!.validate()) {
+      final createNewDiploma = Diplomas(
+        diplomaId: _diplomaIDController.text,
+        diplomaName: _diplomaDegreeNameController.text,
+        diplomaImage: _diplomaImageFile?.path ?? '',
+        modeOfStudy: _modeOfStudyController.text,
+        ranking: _rankingController.text,
+        licenseDate: _liscenseDate,
+        major: _majorController.text,
+        grantedBy: _grantedByController.text,
+        diplomaType: _diplomaTypeController.text,
+        profileId: _profileIDController.text,
+      );
+      Provider.of<DiplomasViewModel>(context, listen: false)
+          .AddDiploma(createNewDiploma)
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile added successfully!')),
+        );
+        Navigator.pop(context);
+      }).catchError((error) {
+        // ScaffoldMessenger.of(context).showSnackBar(
+        // SnackBar(content: Text('Failed to add profile: $error')),
+        // );
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      appBar: AppBar(
-        title: Text('Thêm bằng cấp'),
-      ),
+      showLeadingAction: true,
+      defaultBody: false,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.aliceBlue,
+      resizeToAvoidBottomInset: true,
+      titletext: "Add New Diploma",
+      appBarColor: AppColor.primaryLightColor,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Mã bằng cấp',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  onSaved: (value) {
-                    diplomaId = value;
-                  },
+              GestureDetector(
+                onTap: _pickImage,
+                child: _diplomaImageFile == null
+                    ? Container(
+                        height: 150,
+                        width: double.infinity,
+                        color: Colors.grey[300],
+                        child: Icon(Icons.add_a_photo, color: Colors.grey[700]),
+                      )
+                    : Image.file(_diplomaImageFile!, height: 150),
+              ).pOnly(bottom: 16),
+              Divider(),
+              Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _diplomaIDController,
+                  labelText: 'ID Diploma'.tr(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập mã bằng cấp';
+                      return 'please_enter_id_diploma'.tr();
                     }
                     return null;
                   },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Loại bằng cấp',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                  ),
-                  onSaved: (value) {
-                    diplomaName = value;
-                  },
+                ).px8().w(150),
+                CustomTextFormField(
+                  textEditingController: _diplomaDegreeNameController,
+                  labelText: 'Diploma Degree Name'.tr(),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập loại bằng cấp';
+                      return 'please_enter_Diploma_Degree_Name'.tr();
                     }
                     return null;
                   },
+                ).w(229),
+              ],
+            ).py16(),
+            Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _grantedByController,
+                  labelText: 'Granted By'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_granted_by'.tr();
+                    }
+                    return null;
+                  },
+                ).px8().w(150),
+                CustomTextFormField(
+                  textEditingController: _modeOfStudyController,
+                  labelText: 'Mode Of Study'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_mode_of_study'.tr();
+                    }
+                    return null;
+                  },
+                ).w(229),
+              ],
+            ).py16(),
+               Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _rankingController,
+                  labelText: 'Ranking'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_ranking'.tr();
+                    }
+                    return null;
+                  },
+                ).px8().w(150),
+                CustomTextFormField(
+                  textEditingController: _majorController,
+                  labelText: 'Major'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_major'.tr();
+                    }
+                    return null;
+                  },
+                ).w(229),
+              ],
+            ).py16(),
+                Row(
+              children: [
+                CustomTextFormField(
+                  textEditingController: _diplomaTypeController,
+                  labelText: 'Diploma Type'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_diploma_type'.tr();
+                    }
+                    return null;
+                  },
+                ).px8().w(150),
+                CustomTextFormField(
+                  textEditingController: _profileIDController,
+                  labelText: 'Profile ID'.tr(),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'please_enter_profile_id'.tr();
+                    }
+                    return null;
+                  },
+                ).w(229),
+              ],
+            ).py16(),
+              _buildDateField('License Date', _liscenseDateController, _liscenseDate,
+                    (date) {
+                  setState(() {
+                    _liscenseDate = date;
+                    _liscenseDateController.text =
+                        "${_liscenseDate.toLocal()}".split(' ')[0];
+                  });
+                }).px(8).w(150),
+              SizedBox(height: 24),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    backgroundColor: AppColor.primaryDarkColor,
+                    textStyle: TextStyle(fontSize: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text('Add Diploma'),
                 ),
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _formKey.currentState?.save();
-                    Navigator.pop(
-                      context,
-                    );
-                  }
-                },
-                child: Text('Thêm'),
               ),
             ],
           ),

@@ -16,4 +16,12 @@ class DiplomasRepository {
       throw Exception('Failed to load data');
     }
   }
+  Future<bool> AddDiplomas(Diplomas diploma) async {
+    final response = await service.createNewDiploma(diploma);
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception('Failed to add profile: ${response.statusCode}');
+    }
+  }
 }
