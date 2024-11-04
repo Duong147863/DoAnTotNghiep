@@ -32,7 +32,9 @@ import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -51,7 +53,7 @@ Future<void> main() async {
     // Run app!
     runApp(MultiProvider(
         providers: [
-          ChangeNotifierProvider<EnterprisesViewModel>( 
+          ChangeNotifierProvider<EnterprisesViewModel>(
             create: (context) => EnterprisesViewModel(),
           ),
           ChangeNotifierProvider<ProjectsViewModel>(
@@ -97,7 +99,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: ProfileScreen(),
+          home: LoginScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );

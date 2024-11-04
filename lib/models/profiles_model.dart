@@ -38,36 +38,36 @@ class Profiles {
   String? departmentId;
   String? salaryId;
   String? positionId;
+  String? laborContractId;
   String password;
   int profileStatus;
   bool marriage;
   String temporaryAddress;
   String currentAddress;
-  String? laborContractId;
   int roleID;
   String profileImage;
 
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(
+        profileId: json["profile_id"],
         profileName: json["profile_name"],
         profileStatus: json["profile_status"],
         identifiNum: json["identify_num"],
-        idLicenseDay: DateFormat("dd-MM-yyyy").parse(json['idLicenseDay']),
+        idLicenseDay: DateFormat("dd-MM-yyyy").parse(json['id_license_day']),
         gender: json["gender"],
         phone: json["phone"],
         email: json["email"],
         password: json["password"],
-        departmentId: json["department_id"],
-        profileId: json["profile_id"],
-        salaryId: json["salary_id"],
         birthday: DateFormat("dd-MM-yyyy").parse(json['birthday']),
-        positionId: json["position_id"],
         placeOfBirth: json["place_of_birth"],
         nation: json["nation"],
         marriage: json["marriage"],
         temporaryAddress: json["temporary_address"],
         currentAddress: json["current_address"],
         roleID: json["role_id"],
+        departmentId: json["department_id"],
+        salaryId: json["salary_id"],
+        positionId: json["position_id"],
         laborContractId: json["labor_contract_id"],
         profileImage: json["profile_image"]);
   }

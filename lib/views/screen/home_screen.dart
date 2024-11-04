@@ -4,13 +4,20 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeScreen extends StatefulWidget {
+  final Profiles? profile;
+
+  const HomeScreen({super.key, this.profile});
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -37,8 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool light = true;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final profilesViewModel = Provider.of<ProfilesViewModel>(context);
     final data = _getData();
     return BasePage(
         appBarItemColor: AppColor.boneWhite,
@@ -60,11 +74,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       // CircleAvatar(
                       //   radius: 30,
-                      //    backgroundImage: NetworkImage(widget.profile.profileImage), 
+                      //    backgroundImage: NetworkImage(widget.profile.profileImage),
                       // ),
                       // SizedBox(height: 8),
                       // Text(
-                      //   widget.profile.profileName, 
+                      //   widget.profile.profileName,
                       //   style: TextStyle(
                       //     fontSize: 18,
                       //     color: Colors.white,
@@ -72,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       //   ),
                       // ),
                       // Text(
-                      //  widget.profile.positionId.toString(), 
+                      //  widget.profile.positionId.toString(),
                       //   style: TextStyle(
                       //     fontSize: 14,
                       //     color: Colors.white70,
@@ -107,11 +121,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 title: Text('log_out'.tr()),
-                leading: Icon(Icons.logout),
+                leading: const Icon(Icons.logout),
                 onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.loginRoute);
+                  profilesViewModel.logOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      AppRoutes.loginRoute, (route) => false);
                 },
-              ),
+              ).onInkTap(() async {}),
             ],
           ),
         ),
@@ -124,9 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "hello_".tr()
-                  // + widget.profiles!.profileName
-                  ,
+                  "hello_".tr() + widget.profile!.profileName!,
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEFF8FF),

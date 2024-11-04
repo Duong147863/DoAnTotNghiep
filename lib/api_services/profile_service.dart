@@ -30,17 +30,11 @@ class ProfileService {
     );
   }
 
-  // Future<http.Response> emailLogin(String email, String password) async {
-  //   return await http
-  //       .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/email'), headers: {
-  //     'Content-Type': 'application/json',
-  //     'Accept': 'application/json'
-  //   }, body: <String, dynamic>{
-  //     "email": email,
-  //     "password": password
-  //   });
-  // }
-  //Duong 
+  Future<http.Response> logout() async {
+    return await http.post(Uri.parse('${AppStrings.baseUrlApi}logout'));
+  }
+
+  //Duong
   Future<http.Response> emailLogin(String email, String password) async {
     return await http.post(
       Uri.parse('${AppStrings.baseUrlApi}auth/login/email'),
@@ -48,34 +42,18 @@ class ProfileService {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: json.encode({
-        "email": email,
-        "password": password
-      }),
+      body: json.encode({"email": email, "password": password}),
     );
   }
-  
-  // Future<http.Response> phoneLogin(String phone, String password) async {
-  //   return await http
-  //       .post(Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'), headers: {
-  //     'Content-Type': 'application/json',
-  //     'Accept': 'application/json'
-  //   }, body: <String, dynamic>{
-  //     "phone": phone,
-  //     "password": password
-  //   });
-  // }
-   Future<http.Response> phoneLogin(String phone, String password) async {
+
+  Future<http.Response> phoneLogin(String phone, String password) async {
     return await http.post(
-      Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'), 
+      Uri.parse('${AppStrings.baseUrlApi}auth/login/phone'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
-      body: json.encode({ 
-        "phone": phone,
-        "password": password
-      }),
+      body: json.encode({"phone": phone, "password": password}),
     );
   }
 }
