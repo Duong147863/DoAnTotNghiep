@@ -29,6 +29,16 @@ class ProfileService {
       body: json.encode(profile.toJson()),
     );
   }
+  Future<http.Response> updateProfile(Profiles profile) async {
+  return await http.put(
+    Uri.parse('${AppStrings.baseUrlApi}profile/info/update'), // URL để cập nhật hồ sơ
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: json.encode(profile.toJson()), // Chuyển đổi đối tượng Profiles thành JSON
+  );
+}
 
   Future<http.Response> logout() async {
     return await http.post(Uri.parse('${AppStrings.baseUrlApi}logout'));

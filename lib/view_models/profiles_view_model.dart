@@ -41,6 +41,14 @@ class ProfilesViewModel extends ChangeNotifier {
       throw Exception('Failed to add datas: $e');
     }
   }
+  Future<void> updateProfile(Profiles profile) async {
+    try {
+      await repository.updateProfile(profile);
+    } catch (e) {
+      throw Exception('Failed to add datas: $e');
+    }
+  }
+  
 
   Future<void> logOut() async {
     try {

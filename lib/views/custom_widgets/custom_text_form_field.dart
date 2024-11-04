@@ -31,6 +31,10 @@ class CustomTextFormField extends StatefulWidget {
     this.underline = false,
     this.inputFormatters,
     this.colorHintText,
+    this.enabled,
+    this.decoration,
+    this.style,
+    this.readOnly,
   }) : super(key: key);
 
   //
@@ -40,7 +44,8 @@ class CustomTextFormField extends StatefulWidget {
   final bool obscureText;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
-
+  final bool? enabled ;
+  final bool? readOnly;
   //
   final String? labelText;
   final String? hintText;
@@ -51,12 +56,12 @@ class CustomTextFormField extends StatefulWidget {
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
   final FocusNode? nextFocusNode;
-
+  final InputDecoration? decoration;
   final bool? isReadOnly;
   final Function()? onTap;
   final int? minLines;
   final int? maxLines;
-
+  final TextStyle? style;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
 
@@ -125,6 +130,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       keyboardType: widget.keyboardType,
       minLines: widget.minLines,
       maxLines: widget.obscureText ? 1 : widget.maxLines,
+      enabled: widget.enabled,
     );
   }
 

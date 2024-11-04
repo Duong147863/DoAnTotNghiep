@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
@@ -10,14 +13,17 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
+import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class HomeScreen extends StatefulWidget {
   final Profiles? profile;
-
-  const HomeScreen({super.key, this.profile});
+  const HomeScreen({
+    super.key,
+    this.profile,
+  });
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -72,26 +78,58 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // CircleAvatar(
-                      //   radius: 30,
-                      //    backgroundImage: NetworkImage(widget.profile.profileImage),
-                      // ),
-                      // SizedBox(height: 8),
-                      // Text(
-                      //   widget.profile.profileName,
-                      //   style: TextStyle(
-                      //     fontSize: 18,
-                      //     color: Colors.white,
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
-                      // Text(
-                      //  widget.profile.positionId.toString(),
-                      //   style: TextStyle(
-                      //     fontSize: 14,
-                      //     color: Colors.white70,
-                      //   ),
-                      // ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ProfileScreen(profile: widget.profile),
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.white,
+                          child: ClipOval(
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: widget.profile!.profileImage != null &&
+                                      widget.profile!.profileImage!.isNotEmpty
+                                  ? Image.memory(
+                                      base64Decode(
+                                          widget.profile!.profileImage!),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        print("Error loading image: $error");
+                                        return Icon(Icons.error,
+                                            size: 30, color: Colors.grey);
+                                      },
+                                    )
+                                  : Icon(Icons.person,
+                                      size: 30, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        widget.profile!.profileName!,
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        widget.profile!.positionId!.toString(),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white70,
+                        ),
+                      ),
                     ],
                   ),
                 ),
