@@ -38,7 +38,7 @@ class _QrScanState extends State<QrScan> {
           (value) {
             final List<Barcode> barcodes = capture.barcodes;
             for (final barcode in barcodes) {
-              print('QR Found! ${barcode.rawValue}');
+              print('QR ${barcode.rawValue}');
             }
           },
         );
@@ -47,44 +47,3 @@ class _QrScanState extends State<QrScan> {
     );
   }
 }
-// class ScannerErrorWidget extends StatelessWidget {
-//   const ScannerErrorWidget({super.key, required this.error});
-
-//   final MobileScannerException error;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     String errorMessage;
-
-//     switch (error.errorCode) {
-//       case MobileScannerErrorCode.controllerUninitialized:
-//         errorMessage = 'Controller not ready.';
-//         break;
-//       case MobileScannerErrorCode.permissionDenied:
-//         errorMessage = 'Permission denied';
-//         break;
-//       default:
-//         errorMessage = 'Generic Error';
-//         break;
-//     }
-
-//     return ColoredBox(
-//       color: Colors.black,
-//       child: Center(
-//         child: Column(
-//           mainAxisSize: MainAxisSize.min,
-//           children: [
-//             const Padding(
-//               padding: EdgeInsets.only(bottom: 16),
-//               child: Icon(Icons.error, color: Colors.white),
-//             ),
-//             Text(
-//               errorMessage,
-//               style: const TextStyle(color: Colors.white),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }

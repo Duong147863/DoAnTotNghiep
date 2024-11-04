@@ -42,24 +42,31 @@ class ProfilesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> loginEmail(String email, String password) async {
+  Future<void> logOut() async {
     try {
-      await repository.emailLogin(email, password);
+      await repository.logOut();
+    } catch (e) {
+      throw Exception('Failed to logout: $e');
+    }
+  }
+
+  Future<Profiles> loginEmail(String email, String password) async {
+    try {
+      return await repository.emailLogin(email, password);
     } catch (e) {
       throw Exception('Failed to login: $e');
     }
   }
 
-  Future<void> loginPhone(String phone, String password) async {
+  Future<Profiles> loginPhone(String phone, String password) async {
     try {
-      await repository.phoneLogin(phone, password);
+      return await repository.phoneLogin(phone, password);
     } catch (e) {
       throw Exception('Failed to login: $e');
     }
   }
 
-
-   Future<void> getProfileInfoByID(int profileID) async {
+  Future<void> getProfileInfoByID(int profileID) async {
     try {
       selectedProfile = await repository.getProfileInfoByID(profileID);
       notifyListeners();

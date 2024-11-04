@@ -42,7 +42,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
               dataSet: profiles,
               itemBuilder: (context, index) {
                 return ListTile(
-                  title: Text(profiles[index].profileName),
+                  title: Text(profiles[index].profileName!),
                   leading: CircleAvatar(),
                   onTap: () {},
                 );

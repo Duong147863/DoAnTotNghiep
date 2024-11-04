@@ -40,7 +40,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
   bool _gender = false; // Assuming `false` is Male, `true` is Female
   bool _marriage = false; // Assuming `false` is Male, `true` is Female
 
-
   @override
   void dispose() {
     _profileIDController.dispose();
@@ -74,11 +73,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
         placeOfBirth: _placeOfBirthController.text,
         nation: _nationController.text,
         gender: _gender,
-        roleID: 0,
+        roleID: 1,
         marriage: _marriage,
         profileStatus: 1,
         //
-        profileImage: "Hihi",
+        profileImage: "test image",
       );
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile)
@@ -88,9 +87,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
         );
         Navigator.pop(context);
       }).catchError((error) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        // SnackBar(content: Text('Failed to add profile: $error')),
-        // );
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add profile: $error')),
+        );
       });
     }
   }

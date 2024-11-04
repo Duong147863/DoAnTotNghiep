@@ -45,8 +45,8 @@ class DepartmentInfoScreen extends StatelessWidget {
                       dataSet: members,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          title: Text(members[index].profileName),
-                          leading: Text(members[index].profileId),
+                          title: Text(members[index].profileName!),
+                          leading: Text(members[index].profileId!),
                           onTap: () {},
                         );
                       },
