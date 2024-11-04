@@ -8,20 +8,26 @@ import 'package:nloffice_hrm/constant/app_languages.dart';
 import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/constant/internet_connect.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
+import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
+import 'package:nloffice_hrm/views/screen/diploman_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
+import 'package:nloffice_hrm/views/screen/salary_increase_decision.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:nloffice_hrm/views/screen/employee_managment_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
@@ -70,6 +76,9 @@ Future<void> main() async {
           ),
           ChangeNotifierProvider<ProfilesViewModel>(
             create: (context) => ProfilesViewModel(),
+          ),
+          ChangeNotifierProvider<DiplomasViewModel>(
+            create: (context) => DiplomasViewModel(),
           )
         ],
         child: const LocalizedApp(
@@ -115,7 +124,7 @@ class MainApp extends StatelessWidget {
 //     var iosDeviceInfo = await deviceInfo.iosInfo;
 //     final result =
 //         '${iosDeviceInfo.name}-${iosDeviceInfo.model}-${iosDeviceInfo.identifierForVendor}';
-//     SPUtill.setValue(SPUtill.keyIosDeviceToken, result);
+//     SPUtill.setValue(SPUtill.keyIosDeviceToken, result);SQ
 //     // return iosDeviceInfo.identifierForVendor; // unique ID on iOS
 //   } else {
 //     final androidDeviceInfo = await deviceInfo.androidInfo;
