@@ -15,6 +15,7 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
+import 'package:nloffice_hrm/views/screen/decision_contact_screen.dart';
 import 'package:nloffice_hrm/views/screen/diploman_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
@@ -106,7 +107,7 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: DiplomaScreen(),
+          home: EmploymentContractScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );
