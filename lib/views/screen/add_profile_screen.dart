@@ -1,9 +1,14 @@
+import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -39,7 +44,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
   DateTime _idLicenseDay = DateTime.now();
   bool _gender = false; // Assuming `false` is Male, `true` is Female
   bool _marriage = false; // Assuming `false` is Male, `true` is Female
-
+  //
+  String? _profileImageBase64;
   @override
   void dispose() {
     _profileIDController.dispose();
@@ -77,7 +83,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         marriage: _marriage,
         profileStatus: 1,
         //
-        profileImage: "test image",
+        profileImage:_profileImageBase64??"",
       );
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile)
@@ -93,6 +99,21 @@ class _AddProfilePageState extends State<AddProfilePage> {
       });
     }
   }
+  Future<void> _pickImage() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? imageFile = await picker.pickImage(
+    source: ImageSource.gallery,
+    maxWidth: 600, 
+    maxHeight: 600, 
+  );
+  if (imageFile != null) {
+    File file = File(imageFile.path);
+    String base64String = await AppStrings.ImagetoBase64(file);
+    setState(() {
+      _profileImageBase64 = base64String;
+    });
+  }
+}
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -137,7 +158,18 @@ class _AddProfilePageState extends State<AddProfilePage> {
             child: Form(
           key: _formKey,
           child: Column(children: [
-            CircleAvatar(),
+               GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundImage: _profileImageBase64 != null
+                      ? MemoryImage(base64Decode(_profileImageBase64!))
+                      : null,
+                  child: _profileImageBase64 == null
+                      ? Icon(Icons.add_a_photo)
+                      : null,
+                ),
+              ),
             Divider(),
             //Profile id + full name
             Row(

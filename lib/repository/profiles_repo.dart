@@ -33,11 +33,31 @@ class ProfilesRepository {
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile);
     if (response.statusCode == 200) {
+      print("add successful. Response body: ${response.body}");
       return true;
     } else {
+      print("Failed to add profile: ${response.statusCode}");
+      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
+ Future<bool> updateProfile(Profiles profile) async {
+  try {
+    final response = await service.updateProfile(profile); // Gọi phương thức từ ProfileService
+    if (response.statusCode == 200) {
+      print("Update successful. Response body: ${response.body}");
+      return true; // Cập nhật thành công
+    } else {
+      print("Failed to update profile: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      throw Exception('Failed to update profile');
+    }
+  } catch (error) {
+    print("An error occurred: $error");
+    throw Exception('Failed to update profile');
+  }
+}
+
 
   Future<Profiles> emailLogin(String email, String password) async {
     final response = await service.emailLogin(email, password);
