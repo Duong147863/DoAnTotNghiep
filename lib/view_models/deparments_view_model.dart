@@ -19,4 +19,12 @@ class DeparmentsViewModel extends ChangeNotifier {
     }
     fetchingData = false;
   }
+
+  Future<void> updateDepartment(Departments department) async {
+    try {
+      await repository.updateDepartment(department);
+    } catch (e) {
+      throw Exception('Failed to add datas: $e');
+    }
+  }
 }

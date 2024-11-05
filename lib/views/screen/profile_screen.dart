@@ -61,6 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _marriage = false;
   bool _isEditing = false;
   String? _profileImageBase64;
+  bool _isButtonEnabled = true; 
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
@@ -169,9 +170,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
         ),
         actions: [
-          IconButton(onPressed: () {
-            _updateProfile();
-          }, icon: Icon(Icons.save,color: Colors.red)),
+          IconButton(
+            enableFeedback: true,
+            onPressed: _isButtonEnabled ? () {
+      
+
+      // Tắt nút sau khi nhấn
+      setState(() {
+        _isButtonEnabled = false;
+      });
+      // Thực hiện hành động
+      _updateProfile();
+    } : null, // Nếu nút không được bật, sẽ không thực hiện hành động
+    icon: Icon(Icons.save, color: Colors.red),),
           IconButton(
             onPressed: () {
               setState(() {
