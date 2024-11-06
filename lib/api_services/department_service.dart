@@ -19,16 +19,23 @@ class DepartmentService {
         },
         body: json.encode(department.toJson()));
   }
+
   Future<http.Response> updateDepartment(Departments department) async {
     return await http.put(
-      Uri.parse(
-          '${AppStrings.baseUrlApi}department/update/${department.departmentID}'),
+      Uri.parse('${AppStrings.baseUrlApi}department/update'),
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
-      body: json.encode(
-          department.toJson()), 
+      body: json.encode(department.toJson()),
+    );
+  }
+  Future<http.Response> deleteDepartment(String departmentId) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}department/delete/$departmentId'),
+      headers: {
+        'Accept': 'application/json',
+      },
     );
   }
 }

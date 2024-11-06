@@ -17,4 +17,31 @@ class SalariesRepository {
       throw Exception('Failed to load data');
     }
   }
+   Future<bool> addSalary(Salaries salary) async {
+    final response = await service.addNewSalary(salary);
+    if (response.statusCode == 200) {
+      print("add successful. Response body: ${response.body}");
+      return true;
+    } else {
+      print("Failed to add profile: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      throw Exception('Failed to add profile: ${response.statusCode}');
+    }
+  }
+   Future<bool> updateSalary(Salaries salary) async {
+    try {
+      final response = await service.updateSalary(salary);
+      if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to update department: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to update department');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to update profile');
+    }
+  }
 }

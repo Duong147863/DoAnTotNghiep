@@ -4,6 +4,7 @@ import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/forgot_password/forgot_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
@@ -27,7 +28,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case AppRoutes.homeRoute:
       return MaterialPageRoute(
-          builder: (context) =>  HomeScreen(),
+          builder: (context) => HomeScreen(),
           settings: const RouteSettings(
             name: AppRoutes.homeRoute,
           ));
@@ -105,12 +106,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.salariListRoute:
-      return MaterialPageRoute(
-          builder: (context) => SalaryListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.salariListRoute,
-          ));
+    // case AppRoutes.salariListRoute:
+    //   return MaterialPageRoute(
+    //       builder: (context) => SalaryListScreen(),
+    //       settings: const RouteSettings(
+    //         name: AppRoutes.salariListRoute,
+    //       ));
 
     ///
     case AppRoutes.diplomaListRoute:
@@ -137,6 +138,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
+    case AppRoutes.relativesAddRoute:
+      return MaterialPageRoute(
+          builder: (context) => const AddRelativeScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.relativesAddRoute,
+          ));
+    ///
     case AppRoutes.decisionListRoute:
       return MaterialPageRoute(
           builder: (context) => DecisionsListScreen(),
@@ -158,7 +166,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           settings: const RouteSettings(
             name: AppRoutes.departmentDetailRoute,
           ));
-
+    //
     case AppRoutes.timeAttendanceRoute:
       return MaterialPageRoute(
           builder: (context) => TimeAttendance(),

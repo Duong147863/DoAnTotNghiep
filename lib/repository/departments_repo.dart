@@ -16,20 +16,37 @@ class DepartmentsRepository {
       throw Exception('Failed to load data');
     }
   }
+
   Future<bool> updateDepartment(Departments department) async {
-  try {
-    final response = await service.updateDepartment(department); 
-    if (response.statusCode == 200) {
-      print("Update successful. Response body: ${response.body}");
-      return true; // Cập nhật thành công
-    } else {
-      print("Failed to update department: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      throw Exception('Failed to update department');
+    try {
+      final response = await service.updateDepartment(department);
+      if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to update department: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to update department');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to update profile');
     }
-  } catch (error) {
-    print("An error occurred: $error");
-    throw Exception('Failed to update profile');
   }
-}
+  Future<bool> deleteDepartment(String departmentId) async {
+    try {
+      final response = await service.deleteDepartment(departmentId);
+      if (response.statusCode == 200) {
+        print("Delete successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to delete department: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to delete department');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to delete department');
+    }
+  }
 }

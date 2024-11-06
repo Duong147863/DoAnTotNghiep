@@ -8,7 +8,7 @@ class RelativesViewModel extends ChangeNotifier {
   List<Relatives> _list = [];
   bool fetchingData = false;
   List<Relatives> get listRelatives => _list;
-
+  String? errorMessage;
   Future<void> fetchRelativesOf(int profileID) async {
     fetchingData = true;
     try {
@@ -17,5 +17,12 @@ class RelativesViewModel extends ChangeNotifier {
       throw Exception('Failed to load data: $e');
     }
     fetchingData = false;
+  }
+  Future<void> addRelative(Relatives relatives) async {
+    try {
+      await repository.addRelative(relatives);
+    } catch (e) {
+      throw Exception('Failed to add datas: $e');
+    }
   }
 }

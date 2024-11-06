@@ -19,4 +19,19 @@ class SalariesViewModel extends ChangeNotifier {
     }
     fetchingData = false;
   }
+   Future<void> addSalary(Salaries salary) async {
+    try {
+      await repository.addSalary(salary);
+    } catch (e) {
+      throw Exception('Failed to add datas: $e');
+    }
+  }
+   Future<void> updateSalary(Salaries salary) async {
+    try {
+      await repository.updateSalary(salary);
+    } catch (e) {
+      throw Exception('Failed to add datas: $e');
+    }
+  }
+  
 }

@@ -28,4 +28,32 @@ class PositionsViewModel extends ChangeNotifier {
       throw Exception('Failed to create data: $e');
     }
   }
+
+  Future<void> updatePosition(Positions positions) async {
+    try {
+      await repository.updatedPosition(positions);
+
+      int index =
+          _list.indexWhere((pos) => pos.positionId == positions.positionId);
+      if (index != -1) {
+        _list[index] = positions;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to update department: $e');
+    }
+  }
+  Future<void> deletePosition(String positionId) async {
+    try {
+      bool success = await repository.deletePosition(positionId);
+      if (success) {
+        _list.removeWhere((position) => position.positionId == positionId);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to delete position');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete position: $e');
+    }
+  }
 }

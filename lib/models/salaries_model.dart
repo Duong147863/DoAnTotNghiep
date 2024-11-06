@@ -1,52 +1,31 @@
 class Salaries {
-  Salaries(
-      {required this.salaryId,
-      required this.salaryCoeffcient,
-      this.allowances,
-      this.bonus,
-      this.minus,
-      required this.peronalTax,
-      required this.advanceMoney});
+  Salaries({
+    required this.salaryId,
+    required this.salaryCoefficient,
+    this.allowances,
+    required this.personalTax,
+  });
+
   String salaryId;
-  double salaryCoeffcient;
+  double salaryCoefficient;
   double? allowances;
-  double? bonus;
-  double? minus;
-  double peronalTax;
-  double advanceMoney;
+  double personalTax;
+
   factory Salaries.fromJson(Map<String, dynamic> json) {
     return Salaries(
       salaryId: json["salary_id"],
-      salaryCoeffcient: (json["salary_coefficient"] is int)
-          ? (json["salary_coefficient"] as int).toDouble()
-          : json["salary_coefficient"],
-      allowances: (json["allowances"] is int)
-          ? (json["allowances"] as int).toDouble()
-          : json["allowances"],
-      bonus: (json["bonus"] is int)
-          ? (json["bonus"] as int).toDouble()
-          : json["bonus"],
-      minus: (json["minus"] is int)
-          ? (json["minus"] as int).toDouble()
-          : json["minus"],
-      peronalTax: (json["personal_tax"] is int)
-          ? (json["personal_tax"] as int).toDouble()
-          : json["personal_tax"],
-      advanceMoney: (json["advance_money"] is int)
-          ? (json["advance_money"] as int).toDouble()
-          : json["advance_money"],
+      salaryCoefficient:double.parse(json["salary_coefficient"]),
+      allowances:double.parse(json["allowances"]),
+      personalTax: double.parse(json["personal_tax"])
     );
-
   }
+
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map["salary_id"] = salaryId;
-    map["salary_coefficient"] = salaryCoeffcient;
+    map["salary_coefficient"] = salaryCoefficient;
     map["allowances"] = allowances;
-    map["bonus"] = bonus;
-    map["minus"] = minus;
-    map["personal_tax"] = peronalTax;
-    map["advance_money"] = advanceMoney;
+    map["personal_tax"] = personalTax;
     return map;
   }
 }
