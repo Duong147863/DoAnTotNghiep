@@ -16,13 +16,16 @@ class RelativesRepository {
       throw Exception('Failed to load data');
     }
   }
-
-  Future<bool> addNewRelative(Relatives relative) async {
-    final response = await service.createNewRelative(relative);
+  
+ Future<bool> addRelative(Relatives relatives) async {
+    final response = await service.createNewRelative(relatives);
     if (response.statusCode == 200) {
+      print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      throw Exception('Failed to add relative: ${response.statusCode}');
+      print("Failed to add profile: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
 }

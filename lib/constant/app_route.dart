@@ -21,4 +21,5 @@ class AppRoutes {
   static const employeeListRoute = "list_employee_screen";
   static const employeeManagmentScreen = "employee_management_screen";
   static const leaveRequestList = "leave_request_list_screen";
+  static const relativesAddRoute = "add_relative_screen";
 }

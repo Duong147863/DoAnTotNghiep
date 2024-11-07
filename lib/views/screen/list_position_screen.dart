@@ -6,6 +6,7 @@ import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_position_screen.dart';
 import 'package:provider/provider.dart';
 import '../../constant/app_route.dart';
 import '../custom_widgets/custom_list_view.dart';
@@ -44,14 +45,28 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
       }
     });
   }
-
+  
   void _handleAdd(Positions newPosition) {
     setState(() {
       positions.add(newPosition);
       _handleSearch('');
     });
   }
-
+  void _handleUpdate(Positions updatedPosition) {
+    setState(() {
+      int index = positions.indexWhere((pos) => pos.positionId == updatedPosition.positionId);
+      if (index != -1) {
+        positions[index] = updatedPosition; 
+      }
+    });
+  }
+   void _handleDelete(Positions deletePosition) {
+    setState(() {
+      positions = positions
+          .where((pos) => pos.positionId != deletePosition.positionId)
+          .toList();
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -110,8 +125,19 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
                     title: Text(positions[index].positionName.toString()),
                     trailing: Text(positions[index].positionId.toString()),
                     // leading: Text(accounts[index].positionId.toString()),
-                    onTap: () {
-                      // Navigator.pushNamed(context, AppRoutes.ponsitionListRoute);
+                     onTap: () async {
+                      // Gọi màn hình thông tin phòng ban và chờ kết quả
+                      final updatedPosition = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PositonInfoScreen(positions: positions[index]),
+                        ),
+                      );
+
+                      // Kiểm tra xem có dữ liệu cập nhật không
+                      if (updatedPosition != null) {
+                        _handleUpdate(updatedPosition);
+                      }
                     },
                   );
                 },

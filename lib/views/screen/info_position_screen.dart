@@ -1,51 +1,46 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
-import 'package:nloffice_hrm/models/salaries_model.dart';
-import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
+import 'package:nloffice_hrm/models/positions_model.dart';
+import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class InfoSalariScreen extends StatefulWidget {
-  final Salaries? salaries;
-  const InfoSalariScreen({super.key, required this.salaries});
+class PositonInfoScreen extends StatefulWidget {
+  final Positions? positions;
+  const PositonInfoScreen({super.key, this.positions});
 
   @override
-  State<InfoSalariScreen> createState() => _InfoSalariScreenState();
+  State<PositonInfoScreen> createState() => _PositonInfoScreenState();
 }
 
-class _InfoSalariScreenState extends State<InfoSalariScreen> {
+class _PositonInfoScreenState extends State<PositonInfoScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _salaryIDController = TextEditingController();
-  final _salaryCoefficientController = TextEditingController();
-  final _allowancesController = TextEditingController();
-  final _personalTaxController = TextEditingController();
+  final _positionIDController = TextEditingController();
+  final _positionNameController = TextEditingController();
   bool _isEditing = false;
   void initState() {
     super.initState();
-    _salaryIDController.text = widget.salaries!.salaryId;
-    _salaryCoefficientController.text =
-        widget.salaries!.salaryCoefficient.toString();
-    _personalTaxController.text = widget.salaries!.personalTax.toString();
-    _allowancesController.text = widget.salaries!.allowances.toString();
+    _positionIDController.text = widget.positions!.positionId;
+    _positionNameController.text = widget.positions!.positionName;
   }
 
-  void _updateSalary() async {
+  void _updatePosition() async {
     if (_formKey.currentState!.validate()) {
-      final updatedSalary = Salaries(
-        salaryId: _salaryIDController.text,
-        salaryCoefficient: double.parse(_salaryCoefficientController.text),
-        allowances: double.parse(_allowancesController.text),
-        personalTax: double.parse(_personalTaxController.text),
-      );
+      final updatedPosition = Positions(
+          positionId: _positionIDController.text,
+          positionName: _positionNameController.text);
       try {
-        await Provider.of<SalariesViewModel>(context, listen: false)
-            .updateSalary(updatedSalary);
+        await Provider.of<PositionsViewModel>(context, listen: false)
+            .updatePosition(updatedPosition);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Department Updated successfully!')),
         );
+        Navigator.pop(context, updatedPosition);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update Department: $e')),
@@ -53,12 +48,27 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
       }
     }
   }
+  void _deletePosition() async {
+  try {
+    await Provider.of<PositionsViewModel>(context, listen: false)
+        .deletePosition(widget.positions!.positionId); 
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Position deleted successfully')),
+    );
+    Navigator.pop(context);
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to delete position: $e')),
+    );
+  }
+}
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Info Salary Screen'.tr(),
+      titletext: 'position_info'.tr(),
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -76,11 +86,11 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTextFormField(
-                    textEditingController: _salaryIDController,
-                    labelText: 'salary_id'.tr(),
+                    textEditingController: _positionIDController,
+                    labelText: 'position_id'.tr(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_salary_id'.tr();
+                        return 'please_enter_position_id'.tr();
                       }
                       return null;
                     },
@@ -88,35 +98,11 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                   ).px8(),
                   SizedBox(height: 16),
                   CustomTextFormField(
-                    textEditingController: _salaryCoefficientController,
-                    labelText: 'Salary_coefficient'.tr(),
+                    textEditingController: _positionNameController,
+                    labelText: 'position_name'.tr(),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_Salary_coefficient'.tr();
-                      }
-                      return null;
-                    },
-                    enabled: _isEditing,
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                    textEditingController: _allowancesController,
-                    labelText: 'allowances'.tr(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_allowances'.tr();
-                      }
-                      return null;
-                    },
-                    enabled: _isEditing,
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                    textEditingController: _personalTaxController,
-                    labelText: 'personal_Tax'.tr(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_personal_Tax'.tr();
+                        return 'please_enter_position_name'.tr();
                       }
                       return null;
                     },
@@ -129,7 +115,7 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                       IconButton(
                         icon: Icon(Icons.save,
                             color: const Color.fromARGB(255, 33, 243, 61)),
-                        onPressed: _updateSalary,
+                        onPressed: _updatePosition,
                       ),
                       IconButton(
                         icon: Icon(Icons.edit, color: Colors.blue),
@@ -158,7 +144,7 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                                   TextButton(
                                     onPressed: () {
                                       Navigator.of(context).pop(); // Đóng dialog
-                                       // Thực hiện xóa
+                                      _deletePosition(); // Thực hiện xóa
                                     },
                                     child: Text('Delete'),
                                   ),

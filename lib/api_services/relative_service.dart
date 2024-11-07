@@ -11,7 +11,7 @@ class RelativeService {
   }
 
   Future<http.Response> createNewRelative(Relatives Relative) async {
-    return await http.post(Uri.parse('${AppStrings.baseUrlApi}relative'),
+    return await http.post(Uri.parse('${AppStrings.baseUrlApi}relatives/create'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json'

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
-import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
-import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class DepartmentsScreen extends StatefulWidget {
   @override
@@ -23,8 +20,7 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DeparmentsViewModel>(context, listen: false)
-        .fetchAllDepartments();
+    Provider.of<DeparmentsViewModel>(context, listen: false).fetchAllDepartments();
   }
 
   void _handleDelete(Departments department) {
@@ -38,6 +34,15 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   void _handleAdd(Departments newDepartment) {
     setState(() {
       departments.add(newDepartment);
+    });
+  }
+
+  void _handleUpdate(Departments updatedDepartment) {
+    setState(() {
+      int index = departments.indexWhere((dep) => dep.departmentID == updatedDepartment.departmentID);
+      if (index != -1) {
+        departments[index] = updatedDepartment; // Cập nhật thông tin department
+      }
     });
   }
 
@@ -70,26 +75,18 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
           padding: const EdgeInsets.all(16.0),
           child: CustomSearchBar(
             hintText: '',
-            suggestions: departments
-                .map(
-                  (department) => department.departmentName!,
-                )
-                .toList(),
+            suggestions: departments.map((department) => department.departmentName!).toList(),
             onTextChanged: _handleSearch,
           ),
         ),
         Expanded(
-          child: Consumer<DeparmentsViewModel>(
-              builder: (context, viewModel, child) {
+          child: Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
             if (!viewModel.fetchingData && viewModel.listDepartments.isEmpty) {
-              Provider.of<DeparmentsViewModel>(context, listen: false)
-                  .fetchAllDepartments();
+              Provider.of<DeparmentsViewModel>(context, listen: false).fetchAllDepartments();
             }
             if (viewModel.fetchingData) {
-              // While data is being fetched
               return Center(child: CircularProgressIndicator());
             } else {
-              // If data is successfully fetched
               List<Departments> departments = viewModel.listDepartments;
               return CustomListView(
                 dataSet: departments,
@@ -100,14 +97,19 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
                       departments[index].departmentID.toString(),
                       style: TextStyle(fontSize: 16),
                     ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DepartmentInfoScreen(
-                              departments: departments[index],
-                            ),
-                          ));
+                    onTap: () async {
+                      // Gọi màn hình thông tin phòng ban và chờ kết quả
+                      final updatedDepartment = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DepartmentInfoScreen(departments: departments[index]),
+                        ),
+                      );
+
+                      // Kiểm tra xem có dữ liệu cập nhật không
+                      if (updatedDepartment != null) {
+                        _handleUpdate(updatedDepartment);
+                      }
                     },
                   );
                 },
@@ -116,6 +118,7 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
           }),
         ),
       ],
+      // Bạn có thể bỏ comment nếu muốn sử dụng Floating Action Button
       // fab: FloatingActionButton(
       //   onPressed: () {
       //     Navigator.push(

@@ -46,6 +46,11 @@ class _HomeScreenState extends State<HomeScreen> {
         'text': 'department'.tr(),
         'route': AppRoutes.departmentListRoute
       },
+       {
+        'icon': Icons.business_center_rounded,
+        'text': 'position'.tr(),
+        'route': AppRoutes.positionListRoute
+      },
     ];
   }
 
