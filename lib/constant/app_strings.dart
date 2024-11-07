@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:localize_and_translate/localize_and_translate.dart';
 
 class AppStrings {
   AppStrings._();
 
-  static const String baseUrlApi = "http://192.168.1.2:8000/api/v1/";
+  static const String baseUrlApi = "http://192.168.1.10:8000/api/v1/";
 
   static String notificationsKey = "notifications";
   static String SHARED_LOGGED = "USER_IS_LOGGED";
@@ -28,4 +27,3 @@ class AppStrings {
     return base64.encode(bytes);
   }
 }
-

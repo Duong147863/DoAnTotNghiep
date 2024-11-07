@@ -30,17 +30,17 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
     List<Map<String, dynamic>> data = [
       {
         'icon': Icons.add_circle_outline,
-        'text': 'add_employee'.tr(),
+        'text': 'Thêm nhân viên'.tr(),
         'route': AppRoutes.addprofileRoute
       },
       {
         'icon': Icons.supervisor_account,
-        'text': 'employee_management'.tr(),
+        'text': 'Danh sách nhân viên'.tr(),
         'route': AppRoutes.employeeListRoute
       },
       {
         'icon': Icons.calendar_month_outlined,
-        'text': 'leave_managment'.tr(),
+        'text': 'Nghỉ phép'.tr(),
         'route': AppRoutes.leaveRequestList
       },
     ];

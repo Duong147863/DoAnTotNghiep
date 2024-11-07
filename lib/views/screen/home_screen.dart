@@ -33,18 +33,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return [
       {
         'icon': Icons.supervisor_account,
-        'text': 'employee_management'.tr(),
+        'text': 'Quản lí nhân sự'.tr(),
         'route': AppRoutes.employeeManagmentScreen
       },
       {
         'icon': Icons.currency_exchange,
-        'text': 'payroll_managment'.tr(),
+        'text': 'Quản lí lương'.tr(),
         'route': AppRoutes.salariListRoute,
       },
       {
         'icon': Icons.business_center_rounded,
-        'text': 'department'.tr(),
+        'text': 'Quản lí phòng ban'.tr(),
         'route': AppRoutes.departmentListRoute
+      },
+      {
+        'icon': Icons.business_center_rounded,
+        'text': 'Quản lí chức vụ'.tr(),
+        'route': AppRoutes.positionListRoute
       },
     ];
   }
@@ -78,42 +83,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  ProfileScreen(profile: widget.profile),
-                            ),
-                          );
-                        },
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.white,
-                          child: ClipOval(
-                            child: SizedBox(
-                              width: 60,
-                              height: 60,
-                              child: widget.profile!.profileImage != null &&
-                                      widget.profile!.profileImage!.isNotEmpty
-                                  ? Image.memory(
-                                      base64Decode(
-                                          widget.profile!.profileImage!),
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        print("Error loading image: $error");
-                                        return Icon(Icons.error,
-                                            size: 30, color: Colors.grey);
-                                      },
-                                    )
-                                  : Icon(Icons.person,
-                                      size: 30, color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute<void>(
+                      //         builder: (BuildContext context) =>
+                      //             ProfileScreen(profile: widget.profile),
+                      //       ),
+                      //     );
+                      //   },
+                      //   child: CircleAvatar(
+                      //     radius: 30,
+                      //     backgroundColor: Colors.white,
+                      //     child: ClipOval(
+                      //       child: SizedBox(
+                      //         width: 60,
+                      //         height: 60,
+                      //         child: widget.profile!.profileImage != null &&
+                      //                 widget.profile!.profileImage.isNotEmpty
+                      //             ? Image.memory(
+                      //                 base64Decode(
+                      //                     widget.profile!.profileImage),
+                      //                 fit: BoxFit.cover,
+                      //                 errorBuilder:
+                      //                     (context, error, stackTrace) {
+                      //                   return Icon(Icons.error,
+                      //                       size: 30, color: Colors.grey);
+                      //                 },
+                      //               )
+                      //             :
+                      //             // AssetImage("assets/images/logos/white_logo.png")
+                      //             Icon(Icons.person,
+                      //                 size: 30, color: Colors.grey),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                       SizedBox(height: 8),
                       Text(
                         widget.profile!.profileName!,
