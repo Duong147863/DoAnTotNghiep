@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui';
 
 import 'package:localize_and_translate/localize_and_translate.dart';
 
@@ -28,4 +27,3 @@ class AppStrings {
     return base64.encode(bytes);
   }
 }
-

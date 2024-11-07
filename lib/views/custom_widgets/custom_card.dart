@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/models/projects_model.dart';
 
-class ProjectCard extends StatelessWidget {
-  final Projects project;
+class CustomCard extends StatefulWidget {
+  String title;
+  String subttile;
+  Function onTap;
+  CustomCard(
+      {super.key,
+      required this.title,
+      required this.onTap,
+      required this.subttile});
 
-  ProjectCard({
-    required this.project,
-  });
+  @override
+  State<CustomCard> createState() => _CustomCardState();
+}
 
+class _CustomCardState extends State<CustomCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -22,24 +29,25 @@ class ProjectCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                project.projectName ?? 'Tên dự án không có',
+                widget.title,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18.0,
                 ),
               ),
               SizedBox(height: 8.0),
-              // Text(
-              //   'Thực hiện: ${project.departmentId ?? 'Chưa xác định'}',
-              //   style: TextStyle(
-              //     fontSize: 16.0,
-              //     color: Colors.grey,
-              //   ),
-              // ),
+              Text(
+                widget.subttile,
+                style: TextStyle(
+                  fontSize: 16.0,
+                  color: Colors.grey,
+                ),
+              ),
             ],
           ),
         ),
       ),
+      onTap: () => widget.onTap,
     );
   }
 }

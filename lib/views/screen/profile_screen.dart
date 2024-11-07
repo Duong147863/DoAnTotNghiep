@@ -79,9 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // _passwordController.text = widget.profile!.password;
     _temporaryAddressController.text = widget.profile!.temporaryAddress;
     _currentAddressController.text = widget.profile!.currentAddress;
-    _profileImageBase64 =widget.profile!.profileImage;
-    _marriage=widget.profile!.marriage;
-    _gender=widget.profile!.gender;
+    _profileImageBase64 = widget.profile!.profileImage;
+    _marriage = widget.profile!.marriage;
+    _gender = widget.profile!.gender;
   }
 
   void _updateProfile() async {
@@ -101,9 +101,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
-          profileImage: _profileImageBase64??'');
+          profileImage: _profileImageBase64 ?? '');
 
-       Provider.of<ProfilesViewModel>(context, listen: false)
+      Provider.of<ProfilesViewModel>(context, listen: false)
           .updateProfile(updatedProfile)
           .then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -131,27 +131,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-  try {
-    final ImagePicker picker = ImagePicker();
-    final XFile? imageFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 600,
-      maxHeight: 600,
-    );
-    if (imageFile != null) {
-      File file = File(imageFile.path);
-      String base64String = await AppStrings.ImagetoBase64(file);
-      setState(() {
-        _profileImageBase64 = base64String;
-      });
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? imageFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 600,
+        maxHeight: 600,
+      );
+      if (imageFile != null) {
+        File file = File(imageFile.path);
+        String base64String = await AppStrings.ImagetoBase64(file);
+        setState(() {
+          _profileImageBase64 = base64String;
+        });
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $error')),
+      );
     }
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error picking image: $error')),
-    );
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +163,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         foregroundColor: Colors.white,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back,color: Colors.red,),
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.red,
+          ),
           onPressed: () {
             Navigator.of(context).pop(); // Quay lại trang trước đó
           },
@@ -191,7 +193,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
             icon: Icon(Icons.edit_outlined, color: Colors.red),
           ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.delete_outline,color: Colors.red)),
+          IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.delete_outline, color: Colors.red)),
         ],
       ),
       extendBodyBehindAppBar: false,
