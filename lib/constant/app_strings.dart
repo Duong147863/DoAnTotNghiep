@@ -7,7 +7,7 @@ import 'package:localize_and_translate/localize_and_translate.dart';
 class AppStrings {
   AppStrings._();
 
-  static const String baseUrlApi = "http://192.168.1.10:8000/api/v1/";
+  static const String baseUrlApi = "http://192.168.1.3:8000/api/v1/";
 
   static String notificationsKey = "notifications";
   static String SHARED_LOGGED = "USER_IS_LOGGED";

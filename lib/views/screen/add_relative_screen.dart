@@ -5,7 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
@@ -21,75 +23,60 @@ class AddRelativeScreen extends StatefulWidget {
 }
 
 class _AddRelativeScreenState extends State<AddRelativeScreen> {
+   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  final _profileNameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _birthdayController = TextEditingController();
-  final _placeOfBirthController = TextEditingController();
-  final _identifiNumController = TextEditingController();
-  final _idLicenseDayController = TextEditingController();
-  final _nationController = TextEditingController();
-  final _temporaryAddressController = TextEditingController();
-  final _currentAddressController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _relativeNameController = TextEditingController();
+  final _relationshipController = TextEditingController();
+  final _phoneRelativeController = TextEditingController();
+  final _birthdayRelativeController = TextEditingController();
+  DateTime _birthdayRelative = DateTime.now();
+   final _nationRelativeController = TextEditingController();  
+  final _temporaryAddressRelativeController = TextEditingController();
+  final _currentAddressRelativeController = TextEditingController();
+  final _relativeJobController = TextEditingController();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-  DateTime _birthday = DateTime.now();
-  DateTime _idLicenseDay = DateTime.now();
-  bool _gender = false; // Assuming `false` is Male, `true` is Female
-  bool _marriage = false; // Assuming `false` is Male, `true` is Female
-
   @override
-  void dispose() {
+   void dispose() {
     _profileIDController.dispose();
-    _profileNameController.dispose();
-    _phoneController.dispose();
-    _emailController.dispose();
-    _birthdayController.dispose();
-    _placeOfBirthController.dispose();
-    _identifiNumController.dispose();
-    _idLicenseDayController.dispose();
-    _nationController.dispose();
-    _temporaryAddressController.dispose();
-    _currentAddressController.dispose();
-    _passwordController.dispose();
+    _relativeNameController.dispose();
+    _relationshipController.dispose();
+    _phoneRelativeController.dispose();
+    _birthdayRelativeController.dispose();
+    _nationRelativeController.dispose();
+    _temporaryAddressRelativeController.dispose();
+    _currentAddressRelativeController.dispose();
+    _relativeJobController.dispose();
     super.dispose();
   }
-
   void _submit() {
-    final newProfile = Profiles(
+  if (_formKey.currentState!.validate()) {
+    final addNewRelative = Relatives(
       profileId: _profileIDController.text,
-      profileName: _profileNameController.text,
-      phone: _phoneController.text,
-      email: _emailController.text,
-      birthday: _birthday,
-      temporaryAddress: _temporaryAddressController.text,
-      currentAddress: _currentAddressController.text,
-      identifiNum: _identifiNumController.text,
-      idLicenseDay: _idLicenseDay,
-      password: _passwordController.text,
-      placeOfBirth: _placeOfBirthController.text,
-      nation: _nationController.text,
-      gender: _gender,
-      roleID: 5,
-      marriage: _marriage,
-      profileImage: "abctest",
-      profileStatus: 1,
+      relativesName: _relativeNameController.text,
+      relationship: _relationshipController.text,
+      relativesPhone: _phoneRelativeController.text,
+      relativesBirthday: _birthdayRelative,
+      relativesNation: _nationRelativeController.text,
+      relativesTempAddress: _temporaryAddressRelativeController.text,
+      relativesCurrentAddress: _currentAddressRelativeController.text,
+      relativeJob: _relativeJobController.text,
     );
-    print(newProfile.marriage);
-    Provider.of<ProfilesViewModel>(context, listen: false)
-        .addProfile(newProfile)
+    print('Data to submit: ${addNewRelative.toJson()}');
+    Provider.of<RelativesViewModel>(context, listen: false)
+        .addRelative(addNewRelative)
         .then((_) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile added successfully!')),
-      );
-      Navigator.pop(context);
-    }).catchError((error) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      // SnackBar(content: Text('Failed to add profile: $error')),
-      // );
-    });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Relative added successfully!')),
+          );
+          Navigator.pop(context);
+        }).catchError((error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to add relative: $error')),
+          );
+        });
   }
+}
+
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -128,123 +115,117 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
           )
         ],
         resizeToAvoidBottomInset: true,
-        titletext: "add_new_profile",
+        titletext: "Add New Relatives",
         appBarColor: AppColor.primaryLightColor,
         body: SingleChildScrollView(
-          child: Column(children: [
-            CircleAvatar(),
-            Divider(),
-            //Profile id + full name
-            Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _profileIDController,
-                  labelText: 'profile_id'.tr(),
-                ).px8().w(150),
-                CustomTextFormField(
-                  textEditingController: _profileNameController,
-                  labelText: 'full_name'.tr(),
-                ).w(254),
-              ],
-            ).py16(),
-            //Birthday + Place of birth
-            Row(
-              children: [
-                _buildDateField('Ngày sinh', _birthdayController, _birthday,
-                    (date) {
-                  setState(() {
-                    _birthday = date;
-                    _birthdayController.text =
-                        "${_birthday.toLocal()}".split(' ')[0];
-                  });
-                }).px(8).w(150),
-                CustomTextFormField(
-                  textEditingController: _placeOfBirthController,
-                  labelText: 'place_of_birth'.tr(),
-                ).w(254),
-              ],
-            ),
-            //Gender + Marriage
-            Row(
-              children: [
-                Text('gender'.tr()).px(8),
-                _buildDropdownField('Chọn giới tính', _gender, (value) {
-                  setState(() {
-                    _gender = value!;
-                  });
-                }).p(8).w(130),
-                Text('marriage'.tr()),
-                Radio(
-                  value: true,
-                  onChanged: (value) {
-                    _marriage = value!;
-                  },
-                  groupValue: _marriage,
-                ),
-                Text('yes'.tr()),
-                Radio(
-                  value: false,
-                  onChanged: (value) {
+          child: Form(
+            key: _formKey,
+            child: Column(children: [
+              Row(
+                children: [
+                  CustomTextFormField(
+                    textEditingController: _profileIDController,
+                    labelText: 'profile_id'.tr(),
+                     validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_profile_id'.tr();
+                      }
+                      return null;
+                    },
+                  ).px8().w(150),
+                  CustomTextFormField(
+                    textEditingController: _relativeNameController,
+                    labelText: 'full_name_relative'.tr(),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_full_name_relative'.tr();
+                      }
+                      return null;
+                    },
+                  ).w(254),
+                ],
+              ).py16(),
+              //relationship + relativephone
+              Row(
+                children: [
+                     CustomTextFormField(
+                    textEditingController: _relationshipController,
+                    labelText: 'relationship'.tr(),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_relationship'.tr();
+                      }
+                      return null;
+                    },
+                  ).px8().w(150),
+                  CustomTextFormField(
+                    textEditingController: _phoneRelativeController,
+                    labelText: 'relative_phone'.tr(),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_relative_phone'.tr();
+                      }
+                      return null;
+                    },
+                  ).w(254),
+                ],
+              ),
+              //Nation
+              CustomTextFormField(
+                validator: (value) =>
+                    value.isEmptyOrNull ? 'Please enter nation' : null,
+                textEditingController: _nationRelativeController,
+                labelText: 'relative_nation'.tr(),
+              ).p(8),
+              //Phone
+              Row(
+                children: [
+                  _buildDateField('Ngày sinh', _birthdayRelativeController, _birthdayRelative,
+                      (date) {
                     setState(() {
-                      _marriage = value!;
+                      _birthdayRelative = date;
+                      _birthdayRelativeController.text =
+                          "${_birthdayRelative.toLocal()}".split(' ')[0];
                     });
-                  },
-                  groupValue: _marriage,
-                ),
-                Text('no'.tr()),
-              ],
-            ),
-            // ID number + license day
-            Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _identifiNumController,
-                  labelText: 'id_num'.tr(),
-                ).w(200).px8(),
-                _buildDateField('id_license_date'.tr(), _idLicenseDayController,
-                    _idLicenseDay, (date) {
-                  setState(() {
-                    _idLicenseDay = date;
-                    _idLicenseDayController.text =
-                        "${_idLicenseDay.toLocal()}".split(' ')[0];
-                  });
-                }).w(184),
-              ],
-            ).py8(),
-            //Nation
-            CustomTextFormField(
-              validator: (value) =>
-                  value.isEmptyOrNull ? 'Please enter nation' : null,
-              textEditingController: _nationController,
-              labelText: 'nation'.tr(),
-            ).p(8),
-            //Phone
-            Row(
-              children: [
-                CustomTextFormField(
-                  validator: (value) =>
-                      value.isEmptyOrNull ? 'please_enter_phone_number' : null,
-                  textEditingController: _phoneController,
-                  labelText: 'phone'.tr(),
-                  maxLines: 1,
-                ).w(145),
-              ],
-            ).py(8),
-            //Address
-            CustomTextFormField(
-              textEditingController: _temporaryAddressController,
-              labelText: 'temp_address'.tr(),
-            ).p8(),
-            CustomTextFormField(
-              textEditingController: _currentAddressController,
-              labelText: 'current_address'.tr(),
-            ).p8(),
-            //
-          ]),
+                  }).px(8).w(150),
+                  CustomTextFormField(
+                    validator: (value) =>
+                        value.isEmptyOrNull ? 'please_enter_phone_number' : null,
+                    textEditingController: _relativeJobController,
+                    labelText: 'relative_job'.tr(),
+                    maxLines: 1,
+                    
+                  ).w(254),
+                ],
+              ).py(8),
+              //Address
+              CustomTextFormField(
+                textEditingController: _temporaryAddressRelativeController,
+                labelText: 'temp_address'.tr(),
+                validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_temp_address'.tr();
+                      }
+                      return null;
+                    },
+              ).p8(),
+              CustomTextFormField(
+                textEditingController: _currentAddressRelativeController,
+                labelText: 'current_address'.tr(),
+                validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_current_address'.tr();
+                      }
+                      return null;
+                    },
+              ).p8(),
+              //
+            ]),
+          ),
         ));
   }
 
-  Widget _buildDateField(String label, TextEditingController controller,
+ Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -255,6 +236,12 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
             readOnly: true,
             style: TextStyle(color: Colors.black),
             controller: controller,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'please_enter_relative_birthday'.tr();
+              }
+              return null;
+            },
             decoration: InputDecoration(
               labelStyle: TextStyle(color: Colors.black),
               labelText: label,
@@ -267,23 +254,4 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     );
   }
 
-  Widget _buildDropdownField(
-      String label, bool currentValue, Function(bool?) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: DropdownButtonFormField<bool>(
-        value: currentValue,
-        decoration: InputDecoration(
-          labelStyle: TextStyle(color: Colors.black),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-        items: [
-          DropdownMenuItem(value: false, child: Text('Nam')),
-          DropdownMenuItem(value: true, child: Text('Nữ')),
-        ],
-        onChanged: onChanged,
-        validator: (value) => value == null ? 'Please select a gender' : null,
-      ),
-    );
-  }
 }

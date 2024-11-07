@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
@@ -18,7 +19,23 @@ class PositionService {
         body: json.encode(position.toJson()));
   }
 
-  Future<http.Response> updateExistedPosition() async {
-    return await http.put(Uri.parse(''));
+  Future<http.Response> updatePosition(Positions position) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}position/update'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(position.toJson()),
+    );
+  }
+
+  Future<http.Response> deletePosition(String positionId) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}position/delete/$positionId'),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
   }
 }
