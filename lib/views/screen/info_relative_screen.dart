@@ -5,6 +5,8 @@ import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/edit_relative_screen.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 
 class InfoRelativeScreen extends StatefulWidget {
   final Profiles profile;
@@ -21,16 +23,26 @@ class InfoRelativeScreen extends StatefulWidget {
 
 class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
   List<Relatives> relatives = [];
+  List<Relatives> filteredRelatives = [];
 
   @override
   void initState() {
     super.initState();
     relatives = widget.relatives;
+    filteredRelatives = relatives;
   }
 
-  void addRelative(Relatives relative) {
+  void _handleSearch(String query) {
     setState(() {
-      relatives.add(relative);
+      if (query.isEmpty) {
+        filteredRelatives = relatives;
+      } else {
+        filteredRelatives = relatives.where((relative) {
+          return relative.relativesName!
+              .toLowerCase()
+              .contains(query.toLowerCase());
+        }).toList();
+      }
     });
   }
 
@@ -45,18 +57,28 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Tìm kiếm thân nhân
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: CustomSearchBar(
+                hintText: 'Tìm kiếm thân nhân',
+                suggestions: relatives.map((relative) => relative.relativesName!).toList(),
+                onTextChanged: _handleSearch,
+              ),
+            ),
+            
+            // Hiển thị danh sách thân nhân
             Expanded(
-              child: ListView.builder(
-                itemCount: relatives.length,
+              child: CustomListView(
+                dataSet: filteredRelatives,
                 itemBuilder: (context, index) {
-                  final relative = relatives[index];
+                  final relative = filteredRelatives[index];
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Thân nhân ${index + 1}',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 8),
                       InfoTile(
@@ -69,15 +91,9 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                         label: 'Số điện thoại',
                         value: relative.relativesPhone ?? 'Unknown',
                       ),
-                      // InfoTile(
-                      //   icon: Icons.cake,
-                      //   label: 'Ngày sinh',
-                      //   value: relative.relativesBirthday ?? 'Unknown',
-                      // ),
                       InfoTile(
                         icon: Icons.cake,
                         label: 'Ngày sinh',
-                        // Nếu relativesBirthday không null, định dạng ngày thành chuỗi. Nếu null, hiển thị 'Unknown'
                         value: relative.relativesBirthday != null
                             ? DateFormat('dd/MM/yyyy')
                                 .format(relative.relativesBirthday!)
@@ -90,12 +106,13 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                             icon: Icon(Icons.edit, color: Colors.blue),
                             onPressed: () {
                               Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => EditRelativeScreen(
-                                      relative: relative,
-                                    ),
-                                  ));
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => EditRelativeScreen(
+                                    relative: relative,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ],
@@ -106,6 +123,8 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                 },
               ),
             ),
+            
+            // Nút thêm thân nhân
             SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
@@ -140,13 +159,13 @@ class InfoTile extends StatelessWidget {
         children: [
           Icon(icon, color: Colors.brown),
           SizedBox(width: 16),
-          Text('$label: ',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+          Text('$label: ', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
           Expanded(
-              child: Text(
-            value,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          )),
+            child: Text(
+              value,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
         ],
       ),
     );

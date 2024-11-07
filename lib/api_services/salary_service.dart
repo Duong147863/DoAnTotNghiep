@@ -18,4 +18,14 @@ class SalaryService {
         },
         body: json.encode(salary.toJson()));
   }
+  Future<http.Response> updateSalary(Salaries salary) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}salary/update'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(salary.toJson()),
+    );
+  }
 }

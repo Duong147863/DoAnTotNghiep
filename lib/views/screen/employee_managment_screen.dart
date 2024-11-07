@@ -38,11 +38,22 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
         'text': 'Danh sách nhân viên'.tr(),
         'route': AppRoutes.employeeListRoute
       },
+       {
+        'icon': Icons.calendar_month_outlined,
+        'text': 'relatives_add'.tr(),
+        'route': AppRoutes.relativesAddRoute
+      },
       {
         'icon': Icons.calendar_month_outlined,
         'text': 'Nghỉ phép'.tr(),
         'route': AppRoutes.leaveRequestList
       },
+      {
+        'icon': Icons.calendar_month_outlined,
+        'text': 'list_relatives_managment'.tr(),
+        'route': AppRoutes.relativeListRoute
+      },
+     
     ];
     return BasePage(
         showAppBar: true,

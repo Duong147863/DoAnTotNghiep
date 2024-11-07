@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 
 class DepartmentService {
   Future<http.Response> getAllDepartments() async {
@@ -19,7 +20,22 @@ class DepartmentService {
         body: json.encode(department.toJson()));
   }
 
-  Future<http.Response> updateExistedDepartment() async {
-    return await http.put(Uri.parse(''));
+  Future<http.Response> updateDepartment(Departments department) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}department/update'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(department.toJson()),
+    );
+  }
+  Future<http.Response> deleteDepartment(String departmentId) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}department/delete/$departmentId'),
+      headers: {
+        'Accept': 'application/json',
+      },
+    );
   }
 }

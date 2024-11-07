@@ -25,4 +25,36 @@ class PositionsRepository {
       throw Exception('Failed to add position: ${response.statusCode}');
     }
   }
+    Future<bool> updatedPosition(Positions postions) async {
+    try {
+      final response = await service.updatePosition(postions);
+      if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to update department: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to update department');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to update profile');
+    }
+  }
+  Future<bool> deletePosition(String positionId) async {
+    try {
+      final response = await service.deletePosition(positionId);
+      if (response.statusCode == 200) {
+        print("Delete successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to delete position: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to delete position');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to delete position');
+    }
+  }
 }

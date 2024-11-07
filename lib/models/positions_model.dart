@@ -1,9 +1,9 @@
 import 'dart:ffi';
 
 class Positions {
-  Positions({this.positionId, this.positionName});
-  String? positionId;
-  String? positionName;
+  Positions({required this.positionId,required this.positionName});
+  String positionId;
+  String positionName;
 
   factory Positions.fromJson(Map<String,dynamic>json){
     return Positions(
