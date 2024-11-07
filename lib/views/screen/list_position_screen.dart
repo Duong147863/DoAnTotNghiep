@@ -4,10 +4,12 @@ import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/api_services/position_service.dart'; // Import service
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_position_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 import '../../constant/app_route.dart';
 import '../custom_widgets/custom_list_view.dart';
 
@@ -45,28 +47,32 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
       }
     });
   }
-  
+
   void _handleAdd(Positions newPosition) {
     setState(() {
       positions.add(newPosition);
       _handleSearch('');
     });
   }
+
   void _handleUpdate(Positions updatedPosition) {
     setState(() {
-      int index = positions.indexWhere((pos) => pos.positionId == updatedPosition.positionId);
+      int index = positions
+          .indexWhere((pos) => pos.positionId == updatedPosition.positionId);
       if (index != -1) {
-        positions[index] = updatedPosition; 
+        positions[index] = updatedPosition;
       }
     });
   }
-   void _handleDelete(Positions deletePosition) {
+
+  void _handleDelete(Positions deletePosition) {
     setState(() {
       positions = positions
           .where((pos) => pos.positionId != deletePosition.positionId)
           .toList();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -75,6 +81,19 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
       defaultBody: true,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.primaryLightColor,
+      actions: [
+        IconButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddPositionScreen(),
+              ),
+            );
+          },
+          icon: Icon(Icons.add),
+        )
+      ],
       appBar: AppBar(
         backgroundColor: Color(0xFF0B258A),
         elevation: 0,
@@ -121,16 +140,18 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
               return CustomListView(
                 dataSet: positions,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(positions[index].positionName.toString()),
-                    trailing: Text(positions[index].positionId.toString()),
-                    // leading: Text(accounts[index].positionId.toString()),
-                     onTap: () async {
-                      // Gọi màn hình thông tin phòng ban và chờ kết quả
+                  return CustomCard(
+                          title:
+                              "${positions[index].positionId} - ${positions[index].positionName}",
+                          subttile: "Tổng số lượng người nắm chức vụ: ")
+                      .onInkTap(
+                    () async {
+                      // Gọi màn hình thông tin chức vụ và chờ kết quả
                       final updatedPosition = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PositonInfoScreen(positions: positions[index]),
+                          builder: (context) =>
+                              PositonInfoScreen(positions: positions[index]),
                         ),
                       );
 
@@ -146,18 +167,18 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
           }),
         ),
       ],
-      // fab: FloatingActionButton(
-      //   onPressed: () {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => AddPositionScreen(onAdd: _handleAdd),
-      //       ),
-      //     );
-      //   },
-      //   child: Icon(Icons.add),
-      //   backgroundColor: Colors.blue,
-      // ),
+      fab: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => AddPositionScreen(),
+            ),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.blue,
+      ),
     );
   }
 }

@@ -57,6 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool light = true;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   void dispose() {
     super.dispose();
   }
@@ -83,43 +88,43 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     Navigator.push(
-                      //       context,
-                      //       MaterialPageRoute<void>(
-                      //         builder: (BuildContext context) =>
-                      //             ProfileScreen(profile: widget.profile),
-                      //       ),
-                      //     );
-                      //   },
-                      //   child: CircleAvatar(
-                      //     radius: 30,
-                      //     backgroundColor: Colors.white,
-                      //     child: ClipOval(
-                      //       child: SizedBox(
-                      //         width: 60,
-                      //         height: 60,
-                      //         child: widget.profile!.profileImage != null &&
-                      //                 widget.profile!.profileImage.isNotEmpty
-                      //             ? Image.memory(
-                      //                 base64Decode(
-                      //                     widget.profile!.profileImage),
-                      //                 fit: BoxFit.cover,
-                      //                 errorBuilder:
-                      //                     (context, error, stackTrace) {
-                      //                   return Icon(Icons.error,
-                      //                       size: 30, color: Colors.grey);
-                      //                 },
-                      //               )
-                      //             :
-                      //             // AssetImage("assets/images/logos/white_logo.png")
-                      //             Icon(Icons.person,
-                      //                 size: 30, color: Colors.grey),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ProfileScreen(profile: widget.profile),
+                            ),
+                          );
+                        },
+                        child: CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.white,
+                          child: ClipOval(
+                            child: SizedBox(
+                              width: 60,
+                              height: 60,
+                              child: widget.profile!.profileImage != null &&
+                                      widget.profile!.profileImage.isNotEmpty
+                                  ? Image.memory(
+                                      base64Decode(
+                                          widget.profile!.profileImage),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Icon(Icons.error,
+                                            size: 30, color: Colors.grey);
+                                      },
+                                    )
+                                  :
+                                  // AssetImage("assets/images/logos/white_logo.png")
+                                  Icon(Icons.person,
+                                      size: 30, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      ),
                       SizedBox(height: 8),
                       Text(
                         widget.profile!.profileName!,
@@ -184,7 +189,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "hello_".tr() + widget.profile!.profileName!,
+                  "Xin chào ".tr() + widget.profile!.profileName,
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEFF8FF),

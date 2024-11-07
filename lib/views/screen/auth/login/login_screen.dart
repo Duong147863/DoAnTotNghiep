@@ -146,7 +146,8 @@ class _TapBarState extends State<LoginScreen> {
                     );
                   } else if (SPUtill.isPhoneNumber(emailOrPhone)) {
                     // Đăng nhập bằng số điện thoại
-                    userProfile = await profilesViewModel.loginPhone(emailOrPhone, password);
+                    userProfile = await profilesViewModel.loginPhone(
+                        emailOrPhone, password);
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute<void>(

@@ -10,7 +10,7 @@ import 'package:velocity_x/velocity_x.dart';
 
 class InfoSalariScreen extends StatefulWidget {
   final Salaries? salaries;
-  const InfoSalariScreen({super.key, required this.salaries});
+  const InfoSalariScreen({super.key, this.salaries});
 
   @override
   State<InfoSalariScreen> createState() => _InfoSalariScreenState();
@@ -147,18 +147,21 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text('Confirm Delete'),
-                                content: Text('Are you sure you want to delete this position?'),
+                                content: Text(
+                                    'Are you sure you want to delete this position?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Đóng dialog
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
                                     },
                                     child: Text('Cancel'),
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Đóng dialog
-                                       // Thực hiện xóa
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
+                                      // Thực hiện xóa
                                     },
                                     child: Text('Delete'),
                                   ),
