@@ -25,7 +25,8 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<DeparmentsViewModel>(context, listen: false).fetchAllDepartments();
+    Provider.of<DeparmentsViewModel>(context, listen: false)
+        .fetchAllDepartments();
   }
 
   void _handleDelete(Departments department) {
@@ -44,7 +45,8 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
 
   void _handleUpdate(Departments updatedDepartment) {
     setState(() {
-      int index = departments.indexWhere((dep) => dep.departmentID == updatedDepartment.departmentID);
+      int index = departments.indexWhere(
+          (dep) => dep.departmentID == updatedDepartment.departmentID);
       if (index != -1) {
         departments[index] = updatedDepartment; // Cập nhật thông tin department
       }
@@ -104,22 +106,19 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
               return CustomListView(
                 dataSet: departments,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(departments[index].departmentName.toString()),
-                    trailing: Text(
-                      departments[index].departmentID.toString(),
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DepartmentInfoScreen(
-                              departments: departments[index],
-                            ),
-                          ));
-                    },
-                  );
+                  return CustomCard(
+                    title:
+                        "${departments[index].departmentID} - ${departments[index].departmentName}",
+                    subttile: 'Tổng thành viên: ',
+                  ).onInkTap(() {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DepartmentInfoScreen(
+                            departments: departments[index],
+                          ),
+                        ));
+                  });
                 },
               );
             }

@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 class CustomCard extends StatefulWidget {
   String title;
   String subttile;
-  Function onTap;
+  Function? onTap;
   CustomCard(
-      {super.key,
-      required this.title,
-      required this.onTap,
-      required this.subttile});
+      {super.key, required this.title, this.onTap, required this.subttile});
 
   @override
   State<CustomCard> createState() => _CustomCardState();
@@ -17,37 +14,34 @@ class CustomCard extends StatefulWidget {
 class _CustomCardState extends State<CustomCard> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      child: Card(
-        elevation: 4.0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
-                ),
+    return Card(
+      elevation: 4.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18.0,
               ),
-              SizedBox(height: 8.0),
-              Text(
-                widget.subttile,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: Colors.grey,
-                ),
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              widget.subttile,
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.grey,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-      onTap: () => widget.onTap,
     );
   }
 }
