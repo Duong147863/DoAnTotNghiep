@@ -9,7 +9,9 @@ class SalaryService {
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}salaries/$enterpriseID'));
   }
-
+   Future<http.Response> getAllSalaries() async {
+    return await http.get(Uri.parse('${AppStrings.baseUrlApi}salaries'));
+  }
   Future<http.Response> addNewSalary(Salaries salary) async {
     return await http.post(Uri.parse('${AppStrings.baseUrlApi}salary/create'),
         headers: {
@@ -28,4 +30,5 @@ class SalaryService {
       body: json.encode(salary.toJson()),
     );
   }
+  
 }

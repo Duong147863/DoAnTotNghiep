@@ -106,14 +106,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.salariListRoute:
-      return MaterialPageRoute(
-          builder: (context) => SalaryListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.salariListRoute,
-          ));
+    // case AppRoutes.salariListRoute:
+    //   return MaterialPageRoute(
+    //       builder: (context) => SalaryListScreen(),
+    //       settings: const RouteSettings(
+    //         name: AppRoutes.salariListRoute,
+    //       ));
 
-    ///
+    // ///
     case AppRoutes.diplomaListRoute:
       return MaterialPageRoute(
           builder: (context) => DiplomaListScreen(),
