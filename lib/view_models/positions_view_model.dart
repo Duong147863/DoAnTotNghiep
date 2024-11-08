@@ -12,8 +12,10 @@ class PositionsViewModel extends ChangeNotifier {
 
   Future<void> fetchPositions() async {
     fetchingData = true;
+    notifyListeners(); 
     try {
       _list = await repository.getAllPositions();
+      notifyListeners(); 
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }

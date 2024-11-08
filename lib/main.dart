@@ -116,7 +116,8 @@ class MainApp extends StatelessWidget {
             // open your app when is executed from outside when is terminated.
             return router.generateRoute(settings);
           },
-          home: LoginScreen(),
+          
+          home: AddProfilePage(),
           theme: theme,
           darkTheme: darkTheme,
         );
