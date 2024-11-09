@@ -1,14 +1,12 @@
 class PermissionsModel {
   PermissionsModel({
-    required this.permissionID,
+    this.permissionID,
     required this.permissionName,
   });
-  String permissionID;
+  int? permissionID;
   String permissionName;
   factory PermissionsModel.fromJson(Map<String, dynamic> json) {
-    return PermissionsModel(
-        permissionID: json["permission_id"],
-        permissionName: json["permission_name"]);
+    return PermissionsModel(permissionName: json["permission_name"]);
   }
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};

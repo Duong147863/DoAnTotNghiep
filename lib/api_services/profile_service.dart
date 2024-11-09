@@ -3,11 +3,19 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileService {
   Future<http.Response> getProfileInfoByID(int profileID) async {
-    return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}profile/info/$profileID'));
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(
+      AppStrings.TOKEN,
+    );
+    return await http.get(
+        Uri.parse('${AppStrings.baseUrlApi}profile/info/$profileID'),
+        headers: {
+          'Authorization': 'Bearer $token', 
+        });
   }
 
   Future<http.Response> getAllProfile() async {
@@ -29,19 +37,28 @@ class ProfileService {
       body: json.encode(profile.toJson()),
     );
   }
-  Future<http.Response> updateProfile(Profiles profile) async {
-  return await http.put(
-    Uri.parse('${AppStrings.baseUrlApi}profile/info/update'), // URL để cập nhật hồ sơ
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: json.encode(profile.toJson()), // Chuyển đổi đối tượng Profiles thành JSON
-  );
-}
 
-  Future<http.Response> logout() async {
-    return await http.post(Uri.parse('${AppStrings.baseUrlApi}logout'));
+  Future<http.Response> updateProfile(Profiles profile) async {
+    return await http.put(
+      Uri.parse(
+          '${AppStrings.baseUrlApi}profile/info/update'), // URL để cập nhật hồ sơ
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json
+          .encode(profile.toJson()), // Chuyển đổi đối tượng Profiles thành JSON
+    );
+  }
+
+  Future<http.Response> logout(String token) async {
+    return await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}logout'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
   }
 
   //Duong

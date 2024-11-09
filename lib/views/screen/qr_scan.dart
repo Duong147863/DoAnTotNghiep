@@ -38,7 +38,7 @@ class _QrScanState extends State<QrScan> {
           (value) {
             final List<Barcode> barcodes = capture.barcodes;
             for (final barcode in barcodes) {
-              print('QR ${barcode.rawValue}');
+              // print('QR ${barcode.rawValue}');
             }
           },
         );

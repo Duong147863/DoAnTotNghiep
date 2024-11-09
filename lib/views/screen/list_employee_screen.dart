@@ -22,9 +22,15 @@ class EmployeeListScreen extends StatefulWidget {
 
 class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
+  void initState() {
+    Provider.of<ProfilesViewModel>(context, listen: false).fetchAllProfiles();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BasePage(
-      titletext: "your_employees".tr(),
+      titletext: "Nhân sự".tr(),
       showAppBar: true,
       showLeadingAction: true,
       defaultBody: true,

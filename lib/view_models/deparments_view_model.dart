@@ -5,8 +5,8 @@ import 'package:nloffice_hrm/repository/departments_repo.dart';
 class DeparmentsViewModel extends ChangeNotifier {
   final DepartmentsRepository repository = DepartmentsRepository();
 
-  List<Departments> _list = [];
   bool fetchingData = false;
+  List<Departments> _list = [];
   List<Departments> get listDepartments => _list;
 
   // Lấy tất cả phòng ban

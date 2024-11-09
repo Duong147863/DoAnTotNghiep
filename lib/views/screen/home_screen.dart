@@ -13,6 +13,8 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
+import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
+import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -105,8 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: SizedBox(
                               width: 60,
                               height: 60,
-                              child: widget.profile!.profileImage != null &&
-                                      widget.profile!.profileImage.isNotEmpty
+                              child: widget.profile!.profileImage.isNotEmpty
                                   ? Image.memory(
                                       base64Decode(
                                           widget.profile!.profileImage),
@@ -117,9 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             size: 30, color: Colors.grey);
                                       },
                                     )
-                                  :
-                                  // AssetImage("assets/images/logos/white_logo.png")
-                                  Icon(Icons.person,
+                                  : Icon(Icons.person,
                                       size: 30, color: Colors.grey),
                             ),
                           ),
@@ -127,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 8),
                       Text(
-                        widget.profile!.profileName!,
+                        widget.profile!.profileName,
                         style: TextStyle(
                           fontSize: 18,
                           color: Colors.white,
@@ -208,54 +207,59 @@ class _HomeScreenState extends State<HomeScreen> {
         defaultBody: true,
         bodyChildren: [
           SizedBox(height: 20),
-          InkWell(
-            onTap: () {
-              Navigator.of(context).pushNamed(AppRoutes.timeAttendanceRoute);
-            },
-            borderRadius: BorderRadius.circular(20.0),
-            child: Container(
-              padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.0),
-                gradient: LinearGradient(
-                  colors: [Color(0xFF7B42F6), Color(0xFF1CA9F4)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+          AppStrings.ROLE_PERMISSIONS.contains(
+                  "Manage BoD & HR accounts") // KIỂM TRA QUYỀN VÀ HIỂN THỊ CHỨC NĂNG THEO QUYỀN
+              ? UiSpacer.emptySpace()
+              : InkWell(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(AppRoutes.timeAttendanceRoute);
+                  },
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20.0),
+                      gradient: LinearGradient(
+                        colors: [Color(0xFF7B42F6), Color(0xFF1CA9F4)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.touch_app,
+                          size: 40.0,
+                          color: Colors.white,
+                        ),
+                        SizedBox(width: 12.0),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Chấm công',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            Text(
+                              'để bắt đầu công việc thôi nào!',
+                              style: TextStyle(
+                                fontSize: 14.0,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.touch_app,
-                    size: 40.0,
-                    color: Colors.white,
-                  ),
-                  SizedBox(width: 12.0),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Chấm công',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      Text(
-                        'để bắt đầu công việc thôi nào!',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
           SizedBox(height: 20),
           CustomGridView(
               crossAxisCount: 2,
@@ -281,6 +285,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   ).p(13),
                 ).onTap(() => Navigator.of(context).pushNamed(item['route']));
               }),
+          Text("Công việc của bạn",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              )),
+          Divider().px12(),
+          Container(
+            child: CustomGridView(
+                dataSet: data,
+                crossAxisCount: 3,
+                childAspectRatio: 2,
+                itemBuilder: (context, index) {
+                  return Card();
+                }),
+          ).p8()
         ]);
   }
 }

@@ -85,7 +85,7 @@ Future<void> main() async {
           ChangeNotifierProvider<DiplomasViewModel>(
             create: (context) => DiplomasViewModel(),
           ),
-           ChangeNotifierProvider<SalariesViewModel>(
+          ChangeNotifierProvider<SalariesViewModel>(
             create: (context) => SalariesViewModel(),
           )
         ],

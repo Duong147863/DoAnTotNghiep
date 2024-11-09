@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:provider/provider.dart';
 
 class PayrollScreen extends StatefulWidget {
   final Profiles? profile;
@@ -15,6 +17,11 @@ class PayrollScreen extends StatefulWidget {
 }
 
 class _PayrollScreenState extends State<PayrollScreen> {
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
+
   @override
   void dispose() {
     super.dispose();
@@ -45,7 +52,7 @@ class _PayrollScreenState extends State<PayrollScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Mã Số NV:  ${widget.profile!.profileId}',
+                  Text('Mã NV:  ${widget.profile!.profileId}',
                       style: TextStyle(fontSize: 16)),
                   Text('Tên NV: ${widget.profile!.profileName}',
                       style: TextStyle(fontSize: 16)),
