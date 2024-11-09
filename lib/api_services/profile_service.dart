@@ -14,17 +14,24 @@ class ProfileService {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profile/info/$profileID'),
         headers: {
-          'Authorization': 'Bearer $token', 
+          'Authorization': 'Bearer $token',
         });
   }
 
-  Future<http.Response> getAllProfile() async {
-    return await http.get(Uri.parse('${AppStrings.baseUrlApi}profiles'));
+  Future<http.Response> getAllProfile(String token) async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}profiles'), headers: {
+      'Authorization': 'Bearer $token',
+    });
   }
 
-  Future<http.Response> getDepartmentMembers(String departmentID) async {
+  Future<http.Response> getDepartmentMembers(
+      String departmentID, String token) async {
     return await http.get(
-        Uri.parse('${AppStrings.baseUrlApi}department/members/$departmentID'));
+        Uri.parse('${AppStrings.baseUrlApi}department/members/$departmentID'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        });
   }
 
   Future<http.Response> addNewProfile(Profiles profile) async {
@@ -38,11 +45,12 @@ class ProfileService {
     );
   }
 
-  Future<http.Response> updateProfile(Profiles profile) async {
+  Future<http.Response> updateProfile(Profiles profile, String token) async {
     return await http.put(
       Uri.parse(
           '${AppStrings.baseUrlApi}profile/info/update'), // URL để cập nhật hồ sơ
       headers: {
+        'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },

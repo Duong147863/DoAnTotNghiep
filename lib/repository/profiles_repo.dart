@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/profile_service.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/models/permissions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
@@ -10,7 +9,9 @@ class ProfilesRepository {
   final ProfileService service = ProfileService();
 
   Future<List<Profiles>> fetchAllProfiles() async {
-    final response = await service.getAllProfile();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppStrings.TOKEN);
+    final response = await service.getAllProfile(token!);
     if (response.statusCode == 200) {
       return List<Profiles>.from(
           json.decode(response.body).map((x) => Profiles.fromJson(x)));
@@ -20,8 +21,9 @@ class ProfilesRepository {
   }
 
   Future<List<Profiles>> fetchMembersOfDepartment(String departmentID) async {
-    final response = await service.getDepartmentMembers(departmentID);
-
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(AppStrings.TOKEN);
+    final response = await service.getDepartmentMembers(departmentID, token!);
     if (response.statusCode == 200) {
       return List<Profiles>.from(
           json.decode(response.body).map((x) => Profiles.fromJson(x)));
@@ -36,7 +38,6 @@ class ProfilesRepository {
       print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to add profile: ${response.statusCode}");
       print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
@@ -44,13 +45,11 @@ class ProfilesRepository {
 
   Future<bool> updateProfile(Profiles profile) async {
     try {
-      final response = await service
-          .updateProfile(profile); // Gọi phương thức từ ProfileService
+      final response = await service.updateProfile(
+          profile, AppStrings.TOKEN); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true; // Cập nhật thành công
       } else {
-        print("Failed to update profile: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception('Failed to update profile');
       }
@@ -68,12 +67,12 @@ class ProfilesRepository {
       await prefs.setBool(AppStrings.SHARED_LOGGED, true);
       await prefs.setString(AppStrings.SHARED_USER, email);
       await prefs.setString(AppStrings.SHARED_PASSWORD, password);
-      await prefs.setString(
-          AppStrings.TOKEN, json.decode(response.body)['token']);
+      AppStrings.TOKEN = json.decode(response.body)['token']; // CHUỖI TOKEN
+      print(AppStrings.TOKEN);
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
-      print(AppStrings.ROLE_PERMISSIONS);
+      print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
       throw Exception(
@@ -89,11 +88,11 @@ class ProfilesRepository {
       await prefs.setString(AppStrings.SHARED_USER, phone);
       await prefs.setString(AppStrings.SHARED_PASSWORD, password);
       await prefs.setString(
-          AppStrings.TOKEN, json.decode(response.body)['token']);
+          AppStrings.TOKEN, json.decode(response.body)['token']); // CHUỖI TOKEN
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
-      print(AppStrings.ROLE_PERMISSIONS);
+      print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
       throw Exception(
@@ -102,14 +101,10 @@ class ProfilesRepository {
   }
 
   Future<bool> logOut() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppStrings.TOKEN);
-    final response = await service.logout(token!);
+    final response = await service.logout(AppStrings.TOKEN);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      await prefs.setBool(AppStrings.SHARED_LOGGED, false);
-      await prefs.clear();
       AppStrings.ROLE_PERMISSIONS = [];
-      print(AppStrings.ROLE_PERMISSIONS);
+      AppStrings.TOKEN = "";
       return true;
     } else {
       throw Exception('Failed to logout: ${response.statusCode}');

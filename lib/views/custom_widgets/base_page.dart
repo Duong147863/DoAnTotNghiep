@@ -112,7 +112,7 @@ class _BasePageState extends State<BasePage> {
               )
             : widget.body,
         bottomNavigationBar: widget.bottomNavigationBar,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         bottomSheet: widget.bottomSheet,
         floatingActionButton: widget.fab,
       ),

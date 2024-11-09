@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
@@ -185,6 +186,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
 
     ///
     default:
-      return MaterialPageRoute(builder: ((context) => LoginScreen()));
+      return MaterialPageRoute(builder: ((context) => EmptyWidget()));
   }
 }

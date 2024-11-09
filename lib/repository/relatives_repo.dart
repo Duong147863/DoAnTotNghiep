@@ -23,7 +23,6 @@ class RelativesRepository {
       print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to add profile: ${response.statusCode}");
       print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
