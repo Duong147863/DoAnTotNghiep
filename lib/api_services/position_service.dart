@@ -7,12 +7,16 @@ import 'package:nloffice_hrm/models/positions_model.dart';
 
 class PositionService {
   Future<http.Response> getAllPositions() async {
-    return await http.get(Uri.parse('${AppStrings.baseUrlApi}positions'));
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}positions'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
   }
 
   Future<http.Response> createNewPosition(Positions position) async {
     return await http.post(Uri.parse('${AppStrings.baseUrlApi}position/create'),
         headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
@@ -23,6 +27,7 @@ class PositionService {
     return await http.put(
       Uri.parse('${AppStrings.baseUrlApi}position/update'),
       headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
@@ -34,6 +39,7 @@ class PositionService {
     return await http.delete(
       Uri.parse('${AppStrings.baseUrlApi}position/delete/$positionId'),
       headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
         'Accept': 'application/json',
       },
     );

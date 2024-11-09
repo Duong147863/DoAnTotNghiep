@@ -9,26 +9,33 @@ class SalaryService {
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}salaries/$enterpriseID'));
   }
-   Future<http.Response> getAllSalaries() async {
-    return await http.get(Uri.parse('${AppStrings.baseUrlApi}salaries'));
+
+  Future<http.Response> getAllSalaries() async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}salaries'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
   }
+
   Future<http.Response> addNewSalary(Salaries salary) async {
     return await http.post(Uri.parse('${AppStrings.baseUrlApi}salary/create'),
         headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
         body: json.encode(salary.toJson()));
   }
+
   Future<http.Response> updateSalary(Salaries salary) async {
     return await http.put(
       Uri.parse('${AppStrings.baseUrlApi}salary/update'),
       headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
       body: json.encode(salary.toJson()),
     );
   }
-  
 }

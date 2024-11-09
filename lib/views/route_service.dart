@@ -6,6 +6,7 @@ import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/token_widget_item.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/forgot_password/forgot_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
@@ -107,6 +108,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
+     case AppRoutes.salariesAddRoute:
+      return MaterialPageRoute(
+          builder: (context) => SalaryAddScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.salariesAddRoute,
+          ));
     // case AppRoutes.salariListRoute:
     //   return MaterialPageRoute(
     //       builder: (context) => SalaryListScreen(),
