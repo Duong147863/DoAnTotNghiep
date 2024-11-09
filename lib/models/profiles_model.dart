@@ -76,7 +76,7 @@ class Profiles {
     map["profile_name"] = profileName;
     map["profile_status"] = profileStatus;
     map["identify_num"] = identifiNum;
-    map["id_license_day"] = idLicenseDay.toIso8601String();
+   map["id_license_day"] = DateFormat("dd-MM-yyyy").format(idLicenseDay);
     map["gender"] = gender;
     map["phone"] = phone;
     map["email"] = email;
@@ -84,7 +84,7 @@ class Profiles {
     map["department_id"] = departmentId;
     map["profile_id"] = profileId;
     map["salary_id"] = salaryId;
-    map["birthday"] = birthday.toIso8601String();
+    map["birthday"] = DateFormat("dd-MM-yyyy").format(birthday);
     map["position_id"] = positionId;
     map["place_of_birth"] = placeOfBirth;
     map["nation"] = nation;

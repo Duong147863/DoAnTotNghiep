@@ -112,19 +112,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
     }
   }
 
- void _loadSalaries() async {
-  try {
-    await Provider.of<SalariesViewModel>(context, listen: false)
-        .fetchAllSalaries();
-    salarys = Provider.of<SalariesViewModel>(context, listen: false)
-        .listSalaries;
-    setState(() {});
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to load salaries')),
-    );
+  void _loadSalaries() async {
+    try {
+      await Provider.of<SalariesViewModel>(context, listen: false)
+          .fetchAllSalaries();
+      salarys =
+          Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load salaries')),
+      );
+    }
   }
-}
+
   void _submit() {
     if (_formKey.currentState!.validate()) {
       final newProfile = Profiles(
@@ -549,8 +550,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
       items: salarys.map((Salaries salary) {
         return DropdownMenuItem<Salaries>(
           value: salary,
-          child: Text(
-              salary.allowances.toString()), // assuming department has a `name` field
+          child: Text(salary.salaryId), // assuming department has a `name` field
         );
       }).toList(),
       decoration: InputDecoration(
@@ -558,4 +558,5 @@ class _AddProfilePageState extends State<AddProfilePage> {
       ),
     );
   }
+  
 }

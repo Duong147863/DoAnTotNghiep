@@ -24,16 +24,20 @@ class SalariesViewModel extends ChangeNotifier {
     fetchingData = false;
   }
 
+  // Fetch all salaries and update the list
   Future<void> fetchAllSalaries() async {
     fetchingData = true;
-    notifyListeners();
+    notifyListeners();  // Notify to show loader or loading state
     try {
       _list = await repository.fetchAllSalaries();
-      notifyListeners();
     } catch (e) {
-      throw Exception('Failed to load data: $e');
+      print("Error loading salaries: $e");
+      // Handle error appropriately, maybe notify the UI about the failure
+      throw Exception('Failed to load salaries data: $e');
+    } finally {
+      fetchingData = false;
+      notifyListeners();  // Notify to hide loader or loading state
     }
-    fetchingData = false;
   }
 
   Future<void> addSalary(Salaries salary) async {

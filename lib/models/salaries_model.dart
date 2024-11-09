@@ -13,10 +13,19 @@ class Salaries {
 
   factory Salaries.fromJson(Map<String, dynamic> json) {
     return Salaries(
-      salaryId: json["salary_id"],
-      salaryCoefficient:double.parse(json["salary_coefficient"]),
-      allowances:double.parse(json["allowances"]),
-      personalTax: double.parse(json["personal_tax"])
+       salaryId: json["salary_id"] as String,
+      // Kiểm tra xem giá trị có phải là kiểu int hay double và chuyển đổi tương ứng
+      salaryCoefficient: (json["salary_coefficient"] is int)
+          ? (json["salary_coefficient"] as int).toDouble()
+          : json["salary_coefficient"] as double,
+      allowances: json["allowances"] != null
+          ? (json["allowances"] is int
+              ? (json["allowances"] as int).toDouble()
+              : json["allowances"] as double)
+          : null,
+      personalTax: (json["personal_tax"] is int)
+          ? (json["personal_tax"] as int).toDouble()
+          : json["personal_tax"] as double,
     );
   }
 
