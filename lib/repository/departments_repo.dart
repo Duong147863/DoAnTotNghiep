@@ -23,8 +23,11 @@ class DepartmentsRepository {
     try {
       final response = await service.createNewDepartment(department);
       if (response.statusCode == 200) {
+             print("Update successful. Response body: ${response.body}");
         return true;
       } else {
+             print("Failed to update department: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update department');
       }
     } catch (error) {

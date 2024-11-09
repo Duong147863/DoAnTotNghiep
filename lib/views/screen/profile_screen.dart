@@ -69,14 +69,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _profileImageBase64;
   bool _isButtonEnabled = true;
   //
-  String ?_department;
   List<Departments> departments = [];
   Departments? selectedDepartment;
   List<Positions> positions = [];
   Positions? selectedPositions;
   List<Salaries> salarys = [];
   Salaries? selectedSalarys;
-  
+
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
@@ -107,9 +106,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<DeparmentsViewModel>(context, listen: false)
           .fetchAllDepartments();
-      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-          .listDepartments;
       setState(() {
+        departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+            .listDepartments;
+        if (departments.isNotEmpty) {
+          selectedDepartment = departments.firstWhere(
+            (department) =>
+                department.departmentID == widget.profile!.departmentId,
+          );
+        }
       });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -123,12 +128,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<PositionsViewModel>(context, listen: false)
           .fetchPositions();
-      positions =
-          Provider.of<PositionsViewModel>(context, listen: false).listPositions;
-      setState(() {});
+      setState(() {
+        positions = Provider.of<PositionsViewModel>(context, listen: false)
+            .listPositions;
+        if (positions.isNotEmpty) {
+          selectedPositions = positions.firstWhere(
+            (position) => position.positionId == widget.profile!.positionId,
+          );
+        }
+      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load departments')),
+        SnackBar(content: Text('Failed to load Positions')),
       );
     }
   }
@@ -137,9 +148,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<SalariesViewModel>(context, listen: false)
           .fetchAllSalaries();
-      salarys =
-          Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
-      setState(() {});
+      setState(() {
+        salarys =
+            Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
+        if (salarys.isNotEmpty) {
+          selectedSalarys = salarys.firstWhere(
+            (salary) => salary.salaryId == widget.profile!.salaryId,
+          );
+        }
+      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load salaries')),
@@ -428,21 +445,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Radio(
                     value: true,
                     groupValue: _marriage,
-                    onChanged: (value) {
+                    onChanged:_isEditing? (value) {
                       setState(() {
-                        _marriage = value!;
+                        _marriage = value as bool;
                       });
-                    },
+                    }: null,
                   ),
                   Text('yes'.tr()),
                   Radio(
                     value: false,
                     groupValue: _marriage,
-                    onChanged: (value) {
+                    onChanged: _isEditing ?(value) {
                       setState(() {
-                        _marriage = value!;
+                        _marriage = value as bool;
                       });
-                    },
+                    }:null,
                   ),
                   Text('no'.tr()),
                 ],
@@ -572,7 +589,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onTap: () => _selectDate(context, initialDate, onDateSelected),
+        onTap: _isEditing ? () => _selectDate(context, initialDate, onDateSelected) : null, 
         child: AbsorbPointer(
           child: TextFormField(
             readOnly: true,
@@ -610,7 +627,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           DropdownMenuItem(value: false, child: Text('Man')),
           DropdownMenuItem(value: true, child: Text('Woman')),
         ],
-        onChanged: onChanged,
+        onChanged: _isEditing
+          ? onChanged
+          : null, // Nếu không cho phép chọn, onChanged = null
         validator: (value) => value == null ? 'Please select a gender' : null,
       ),
     );
@@ -620,20 +639,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return DropdownButtonFormField<Departments>(
       value: selectedDepartment,
       hint: Text(hint),
-      onChanged: (Departments? newValue) {
-        setState(() {
-          selectedDepartment = newValue;
-        });
-      },
+      onChanged: _isEditing
+          ? (Departments? newValue) {
+              setState(() {
+                selectedDepartment = newValue;
+              });
+            }
+          : null, // Khi không cho phép chọn, onChanged = null
       items: departments.map((Departments department) {
         return DropdownMenuItem<Departments>(
           value: department,
-          child: Text(department
-              .departmentName), // assuming department has a `name` field
+          child: Text(department.departmentName),
         );
       }).toList(),
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        enabled: _isEditing, // Vô hiệu hóa cả dropdown nếu _isEditing là false
       ),
     );
   }
@@ -642,11 +663,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return DropdownButtonFormField<Positions>(
       value: selectedPositions,
       hint: Text(hint),
-      onChanged: (Positions? newValue) {
-        setState(() {
-          selectedPositions = newValue;
-        });
-      },
+      onChanged: _isEditing
+          ? (Positions? newValue) {
+              setState(() {
+                selectedPositions = newValue;
+              });
+            }
+          : null,
       items: positions.map((Positions position) {
         return DropdownMenuItem<Positions>(
           value: position,
@@ -656,6 +679,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        enabled: _isEditing
       ),
     );
   }
@@ -664,11 +688,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return DropdownButtonFormField<Salaries>(
       value: selectedSalarys,
       hint: Text(hint),
-      onChanged: (Salaries? newValue) {
-        setState(() {
-          selectedSalarys = newValue;
-        });
-      },
+      onChanged: _isEditing
+          ? (Salaries? newValue) {
+              setState(() {
+                selectedSalarys = newValue;
+              });
+            }
+          : null,
       items: salarys.map((Salaries salary) {
         return DropdownMenuItem<Salaries>(
           value: salary,
@@ -678,6 +704,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        enabled: _isEditing
       ),
     );
   }

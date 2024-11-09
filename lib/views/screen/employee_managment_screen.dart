@@ -5,7 +5,9 @@ import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
+import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
@@ -26,6 +28,8 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
   final _formKey = GlobalKey<FormState>();
   final _departmentNameController = TextEditingController();
   final _departmentIdController = TextEditingController();
+  final _positionNameController = TextEditingController();
+  final _positionIdController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -139,6 +143,11 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
               onTap: () {
                 Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
               }),
+              SpeedDialChild(
+              label: "Thêm lương",
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.salariesAddRoute);
+              }),
           SpeedDialChild(
               label: "Thêm phòng ban",
               onTap: () => showDialog<Widget>(
@@ -202,9 +211,86 @@ class _EmployeeManagementScreenState extends State<EmployeeManagementScreen> {
                                           departmentName:
                                               _departmentNameController.text,
                                         );
-                                        Provider.of<DeparmentsViewModel>(
+                                        context.read<DeparmentsViewModel>().addNewDepartment(newDepartment);
+
+                                        Navigator.pop(context);
+                                        initState();
+                                      }
+                                    },
+                                    child: Text('Add Department'),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
+                  )),
+          SpeedDialChild(
+              label: "Thêm chức vụ",
+              onTap: () => showDialog<Widget>(
+                    context: context,
+                    builder: (context) => Dialog(
+                      child: Container(
+                        height: 300,
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Form(
+                              key: _formKey,
+                              child: ListView(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: TextFormField(
+                                      controller: _positionIdController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Position ID',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter department ID';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: TextFormField(
+                                      controller: _positionNameController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Position Name',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter department name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        final newPositions = Positions(
+                                          positionId:
+                                              _positionIdController.text,
+                                          positionName:
+                                              _positionIdController.text,
+                                        );
+                                        Provider.of<PositionsViewModel>(
                                                 context)
-                                            .addNewDepartment(newDepartment);
+                                            .addNewPosition(newPositions);
                                         Navigator.pop(context);
                                         initState();
                                       }

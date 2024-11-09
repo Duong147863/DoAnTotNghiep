@@ -38,6 +38,7 @@ class ProfileService {
     return await http.post(
       Uri.parse('${AppStrings.baseUrlApi}profile/auth/register'),
       headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
@@ -45,12 +46,12 @@ class ProfileService {
     );
   }
 
-  Future<http.Response> updateProfile(Profiles profile, String token) async {
+  Future<http.Response> updateProfile(Profiles profile) async {
     return await http.put(
       Uri.parse(
-          '${AppStrings.baseUrlApi}profile/info/update'), // URL để cập nhật hồ sơ
+          '${AppStrings.baseUrlApi}profile/update'), // URL để cập nhật hồ sơ
       headers: {
-        'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },

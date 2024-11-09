@@ -46,7 +46,7 @@ class ProfilesRepository {
   Future<bool> updateProfile(Profiles profile) async {
     try {
       final response = await service.updateProfile(
-          profile, AppStrings.TOKEN); // Gọi phương thức từ ProfileService
+          profile); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
         return true; // Cập nhật thành công
       } else {
