@@ -13,14 +13,9 @@ class AppStrings {
   static String SHARED_LOGGED = "USER_IS_LOGGED";
   static String SHARED_USER = "USER";
   static String SHARED_PASSWORD = "PASSWORD";
-
-  static List<String> get Statuses {
-    return [
-      'pending'.tr(),
-      'accepted'.tr(),
-      'cancelled'.tr(),
-    ];
-  }
+  static String TOKEN = "TOKEN";
+  static List<String> ROLE_PERMISSIONS = [];
+  static String PERMISSIONS = "";
 
   static Future<String> ImagetoBase64(File imageFile) async {
     Uint8List bytes = await imageFile.readAsBytes();

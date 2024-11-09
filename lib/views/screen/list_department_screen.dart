@@ -84,7 +84,7 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
             hintText: '',
             suggestions: departments
                 .map(
-                  (department) => department.departmentName!,
+                  (department) => department.departmentName,
                 )
                 .toList(),
             onTextChanged: _handleSearch,
@@ -103,6 +103,7 @@ class _DepartmentsScreenState extends State<DepartmentsScreen> {
             } else {
               // If data is successfully fetched
               List<Departments> departments = viewModel.listDepartments;
+              
               return CustomListView(
                 dataSet: departments,
                 itemBuilder: (context, index) {
