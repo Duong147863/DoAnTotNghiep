@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_languages.dart';
 import 'package:nloffice_hrm/constant/internet_connect.dart';
+import 'package:nloffice_hrm/view_models/absent_view_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
@@ -86,6 +87,9 @@ Future<void> main() async {
           ),
           ChangeNotifierProvider<SalariesViewModel>(
             create: (context) => SalariesViewModel(),
+          ),
+          ChangeNotifierProvider<AbsentsViewModel>(
+            create: (context) => AbsentsViewModel(),
           )
         ],
         child: const LocalizedApp(

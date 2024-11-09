@@ -15,6 +15,7 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
+import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -300,7 +301,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemBuilder: (context, index) {
                   return Card();
                 }),
-          ).p8()
+          ).p8(),
+          SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              // Ví dụ: Chuyển hướng tới màn hình profile khi bấm nút
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddAbsentRequestScreen(profiles: widget.profile),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20), // Bo góc cho button
+              ),
+              padding: EdgeInsets.symmetric(
+                  vertical: 15,
+                  horizontal: 50), // Độ rộng và chiều cao của button
+            ),
+            child: Text(
+              'Tạo Đơn Nghỉ Việc', // Nội dung của button
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white, // Màu chữ của button
+              ),
+            ),
+          ),
         ]);
   }
 }

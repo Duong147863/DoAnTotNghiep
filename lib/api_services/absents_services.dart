@@ -1,7 +1,19 @@
-import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-class AbsentsServices {
-  Future<http.Response> getAbsentsList() {
-    return http.get(Uri());
+import 'package:http/http.dart' as http;
+import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/absents_model.dart';
+
+class AbsentsService {
+  Future<http.Response> createNewAbsent(
+    Absents asbents,
+  ) async {
+    return await http.post(Uri.parse('${AppStrings.baseUrlApi}absent/create'),
+        headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: json.encode(asbents.toJson()));
   }
 }
