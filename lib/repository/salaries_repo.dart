@@ -23,12 +23,9 @@ class SalariesRepository {
     final response = await service.getAllSalaries();
 
     if (response.statusCode == 200) {
-      print("add successful. Response body: ${response.body}");
       return List<Salaries>.from(
           json.decode(response.body).map((x) => Salaries.fromJson(x)));
-    } else {
-      print("Failed to add profile: ${response.statusCode}");
-      print("Response body: ${response.body}");
+    } else {;
       throw Exception('Failed to load data');
     }
   }

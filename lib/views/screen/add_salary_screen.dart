@@ -34,9 +34,9 @@ class _SalaryAddScreenState extends State<SalaryAddScreen> {
     if (_formKey.currentState!.validate()) {
       final newSalary = Salaries(
         salaryId: _salaryIDController.text,
-        salaryCoefficient: double.parse(_salaryCoefficientController.text),
-        allowances: double.parse(_allowancesController.text),
-        personalTax: double.parse(_personalTaxController.text),
+        salaryCoefficient: _parseDouble(_salaryCoefficientController.text),
+        allowances: _parseDouble(_allowancesController.text),
+        personalTax: _parseDouble(_personalTaxController.text),
       );
       Provider.of<SalariesViewModel>(context, listen: false)
           .addSalary(newSalary)
@@ -136,4 +136,13 @@ class _SalaryAddScreenState extends State<SalaryAddScreen> {
       ),
     );
   }
+  // Phương thức phụ để xử lý chuyển đổi từ String sang double
+double _parseDouble(String value) {
+  if (value.isEmpty) return 0.0; // Nếu rỗng thì trả về giá trị mặc định
+  try {
+    return double.parse(value);
+  } catch (e) {
+    return 0.0; // Nếu lỗi chuyển đổi, trả về giá trị mặc định
+  }
+}
 }

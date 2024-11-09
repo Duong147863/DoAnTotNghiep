@@ -117,7 +117,7 @@ class MainApp extends StatelessWidget {
             return router.generateRoute(settings);
           },
           
-          home: AddProfilePage(),
+          home: LoginScreen(),
           theme: theme,
           darkTheme: darkTheme,
         );

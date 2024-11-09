@@ -7,9 +7,15 @@ import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/api_services/app.service.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/constant/input.styles.dart';
+import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/repository/profiles_repo.dart';
+import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
+import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
@@ -61,13 +67,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _marriage = false;
   bool _isEditing = false;
   String? _profileImageBase64;
-  bool _isButtonEnabled = true; 
+  bool _isButtonEnabled = true;
+  //
+  String ?_department;
+  List<Departments> departments = [];
+  Departments? selectedDepartment;
+  List<Positions> positions = [];
+  Positions? selectedPositions;
+  List<Salaries> salarys = [];
+  Salaries? selectedSalarys;
+  
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
     _profileNameController.text = widget.profile!.profileName;
     _birthdayController.text =
-        DateFormat('yyyy-MM-dd').format(widget.profile!.birthday);
+        DateFormat('dd-MM-yyy').format(widget.profile!.birthday);
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
@@ -82,6 +97,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _profileImageBase64 = widget.profile!.profileImage;
     _marriage = widget.profile!.marriage;
     _gender = widget.profile!.gender;
+    _loadDepartments();
+    _loadPositions();
+    _loadSalaries();
+  }
+
+  // Method to load departments
+  void _loadDepartments() async {
+    try {
+      await Provider.of<DeparmentsViewModel>(context, listen: false)
+          .fetchAllDepartments();
+      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+          .listDepartments;
+      setState(() {
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load departments')),
+      );
+    }
+  }
+
+  // Method to load departments
+  void _loadPositions() async {
+    try {
+      await Provider.of<PositionsViewModel>(context, listen: false)
+          .fetchPositions();
+      positions =
+          Provider.of<PositionsViewModel>(context, listen: false).listPositions;
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load departments')),
+      );
+    }
+  }
+
+  void _loadSalaries() async {
+    try {
+      await Provider.of<SalariesViewModel>(context, listen: false)
+          .fetchAllSalaries();
+      salarys =
+          Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load salaries')),
+      );
+    }
   }
 
   void _updateProfile() async {
@@ -101,6 +164,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
+          departmentId: selectedDepartment!.departmentID,
+          positionId: selectedPositions!.positionId,
+          salaryId: selectedSalarys!.salaryId,
           profileImage: _profileImageBase64 ?? '');
 
       Provider.of<ProfilesViewModel>(context, listen: false)
@@ -174,17 +240,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             enableFeedback: true,
-            onPressed: _isButtonEnabled ? () {
-      
-
-      // Tắt nút sau khi nhấn
-      setState(() {
-        _isButtonEnabled = false;
-      });
-      // Thực hiện hành động
-      _updateProfile();
-    } : null, // Nếu nút không được bật, sẽ không thực hiện hành động
-    icon: Icon(Icons.save, color: Colors.red),),
+            onPressed: _isButtonEnabled
+                ? () {
+                    // Tắt nút sau khi nhấn
+                    setState(() {
+                      _isButtonEnabled = false;
+                    });
+                    // Thực hiện hành động
+                    _updateProfile();
+                  }
+                : null, // Nếu nút không được bật, sẽ không thực hiện hành động
+            icon: Icon(Icons.save, color: Colors.red),
+          ),
           IconButton(
             onPressed: () {
               setState(() {
@@ -328,6 +395,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     enabled: _isEditing,
                   ).w(254),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Department'.tr()).px(8),
+                  _buildDepartmentDropdown('Choose Department').p(8).w(300),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Position'.tr()).px(8),
+                  _buildPositionsDropdown('Choose Postion').p(8).w(300),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Salary'.tr()).px(8),
+                  _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
               // Gender + Marriage
@@ -527,6 +612,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
         onChanged: onChanged,
         validator: (value) => value == null ? 'Please select a gender' : null,
+      ),
+    );
+  }
+
+  Widget _buildDepartmentDropdown(String hint) {
+    return DropdownButtonFormField<Departments>(
+      value: selectedDepartment,
+      hint: Text(hint),
+      onChanged: (Departments? newValue) {
+        setState(() {
+          selectedDepartment = newValue;
+        });
+      },
+      items: departments.map((Departments department) {
+        return DropdownMenuItem<Departments>(
+          value: department,
+          child: Text(department
+              .departmentName), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _buildPositionsDropdown(String hint) {
+    return DropdownButtonFormField<Positions>(
+      value: selectedPositions,
+      hint: Text(hint),
+      onChanged: (Positions? newValue) {
+        setState(() {
+          selectedPositions = newValue;
+        });
+      },
+      items: positions.map((Positions position) {
+        return DropdownMenuItem<Positions>(
+          value: position,
+          child: Text(
+              position.positionName), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _buildSalaryDropdown(String hint) {
+    return DropdownButtonFormField<Salaries>(
+      value: selectedSalarys,
+      hint: Text(hint),
+      onChanged: (Salaries? newValue) {
+        setState(() {
+          selectedSalarys = newValue;
+        });
+      },
+      items: salarys.map((Salaries salary) {
+        return DropdownMenuItem<Salaries>(
+          value: salary,
+          child:
+              Text(salary.salaryId), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }
