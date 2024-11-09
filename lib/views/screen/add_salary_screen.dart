@@ -136,13 +136,14 @@ class _SalaryAddScreenState extends State<SalaryAddScreen> {
       ),
     );
   }
+
   // Phương thức phụ để xử lý chuyển đổi từ String sang double
-double _parseDouble(String value) {
-  if (value.isEmpty) return 0.0; // Nếu rỗng thì trả về giá trị mặc định
-  try {
-    return double.parse(value);
-  } catch (e) {
-    return 0.0; // Nếu lỗi chuyển đổi, trả về giá trị mặc định
+  double _parseDouble(String value) {
+    if (value.isEmpty) return 0.0; // Nếu rỗng thì trả về giá trị mặc định
+    try {
+      return double.parse(value);
+    } catch (e) {
+      return 0.0; // Nếu lỗi chuyển đổi, trả về giá trị mặc định
+    }
   }
-}
 }
