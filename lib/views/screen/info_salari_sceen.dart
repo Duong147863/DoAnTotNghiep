@@ -24,13 +24,14 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
   final _personalTaxController = TextEditingController();
   bool _isEditing = false;
   void initState() {
-    super.initState();
-    _salaryIDController.text = widget.salaries!.salaryId;
-    _salaryCoefficientController.text =
-        widget.salaries!.salaryCoefficient.toString();
+  super.initState();
+  if (widget.salaries != null) {
+    _salaryIDController.text =widget.salaries!.salaryId;
+    _salaryCoefficientController.text = widget.salaries!.salaryCoefficient.toString();
     _personalTaxController.text = widget.salaries!.personalTax.toString();
     _allowancesController.text = widget.salaries!.allowances.toString();
   }
+}
 
   void _updateSalary() async {
     if (_formKey.currentState!.validate()) {

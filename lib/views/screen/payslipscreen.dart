@@ -61,7 +61,7 @@ class _PayrollScreenState extends State<PayrollScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Chức vụ: ', style: TextStyle(fontSize: 16)),
+                  Text('Chức vụ: ${widget.position!.positionName} ', style: TextStyle(fontSize: 16)),
                   Text('', style: TextStyle(fontSize: 16)),
                 ],
               ),

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/salary_service.dart';
+import 'package:nloffice_hrm/models/positions_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 
 class SalariesRepository {
@@ -17,7 +19,17 @@ class SalariesRepository {
       throw Exception('Failed to load data');
     }
   }
-   Future<bool> addSalary(Salaries salary) async {
+  Future<List<Salaries>> fetchAllSalaries() async {
+    final response = await service.getAllSalaries();
+
+    if (response.statusCode == 200) {
+      return List<Salaries>.from(
+          json.decode(response.body).map((x) => Salaries.fromJson(x)));
+    } else {;
+      throw Exception('Failed to load data');
+    }
+  }
+  Future<bool> addSalary(Salaries salary) async {
     final response = await service.addNewSalary(salary);
     if (response.statusCode == 200) {
       print("add successful. Response body: ${response.body}");
@@ -28,7 +40,8 @@ class SalariesRepository {
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
-   Future<bool> updateSalary(Salaries salary) async {
+
+  Future<bool> updateSalary(Salaries salary) async {
     try {
       final response = await service.updateSalary(salary);
       if (response.statusCode == 200) {

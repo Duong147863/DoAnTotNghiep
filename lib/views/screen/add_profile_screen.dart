@@ -9,8 +9,14 @@ import 'package:intl/intl.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/salaries_model.dart';
+import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
+import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
@@ -18,7 +24,6 @@ import 'package:velocity_x/velocity_x.dart';
 
 class AddProfilePage extends StatefulWidget {
   // final Profiles? profile;
-
   const AddProfilePage({super.key});
 
   @override
@@ -45,6 +50,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
   bool _gender = false; // Assuming `false` is Male, `true` is Female
   bool _marriage = false; // Assuming `false` is Male, `true` is Female
   //
+  List<Departments> departments = [];
+  Departments? selectedDepartment;
+  List<Positions> positions = [];
+  Positions? selectedPositions;
+  List<Salaries> salarys = [];
+  Salaries? selectedSalarys;
   String? _profileImageBase64;
   @override
   void dispose() {
@@ -61,6 +72,58 @@ class _AddProfilePageState extends State<AddProfilePage> {
     _currentAddressController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDepartments();
+    _loadPositions();
+    _loadSalaries();
+  }
+
+  // Method to load departments
+  void _loadDepartments() async {
+    try {
+      await Provider.of<DeparmentsViewModel>(context, listen: false)
+          .fetchAllDepartments();
+      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+          .listDepartments;
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load departments')),
+      );
+    }
+  }
+
+  // Method to load departments
+  void _loadPositions() async {
+    try {
+      await Provider.of<PositionsViewModel>(context, listen: false)
+          .fetchPositions();
+      positions =
+          Provider.of<PositionsViewModel>(context, listen: false).listPositions;
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load departments')),
+      );
+    }
+  }
+
+  void _loadSalaries() async {
+    try {
+      await Provider.of<SalariesViewModel>(context, listen: false)
+          .fetchAllSalaries();
+      salarys =
+          Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load salaries')),
+      );
+    }
   }
 
   void _submit() {
@@ -83,7 +146,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
         marriage: _marriage,
         profileStatus: 1,
         //
-        profileImage:_profileImageBase64??"",
+        departmentId: selectedDepartment!.departmentID,
+        positionId: selectedPositions!.positionId,
+        salaryId: selectedSalarys!.salaryId,
+        profileImage: _profileImageBase64 ?? "",
       );
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile)
@@ -99,21 +165,22 @@ class _AddProfilePageState extends State<AddProfilePage> {
       });
     }
   }
+
   Future<void> _pickImage() async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? imageFile = await picker.pickImage(
-    source: ImageSource.gallery,
-    maxWidth: 600, 
-    maxHeight: 600, 
-  );
-  if (imageFile != null) {
-    File file = File(imageFile.path);
-    String base64String = await AppStrings.ImagetoBase64(file);
-    setState(() {
-      _profileImageBase64 = base64String;
-    });
+    final ImagePicker picker = ImagePicker();
+    final XFile? imageFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (imageFile != null) {
+      File file = File(imageFile.path);
+      String base64String = await AppStrings.ImagetoBase64(file);
+      setState(() {
+        _profileImageBase64 = base64String;
+      });
+    }
   }
-}
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -158,18 +225,18 @@ class _AddProfilePageState extends State<AddProfilePage> {
             child: Form(
           key: _formKey,
           child: Column(children: [
-               GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundImage: _profileImageBase64 != null
-                      ? MemoryImage(base64Decode(_profileImageBase64!))
-                      : null,
-                  child: _profileImageBase64 == null
-                      ? Icon(Icons.add_a_photo)
-                      : null,
-                ),
+            GestureDetector(
+              onTap: _pickImage,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: _profileImageBase64 != null
+                    ? MemoryImage(base64Decode(_profileImageBase64!))
+                    : null,
+                child: _profileImageBase64 == null
+                    ? Icon(Icons.add_a_photo)
+                    : null,
               ),
+            ),
             Divider(),
             //Profile id + full name
             Row(
@@ -217,6 +284,24 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     return null;
                   },
                 ).w(254),
+              ],
+            ),
+            Row(
+              children: [
+                Text('Department'.tr()).px(8),
+                _buildDepartmentDropdown('Choose Department').p(8).w(300),
+              ],
+            ),
+            Row(
+              children: [
+                Text('Position'.tr()).px(8),
+                _buildPositionsDropdown('Choose Postion').p(8).w(300),
+              ],
+            ),
+            Row(
+              children: [
+                Text('Salary'.tr()).px(8),
+                _buildSalaryDropdown('Choose Salary').p(8).w(300),
               ],
             ),
             //Gender + Marriage
@@ -408,4 +493,70 @@ class _AddProfilePageState extends State<AddProfilePage> {
       ),
     );
   }
+
+  Widget _buildDepartmentDropdown(String hint) {
+    return DropdownButtonFormField<Departments>(
+      value: selectedDepartment,
+      hint: Text(hint),
+      onChanged: (Departments? newValue) {
+        setState(() {
+          selectedDepartment = newValue;
+        });
+      },
+      items: departments.map((Departments department) {
+        return DropdownMenuItem<Departments>(
+          value: department,
+          child: Text(department
+              .departmentName), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _buildPositionsDropdown(String hint) {
+    return DropdownButtonFormField<Positions>(
+      value: selectedPositions,
+      hint: Text(hint),
+      onChanged: (Positions? newValue) {
+        setState(() {
+          selectedPositions = newValue;
+        });
+      },
+      items: positions.map((Positions position) {
+        return DropdownMenuItem<Positions>(
+          value: position,
+          child: Text(
+              position.positionName), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _buildSalaryDropdown(String hint) {
+    return DropdownButtonFormField<Salaries>(
+      value: selectedSalarys,
+      hint: Text(hint),
+      onChanged: (Salaries? newValue) {
+        setState(() {
+          selectedSalarys = newValue;
+        });
+      },
+      items: salarys.map((Salaries salary) {
+        return DropdownMenuItem<Salaries>(
+          value: salary,
+          child: Text(salary.salaryId), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+  
 }

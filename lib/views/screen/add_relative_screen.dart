@@ -190,7 +190,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                   }).px(8).w(150),
                   CustomTextFormField(
                     validator: (value) =>
-                        value.isEmptyOrNull ? 'please_enter_phone_number' : null,
+                        value.isEmptyOrNull ? 'please_enter_RelativeJob' : null,
                     textEditingController: _relativeJobController,
                     labelText: 'relative_job'.tr(),
                     maxLines: 1,
