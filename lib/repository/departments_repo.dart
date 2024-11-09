@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/department_service.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DepartmentsRepository {
   final DepartmentService service = DepartmentService();
@@ -14,6 +16,19 @@ class DepartmentsRepository {
           json.decode(response.body).map((x) => Departments.fromJson(x)));
     } else {
       throw Exception('Failed to load data');
+    }
+  }
+
+  Future<bool> addNewDepartment(Departments department) async {
+    try {
+      final response = await service.createNewDepartment(department);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update department');
+      }
+    } catch (error) {
+      throw Exception('Failed to update profile');
     }
   }
 
@@ -33,6 +48,7 @@ class DepartmentsRepository {
       throw Exception('Failed to update profile');
     }
   }
+
   Future<bool> deleteDepartment(String departmentId) async {
     try {
       final response = await service.deleteDepartment(departmentId);

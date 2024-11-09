@@ -72,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final profilesViewModel = Provider.of<ProfilesViewModel>(context);
     final data = _getData();
+    print(AppStrings.ROLE_PERMISSIONS);
     return BasePage(
         appBarItemColor: AppColor.boneWhite,
         showAppBar: true,
@@ -208,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
         bodyChildren: [
           SizedBox(height: 20),
           AppStrings.ROLE_PERMISSIONS.contains(
-                  "Manage BoD & HR accounts") // KIỂM TRA QUYỀN VÀ HIỂN THỊ CHỨC NĂNG THEO QUYỀN
+                  'Manage BoD & HR accounts') // KIỂM TRA QUYỀN VÀ HIỂN THỊ CHỨC NĂNG THEO QUYỀN
               ? UiSpacer.emptySpace()
               : InkWell(
                   onTap: () {

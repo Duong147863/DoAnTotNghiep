@@ -5,7 +5,6 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_languages.dart';
-import 'package:nloffice_hrm/constant/app_theme.dart';
 import 'package:nloffice_hrm/constant/internet_connect.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
@@ -100,28 +99,18 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AdaptiveTheme(
-      light: AppTheme.lightTheme,
-      dark: AppTheme.darkTheme,
-      initial: AdaptiveThemeMode.system, // đồng bộ với chế độ màu nền thiết bị
-      builder: (theme, darkTheme) {
-        return MaterialApp(
-          title: 'LDOffice',
-          debugShowCheckedModeBanner: false,
-          localizationsDelegates: translator.delegates,
-          locale: translator.activeLocale,
-          supportedLocales: translator.locals(),
-          onGenerateRoute: router.generateRoute,
-          onUnknownRoute: (RouteSettings settings) {
-            // open your app when is executed from outside when is terminated.
-            return router.generateRoute(settings);
-          },
-          
-          home: LoginScreen(),
-          theme: theme,
-          darkTheme: darkTheme,
-        );
+    return MaterialApp(
+      title: 'LDOffice',
+      debugShowCheckedModeBanner: false,
+      localizationsDelegates: translator.delegates,
+      locale: translator.activeLocale,
+      supportedLocales: translator.locals(),
+      onGenerateRoute: router.generateRoute,
+      onUnknownRoute: (RouteSettings settings) {
+        // open your app when is executed from outside when is terminated.
+        return router.generateRoute(settings);
       },
+      home: LoginScreen(),
     );
   }
 }
