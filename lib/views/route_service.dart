@@ -13,6 +13,7 @@ import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/language_screen.dart';
 import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
@@ -63,6 +64,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           builder: (context) => const ProfileScreen(),
           settings: const RouteSettings(
             name: AppRoutes.profileRoute,
+          ));
+
+    ///
+       case AppRoutes.absentListRoute:
+      return MaterialPageRoute(
+          builder: (context) => const ListAbsentScreen(),
+          settings: const RouteSettings(
+            name: AppRoutes.absentListRoute,
           ));
 
     ///
