@@ -9,20 +9,51 @@ class RelativesViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Relatives> get listRelatives => _list;
   String? errorMessage;
-  Future<void> fetchRelativesOf(int profileID) async {
+  Future<void> fetchAllRelatives(String profileId) async {
     fetchingData = true;
+    notifyListeners();
     try {
-      _list = await repository.fetchRelativesOf(profileID);
+      _list = await repository.fetchAllRelatives(profileId);
+      notifyListeners();
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }
     fetchingData = false;
   }
+
   Future<void> addRelative(Relatives relatives) async {
     try {
       await repository.addRelative(relatives);
     } catch (e) {
       throw Exception('Failed to add datas: $e');
+    }
+  }
+
+  Future<void> updateRelatives(Relatives relatives) async {
+    try {
+      await repository.updatedRelatives(relatives);
+
+      int index =
+          _list.indexWhere((relav) => relav.profileId == relatives.profileId);
+      if (index != -1) {
+        _list[index] = relatives;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to update relatives: $e');
+    }
+  }
+    Future<void> deleteRelative(String profileid) async {
+    try {
+      bool success = await repository.deleteRelative(profileid);
+      if (success) {
+        _list.removeWhere((rela) => rela.profileId == profileid);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to delete position');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete position: $e');
     }
   }
 }

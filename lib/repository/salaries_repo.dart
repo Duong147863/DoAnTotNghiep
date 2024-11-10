@@ -1,8 +1,6 @@
 import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/salary_service.dart';
-import 'package:nloffice_hrm/models/positions_model.dart';
-import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 
 class SalariesRepository {

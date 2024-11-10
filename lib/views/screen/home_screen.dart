@@ -17,8 +17,12 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -299,6 +303,63 @@ class _HomeScreenState extends State<HomeScreen> {
                 }),
           ).p8(),
           SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      AddRelativeScreen(profile: widget.profile),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(10.0), // Button rounded corners
+              ),
+            ),
+            child: Text("Add Relative",style: TextStyle(color: Colors.black),),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      RelativeListScreen(profiles: widget.profile),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(10.0), // Button rounded corners
+              ),
+            ),
+            child: Text("List Relative",style: TextStyle(color: Colors.black),),
+          ),
+           ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      ListShiftsScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(10.0), // Button rounded corners
+              ),
+            ),
+            child: Text("List Shifts Screen",style: TextStyle(color: Colors.black),),
+          )
         ]);
   }
 }
