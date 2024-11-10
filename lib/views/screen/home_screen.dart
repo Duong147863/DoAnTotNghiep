@@ -54,6 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
         'text': 'Quản lí chức vụ'.tr(),
         'route': AppRoutes.positionListRoute
       },
+       {
+        'icon': Icons.business_center_rounded,
+        'text': 'Quản Lí Đơn Nghỉ Việc'.tr(),
+        'route': AppRoutes.absentListRoute
+      },
     ];
   }
 
