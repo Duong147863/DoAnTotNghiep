@@ -111,19 +111,18 @@ class _LanguageScreenState extends State<LanguageScreen> {
                     const SizedBox(
                       height: 25,
                     ),
-                    Text("choose_your_preferred_language".tr(),
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black54))
-                        .tr(),
+                    Text("choose_your_preferred_language",
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54)),
                     const SizedBox(
                       height: 5,
                     ),
                     const Text(
                       "please_select_your_language",
                       style: TextStyle(fontSize: 14, color: Colors.grey),
-                    ).tr(),
+                    ),
                     const SizedBox(
                       height: 10,
                     ),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
@@ -30,7 +29,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      titletext: "Nhân sự".tr(),
+      titletext: "Nhân sự",
       showAppBar: true,
       showLeadingAction: true,
       defaultBody: true,

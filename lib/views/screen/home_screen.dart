@@ -3,12 +3,13 @@ import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
+
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
@@ -16,6 +17,8 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
+import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -33,33 +36,41 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Map<String, dynamic>> _getData() {
-    return [
-      {
-        'icon': Icons.supervisor_account,
-        'text': 'Quản lí nhân sự'.tr(),
-        'route': AppRoutes.employeeManagmentScreen
-      },
-      {
-        'icon': Icons.currency_exchange,
-        'text': 'Quản lí lương'.tr(),
-        'route': AppRoutes.salariListRoute,
-      },
-      {
-        'icon': Icons.business_center_rounded,
-        'text': 'Quản lí phòng ban'.tr(),
-        'route': AppRoutes.departmentListRoute
-      },
-      {
-        'icon': Icons.business_center_rounded,
-        'text': 'Quản lí chức vụ'.tr(),
-        'route': AppRoutes.positionListRoute
-      },
-       {
-        'icon': Icons.business_center_rounded,
-        'text': 'Quản Lí Đơn Nghỉ Việc'.tr(),
-        'route': AppRoutes.absentListRoute
-      },
-    ];
+    if (AppStrings.ROLE_PERMISSIONS
+        .containsAny(['Manage BoD & HR accounts', 'Manage Staffs info only'])) {
+      return [
+        {
+          'icon': Icons.supervisor_account,
+          'text': 'Quản lí nhân sự',
+          'route': AppRoutes.employeeManagmentScreen
+        },
+        {
+          'icon': Icons.currency_exchange,
+          'text': 'Quản lí lương',
+          'route': AppRoutes.salariListRoute,
+        },
+        {
+          'icon': Icons.business_center_rounded,
+          'text': 'Quản lí chức vụ',
+          'route': AppRoutes.positionListRoute
+        },
+        {
+          'icon': Icons.work_off_sharp,
+          'text': 'Quản lí nghỉ phép',
+          'route': AppRoutes.leaveRequestList
+        },
+      ];
+    } else if (AppStrings.ROLE_PERMISSIONS
+        .containsAny(['Manage your department members only'])) {
+      return [
+        {
+          'icon': Icons.supervisor_account,
+          'text': 'Quản lí phòng ban',
+          'route': AppRoutes.employeeManagmentScreen
+        },
+      ];
+    }
+    return [];
   }
 
   bool light = true;
@@ -78,12 +89,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final profilesViewModel = Provider.of<ProfilesViewModel>(context);
     final data = _getData();
-    print(AppStrings.ROLE_PERMISSIONS);
     return BasePage(
         appBarItemColor: AppColor.boneWhite,
         showAppBar: true,
         drawer: Drawer(
-          child: ListView(
+          child: Column(
             children: [
               Container(
                 height: 150,
@@ -152,37 +162,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
-                title: Text('language_setting'.tr()),
-                leading: Icon(Icons.language),
-                onTap: () {
-                  Navigator.of(context).pushNamed(AppRoutes.languageRoute);
-                },
+                title: Text("Doanh nghiệp"),
+                onTap: () {},
               ),
-              ListTile(
-                leading: Icon(Icons.color_lens_outlined),
-                title: Text('theme_switch'.tr()),
-                trailing: Switch(
-                    value: light,
-                    activeColor: AppColor.primaryDarkColor,
-                    inactiveThumbColor: Colors.black,
-                    thumbIcon: WidgetStatePropertyAll<Icon>(Icon(light
-                        ? Icons.light_mode_rounded
-                        : Icons.nightlight_outlined)),
-                    onChanged: (bool value) {
-                      setState(() {
-                        light = value;
-                      });
-                    }),
+              Expanded(
+                child: Align(
+                  alignment: FractionalOffset.bottomCenter,
+                  child: ListTile(
+                    title: Text('Đăng xuất'),
+                    leading: const Icon(Icons.logout),
+                    onTap: () {
+                      profilesViewModel.logOut();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoutes.loginRoute, (route) => false);
+                    },
+                  ),
+                ),
               ),
-              ListTile(
-                title: Text('log_out'.tr()),
-                leading: const Icon(Icons.logout),
-                onTap: () {
-                  profilesViewModel.logOut();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                      AppRoutes.loginRoute, (route) => false);
-                },
-              ).onInkTap(() async {}),
             ],
           ),
         ),
@@ -195,18 +191,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Xin chào ".tr() + widget.profile!.profileName,
+                  "Xin chào " + widget.profile!.profileName,
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEFF8FF),
                       fontWeight: FontWeight.w600),
                 ),
               ).p(10),
-              IconButton(
-                  onPressed: () {
-                    // Navigator.pushNamed(context, AppRoutes.noconnetionRoute);
-                  },
-                  icon: Icon(Icons.notifications))
             ],
           ),
         ),
@@ -308,32 +299,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 }),
           ).p8(),
           SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              // Ví dụ: Chuyển hướng tới màn hình profile khi bấm nút
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddAbsentRequestScreen(profiles: widget.profile),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20), // Bo góc cho button
-              ),
-              padding: EdgeInsets.symmetric(
-                  vertical: 15,
-                  horizontal: 50), // Độ rộng và chiều cao của button
-            ),
-            child: Text(
-              'Tạo Đơn Nghỉ Việc', // Nội dung của button
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white, // Màu chữ của button
-              ),
-            ),
-          ),
         ]);
   }
 }

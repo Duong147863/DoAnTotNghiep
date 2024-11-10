@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
@@ -24,14 +23,15 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
   final _personalTaxController = TextEditingController();
   bool _isEditing = false;
   void initState() {
-  super.initState();
-  if (widget.salaries != null) {
-    _salaryIDController.text =widget.salaries!.salaryId;
-    _salaryCoefficientController.text = widget.salaries!.salaryCoefficient.toString();
-    _personalTaxController.text = widget.salaries!.personalTax.toString();
-    _allowancesController.text = widget.salaries!.allowances.toString();
+    super.initState();
+    if (widget.salaries != null) {
+      _salaryIDController.text = widget.salaries!.salaryId;
+      _salaryCoefficientController.text =
+          widget.salaries!.salaryCoefficient.toString();
+      _personalTaxController.text = widget.salaries!.personalTax.toString();
+      _allowancesController.text = widget.salaries!.allowances.toString();
+    }
   }
-}
 
   void _updateSalary() async {
     if (_formKey.currentState!.validate()) {
@@ -59,7 +59,7 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Info Salary Screen'.tr(),
+      titletext: 'Info Salary Screen',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -78,10 +78,10 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _salaryIDController,
-                    labelText: 'salary_id'.tr(),
+                    labelText: 'salary_id',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_salary_id'.tr();
+                        return 'please_enter_salary_id';
                       }
                       return null;
                     },
@@ -90,10 +90,10 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _salaryCoefficientController,
-                    labelText: 'Salary_coefficient'.tr(),
+                    labelText: 'Salary_coefficient',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_Salary_coefficient'.tr();
+                        return 'please_enter_Salary_coefficient';
                       }
                       return null;
                     },
@@ -102,10 +102,10 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _allowancesController,
-                    labelText: 'allowances'.tr(),
+                    labelText: 'allowances',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_allowances'.tr();
+                        return 'please_enter_allowances';
                       }
                       return null;
                     },
@@ -114,10 +114,10 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _personalTaxController,
-                    labelText: 'personal_Tax'.tr(),
+                    labelText: 'personal_Tax',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_personal_Tax'.tr();
+                        return 'please_enter_personal_Tax';
                       }
                       return null;
                     },

@@ -2,7 +2,6 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
@@ -23,20 +22,20 @@ class AddRelativeScreen extends StatefulWidget {
 }
 
 class _AddRelativeScreenState extends State<AddRelativeScreen> {
-   final _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
   final _relativeNameController = TextEditingController();
   final _relationshipController = TextEditingController();
   final _phoneRelativeController = TextEditingController();
   final _birthdayRelativeController = TextEditingController();
   DateTime _birthdayRelative = DateTime.now();
-   final _nationRelativeController = TextEditingController();  
+  final _nationRelativeController = TextEditingController();
   final _temporaryAddressRelativeController = TextEditingController();
   final _currentAddressRelativeController = TextEditingController();
   final _relativeJobController = TextEditingController();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   @override
-   void dispose() {
+  void dispose() {
     _profileIDController.dispose();
     _relativeNameController.dispose();
     _relationshipController.dispose();
@@ -48,35 +47,35 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     _relativeJobController.dispose();
     super.dispose();
   }
-  void _submit() {
-  if (_formKey.currentState!.validate()) {
-    final addNewRelative = Relatives(
-      profileId: _profileIDController.text,
-      relativesName: _relativeNameController.text,
-      relationship: _relationshipController.text,
-      relativesPhone: _phoneRelativeController.text,
-      relativesBirthday: _birthdayRelative,
-      relativesNation: _nationRelativeController.text,
-      relativesTempAddress: _temporaryAddressRelativeController.text,
-      relativesCurrentAddress: _currentAddressRelativeController.text,
-      relativeJob: _relativeJobController.text,
-    );
-    print('Data to submit: ${addNewRelative.toJson()}');
-    Provider.of<RelativesViewModel>(context, listen: false)
-        .addRelative(addNewRelative)
-        .then((_) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Relative added successfully!')),
-          );
-          Navigator.pop(context);
-        }).catchError((error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to add relative: $error')),
-          );
-        });
-  }
-}
 
+  void _submit() {
+    if (_formKey.currentState!.validate()) {
+      final addNewRelative = Relatives(
+        profileId: _profileIDController.text,
+        relativesName: _relativeNameController.text,
+        relationship: _relationshipController.text,
+        relativesPhone: _phoneRelativeController.text,
+        relativesBirthday: _birthdayRelative,
+        relativesNation: _nationRelativeController.text,
+        relativesTempAddress: _temporaryAddressRelativeController.text,
+        relativesCurrentAddress: _currentAddressRelativeController.text,
+        relativeJob: _relativeJobController.text,
+      );
+      print('Data to submit: ${addNewRelative.toJson()}');
+      Provider.of<RelativesViewModel>(context, listen: false)
+          .addRelative(addNewRelative)
+          .then((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Relative added successfully!')),
+        );
+        Navigator.pop(context);
+      }).catchError((error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to add relative: $error')),
+        );
+      });
+    }
+  }
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -125,20 +124,20 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _profileIDController,
-                    labelText: 'profile_id'.tr(),
-                     validator: (value) {
+                    labelText: 'profile_id',
+                    validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id'.tr();
+                        return 'please_enter_profile_id';
                       }
                       return null;
                     },
                   ).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _relativeNameController,
-                    labelText: 'full_name_relative'.tr(),
+                    labelText: 'full_name_relative',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_full_name_relative'.tr();
+                        return 'please_enter_full_name_relative';
                       }
                       return null;
                     },
@@ -148,22 +147,22 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               //relationship + relativephone
               Row(
                 children: [
-                     CustomTextFormField(
+                  CustomTextFormField(
                     textEditingController: _relationshipController,
-                    labelText: 'relationship'.tr(),
+                    labelText: 'relationship',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_relationship'.tr();
+                        return 'please_enter_relationship';
                       }
                       return null;
                     },
                   ).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _phoneRelativeController,
-                    labelText: 'relative_phone'.tr(),
+                    labelText: 'relative_phone',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_relative_phone'.tr();
+                        return 'please_enter_relative_phone';
                       }
                       return null;
                     },
@@ -175,13 +174,13 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 validator: (value) =>
                     value.isEmptyOrNull ? 'Please enter nation' : null,
                 textEditingController: _nationRelativeController,
-                labelText: 'relative_nation'.tr(),
+                labelText: 'relative_nation',
               ).p(8),
               //Phone
               Row(
                 children: [
-                  _buildDateField('Ngày sinh', _birthdayRelativeController, _birthdayRelative,
-                      (date) {
+                  _buildDateField('Ngày sinh', _birthdayRelativeController,
+                      _birthdayRelative, (date) {
                     setState(() {
                       _birthdayRelative = date;
                       _birthdayRelativeController.text =
@@ -192,32 +191,31 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     validator: (value) =>
                         value.isEmptyOrNull ? 'please_enter_RelativeJob' : null,
                     textEditingController: _relativeJobController,
-                    labelText: 'relative_job'.tr(),
+                    labelText: 'relative_job',
                     maxLines: 1,
-                    
                   ).w(254),
                 ],
               ).py(8),
               //Address
               CustomTextFormField(
                 textEditingController: _temporaryAddressRelativeController,
-                labelText: 'temp_address'.tr(),
+                labelText: 'temp_address',
                 validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_temp_address'.tr();
-                      }
-                      return null;
-                    },
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_temp_address';
+                  }
+                  return null;
+                },
               ).p8(),
               CustomTextFormField(
                 textEditingController: _currentAddressRelativeController,
-                labelText: 'current_address'.tr(),
+                labelText: 'current_address',
                 validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_current_address'.tr();
-                      }
-                      return null;
-                    },
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_current_address';
+                  }
+                  return null;
+                },
               ).p8(),
               //
             ]),
@@ -225,7 +223,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         ));
   }
 
- Widget _buildDateField(String label, TextEditingController controller,
+  Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -238,7 +236,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_enter_relative_birthday'.tr();
+                return 'please_enter_relative_birthday';
               }
               return null;
             },
@@ -253,5 +251,4 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
       ),
     );
   }
-
 }

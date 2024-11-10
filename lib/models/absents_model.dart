@@ -11,7 +11,7 @@ class Absents {
     this.to,
     this.daysOff,
     required this.profileID,
-    this.status = 1,
+    this.status = -1,
   });
 
   DateTime from;
@@ -26,7 +26,9 @@ class Absents {
     return Absents(
       ID: json["ID"],
       reason: json["reason"],
-      to: json['to'] != null ? DateFormat("dd-MM-yyyy").parse(json['to']) : null,
+      to: json['to'] != null
+          ? DateFormat("dd-MM-yyyy").parse(json['to'])
+          : null,
       status: json["status"],
       profileID: json["profile_id"],
       daysOff: json["days_off"] != null

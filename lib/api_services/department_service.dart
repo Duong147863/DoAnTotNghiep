@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
-import 'package:nloffice_hrm/models/profiles_model.dart';
 
 class DepartmentService {
   Future<http.Response> getAllDepartments() async {

@@ -17,7 +17,6 @@ import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/employee_managment_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
@@ -107,14 +106,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           name: AppRoutes.leaveRequestList,
         ),
       );
-
-    ///
-    case AppRoutes.departmentListRoute:
-      return MaterialPageRoute(
-          builder: (context) => DepartmentsScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.departmentListRoute,
-          ));
 
     ///
      case AppRoutes.salariesAddRoute:

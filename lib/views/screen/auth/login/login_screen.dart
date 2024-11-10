@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
@@ -167,7 +166,7 @@ class _TapBarState extends State<LoginScreen> {
                 }
               }
             },
-            title: 'login'.tr(),
+            title: 'login',
             titleStyle: TextStyle(fontSize: 20, color: Colors.white),
           ).p(10)
         ],

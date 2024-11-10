@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
@@ -48,27 +47,28 @@ class _PositonInfoScreenState extends State<PositonInfoScreen> {
       }
     }
   }
+
   void _deletePosition() async {
-  try {
-    await Provider.of<PositionsViewModel>(context, listen: false)
-        .deletePosition(widget.positions!.positionId); 
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Position deleted successfully')),
-    );
-    Navigator.pop(context);
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to delete position: $e')),
-    );
+    try {
+      await Provider.of<PositionsViewModel>(context, listen: false)
+          .deletePosition(widget.positions!.positionId);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Position deleted successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete position: $e')),
+      );
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'position_info'.tr(),
+      titletext: 'position_info',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -87,10 +87,10 @@ class _PositonInfoScreenState extends State<PositonInfoScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _positionIDController,
-                    labelText: 'position_id'.tr(),
+                    labelText: 'position_id',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_position_id'.tr();
+                        return 'please_enter_position_id';
                       }
                       return null;
                     },
@@ -99,10 +99,10 @@ class _PositonInfoScreenState extends State<PositonInfoScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _positionNameController,
-                    labelText: 'position_name'.tr(),
+                    labelText: 'position_name',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_position_name'.tr();
+                        return 'please_enter_position_name';
                       }
                       return null;
                     },
@@ -133,17 +133,20 @@ class _PositonInfoScreenState extends State<PositonInfoScreen> {
                             builder: (BuildContext context) {
                               return AlertDialog(
                                 title: Text('Confirm Delete'),
-                                content: Text('Are you sure you want to delete this position?'),
+                                content: Text(
+                                    'Are you sure you want to delete this position?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Đóng dialog
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
                                     },
                                     child: Text('Cancel'),
                                   ),
                                   TextButton(
                                     onPressed: () {
-                                      Navigator.of(context).pop(); // Đóng dialog
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
                                       _deletePosition(); // Thực hiện xóa
                                     },
                                     child: Text('Delete'),

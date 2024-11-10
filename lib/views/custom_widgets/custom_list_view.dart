@@ -65,7 +65,7 @@ class CustomListView extends StatelessWidget {
     // showSearchBar
     //     ? CustomTextFormField(
     //         maxLines: 3,
-    //         hintText: 'search'.tr(),
+    //         hintText: 'search',
     //         prefixIcon: Icon(Icons.search),
     //       )
     //  border: OutlineInputBorder(

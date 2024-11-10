@@ -49,12 +49,11 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
   void _submit() {
     if (_formKey.currentState!.validate()) {
       final newAbsents = Absents(
-        profileID: _profileIDController.text,
-        reason: _reasonController.text,
-        from: _fromDate,
-        to: _toDate,
-        daysOff: _parseDouble(_daysOffController.text)
-      );
+          profileID: _profileIDController.text,
+          reason: _reasonController.text,
+          from: _fromDate,
+          to: _toDate,
+          daysOff: _parseDouble(_daysOffController.text));
       Provider.of<AbsentsViewModel>(context, listen: false)
           .addNewAbsent(newAbsents)
           .then((_) {
@@ -82,7 +81,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-           key: _formKey,
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -141,7 +140,8 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   // Kiểm tra nếu số ngày nhập vào khớp với sự tính toán từ ngày "From" và "To"
                   double enteredDaysOff = _parseDouble(value);
                   if (enteredDaysOff != _calculateDaysOff()) {
-                    return 'Holiday does not match the number of days between "To day" and "From day" '.tr();
+                    return 'Holiday does not match the number of days between "To day" and "From day" '
+                        .tr();
                   }
                   return null;
                 },
@@ -156,12 +156,13 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   return null;
                 },
               ).py8(),
-              Spacer(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   ElevatedButton(
-                    onPressed: () { _submit();},
+                    onPressed: () {
+                      _submit();
+                    },
                     child: Text('Lưu'),
                   ),
                 ],
@@ -173,39 +174,40 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
     );
   }
 
- Widget _buildDateField(String label, TextEditingController controller,
-    DateTime initialDate, Function(DateTime) onDateSelected) {
-  return GestureDetector(
-    onTap: () => _selectDate(context, initialDate, onDateSelected),
-    child: AbsorbPointer(
-      child: TextFormField(
-        readOnly: true,
-        style: TextStyle(color: Colors.black),
-        controller: controller,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'please'.tr();
-          }
-
-          // Kiểm tra ngày "To" phải lớn hơn hoặc bằng ngày "From" cộng thêm một ngày
-          if (label == 'To day') {
-            final fromDate = _fromDate;
-            final toDate = DateTime.parse(value);
-
-            if (toDate.isBefore(fromDate.add(Duration(days: 1)))) {
-              return 'To day must be at least one day after From day'.tr();
+  Widget _buildDateField(String label, TextEditingController controller,
+      DateTime initialDate, Function(DateTime) onDateSelected) {
+    return GestureDetector(
+      onTap: () => _selectDate(context, initialDate, onDateSelected),
+      child: AbsorbPointer(
+        child: TextFormField(
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'please'.tr();
             }
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+
+            // Kiểm tra ngày "To" phải lớn hơn hoặc bằng ngày "From" cộng thêm một ngày
+            if (label == 'To day') {
+              final fromDate = _fromDate;
+              final toDate = DateTime.parse(value);
+
+              if (toDate.isBefore(fromDate.add(Duration(days: 1)))) {
+                return 'To day must be at least one day after From day'.tr();
+              }
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
+
   // Hàm tính toán số ngày nghỉ
   double _calculateDaysOff() {
     final difference = _toDate.difference(_fromDate).inDays;
@@ -219,6 +221,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       _daysOffController.text = daysOff.toString();
     });
   }
+
   // Phương thức phụ để xử lý chuyển đổi từ String sang double
   double _parseDouble(String value) {
     if (value.isEmpty) return 0.0; // Nếu rỗng thì trả về giá trị mặc định

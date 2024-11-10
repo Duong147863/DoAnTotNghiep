@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
@@ -68,7 +67,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'department_info'.tr(),
+      titletext: '${widget.departments!.departmentName}',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -87,10 +86,10 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _departmentIDController,
-                    labelText: 'department_id'.tr(),
+                    labelText: 'Mã Phòng ban',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id'.tr();
+                        return 'Vui lòng nhập mã phòng ban';
                       }
                       return null;
                     },
@@ -99,16 +98,18 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _departmentNameController,
-                    labelText: 'department_name'.tr(),
+                    labelText: 'Tên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_full_name'.tr();
+                        return 'Vui lòng nhập tên phòng ban';
                       }
                       return null;
                     },
                     enabled: _isEditing,
                   ).px8(),
-                  Spacer(),
+                  // Consumer<>(builder: (builder,viewModel,child){
+
+                  // }),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
