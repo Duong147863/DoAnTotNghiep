@@ -16,4 +16,10 @@ class AbsentsService {
         },
         body: json.encode(asbents.toJson()));
   }
+    Future<http.Response> getAllAbsents(String profileId) async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}absents/$profileId'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
 }

@@ -25,4 +25,5 @@ class AppRoutes {
   static const leaveRequestList = "leave_request_list_screen";
   static const relativesAddRoute = "add_relative_screen";
   static const salariesAddRoute = "add_salary_screen";
+  static const absentListRoute = "list_absent_screen";
 }
