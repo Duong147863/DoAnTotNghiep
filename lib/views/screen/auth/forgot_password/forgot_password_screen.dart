@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -68,7 +67,7 @@ class ForgePasswordScreen extends StatelessWidget {
             ).p(10),
             //Submit button
             CustomButton(
-              title: 'send'.tr(),
+              title: 'send',
               titleStyle: TextStyle(fontSize: 20, color: Colors.white),
             ).p(10)
           ],

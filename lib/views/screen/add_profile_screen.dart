@@ -6,7 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
+
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
@@ -23,8 +23,8 @@ import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class AddProfilePage extends StatefulWidget {
-  // final Profiles? profile;
-  const AddProfilePage({super.key});
+  final Profiles? profile;
+  const AddProfilePage({super.key, this.profile});
 
   @override
   _AddProfilePageState createState() => _AddProfilePageState();
@@ -89,7 +89,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
           .fetchAllDepartments();
       departments = Provider.of<DeparmentsViewModel>(context, listen: false)
           .listDepartments;
-      setState(() {});
+      setState(() {
+        if (widget.profile!.departmentId != 'BoD') {
+          departments.removeWhere((e) => e.departmentID == 'BoD');
+        }
+      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
@@ -243,20 +247,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
               children: [
                 CustomTextFormField(
                   textEditingController: _profileIDController,
-                  labelText: 'profile_id'.tr(),
+                  labelText: 'profile_id',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_profile_id'.tr();
+                      return 'please_enter_profile_id';
                     }
                     return null;
                   },
                 ).px8().w(150),
                 CustomTextFormField(
                   textEditingController: _profileNameController,
-                  labelText: 'full_name'.tr(),
+                  labelText: 'full_name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_full_name'.tr();
+                      return 'please_enter_full_name';
                     }
                     return null;
                   },
@@ -276,10 +280,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 }).px(8).w(150),
                 CustomTextFormField(
                   textEditingController: _placeOfBirthController,
-                  labelText: 'place_of_birth'.tr(),
+                  labelText: 'place_of_birth',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_place_of_birth'.tr();
+                      return 'please_enter_place_of_birth';
                     }
                     return null;
                   },
@@ -288,32 +292,32 @@ class _AddProfilePageState extends State<AddProfilePage> {
             ),
             Row(
               children: [
-                Text('Department'.tr()).px(8),
+                Text('Department').px(8),
                 _buildDepartmentDropdown('Choose Department').p(8).w(300),
               ],
             ),
             Row(
               children: [
-                Text('Position'.tr()).px(8),
+                Text('Position').px(8),
                 _buildPositionsDropdown('Choose Postion').p(8).w(300),
               ],
             ),
             Row(
               children: [
-                Text('Salary'.tr()).px(8),
+                Text('Salary').px(8),
                 _buildSalaryDropdown('Choose Salary').p(8).w(300),
               ],
             ),
             //Gender + Marriage
             Row(
               children: [
-                Text('gender'.tr()).px(8),
+                Text('gender').px(8),
                 _buildDropdownField('Chọn giới tính', _gender, (value) {
                   setState(() {
                     _gender = value!;
                   });
                 }).p(8).w(130),
-                Text('marriage'.tr()),
+                Text('marriage'),
                 Radio(
                   value: true,
                   groupValue: _marriage,
@@ -323,7 +327,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     });
                   },
                 ),
-                Text('yes'.tr()),
+                Text('yes'),
                 Radio(
                   value: false,
                   groupValue: _marriage,
@@ -333,7 +337,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     });
                   },
                 ),
-                Text('no'.tr()),
+                Text('no'),
               ],
             ),
             // ID number + license day
@@ -341,21 +345,21 @@ class _AddProfilePageState extends State<AddProfilePage> {
               children: [
                 CustomTextFormField(
                   textEditingController: _identifiNumController,
-                  labelText: 'id_num'.tr(),
+                  labelText: 'id_num',
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_phone_number'.tr();
+                      return 'please_enter_phone_number';
                     }
                     if (value.length != 12) {
-                      return 'please_enter_valid_id_num'
-                          .tr(); // Thông báo nhập đúng 10 chữ số
+                      return 'please_enter_valid_id_num'; // Thông báo nhập đúng 10 chữ số
                     }
                     return null;
                   },
                 ).w(200).px8(),
-                _buildDateField('id_license_date'.tr(), _idLicenseDayController,
-                    _idLicenseDay, (date) {
+                _buildDateField(
+                    'id_license_date', _idLicenseDayController, _idLicenseDay,
+                    (date) {
                   setState(() {
                     _idLicenseDay = date;
                     _idLicenseDayController.text =
@@ -369,23 +373,23 @@ class _AddProfilePageState extends State<AddProfilePage> {
               validator: (value) =>
                   value.isEmptyOrNull ? 'Please enter nation' : null,
               textEditingController: _nationController,
-              labelText: 'nation'.tr(),
+              labelText: 'nation',
             ).p(8),
             //Email + phone
             Row(
               children: [
                 CustomTextFormField(
                   textEditingController: _emailController,
-                  labelText: 'email'.tr(),
+                  labelText: 'email',
                   maxLines: 1,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_email'.tr();
+                      return 'please_enter_email';
                     }
                     final emailRegex =
                         RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                     if (!emailRegex.hasMatch(value)) {
-                      return 'please_enter_valid_email'.tr();
+                      return 'please_enter_valid_email';
                     }
                     return null;
                   },
@@ -393,16 +397,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 CustomTextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'please_enter_phone_number'.tr();
+                            return 'please_enter_phone_number';
                           }
                           if (value.length != 10) {
-                            return 'please_enter_valid_phone_number'
-                                .tr(); // Thông báo nhập đúng 10 chữ số
+                            return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
                           }
                           return null;
                         },
                         textEditingController: _phoneController,
-                        labelText: 'phone'.tr(),
+                        labelText: 'phone',
                         maxLines: 1,
                         keyboardType: TextInputType.number)
                     .w(145),
@@ -410,11 +413,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
             ).py(8),
             //Password
             CustomTextFormField(
-              labelText: "password".tr(),
+              labelText: "password",
               textEditingController: _passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'please_enter_password'.tr();
+                  return 'please_enter_password';
                 }
                 return null;
               },
@@ -422,20 +425,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
             //Address
             CustomTextFormField(
               textEditingController: _temporaryAddressController,
-              labelText: 'temp_address'.tr(),
+              labelText: 'temp_address',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'please_enter_temp_address'.tr();
+                  return 'please_enter_temp_address';
                 }
                 return null;
               },
             ).p8(),
             CustomTextFormField(
               textEditingController: _currentAddressController,
-              labelText: 'current_address'.tr(),
+              labelText: 'current_address',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'please_enter_current_address'.tr();
+                  return 'please_enter_current_address';
                 }
                 return null;
               },
@@ -458,7 +461,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date'.tr();
+                return 'please_id_license_date';
               }
               return null;
             },
@@ -550,7 +553,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
       items: salarys.map((Salaries salary) {
         return DropdownMenuItem<Salaries>(
           value: salary,
-          child: Text(salary.salaryId), // assuming department has a `name` field
+          child:
+              Text(salary.salaryId), // assuming department has a `name` field
         );
       }).toList(),
       decoration: InputDecoration(
@@ -558,5 +562,4 @@ class _AddProfilePageState extends State<AddProfilePage> {
       ),
     );
   }
-  
 }

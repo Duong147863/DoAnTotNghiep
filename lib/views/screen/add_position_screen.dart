@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -51,7 +50,7 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
     return BasePage(
       showAppBar: true,
       appBar: AppBar(
-        title: Text('add_new_position'.tr()),
+        title: Text('Thêm chức vụ'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -63,10 +62,10 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
                 padding: EdgeInsets.symmetric(vertical: 8.0),
                 child: CustomTextFormField(
                   textEditingController: _positionIdController,
-                  labelText: 'position_id'.tr(),
+                  labelText: 'position_id',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_position_id'.tr();
+                      return 'please_enter_position_id';
                     }
                     return null;
                   },
@@ -76,10 +75,10 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
                 padding: const EdgeInsets.all(10),
                 child: CustomTextFormField(
                   textEditingController: _positionNameController,
-                  labelText: 'position_name'.tr(),
+                  labelText: 'position_name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_position_name'.tr();
+                      return 'please_enter_position_name';
                     }
                     return null;
                   },
@@ -87,7 +86,7 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
               ),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text('add_new_position'.tr()),
+                child: Text('add_new_position'),
               ),
             ],
           ),

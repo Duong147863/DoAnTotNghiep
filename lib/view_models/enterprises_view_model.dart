@@ -5,14 +5,12 @@ import 'package:nloffice_hrm/repository/enterprises_repo.dart';
 class EnterprisesViewModel extends ChangeNotifier {
   final EnterprisesRepository repository = EnterprisesRepository();
 
-  List<Enterprises> _list = [];
   bool fetchingData = false;
-  List<Enterprises> get listEnterprises => _list;
 
   Future<void> fetchEnterpriseInfo() async {
     fetchingData = true;
     try {
-      _list = await repository.fetchEnterpriseInfo();
+      await repository.fetchEnterpriseInfo();
     } catch (e) {
       throw Exception('Failed to load datas: $e');
     }

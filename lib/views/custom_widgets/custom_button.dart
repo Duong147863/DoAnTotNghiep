@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_text_styles.dart';
 // import 'package:sod_user/utils/utils.dart';

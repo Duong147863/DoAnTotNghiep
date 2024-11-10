@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:nloffice_hrm/api_services/app.service.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/constant/input.styles.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
@@ -19,7 +18,7 @@ import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
+
 import 'package:provider/provider.dart';
 import 'package:velocity_x/src/extensions/context_ext.dart';
 import 'package:velocity_x/src/velocity_xx.dart';
@@ -294,10 +293,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   image: _profileImageBase64 != null &&
                           _profileImageBase64!.isNotEmpty
                       ? MemoryImage(base64Decode(_profileImageBase64!))
-                      : (widget.profile!.profileImage != null &&
-                              widget.profile!.profileImage!.isNotEmpty
+                      : (widget.profile!.profileImage.isNotEmpty
                           ? MemoryImage(
-                              base64Decode(widget.profile!.profileImage!))
+                              base64Decode(widget.profile!.profileImage))
                           : AssetImage('assets/images/male_avatar.png')
                               as ImageProvider), // Default avatar
                   fit: BoxFit.cover,
@@ -367,10 +365,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _profileIDController,
-                    labelText: 'profile_id'.tr(),
+                    labelText: 'Mã',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id'.tr();
+                        return 'please_enter_profile_id';
                       }
                       return null;
                     },
@@ -378,10 +376,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _profileNameController,
-                    labelText: 'full_name'.tr(),
+                    labelText: 'Họ và tên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_full_name'.tr();
+                        return 'please_enter_full_name';
                       }
                       return null;
                     },
@@ -393,7 +391,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Birthday + Place of birth
               Row(
                 children: [
-                  _buildDateField('birthday', _birthdayController, _birthday,
+                  _buildDateField('Ngày sinh', _birthdayController, _birthday,
                       (date) {
                     setState(() {
                       _birthday = date;
@@ -403,10 +401,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }).px(8).w(150),
                   CustomTextFormField(
                     textEditingController: _placeOfBirthController,
-                    labelText: 'place_of_birth'.tr(),
+                    labelText: 'Nơi sinh',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_place_of_birth'.tr();
+                        return 'please_enter_place_of_birth';
                       }
                       return null;
                     },
@@ -416,52 +414,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Row(
                 children: [
-                  Text('Department'.tr()).px(8),
+                  Text('Phòng:').px(8),
                   _buildDepartmentDropdown('Choose Department').p(8).w(300),
                 ],
               ),
               Row(
                 children: [
-                  Text('Position'.tr()).px(8),
+                  Text('Chức vụ').px(8),
                   _buildPositionsDropdown('Choose Postion').p(8).w(300),
                 ],
               ),
               Row(
                 children: [
-                  Text('Salary'.tr()).px(8),
+                  Text('Lương').px(8),
                   _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
               // Gender + Marriage
               Row(
                 children: [
-                  Text('gender'.tr()).px(8),
+                  Text('Giới tính').px(8),
                   _buildDropdownField('Chọn giới tính', _gender, (value) {
                     setState(() {
                       _gender = value!;
                     });
                   }).p(8).w(130),
-                  Text('marriage'.tr()),
+                  //Nation
+                  CustomTextFormField(
+                    validator: (value) =>
+                        value.isEmptyOrNull ? 'Please enter nation' : null,
+                    textEditingController: _nationController,
+                    labelText: 'Quốc tịch',
+                    enabled: _isEditing,
+                  ).p(8).w(160),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('Hôn nhân:'),
                   Radio(
                     value: true,
                     groupValue: _marriage,
-                    onChanged:_isEditing? (value) {
-                      setState(() {
-                        _marriage = value as bool;
-                      });
-                    }: null,
+                    onChanged: _isEditing
+                        ? (value) {
+                            setState(() {
+                              _marriage = value as bool;
+                            });
+                          }
+                        : null,
                   ),
-                  Text('yes'.tr()),
+                  Text('Đã kết hôn'),
                   Radio(
                     value: false,
                     groupValue: _marriage,
-                    onChanged: _isEditing ?(value) {
-                      setState(() {
-                        _marriage = value as bool;
-                      });
-                    }:null,
+                    onChanged: _isEditing
+                        ? (value) {
+                            setState(() {
+                              _marriage = value as bool;
+                            });
+                          }
+                        : null,
                   ),
-                  Text('no'.tr()),
+                  Text('Chưa kết hôn'),
                 ],
               ),
 
@@ -470,22 +484,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _identifiNumController,
-                    labelText: 'id_num'.tr(),
+                    labelText: 'id_num',
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_phone_number'.tr();
+                        return 'please_enter_phone_number';
                       }
                       if (value.length != 12) {
-                        return 'please_enter_valid_id_num'
-                            .tr(); // Thông báo nhập đúng 10 chữ số
+                        return 'please_enter_valid_id_num'; // Thông báo nhập đúng 10 chữ số
                       }
                       return null;
                     },
                     enabled: _isEditing,
                   ).w(200).px8(),
-                  _buildDateField('id_license_date'.tr(),
-                      _idLicenseDayController, _idLicenseDay, (date) {
+                  _buildDateField(
+                      'id_license_date', _idLicenseDayController, _idLicenseDay,
+                      (date) {
                     setState(() {
                       _idLicenseDay = date;
                       _idLicenseDayController.text =
@@ -494,29 +508,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }).w(184),
                 ],
               ).py8(),
-              //Nation
-              CustomTextFormField(
-                validator: (value) =>
-                    value.isEmptyOrNull ? 'Please enter nation' : null,
-                textEditingController: _nationController,
-                labelText: 'nation'.tr(),
-                enabled: _isEditing,
-              ).p(8),
+
               //Email + phone
               Row(
                 children: [
                   CustomTextFormField(
                     textEditingController: _emailController,
-                    labelText: 'email'.tr(),
+                    labelText: 'Email',
                     maxLines: 1,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_email'.tr();
+                        return 'please_enter_email';
                       }
                       final emailRegex =
                           RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                       if (!emailRegex.hasMatch(value)) {
-                        return 'please_enter_valid_email'.tr();
+                        return 'please_enter_valid_email';
                       }
                       return null;
                     },
@@ -525,16 +532,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CustomTextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'please_enter_phone_number'.tr();
+                              return 'please_enter_phone_number';
                             }
                             if (value.length != 10) {
-                              return 'please_enter_valid_phone_number'
-                                  .tr(); // Thông báo nhập đúng 10 chữ số
+                              return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
                             }
                             return null;
                           },
                           textEditingController: _phoneController,
-                          labelText: 'phone'.tr(),
+                          labelText: 'Số điện thoại',
                           maxLines: 1,
                           enabled: _isEditing,
                           keyboardType: TextInputType.number)
@@ -543,11 +549,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ).py(8),
               //Password
               // CustomTextFormField(
-              //   labelText: "password".tr(),
+              //   labelText: "password",
               //   textEditingController: _passwordController,
               //   validator: (value) {
               //     if (value == null || value.isEmpty) {
-              //       return 'please_enter_password'.tr();
+              //       return 'please_enter_password';
               //     }
               //     return null;
               //   },
@@ -556,10 +562,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //Address
               CustomTextFormField(
                 textEditingController: _temporaryAddressController,
-                labelText: 'temp_address'.tr(),
+                labelText: 'Địa chỉ tạm trú',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please_enter_temp_address'.tr();
+                    return 'please_enter_temp_address';
                   }
                   return null;
                 },
@@ -567,10 +573,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ).p8(),
               CustomTextFormField(
                 textEditingController: _currentAddressController,
-                labelText: 'current_address'.tr(),
+                labelText: 'Nơi ở hiện tại',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please_enter_current_address'.tr();
+                    return 'please_enter_current_address';
                   }
                   return null;
                 },
@@ -589,7 +595,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onTap: _isEditing ? () => _selectDate(context, initialDate, onDateSelected) : null, 
+        onTap: _isEditing
+            ? () => _selectDate(context, initialDate, onDateSelected)
+            : null,
         child: AbsorbPointer(
           child: TextFormField(
             readOnly: true,
@@ -597,7 +605,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date'.tr();
+                return 'please_id_license_date';
               }
               return null;
             },
@@ -624,12 +632,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         items: [
-          DropdownMenuItem(value: false, child: Text('Man')),
-          DropdownMenuItem(value: true, child: Text('Woman')),
+          DropdownMenuItem(value: false, child: Text('Nam')),
+          DropdownMenuItem(value: true, child: Text('Nữ')),
         ],
         onChanged: _isEditing
-          ? onChanged
-          : null, // Nếu không cho phép chọn, onChanged = null
+            ? onChanged
+            : null, // Nếu không cho phép chọn, onChanged = null
         validator: (value) => value == null ? 'Please select a gender' : null,
       ),
     );
@@ -678,9 +686,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }).toList(),
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabled: _isEditing
-      ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          enabled: _isEditing),
     );
   }
 
@@ -703,9 +710,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }).toList(),
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabled: _isEditing
-      ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          enabled: _isEditing),
     );
   }
 }

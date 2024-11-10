@@ -6,12 +6,10 @@ import 'package:nloffice_hrm/models/enterprises_model.dart';
 class EnterprisesRepository {
   final EnterpriseService service = EnterpriseService();
 
-  Future<List<Enterprises>> fetchEnterpriseInfo() async {
+  Future<Enterprises> fetchEnterpriseInfo() async {
     final response = await service.getEnterpriseInfo();
-
     if (response.statusCode == 200) {
-      return List<Enterprises>.from(
-          json.decode(response.body).map((x) => Enterprises.fromJson(x)));
+      return json.decode(response.body).map((x) => Enterprises.fromJson(x));
     } else {
       throw Exception('Failed to load data');
     }

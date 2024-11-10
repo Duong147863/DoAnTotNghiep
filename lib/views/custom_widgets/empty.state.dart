@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 // import 'package:sod_user/constants/app_images.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_button.dart';
-import 'package:localize_and_translate/localize_and_translate.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class EmptyState extends StatelessWidget {
@@ -65,7 +64,6 @@ class EmptyState extends StatelessWidget {
           //
           auth
               ? "You have to login to access profile and history"
-                  .tr()
                   .text
                   .center
                   .base
@@ -79,12 +77,12 @@ class EmptyState extends StatelessWidget {
           //
           auth
               ? CustomButton(
-                  title: "Login".tr(),
+                  title: "Login",
                   onPressed: actionPressed,
                 ).centered()
               : showAction
                   ? CustomButton(
-                      title: actionText.tr(),
+                      title: actionText,
                       onPressed: actionPressed,
                     ).centered().py12()
                   : SizedBox.shrink(),

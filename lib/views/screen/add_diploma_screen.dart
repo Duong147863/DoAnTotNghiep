@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
@@ -49,6 +48,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
     _grantedByController.dispose();
     super.dispose();
   }
+
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
@@ -57,7 +57,9 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
       });
     }
   }
-  Future<void> _selectDate(BuildContext context, DateTime initialDate, Function(DateTime) onDateSelected) async {
+
+  Future<void> _selectDate(BuildContext context, DateTime initialDate,
+      Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
@@ -69,7 +71,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
     }
   }
 
-   Widget _buildDateField(String label, TextEditingController controller,
+  Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -82,7 +84,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date'.tr();
+                return 'please_id_license_date';
               }
               return null;
             },
@@ -97,7 +99,8 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
       ),
     );
   }
-    void _submit() {
+
+  void _submit() {
     if (_formKey.currentState!.validate()) {
       final createNewDiploma = Diplomas(
         diplomaId: _diplomaIDController.text,
@@ -156,109 +159,110 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
               ).pOnly(bottom: 16),
               Divider(),
               Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _diplomaIDController,
-                  labelText: 'ID Diploma'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_id_diploma'.tr();
-                    }
-                    return null;
-                  },
-                ).px8().w(150),
-                CustomTextFormField(
-                  textEditingController: _diplomaDegreeNameController,
-                  labelText: 'Diploma Degree Name'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_Diploma_Degree_Name'.tr();
-                    }
-                    return null;
-                  },
-                ).w(229),
-              ],
-            ).py16(),
-            Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _grantedByController,
-                  labelText: 'Granted By'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_granted_by'.tr();
-                    }
-                    return null;
-                  },
-                ).px8().w(150),
-                CustomTextFormField(
-                  textEditingController: _modeOfStudyController,
-                  labelText: 'Mode Of Study'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_mode_of_study'.tr();
-                    }
-                    return null;
-                  },
-                ).w(229),
-              ],
-            ).py16(),
-               Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _rankingController,
-                  labelText: 'Ranking'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_ranking'.tr();
-                    }
-                    return null;
-                  },
-                ).px8().w(150),
-                CustomTextFormField(
-                  textEditingController: _majorController,
-                  labelText: 'Major'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_major'.tr();
-                    }
-                    return null;
-                  },
-                ).w(229),
-              ],
-            ).py16(),
-                Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _diplomaTypeController,
-                  labelText: 'Diploma Type'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_diploma_type'.tr();
-                    }
-                    return null;
-                  },
-                ).px8().w(150),
-                CustomTextFormField(
-                  textEditingController: _profileIDController,
-                  labelText: 'Profile ID'.tr(),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_profile_id'.tr();
-                    }
-                    return null;
-                  },
-                ).w(229),
-              ],
-            ).py16(),
-              _buildDateField('License Date', _liscenseDateController, _liscenseDate,
-                    (date) {
-                  setState(() {
-                    _liscenseDate = date;
-                    _liscenseDateController.text =
-                        "${_liscenseDate.toLocal()}".split(' ')[0];
-                  });
-                }).px(8).w(150),
+                children: [
+                  CustomTextFormField(
+                    textEditingController: _diplomaIDController,
+                    labelText: 'ID Diploma',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_id_diploma';
+                      }
+                      return null;
+                    },
+                  ).px8().w(150),
+                  CustomTextFormField(
+                    textEditingController: _diplomaDegreeNameController,
+                    labelText: 'Diploma Degree Name',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_Diploma_Degree_Name';
+                      }
+                      return null;
+                    },
+                  ).w(229),
+                ],
+              ).py16(),
+              Row(
+                children: [
+                  CustomTextFormField(
+                    textEditingController: _grantedByController,
+                    labelText: 'Granted By',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_granted_by';
+                      }
+                      return null;
+                    },
+                  ).px8().w(150),
+                  CustomTextFormField(
+                    textEditingController: _modeOfStudyController,
+                    labelText: 'Mode Of Study',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_mode_of_study';
+                      }
+                      return null;
+                    },
+                  ).w(229),
+                ],
+              ).py16(),
+              Row(
+                children: [
+                  CustomTextFormField(
+                    textEditingController: _rankingController,
+                    labelText: 'Ranking',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_ranking';
+                      }
+                      return null;
+                    },
+                  ).px8().w(150),
+                  CustomTextFormField(
+                    textEditingController: _majorController,
+                    labelText: 'Major',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_major';
+                      }
+                      return null;
+                    },
+                  ).w(229),
+                ],
+              ).py16(),
+              Row(
+                children: [
+                  CustomTextFormField(
+                    textEditingController: _diplomaTypeController,
+                    labelText: 'Diploma Type',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_diploma_type';
+                      }
+                      return null;
+                    },
+                  ).px8().w(150),
+                  CustomTextFormField(
+                    textEditingController: _profileIDController,
+                    labelText: 'Profile ID',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_profile_id';
+                      }
+                      return null;
+                    },
+                  ).w(229),
+                ],
+              ).py16(),
+              _buildDateField(
+                  'License Date', _liscenseDateController, _liscenseDate,
+                  (date) {
+                setState(() {
+                  _liscenseDate = date;
+                  _liscenseDateController.text =
+                      "${_liscenseDate.toLocal()}".split(' ')[0];
+                });
+              }).px(8).w(150),
               SizedBox(height: 24),
               Center(
                 child: ElevatedButton(

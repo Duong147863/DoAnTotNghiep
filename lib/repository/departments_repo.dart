@@ -23,15 +23,15 @@ class DepartmentsRepository {
     try {
       final response = await service.createNewDepartment(department);
       if (response.statusCode == 200) {
-             print("Update successful. Response body: ${response.body}");
+        print("add successful. Response body: ${response.body}");
         return true;
       } else {
-             print("Failed to update department: ${response.statusCode}");
+        print("Failed to add department: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception('Failed to update department');
+        throw Exception('Failed to add department');
       }
     } catch (error) {
-      throw Exception('Failed to update profile');
+      throw Exception('Failed to add department');
     }
   }
 
@@ -48,7 +48,7 @@ class DepartmentsRepository {
       }
     } catch (error) {
       print("An error occurred: $error");
-      throw Exception('Failed to update profile');
+      throw Exception('Failed to update department');
     }
   }
 
