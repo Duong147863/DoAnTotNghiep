@@ -1,8 +1,5 @@
-import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/api_services/salary_service.dart';
-import 'package:nloffice_hrm/models/positions_model.dart';
-import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/repository/salaries_repo.dart';
 

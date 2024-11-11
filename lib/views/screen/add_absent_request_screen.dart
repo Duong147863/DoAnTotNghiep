@@ -30,7 +30,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
 
   void initState() {
     super.initState();
-    _profileIDController.text = widget.profiles!.profileId;
+    _profileIDController.text = "dev-001";
   }
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,

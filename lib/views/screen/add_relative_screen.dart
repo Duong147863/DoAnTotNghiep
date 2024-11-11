@@ -13,9 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class AddRelativeScreen extends StatefulWidget {
-  // final Profiles? profile;
+  final Profiles? profile;
 
-  const AddRelativeScreen({super.key});
+  const AddRelativeScreen({super.key, this.profile});
 
   @override
   _AddRelativeScreenState createState() => _AddRelativeScreenState();
@@ -35,18 +35,22 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
   final _relativeJobController = TextEditingController();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   @override
-  void dispose() {
-    _profileIDController.dispose();
-    _relativeNameController.dispose();
-    _relationshipController.dispose();
-    _phoneRelativeController.dispose();
-    _birthdayRelativeController.dispose();
-    _nationRelativeController.dispose();
-    _temporaryAddressRelativeController.dispose();
-    _currentAddressRelativeController.dispose();
-    _relativeJobController.dispose();
-    super.dispose();
+  void initState() {
+    super.initState();
+    _profileIDController.text=widget.profile!.profileId;
   }
+
+  // void dispose() {
+  //   _profileIDController.dispose();
+  //   _relativeNameController.dispose();
+  //   _relationshipController.dispose();
+  //   _phoneRelativeController.dispose();
+  //   _birthdayRelativeController.dispose();
+  //   _nationRelativeController.dispose();
+  //   _temporaryAddressRelativeController.dispose();
+  //   _currentAddressRelativeController.dispose();
+  //   super.dispose();
+  // }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -123,6 +127,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               Row(
                 children: [
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _profileIDController,
                     labelText: 'profile_id',
                     validator: (value) {
@@ -158,15 +163,20 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
-                    textEditingController: _phoneRelativeController,
-                    labelText: 'relative_phone',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_relative_phone';
-                      }
-                      return null;
-                    },
-                  ).w(254),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'please_enter_phone_number';
+                            }
+                            if (value.length != 10) {
+                              return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
+                            }
+                            return null;
+                          },
+                          textEditingController: _phoneRelativeController,
+                          labelText: 'phone',
+                          maxLines: 1,
+                          keyboardType: TextInputType.number)
+                      .w(254),
                 ],
               ),
               //Nation
@@ -188,11 +198,14 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     });
                   }).px(8).w(150),
                   CustomTextFormField(
-                    validator: (value) =>
-                        value.isEmptyOrNull ? 'please_enter_RelativeJob' : null,
                     textEditingController: _relativeJobController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_relativeJob';
+                      }
+                      return null;
+                    },
                     labelText: 'relative_job',
-                    maxLines: 1,
                   ).w(254),
                 ],
               ).py(8),

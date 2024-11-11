@@ -1,34 +1,32 @@
-import 'dart:ffi';
-
 class Shifts {
   Shifts(
       {required this.shiftId,
       required this.shiftName,
       required this.startTime,
-      required this.endTime,
-      this.status});
+      required this.endTime,});
 
   String shiftId;
   DateTime startTime;
   DateTime endTime;
   String shiftName;
-  Int8? status;
   factory Shifts.fromJson(Map<String, dynamic> json) {
     return Shifts(
       shiftId: json["shift_id"],
-      startTime: json["start_time"],
-      endTime: json["end_time"],
+       startTime: DateTime.parse(json["start_time"]),
+      endTime: DateTime.parse(json["end_time"]),  
       shiftName: json["shift_name"],
-      status: json["status"],
     );
   }
-   Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map["shift_id"] = shiftId;
-    map["start_time"] = startTime;
-    map["end_time"] = endTime;
+    map["start_time"] = _formatTime(startTime);  
+    map["end_time"] = _formatTime(endTime);   
     map["shift_name"] = shiftName;
-    map["status"] = status;
     return map;
   }
+
+ static String _formatTime(DateTime time) {
+  return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+}
 }

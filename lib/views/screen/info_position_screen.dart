@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
+import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';

@@ -1,51 +1,67 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
+import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
-import 'package:nloffice_hrm/api_services/profile_service.dart';
-import 'package:nloffice_hrm/api_services/relative_service.dart'; 
+import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class RelativeListScreen extends StatefulWidget {
+  final Profiles? profiles;
+  const RelativeListScreen({super.key, this.profiles});
   @override
   _RelativeListScreenState createState() => _RelativeListScreenState();
 }
 
 class _RelativeListScreenState extends State<RelativeListScreen> {
-  List<Profiles> profiles = [];
   List<Relatives> relatives = [];
-  List<Profiles> filteredProfiles = [];
+  List<Relatives> filteredRelatives = [];
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchData();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _fetchData();
+  // }
 
-  Future<void> _fetchData() async {
-    try {
-      // List<Profiles> fetchedProfiles = await fetchProfile();
-      // List<Relatives> fetchedRelatives = await fetchRelatives();
-      // setState(() {
-      //   profiles = fetchedProfiles;
-      //   relatives = fetchedRelatives;
-      //   filteredProfiles = fetchedProfiles; 
-      // });
-    } catch (error) {
-      print('Error fetching data: $error');
-    }
+  // Future<void> _fetchData() async {
+  //   try {
+  //     // List<Profiles> fetchedProfiles = await fetchProfile();
+  //     // List<Relatives> fetchedRelatives = await fetchRelatives();
+  //     // setState(() {
+  //     //   profiles = fetchedProfiles;
+  //     //   relatives = fetchedRelatives;
+  //     //   filteredProfiles = fetchedProfiles;
+  //     // });
+  //   } catch (error) {
+  //     print('Error fetching data: $error');
+  //   }
+  // }
+
+  void _handleUpdate(Relatives updatedRelative) {
+    setState(() {
+      int index = relatives
+          .indexWhere((rela) => rela.profileId == updatedRelative.profileId);
+      if (index != -1) {
+        relatives[index] = updatedRelative;
+      }
+    });
   }
 
   void _handleSearch(String query) {
     setState(() {
       if (query.isEmpty) {
-        filteredProfiles = profiles;
+        filteredRelatives = relatives; // Show all absents if query is empty
       } else {
-        filteredProfiles = profiles.where((profile) {
-          return profile.profileName!
+        filteredRelatives = relatives.where((relative) {
+          return relative.profileId!
               .toLowerCase()
-              .contains(query.toLowerCase());
+              .contains(query.toLowerCase()); // Filter based on reason
         }).toList();
       }
     });
@@ -55,48 +71,68 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      appBar: AppBar(
-        title: Text('Danh sách thân nhân'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomSearchBar(
-              suggestions: profiles.map((profile) => profile.profileName!).toList(),
-              onTextChanged: _handleSearch,
-              hintText: '',
-            ),
+      showLeadingAction: true,
+      defaultBody: true,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.primaryLightColor,
+      titletext: "List Relative Screen".tr(),
+      bodyChildren: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: CustomSearchBar(
+            suggestions: relatives
+                .map(
+                  (relative) => relative.profileId,
+                )
+                .toList(),
+            onTextChanged: _handleSearch,
+            hintText: '',
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredProfiles.length,
-              itemBuilder: (context, index) {
-                final profile = filteredProfiles[index];
-                final relative = relatives.firstWhere(
-                  (s) => s.profileId == profile.profileId,
-                  // orElse: () => Relatives(),
-                );
-                return ListTile(
-                  title: Text(profile.profileName ?? ''),
-                  subtitle: Text(relative.relativesName ?? 'Chưa có thông tin'),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => InfoRelativeScreen(
-                          profile: profile,
-                          relatives: relatives,
-                        ),
-                      ),
+        ),
+        Expanded(
+          child: Consumer<RelativesViewModel>(
+            builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData && viewModel.listRelatives.isEmpty) {
+                Provider.of<RelativesViewModel>(context, listen: false)
+                    .fetchAllRelatives(widget.profiles!.profileId);
+              }
+              if (viewModel.fetchingData) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                // If data is fetched, display it
+                List<Relatives> relatives = viewModel.listRelatives;
+                return CustomListView(
+                  dataSet: relatives,
+                  itemBuilder: (context, index) {
+                    return CustomCard(
+                      title:
+                          "${relatives[index].profileId} - ${relatives[index].relativeJob}",
+                      subttile:
+                          "Tên Thân Nhân: ${relatives[index].relativesName}",
+                    ).onInkTap(
+                      () async {
+                        // Gọi màn hình thông tin chức vụ và chờ kết quả
+                        final updatedPosition = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                InfoRelativeScreen(profile: relatives[index]),
+                          ),
+                        );
+
+                        // Kiểm tra xem có dữ liệu cập nhật không
+                        if (updatedPosition != null) {
+                          _handleUpdate(updatedPosition);
+                        }
+                      },
                     );
                   },
                 );
-              },
-            ),
+              }
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

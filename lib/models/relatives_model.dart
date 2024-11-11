@@ -47,6 +47,7 @@ class Relatives {
     map["relative_phone"] = relativesPhone;
     map["relative_birthday"] = relativesBirthday.toIso8601String();
     map["relationship"] = relationship;
+    map["relative_id"] = relativeId;
     map["relative_nation"] = relativesNation;
     map["relative_temp_address"] = relativesTempAddress;
     map["relative_current_address"] = relativesCurrentAddress;

@@ -12,10 +12,10 @@ class PositionsViewModel extends ChangeNotifier {
 
   Future<void> fetchPositions() async {
     fetchingData = true;
-    notifyListeners(); 
+    notifyListeners();
     try {
       _list = await repository.getAllPositions();
-      notifyListeners(); 
+      notifyListeners();
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }
@@ -45,6 +45,7 @@ class PositionsViewModel extends ChangeNotifier {
       throw Exception('Failed to update department: $e');
     }
   }
+
   Future<void> deletePosition(String positionId) async {
     try {
       bool success = await repository.deletePosition(positionId);
@@ -52,10 +53,10 @@ class PositionsViewModel extends ChangeNotifier {
         _list.removeWhere((position) => position.positionId == positionId);
         notifyListeners();
       } else {
-        throw Exception('Failed to delete position');
+        throw Exception('Failed to delete Relative');
       }
     } catch (e) {
-      throw Exception('Failed to delete position: $e');
+      throw Exception('Failed to delete Relative: $e');
     }
   }
 }
