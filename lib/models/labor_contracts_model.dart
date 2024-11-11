@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:ffi';
-class LaborContracts{
+
+import 'package:intl/intl.dart';
+
+class LaborContracts {
   LaborContracts({
-    required this.profileId,
     required this.image,
     required this.startTime,
     this.endTime,
@@ -11,20 +13,20 @@ class LaborContracts{
     required this.departmentId,
   });
 
-  String profileId;
   String image;
   DateTime startTime;
-  DateTime ? endTime;
+  DateTime? endTime;
   String laborContractId;
   int enterpriseId;
   String departmentId;
 
   factory LaborContracts.fromJson(Map<String, dynamic> json) {
     return LaborContracts(
-      profileId: json["profile_id"],
       image: json["image"],
-      startTime: json["start_time"],
-      endTime: json["end_time"],
+      startTime: DateFormat("dd-MM-yyyy").parse(json['start_time']),
+      endTime: json['end_time'] != null
+          ? DateFormat("dd-MM-yyyy").parse(json['end_time'])
+          : null,
       laborContractId: json["labor_contract_id"],
       enterpriseId: json["enterprise_id"],
       departmentId: json["department_id"],
@@ -32,10 +34,14 @@ class LaborContracts{
   }
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
-    map["profile_id"] = profileId;
     map["image"] = image;
-    map["start_time"] = startTime;
-    map["end_time"] = endTime;
+    map["start_time"] = DateFormat("dd-MM-yyyy").format(startTime);
+     // Kiểm tra nếu endTime không phải là null, mới format
+    if (endTime != null) {
+      map["end_time"] = DateFormat("dd-MM-yyyy").format(endTime!);
+    } else {
+      map["end_time"] = null;  // Nếu endTime là null, gửi giá trị null
+    }
     map["labor_contract_id"] = laborContractId;
     map["enterprise_id"] = enterpriseId;
     map["department_id"] = departmentId;

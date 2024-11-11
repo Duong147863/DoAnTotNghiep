@@ -17,10 +17,12 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
@@ -359,6 +361,44 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             child: Text("List Shifts Screen",style: TextStyle(color: Colors.black),),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      ListProjectScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(10.0), // Button rounded corners
+              ),
+            ),
+            child: Text("List Project Screen",style: TextStyle(color: Colors.black),),
+          ),
+           ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) =>
+                      AddLaborContractScreen(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
+              shape: RoundedRectangleBorder(
+                borderRadius:
+                    BorderRadius.circular(10.0), // Button rounded corners
+              ),
+            ),
+            child: Text("Add Labor Contract Screen",style: TextStyle(color: Colors.black),),
           )
         ]);
   }

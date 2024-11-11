@@ -89,12 +89,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
           .fetchAllDepartments();
       departments = Provider.of<DeparmentsViewModel>(context, listen: false)
           .listDepartments;
+      print("Departments loaded: $departments"); // In chi tiết phòng ban đã tải
       setState(() {
-        if (widget.profile!.departmentId != 'BoD') {
+        // Check if widget.profile and widget.profile!.departmentId are not null
+        if (widget.profile != null && widget.profile!.departmentId != 'BoD') {
           departments.removeWhere((e) => e.departmentID == 'BoD');
         }
       });
     } catch (error) {
+      print('Error loading departments: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
       );

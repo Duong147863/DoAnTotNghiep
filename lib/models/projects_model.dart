@@ -2,11 +2,11 @@ class Projects {
   Projects(
       {required this.projectId,
       required this.projectName,
-      required this.projectStatus,
+      this.projectStatus=0,
       });
   String projectId;
   String projectName;
-  String projectStatus;
+  int projectStatus;
 
   factory Projects.fromJson(Map<String, dynamic> json) {
     return Projects(
@@ -19,7 +19,7 @@ class Projects {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map["project_id"] = projectId;
-    map["profile_name"] = projectName;
+    map["project_name"] = projectName;
     map["project_status"] = projectStatus;
     return map;
   }
