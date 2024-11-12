@@ -24,9 +24,11 @@ class ProfilesRepository {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(AppStrings.TOKEN);
     final response = await service.getDepartmentMembers(departmentID, token!);
+    print(json.decode(response.body));
     if (response.statusCode == 200) {
-      return List<Profiles>.from(
-          json.decode(response.body).map((x) => Profiles.fromJson(x)));
+      return List<Profiles>.from(json
+          .decode(response.body)['profiles']
+          .map((x) => Profiles.fromJson(x)));
     } else {
       throw Exception('Failed to load data');
     }
@@ -45,8 +47,8 @@ class ProfilesRepository {
 
   Future<bool> updateProfile(Profiles profile) async {
     try {
-      final response = await service.updateProfile(
-          profile); // Gọi phương thức từ ProfileService
+      final response = await service
+          .updateProfile(profile); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
         return true; // Cập nhật thành công
       } else {
@@ -120,9 +122,12 @@ class ProfilesRepository {
           'Failed to load profile info: ${response.statusCode} - ${response.body}');
     }
   }
-  Future<bool> changePassword(String profileID, String currentPassword, String newPassword, String confirmNewPassword) async {
+
+  Future<bool> changePassword(String profileID, String currentPassword,
+      String newPassword, String confirmNewPassword) async {
     try {
-      final response = await service.changePassword(profileID, currentPassword, newPassword, confirmNewPassword);
+      final response = await service.changePassword(
+          profileID, currentPassword, newPassword, confirmNewPassword);
       if (response.statusCode == 200) {
         print("Password change successful");
         print("Update successful. Response body: ${response.body}");

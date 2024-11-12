@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/models/enterprises_model.dart';
+import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/screen/edit_enterprises_screen.dart';
+import 'package:provider/provider.dart';
 
-class InfoEnterpriseScreen extends StatelessWidget {
-  final Enterprises enterprise;
-  final VoidCallback onDelete;
+class InfoEnterpriseScreen extends StatefulWidget {
+  @override
+  State<InfoEnterpriseScreen> createState() => _InfoEnterpriseScreenState();
+}
 
-  InfoEnterpriseScreen({
-    required this.enterprise,
-    required this.onDelete,
-  });
+class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
+  Enterprises? enterprise;
+
+  @override
+  void initState() {
+    Provider.of<EnterprisesViewModel>(context).fetchAllEnterprises();
+    enterprise = Provider.of<EnterprisesViewModel>(context).enterprises;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +40,12 @@ class InfoEnterpriseScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       Text(
-                        enterprise.name ?? '',
+                        enterprise!.name,
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       Text(
-                        enterprise.licenseNum ?? '',
+                        enterprise!.licenseNum,
                         style: TextStyle(fontSize: 18, color: Colors.grey),
                       ),
                     ],
@@ -48,23 +56,23 @@ class InfoEnterpriseScreen extends StatelessWidget {
                 InfoTile(
                   icon: Icons.business,
                   label: 'License Number',
-                  value: enterprise.licenseNum ?? 'Không có',
+                  value: enterprise!.licenseNum,
                 ),
                 InfoTile(
                   icon: Icons.email,
                   label: 'E-mail',
-                  value: enterprise.email ?? 'Không có',
+                  value: enterprise!.email!,
                 ),
                 InfoTile(
                   icon: Icons.phone,
                   label: 'Phone',
-                  value: enterprise.phone ?? 'Không có',
+                  value: enterprise!.phone!,
                 ),
                 InfoTile(
                   icon: Icons.calendar_today,
                   label: 'Assign Date',
-                  value: enterprise.assignDate != null
-                      ? _formatDate(enterprise.assignDate!)
+                  value: enterprise?.assignDate != null
+                      ? _formatDate(enterprise!.assignDate)
                       : 'Không có',
                 ),
               ],
@@ -81,7 +89,7 @@ class InfoEnterpriseScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => EditEnterpriseScreen(
-                            enterprise: enterprise,
+                            enterprise: enterprise!,
                           ),
                         ));
                   },
@@ -121,7 +129,7 @@ class InfoEnterpriseScreen extends StatelessWidget {
             TextButton(
               child: Text('Delete'),
               onPressed: () {
-                onDelete();
+                // onDelete();
                 Navigator.of(context).pop(); // Dismiss the dialog
                 Navigator.pop(context); // Go back to the previous screen
               },

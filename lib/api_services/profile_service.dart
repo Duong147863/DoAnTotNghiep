@@ -25,10 +25,26 @@ class ProfileService {
     });
   }
 
+  Future<http.Response> getAllQuitMembers(String token) async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}profiles/quit'), headers: {
+      'Authorization': 'Bearer $token',
+    });
+  }
+
+  Future<http.Response> getAllProfileByPosition(
+      String positionID, String token) async {
+    return await http.get(
+        Uri.parse('${AppStrings.baseUrlApi}profiles/position/$positionID'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        });
+  }
+
   Future<http.Response> getDepartmentMembers(
       String departmentID, String token) async {
     return await http.get(
-        Uri.parse('${AppStrings.baseUrlApi}department/members/$departmentID'),
+        Uri.parse('${AppStrings.baseUrlApi}profiles/department/$departmentID'),
         headers: {
           'Authorization': 'Bearer $token',
         });
@@ -92,7 +108,8 @@ class ProfileService {
       body: json.encode({"phone": phone, "password": password}),
     );
   }
-   // Thêm phương thức đổi mật khẩu
+
+  // Thêm phương thức đổi mật khẩu
   Future<http.Response> changePassword(
     String profileId,
     String currentPassword,

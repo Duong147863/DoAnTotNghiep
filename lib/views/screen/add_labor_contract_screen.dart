@@ -33,7 +33,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   DateTime _endTime = DateTime.now();
   List<Departments> departments = [];
   Departments? selectedDepartment;
-  List<Enterprises> enterprises = [];
+  Enterprises? enterprises;
   Enterprises? selectedEnterprises;
   String? _laborContractImageBase64;
   @override
@@ -73,12 +73,13 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       );
     }
   }
-   void _loadEnterpriseID() async {
+
+  void _loadEnterpriseID() async {
     try {
       await Provider.of<EnterprisesViewModel>(context, listen: false)
           .fetchAllEnterprises();
-      enterprises = Provider.of<EnterprisesViewModel>(context, listen: false)
-          .listEnterprises;
+      enterprises =
+          Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
       setState(() {});
     } catch (error) {
       print('Error loading enterprises: $error');
@@ -187,7 +188,8 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                     children: [
                       Text('Enterprises').px8(),
                       Expanded(
-                          child: _buildEnterprisesTextFormField('Choose Enterprises')),
+                          child: _buildEnterprisesTextFormField(
+                              'Choose Enterprises')),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -340,55 +342,56 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       },
     );
   }
+
   Widget _buildEnterprisesTextFormField(String hint) {
-  return TextFormField(
-    controller: _enterpriseController,
-    readOnly: true,
-    decoration: InputDecoration(
-      labelText: hint,
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
+    return TextFormField(
+      controller: _enterpriseController,
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: hint,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
       ),
-    ),
-    onTap: () async {
-      final Enterprises? selectedEnterprise = await showDialog<Enterprises>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Choose Enterprise'),
-            content: SizedBox(
-              height: 300, // Adjust height if necessary
-              width: 300,
-              child: ListView.builder(
-                itemCount: enterprises.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(enterprises[index].name),
-                    onTap: () {
-                      Navigator.pop(context, enterprises[index]);
-                    },
-                  );
-                },
-              ),
-            ),
-          );
-        },
-      );
+      onTap: () async {
+        // final Enterprises? selectedEnterprise = await showDialog<Enterprises>(
+        //   context: context,
+        //   builder: (BuildContext context) {
+        //     return AlertDialog(
+        //       title: Text('Choose Enterprise'),
+        //       content: SizedBox(
+        //         height: 300, // Adjust height if necessary
+        //         width: 300,
+        //         child: ListView.builder(
+        //           itemCount: enterprises.length,
+        //           itemBuilder: (BuildContext context, int index) {
+        //             return ListTile(
+        //               title: Text(enterprises[index].name),
+        //               onTap: () {
+        //                 Navigator.pop(context, enterprises[index]);
+        //               },
+        //             );
+        //           },
+        //         ),
+        //       ),
+        //     );
+        //   },
+        // );
 
-      if (selectedEnterprise != null) {
-        setState(() {
-          selectedEnterprises = selectedEnterprise;
-          _enterpriseController.text = selectedEnterprise.name; // Display the name in TextFormField
-        });
-      }
-    },
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'Please select an enterprise';
-      }
-      return null;
-    },
-  );
-}
-
+        // if (selectedEnterprise != null) {
+        //   setState(() {
+        //     selectedEnterprises = selectedEnterprise;
+        //     _enterpriseController.text =
+        //         selectedEnterprise.name; // Display the name in TextFormField
+        //   });
+        // }
+      },
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select an enterprise';
+        }
+        return null;
+      },
+    );
+  }
 }

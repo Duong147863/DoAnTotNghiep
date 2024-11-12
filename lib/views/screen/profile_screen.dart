@@ -79,13 +79,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
     _profileNameController.text = widget.profile!.profileName;
-    _birthdayController.text =
-        DateFormat('dd-MM-yyy').format(widget.profile!.birthday);
+    _birthdayController.text = widget.profile!.birthday.toIso8601String();
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
+    // print(widget.profile!.idLicenseDay.toIso8601String());
     _idLicenseDayController.text =
-        DateFormat('yyyy-MM-dd').format(widget.profile!.idLicenseDay);
+        widget.profile!.idLicenseDay.toIso8601String();
     _nationController.text = widget.profile!.nation;
     _emailController.text = widget.profile!.email ?? '';
     _phoneController.text = widget.profile!.phone;
@@ -253,33 +253,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.of(context).pop(); // Quay lại trang trước đó
           },
         ),
-        actions: [
-          IconButton(
-            enableFeedback: true,
-            onPressed: _isButtonEnabled
-                ? () {
-                    // Tắt nút sau khi nhấn
+        actions: AppStrings.ROLE_PERMISSIONS
+                .containsAny(['Manage BoD & HR accounts', ''])
+            ? <Widget>[
+                IconButton(
+                  enableFeedback: true,
+                  onPressed: _isButtonEnabled
+                      ? () {
+                          // Tắt nút sau khi nhấn
+                          setState(() {
+                            _isButtonEnabled = false;
+                          });
+                          // Thực hiện hành động
+                          _updateProfile();
+                        }
+                      : null, // Nếu nút không được bật, sẽ không thực hiện hành động
+                  icon: Icon(Icons.save, color: Colors.red),
+                ),
+                IconButton(
+                  onPressed: () {
                     setState(() {
-                      _isButtonEnabled = false;
+                      _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
                     });
-                    // Thực hiện hành động
-                    _updateProfile();
-                  }
-                : null, // Nếu nút không được bật, sẽ không thực hiện hành động
-            icon: Icon(Icons.save, color: Colors.red),
-          ),
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
-              });
-            },
-            icon: Icon(Icons.edit_outlined, color: Colors.red),
-          ),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(Icons.delete_outline, color: Colors.red)),
-        ],
+                  },
+                  icon: Icon(Icons.edit_outlined, color: Colors.red),
+                ),
+              ]
+            : [],
       ),
       extendBodyBehindAppBar: false,
       body: ListView(children: [

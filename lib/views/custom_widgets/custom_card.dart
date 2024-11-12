@@ -26,6 +26,7 @@ class _CustomCardState extends State<CustomCard> {
           children: [
             Text(
               widget.title,
+              maxLines: 2,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,

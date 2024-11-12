@@ -98,18 +98,20 @@ class _BasePageState extends State<BasePage> {
                 )
             : null,
         body: widget.defaultBody
-            ? Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40))),
-                child: Column(
-                  children: widget.bodyChildren!,
+            ? SingleChildScrollView(
+              child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40))),
+                  child: Column(
+                    children: widget.bodyChildren!,
+                  ),
                 ),
-              )
+            )
             : widget.body,
         bottomNavigationBar: widget.bottomNavigationBar,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
