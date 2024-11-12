@@ -8,6 +8,7 @@ import 'package:nloffice_hrm/view_models/absent_view_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
+import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
@@ -24,6 +25,7 @@ import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/auth/login/login_screen.dart';
+import 'package:nloffice_hrm/views/screen/emloyment_contact_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_salari_sceen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/salary_increase_decision.dart';
@@ -81,6 +83,12 @@ void main() {
     ),
     ChangeNotifierProvider<ShiftsViewModel>(
       create: (context) => ShiftsViewModel(),
+    ),
+     ChangeNotifierProvider<ProjectsViewModel>(
+      create: (context) => ProjectsViewModel(),
+    ),
+     ChangeNotifierProvider<LaborContactsViewModel>(
+      create: (context) => LaborContactsViewModel(),
     )
   ], child: MainApp()));
 }

@@ -45,7 +45,7 @@ class Relatives {
     map["profile_id"] = profileId;
     map["relative_name"] = relativesName;
     map["relative_phone"] = relativesPhone;
-    map["relative_birthday"] = relativesBirthday.toIso8601String();
+    map["relative_birthday"] = DateFormat("dd-MM-yyyy").format(relativesBirthday);
     map["relationship"] = relationship;
     map["relative_id"] = relativeId;
     map["relative_nation"] = relativesNation;

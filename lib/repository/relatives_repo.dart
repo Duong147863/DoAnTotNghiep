@@ -26,8 +26,11 @@ class RelativesRepository {
   Future<bool> addRelative(Relatives relatives) async {
     final response = await service.createNewRelative(relatives);
     if (response.statusCode == 200) {
+       print("Delete successful. Response body: ${response.body}");
       return true;
     } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
