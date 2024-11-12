@@ -92,4 +92,25 @@ class ProfileService {
       body: json.encode({"phone": phone, "password": password}),
     );
   }
+   // Thêm phương thức đổi mật khẩu
+  Future<http.Response> changePassword(
+    String profileId,
+    String currentPassword,
+    String newPassword,
+    String newPasswordConfirmation,
+  ) async {
+    return await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}profile/changePassword'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'profile_id': profileId,
+        'current_password': currentPassword,
+        'new_password': newPassword,
+        'new_password_confirmation': newPasswordConfirmation,
+      }),
+    );
+  }
 }

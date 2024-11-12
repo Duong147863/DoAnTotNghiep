@@ -5,9 +5,11 @@ import 'package:image_picker/image_picker.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/enterprises_model.dart';
 import 'package:nloffice_hrm/models/labor_contracts_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
+import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
@@ -26,17 +28,19 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   final _laborContractIDController = TextEditingController();
   final _startTimeController = TextEditingController();
   final _endTimeController = TextEditingController();
-  final _enterpriseIDController = TextEditingController();
+  final _enterpriseController = TextEditingController();
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
   List<Departments> departments = [];
   Departments? selectedDepartment;
+  List<Enterprises> enterprises = [];
+  Enterprises? selectedEnterprises;
   String? _laborContractImageBase64;
   @override
   void initState() {
     super.initState();
     _loadDepartments();
-    _enterpriseIDController.text = '0';
+    _loadEnterpriseID();
   }
 
   Future<void> _pickImage() async {
@@ -69,25 +73,30 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       );
     }
   }
+   void _loadEnterpriseID() async {
+    try {
+      await Provider.of<EnterprisesViewModel>(context, listen: false)
+          .fetchAllEnterprises();
+      enterprises = Provider.of<EnterprisesViewModel>(context, listen: false)
+          .listEnterprises;
+      setState(() {});
+    } catch (error) {
+      print('Error loading enterprises: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load enterprises')),
+      );
+    }
+  }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // Chuyển đổi enterpriseId sang int, nếu không thể chuyển đổi sẽ trả về null.
-      int? enterpriseId = int.tryParse(_enterpriseIDController.text);
-
-      if (enterpriseId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Enterprise ID phải là một số hợp lệ')),
-        );
-        return;
-      }
       final newLaborContact = LaborContracts(
         laborContractId: _laborContractIDController.text,
         startTime: _startTime,
         endTime: _endTimeController.text.isNotEmpty
             ? _endTime
             : null, // Nếu End Time trống, truyền null
-        enterpriseId: enterpriseId,
+        enterpriseId: selectedEnterprises!.enterpriseId,
         image: _laborContractImageBase64 ?? "",
         departmentId: selectedDepartment!.departmentID,
       );
@@ -174,17 +183,13 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                     },
                   ).px8(),
                   SizedBox(height: 16),
-                  CustomTextFormField(
-                    enabled: false,
-                    textEditingController: _enterpriseIDController,
-                    labelText: 'Enterprise ID',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_enterprise_id';
-                      }
-                      return null;
-                    },
-                  ).px8(),
+                  Row(
+                    children: [
+                      Text('Enterprises').px8(),
+                      Expanded(
+                          child: _buildEnterprisesTextFormField('Choose Enterprises')),
+                    ],
+                  ),
                   SizedBox(height: 16),
                   Row(
                     children: [
@@ -335,4 +340,55 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       },
     );
   }
+  Widget _buildEnterprisesTextFormField(String hint) {
+  return TextFormField(
+    controller: _enterpriseController,
+    readOnly: true,
+    decoration: InputDecoration(
+      labelText: hint,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    onTap: () async {
+      final Enterprises? selectedEnterprise = await showDialog<Enterprises>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Choose Enterprise'),
+            content: SizedBox(
+              height: 300, // Adjust height if necessary
+              width: 300,
+              child: ListView.builder(
+                itemCount: enterprises.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    title: Text(enterprises[index].name),
+                    onTap: () {
+                      Navigator.pop(context, enterprises[index]);
+                    },
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      );
+
+      if (selectedEnterprise != null) {
+        setState(() {
+          selectedEnterprises = selectedEnterprise;
+          _enterpriseController.text = selectedEnterprise.name; // Display the name in TextFormField
+        });
+      }
+    },
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'Please select an enterprise';
+      }
+      return null;
+    },
+  );
+}
+
 }

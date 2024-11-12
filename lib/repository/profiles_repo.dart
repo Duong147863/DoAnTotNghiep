@@ -120,4 +120,21 @@ class ProfilesRepository {
           'Failed to load profile info: ${response.statusCode} - ${response.body}');
     }
   }
+  Future<bool> changePassword(String profileID, String currentPassword, String newPassword, String confirmNewPassword) async {
+    try {
+      final response = await service.changePassword(profileID, currentPassword, newPassword, confirmNewPassword);
+      if (response.statusCode == 200) {
+        print("Password change successful");
+        print("Update successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to change password: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to change password: ${response.statusCode}');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to change password');
+    }
+  }
 }

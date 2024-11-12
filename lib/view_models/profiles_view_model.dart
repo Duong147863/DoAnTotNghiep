@@ -7,7 +7,7 @@ class ProfilesViewModel extends ChangeNotifier {
 
   List<Profiles> allProfiles = [];
   List<Profiles> listmembersOfDepartment = [];
-
+  bool isChangingPassword = false; // Trạng thái khi đang thay đổi mật khẩu
   bool fetchingData = false;
   List<Profiles> get listProfiles => allProfiles;
   List<Profiles> get listMembersOfDepartment => listmembersOfDepartment;
@@ -80,6 +80,34 @@ class ProfilesViewModel extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to load profile info: $e');
+    }
+  }
+  Future<void> changePassword(
+    String profileID,
+    String currentPassword,
+    String newPassword,
+    String confirmNewPassword,
+  ) async {
+    isChangingPassword = true;  // Đánh dấu bắt đầu thay đổi mật khẩu
+    notifyListeners();
+    
+    try {
+      bool isSuccess = await repository.changePassword(
+        profileID,
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+      );
+      if (isSuccess) {
+        // Cập nhật lại trạng thái sau khi thay đổi mật khẩu thành công
+        isChangingPassword = false;
+        notifyListeners();
+      }
+    } catch (e) {
+      // Xử lý lỗi nếu có
+      isChangingPassword = false;
+      notifyListeners();
+      throw Exception('Failed to change password: $e');
     }
   }
 }
