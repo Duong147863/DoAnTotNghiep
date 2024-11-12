@@ -21,28 +21,28 @@ class ListShiftsScreen extends StatefulWidget {
 class _ListShiftsScreenState extends State<ListShiftsScreen> {
   List<Shifts> shifts = [];
   List<Shifts> filteredShifts = [];
-   void _handleSearch(String query) {
+  void _handleSearch(String query) {
     setState(() {
       if (query.isEmpty) {
         filteredShifts = shifts;
       } else {
         filteredShifts = shifts.where((shift) {
-          return shift.shiftName
-              .toLowerCase()
-              .contains(query.toLowerCase());
+          return shift.shiftName.toLowerCase().contains(query.toLowerCase());
         }).toList();
       }
     });
   }
-   void _handleUpdate(Shifts updatedShift) {
+
+  void _handleUpdate(Shifts updatedShift) {
     setState(() {
-      int index = shifts
-          .indexWhere((shi) => shi.shiftId == updatedShift.shiftId);
+      int index =
+          shifts.indexWhere((shi) => shi.shiftId == updatedShift.shiftId);
       if (index != -1) {
         shifts[index] = updatedShift;
       }
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -74,7 +74,7 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Shifts Management",
+                "Ca làm việc",
                 style: TextStyle(
                     fontSize: 16,
                     color: Color(0xFFEFF8FF),
@@ -89,14 +89,13 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
           padding: const EdgeInsets.all(16.0),
           child: CustomSearchBar(
             hintText: '',
-            suggestions:
-                shifts.map((shift) => shift.shiftName!).toList(),
+            suggestions: shifts.map((shift) => shift.shiftName!).toList(),
             onTextChanged: _handleSearch,
           ),
         ),
         Expanded(
-          child: Consumer<ShiftsViewModel>(
-              builder: (context, viewModel, child) {
+          child:
+              Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
             if (!viewModel.fetchingData && viewModel.listShifts.isEmpty) {
               Provider.of<ShiftsViewModel>(context, listen: false)
                   .getAllShifts();
@@ -113,7 +112,8 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
                   return CustomCard(
                           title:
                               "${shifts[index].shiftId} - ${shifts[index].shiftName}",
-                          subttile: "${shifts[index].startTime} - ${shifts[index].endTime}")
+                          subttile:
+                              "${shifts[index].startTime.toIso8601String()} - ${shifts[index].endTime}")
                       .onInkTap(
                     () async {
                       // Gọi màn hình thông tin chức vụ và chờ kết quả

@@ -79,8 +79,8 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: CustomSearchBar(
-              hintText: '',
-              suggestions: projects.map((pro) => pro.projectName!).toList(),
+              hintText: 'Tên dự án',
+              suggestions: projects.map((pro) => pro.projectName).toList(),
               onTextChanged: _handleSearch,
             ),
           ),
@@ -103,7 +103,10 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                     return CustomCard(
                             title:
                                 "${projects[index].projectId} - ${projects[index].projectName}",
-                            subttile: projects[index].projectStatus == 0 ? "Đang Làm" : "Hoàn Thành")
+                                
+                            subttile: projects[index].projectStatus == 0
+                                ? "Đang Làm"
+                                : "Hoàn Thành")
                         .onInkTap(
                       () async {
                         // Gọi màn hình thông tin chức vụ và chờ kết quả

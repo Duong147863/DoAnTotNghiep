@@ -6,11 +6,12 @@ class ProfilesViewModel extends ChangeNotifier {
   final ProfilesRepository repository = ProfilesRepository();
 
   List<Profiles> allProfiles = [];
-  List<Profiles> listmembersOfDepartment = [];
+  List<Profiles> membersDepartment = [];
+  List<Profiles> listProfilesByPosition = [];
   bool isChangingPassword = false; // Trạng thái khi đang thay đổi mật khẩu
   bool fetchingData = false;
   List<Profiles> get listProfiles => allProfiles;
-  List<Profiles> get listMembersOfDepartment => listmembersOfDepartment;
+  List<Profiles> get listMembersOfDepartment => membersDepartment;
   //
   Profiles? selectedProfile;
   Future<void> fetchAllProfiles() async {
@@ -25,13 +26,15 @@ class ProfilesViewModel extends ChangeNotifier {
   }
 
   Future<void> membersOfDepartment(String departmentID) async {
+    // fetchingData = true;
     try {
-      listmembersOfDepartment =
+      membersDepartment =
           await repository.fetchMembersOfDepartment(departmentID);
-      notifyListeners();
+      // notifyListeners();
     } catch (e) {
       throw Exception('Failed to load datas: $e');
     }
+    // fetchingData = false;
   }
 
   Future<void> addProfile(Profiles profile) async {
@@ -41,6 +44,7 @@ class ProfilesViewModel extends ChangeNotifier {
       throw Exception('Failed to add datas: $e');
     }
   }
+
   Future<void> updateProfile(Profiles profile) async {
     try {
       await repository.updateProfile(profile);
@@ -48,7 +52,6 @@ class ProfilesViewModel extends ChangeNotifier {
       throw Exception('Failed to add datas: $e');
     }
   }
-  
 
   Future<void> logOut() async {
     try {
@@ -82,15 +85,16 @@ class ProfilesViewModel extends ChangeNotifier {
       throw Exception('Failed to load profile info: $e');
     }
   }
+
   Future<void> changePassword(
     String profileID,
     String currentPassword,
     String newPassword,
     String confirmNewPassword,
   ) async {
-    isChangingPassword = true;  // Đánh dấu bắt đầu thay đổi mật khẩu
+    isChangingPassword = true; // Đánh dấu bắt đầu thay đổi mật khẩu
     notifyListeners();
-    
+
     try {
       bool isSuccess = await repository.changePassword(
         profileID,
