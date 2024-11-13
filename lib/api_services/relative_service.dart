@@ -34,9 +34,9 @@ class RelativeService {
       body: json.encode(relatives.toJson()),
     );
   }
-  Future<http.Response> deleteRelative(String profileID) async {
+  Future<http.Response> deleteRelative(int relativesId) async {
     return await http.delete(
-      Uri.parse('${AppStrings.baseUrlApi}relatives/delete/$profileID'),
+      Uri.parse('${AppStrings.baseUrlApi}relatives/delete/$relativesId'),
       headers: {
         'Authorization': 'Bearer ${AppStrings.TOKEN}',
         'Accept': 'application/json',

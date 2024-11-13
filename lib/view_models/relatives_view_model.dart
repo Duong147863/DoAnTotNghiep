@@ -43,17 +43,17 @@ class RelativesViewModel extends ChangeNotifier {
       throw Exception('Failed to update relatives: $e');
     }
   }
-    Future<void> deleteRelative(String profileid) async {
+    Future<void> deleteRelative(int relativesId) async {
     try {
-      bool success = await repository.deleteRelative(profileid);
+      bool success = await repository.deleteRelative(relativesId);
       if (success) {
-        _list.removeWhere((rela) => rela.profileId == profileid);
+        _list.removeWhere((rela) => rela.relativeId == relativesId);
         notifyListeners();
       } else {
-        throw Exception('Failed to delete position');
+        throw Exception('Failed to delete relatives');
       }
     } catch (e) {
-      throw Exception('Failed to delete position: $e');
+      throw Exception('Failed to delete relatives: $e');
     }
   }
 }

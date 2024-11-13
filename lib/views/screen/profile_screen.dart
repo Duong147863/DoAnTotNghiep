@@ -10,11 +10,13 @@ import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
+import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/repository/profiles_repo.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
+import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
@@ -61,7 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _currentAddressController = TextEditingController();
   DateTime _birthday = DateTime.now();
   DateTime _idLicenseDay = DateTime.now();
-
   bool _gender = false;
   bool _marriage = false;
   bool _isEditing = false;
@@ -74,6 +75,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Positions? selectedPositions;
   List<Salaries> salarys = [];
   Salaries? selectedSalarys;
+  List<WorkingProcesses> workingProcesses = [];
+  WorkingProcesses? selectedWorkingProcesses;
 
   void initState() {
     super.initState();
@@ -98,6 +101,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadDepartments();
     _loadPositions();
     _loadSalaries();
+    _loadworkingProcesses();
+
   }
 
   // Method to load departments
@@ -159,6 +164,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load salaries')),
+      );
+    }
+  }
+    void _loadworkingProcesses() async {
+    try {
+      await Provider.of<WorkingprocessesViewModel>(context, listen: false)
+          .fetchWorkingProcess(widget.profile!.profileId);
+      setState(() {
+        workingProcesses =
+            Provider.of<WorkingprocessesViewModel>(context, listen: false).listWorkingProcess;
+        if (workingProcesses.isNotEmpty) {
+          selectedWorkingProcesses = workingProcesses.firstWhere(
+            (wor) => wor.profileId == widget.profile!.profileId,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Workingprocesses')),
       );
     }
   }
@@ -233,6 +257,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -547,18 +572,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       .w(145),
                 ],
               ).py(8),
-              //Password
-              // CustomTextFormField(
-              //   labelText: "password",
-              //   textEditingController: _passwordController,
-              //   validator: (value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'please_enter_password';
-              //     }
-              //     return null;
-              //   },
-              //   enabled: _isEditing,
-              // ).p8(),
               //Address
               CustomTextFormField(
                 textEditingController: _temporaryAddressController,
@@ -715,3 +728,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
