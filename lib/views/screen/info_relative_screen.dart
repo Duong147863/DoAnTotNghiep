@@ -35,7 +35,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
   final _temporaryAddressRelativeController = TextEditingController();
   final _currentAddressRelativeController = TextEditingController();
   final _relativeJobController = TextEditingController();
-  final idrelativeController=TextEditingController();
+  final idrelativeController = TextEditingController();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   bool _isEditing = false;
   List<Relatives> relatives = [];
@@ -43,14 +43,17 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     super.initState();
     _profileIDController.text = widget.profile.profileId;
     _relativeNameController.text = widget.profile.relativesName;
-    _phoneRelativeController.text=widget.profile.relativesPhone;
-    _birthdayRelativeController.text=DateFormat('yyyy-MM-dd').format(widget.profile.relativesBirthday);
-    _nationRelativeController.text=widget.profile.relativesNation;
-    _temporaryAddressRelativeController.text=widget.profile.relativesTempAddress;
-    _currentAddressRelativeController.text=widget.profile.relativesCurrentAddress;
-    _relativeJobController.text=widget.profile.relativeJob;
-    _relationshipController.text=widget.profile.relationship;
-    idrelativeController.text=widget.profile.relativeId.toString();
+    _phoneRelativeController.text = widget.profile.relativesPhone;
+    _birthdayRelativeController.text =
+        DateFormat('yyyy-MM-dd').format(widget.profile.relativesBirthday);
+    _nationRelativeController.text = widget.profile.relativesNation;
+    _temporaryAddressRelativeController.text =
+        widget.profile.relativesTempAddress;
+    _currentAddressRelativeController.text =
+        widget.profile.relativesCurrentAddress;
+    _relativeJobController.text = widget.profile.relativeJob;
+    _relationshipController.text = widget.profile.relationship;
+    idrelativeController.text = widget.profile.relativeId.toString();
   }
 
   void _updateRelatives() async {
@@ -81,15 +84,25 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
       }
     }
   }
-   void _deleteRelatives() async {
-    try {
-      await Provider.of<RelativesViewModel>(context, listen: false)
-          .deleteRelative(widget.profile.profileId);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Relative deleted successfully')),
-      );
-      Navigator.pop(context);
+  void _deleteRelatives() async {
+    try {
+      final relativeId = widget.profile.relativeId;
+
+      if (relativeId != null) {
+        await Provider.of<RelativesViewModel>(context, listen: false)
+            .deleteRelative(relativeId);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Relative deleted successfully')),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Relative ID is null. Cannot delete relative.')),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to delete Relative: $e')),
@@ -156,7 +169,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   ).px8(),
                   SizedBox(height: 16),
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _relationshipController,
                     labelText: 'relationship',
                     validator: (value) {
@@ -168,7 +181,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   ).px8(),
                   SizedBox(height: 16),
                   CustomTextFormField(
-                     enabled: _isEditing,
+                          enabled: _isEditing,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'please_enter_phone_number';
@@ -186,7 +199,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   SizedBox(height: 16),
                   //Nation
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     validator: (value) =>
                         value.isEmptyOrNull ? 'Please enter nation' : null,
                     textEditingController: _nationRelativeController,
@@ -203,7 +216,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   }).px(8),
                   SizedBox(height: 16),
                   CustomTextFormField(
-                      enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _relativeJobController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -216,7 +229,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   SizedBox(height: 16),
                   //Address
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _temporaryAddressRelativeController,
                     labelText: 'temp_address',
                     validator: (value) {
@@ -228,7 +241,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   ).px8(),
                   SizedBox(height: 16),
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _currentAddressRelativeController,
                     labelText: 'current_address',
                     validator: (value) {
@@ -304,7 +317,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-         onTap: _isEditing
+        onTap: _isEditing
             ? () => _selectDate(context, initialDate, onDateSelected)
             : null,
         child: AbsorbPointer(

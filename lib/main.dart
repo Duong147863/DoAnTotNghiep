@@ -15,6 +15,8 @@ import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
+import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
+import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_salary_screen.dart';
@@ -84,11 +86,17 @@ void main() {
     ChangeNotifierProvider<ShiftsViewModel>(
       create: (context) => ShiftsViewModel(),
     ),
-     ChangeNotifierProvider<ProjectsViewModel>(
+    ChangeNotifierProvider<ProjectsViewModel>(
       create: (context) => ProjectsViewModel(),
     ),
-     ChangeNotifierProvider<LaborContactsViewModel>(
+    ChangeNotifierProvider<LaborContactsViewModel>(
       create: (context) => LaborContactsViewModel(),
+    ),
+    ChangeNotifierProvider<WorkingprocessesViewModel>(
+      create: (context) => WorkingprocessesViewModel(),
+    ),
+    ChangeNotifierProvider<TrainingprocessesViewModel>(
+      create: (context) => TrainingprocessesViewModel(),
     )
   ], child: MainApp()));
 }

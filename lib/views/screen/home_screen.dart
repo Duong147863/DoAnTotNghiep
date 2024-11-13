@@ -24,6 +24,8 @@ import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
@@ -31,6 +33,10 @@ import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_trainingprocesses_HR_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_trainingprocesses_emloyee_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_workingprocess_HR_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_workingprocess_emloyee_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -192,6 +198,84 @@ class _HomeScreenState extends State<HomeScreen> {
                   context,
                   MaterialPageRoute<void>(
                     builder: (BuildContext context) => ChangePasswordScreen(
+                      profiles: widget.profile,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text("Add Workingprocess"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => AddWorkingprocesScreen(
+                      profiles: widget.profile,
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text("List Workingprocess Screen Dành Cho Nhân Viên"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ListWorkingprocessEmloyeeScreen(
+                      profiles: widget.profile
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text("List Workingprocess Screen HR"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ListWorkingprocessHRScreen(
+                      profiles: widget.profile
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text("Add TrainingProcesses"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => AddTrainingprocessesScreen(
+                      profiles: widget.profile,
+                    ),
+                  ),
+                );
+              },
+            ),
+               ListTile(
+              title: Text("List TrainingProcesses Screen Dành Cho Nhân Viên"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ListTrainingprocessesEmloyeeScreen(
+                      profiles: widget.profile,
+                    ),
+                  ),
+                );
+              },
+            ),
+              ListTile(
+              title: Text("List TrainingProcesses Screen HR"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => ListTrainingprocessesHRScreen(
                       profiles: widget.profile,
                     ),
                   ),

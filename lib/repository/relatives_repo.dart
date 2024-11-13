@@ -26,11 +26,11 @@ class RelativesRepository {
   Future<bool> addRelative(Relatives relatives) async {
     final response = await service.createNewRelative(relatives);
     if (response.statusCode == 200) {
-       print("Delete successful. Response body: ${response.body}");
+      print("Delete successful. Response body: ${response.body}");
       return true;
     } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
+      print("Failed to delete Relative: ${response.statusCode}");
+      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -48,16 +48,17 @@ class RelativesRepository {
       throw Exception('Failed to update profile');
     }
   }
-    Future<bool> deleteRelative(String profileID) async {
+
+  Future<bool> deleteRelative(int relativesId) async {
     try {
-      final response = await service.deleteRelative(profileID);
+      final response = await service.deleteRelative(relativesId);
       if (response.statusCode == 200) {
         print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete Relative: ${response.statusCode}");
         print("Response body: ${response.body}");
-        throw Exception('Failed to delete Relative');
+        return false; 
       }
     } catch (error) {
       print("An error occurred: $error");
