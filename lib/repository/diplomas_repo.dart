@@ -33,4 +33,37 @@ Future<List<Diplomas>> getDiplomasOf(
       throw Exception('Failed to add diploma: ${response.statusCode}');
     }
   }
+  Future<bool> updateDiplomas(Diplomas diploma) async {
+    try {
+      final response = await service.updateDiplomas(diploma);
+      if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to Update Trainingprocesses: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to update Trainingprocesses');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to update Trainingprocesses');
+    }
+  }
+
+  Future<bool> deleteDiplomas(String diplomas) async {
+    try {
+      final response = await service.deleteDiplomas(diplomas);
+      if (response.statusCode == 200) {
+        print("Delete successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to delete Trainingprocesses: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to delete Trainingprocesses');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to delete Trainingprocesses');
+    }
+  }
 }

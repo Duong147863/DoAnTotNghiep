@@ -28,4 +28,31 @@ class DiplomasViewModel extends ChangeNotifier {
       throw Exception('Failed to add datas: $e');
     }
   }
+  Future<void> updateDiplomas(Diplomas diploma) async {
+    try {
+      await repository.updateDiplomas(diploma);
+      int index =
+          _list.indexWhere((dip) => dip.diplomaId == diploma.diplomaId);
+      if (index != -1) {
+        _list[index] = diploma;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to update Training Processes: $e');
+    }
+  }
+
+  Future<void> deleteTrainingProcesses(String diplomaId) async {
+    try {
+      bool success = await repository.deleteDiplomas(diplomaId);
+      if (success) {
+        _list.removeWhere((dip) => dip.diplomaId == diplomaId);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to delete Trainingprocesses');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete Trainingprocesses: $e');
+    }
+  }
 }

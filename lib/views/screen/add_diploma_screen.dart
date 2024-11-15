@@ -23,7 +23,6 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   final _formKey = GlobalKey<FormState>();
   final _diplomaIDController = TextEditingController();
   final _diplomaDegreeNameController = TextEditingController();
-  final _diplomaImageController = TextEditingController();
   final _modeOfStudyController = TextEditingController();
   final _rankingController = TextEditingController();
   final _liscenseDateController = TextEditingController();
@@ -44,14 +43,12 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   void dispose() {
     _diplomaIDController.dispose();
     _diplomaDegreeNameController.dispose();
-    _diplomaImageController.dispose();
     _modeOfStudyController.dispose();
     _rankingController.dispose();
     _liscenseDateController.dispose();
     _majorController.dispose();
     _diplomaTypeController.dispose();
     _profileIDController.dispose();
-    _diplomaImageController.dispose();
     _grantedByController.dispose();
     super.dispose();
   }
