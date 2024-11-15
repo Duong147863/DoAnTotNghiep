@@ -7,19 +7,18 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
-import 'package:nloffice_hrm/views/screen/info_trainingprocesses_HR_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_trainingprocesses_emloyee_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_trainingprocesses_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
-class ListTrainingprocessesHRScreen extends StatefulWidget {
+class ListTrainingprocessesScreen extends StatefulWidget {
   final Profiles? profiles;
-  const ListTrainingprocessesHRScreen({super.key,this.profiles});
+  const ListTrainingprocessesScreen({super.key,this.profiles});
 
   @override
-  State<ListTrainingprocessesHRScreen> createState() => _ListTrainingprocessesHRScreenState();
+  State<ListTrainingprocessesScreen> createState() => _ListTrainingprocessesScreenState();
 }
 
-class _ListTrainingprocessesHRScreenState extends State<ListTrainingprocessesHRScreen> {
+class _ListTrainingprocessesScreenState extends State<ListTrainingprocessesScreen> {
   List<Trainingprocesses> trainingprocesses = [];
   List<Trainingprocesses> filteredTrainingprocesses = [];
   void _handleSearch(String query) {
@@ -37,7 +36,7 @@ class _ListTrainingprocessesHRScreenState extends State<ListTrainingprocessesHRS
   void _handleUpdate(Trainingprocesses updatedTrainingprocesses) {
     setState(() {
       int index = trainingprocesses.indexWhere(
-          (tra) => tra.profileId == updatedTrainingprocesses.profileId);
+          (tra) => tra.trainingprocessesId == updatedTrainingprocesses.trainingprocessesId);
       if (index != -1) {
         trainingprocesses[index] = updatedTrainingprocesses;
       }
@@ -98,24 +97,34 @@ class _ListTrainingprocessesHRScreenState extends State<ListTrainingprocessesHRS
               return CustomListView(
                 dataSet: trainingPro,
                 itemBuilder: (context, index) {
-                  return CustomCard(
-                    title:
-                        "${trainingPro[index].profileId} - ${trainingPro[index].trainingprocessesId}",
-                    subttile: trainingPro[index].trainingprocessesStatus == -1
-                        ? "Từ Chối Duyệt"
-                        : trainingPro[index].trainingprocessesStatus == 0
-                            ? "Đợi Duyệt"
-                            : trainingPro[index].trainingprocessesStatus == 1
-                                ? "Đã Duyệt"
-                                : "Trạng Thái Không Hợp Lệ",
-                    subttile1: trainingPro[index].trainingprocessesStatus ==
-                            -1
-                        ? "Từ Chối Duyệt"
-                        : trainingPro[index].trainingprocessesStatus == 0
-                            ? "Đợi Duyệt"
-                            : trainingPro[index].trainingprocessesStatus == 1
-                                ? "Đã Duyệt"
-                                : "Trạng Thái Không Hợp Lệ",
+                 return Card(
+                    child: ListTile(
+                      title: Text(
+                          "${trainingPro[index].profileId} - ${trainingPro[index].trainingprocessesId}"),
+                      subtitle: Text(
+                        trainingPro[index].trainingprocessesStatus == -1
+                            ? "Từ Chối Duyệt"
+                            : trainingPro[index].trainingprocessesStatus == 0
+                                ? "Đợi Duyệt"
+                                : trainingPro[index].trainingprocessesStatus ==
+                                        1
+                                    ? "Đã Duyệt"
+                                    : "Trạng Thái Không Hợp Lệ",
+                        style: TextStyle(
+                          color: trainingPro[index].trainingprocessesStatus ==
+                                  -1
+                              ? Colors.red
+                              : trainingPro[index].trainingprocessesStatus == 0
+                                  ? Colors.yellow
+                                  : trainingPro[index]
+                                              .trainingprocessesStatus ==
+                                          1
+                                      ? Colors.green
+                                      : Colors
+                                          .black,
+                        ),
+                      ),
+                    ),
                   ).onInkTap(
                     () async {
                       if (trainingPro[index].trainingprocessesStatus == 1) {
@@ -128,7 +137,7 @@ class _ListTrainingprocessesHRScreenState extends State<ListTrainingprocessesHRS
                       final updatedWorkingProcesses = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => InfoTrainingprocessesHRScreen(
+                          builder: (context) => InfoTrainingprocessesScreen(
                             trainingprocesses: trainingPro[index],
                           ),
                         ),

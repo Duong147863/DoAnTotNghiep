@@ -16,6 +16,12 @@ class SalaryService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
+  Future<http.Response> getAllSalariesByProfileID(String profileId) async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}salary/$profileId'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
 
   Future<http.Response> addNewSalary(Salaries salary) async {
     return await http.post(Uri.parse('${AppStrings.baseUrlApi}salary/create'),
@@ -36,6 +42,15 @@ class SalaryService {
         'Accept': 'application/json',
       },
       body: json.encode(salary.toJson()),
+    );
+  }
+   Future<http.Response> deleteSalary(String salaryId) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}salary/delete/$salaryId'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Accept': 'application/json',
+      },
     );
   }
 }

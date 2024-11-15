@@ -18,10 +18,10 @@ class ProfileService {
         });
   }
 
-  Future<http.Response> getAllProfile(String token) async {
+  Future<http.Response> getAllProfile() async {
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}profiles'), headers: {
-      'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
 

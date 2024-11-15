@@ -12,7 +12,7 @@ class Shifts {
   factory Shifts.fromJson(Map<String, dynamic> json) {
     return Shifts(
       shiftId: json["shift_id"],
-       startTime: DateTime.parse(json["start_time"]),
+      startTime: DateTime.parse(json["start_time"]),
       endTime: DateTime.parse(json["end_time"]),  
       shiftName: json["shift_name"],
     );

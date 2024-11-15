@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
@@ -12,6 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class AddDiplomaScreen extends StatefulWidget {
+  final Profiles? profile;
+  const AddDiplomaScreen({super.key, this.profile});
   @override
   _AddDiplomaScreenState createState() => _AddDiplomaScreenState();
 }
@@ -34,6 +37,10 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   File? _diplomaImageFile;
   final ImagePicker _picker = ImagePicker();
   @override
+  void initState() {
+    super.initState();
+    _profileIDController.text=widget.profile!.profileId;
+  }
   void dispose() {
     _diplomaIDController.dispose();
     _diplomaDegreeNameController.dispose();
@@ -243,6 +250,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _profileIDController,
                     labelText: 'Profile ID',
                     validator: (value) {

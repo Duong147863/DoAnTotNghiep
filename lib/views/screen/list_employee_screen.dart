@@ -66,8 +66,8 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                         backgroundColor: Colors.white,
                         child: ClipOval(
                           child: SizedBox(
-                            width: 60,
-                            height: 60,
+                            width: 100,
+                            height: 100,
                             child: profiles[index].profileImage != null &&
                                     profiles[index].profileImage.isNotEmpty
                                 ? Image.memory(

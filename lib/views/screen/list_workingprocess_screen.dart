@@ -8,21 +8,21 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_workingprocess_HR_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_workingprocesses_emloyee_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class ListWorkingprocessHRScreen extends StatefulWidget {
+class ListWorkingprocessScreen extends StatefulWidget {
   final Profiles? profiles;
-  const ListWorkingprocessHRScreen({super.key, this.profiles});
+  const ListWorkingprocessScreen({super.key, this.profiles});
 
   @override
-  State<ListWorkingprocessHRScreen> createState() =>
-      _ListWorkingprocessHRScreenState();
+  State<ListWorkingprocessScreen> createState() =>
+      _ListWorkingprocessScreenState();
 }
 
-class _ListWorkingprocessHRScreenState extends State<ListWorkingprocessHRScreen> {
+class _ListWorkingprocessScreenState
+    extends State<ListWorkingprocessScreen> {
   List<WorkingProcesses> workingProcesses = [];
   List<WorkingProcesses> filteredworkingProcesses = [];
   void _handleSearch(String query) {
@@ -40,7 +40,7 @@ class _ListWorkingprocessHRScreenState extends State<ListWorkingprocessHRScreen>
   void _handleUpdate(WorkingProcesses updatedWorkingProcesses) {
     setState(() {
       int index = workingProcesses.indexWhere(
-          (wor) => wor.profileId == updatedWorkingProcesses.profileId);
+          (wor) => wor.workingprocessId == updatedWorkingProcesses.workingprocessId);
       if (index != -1) {
         workingProcesses[index] = updatedWorkingProcesses;
       }
@@ -102,32 +102,41 @@ class _ListWorkingprocessHRScreenState extends State<ListWorkingprocessHRScreen>
               return CustomListView(
                 dataSet: workingProcesses,
                 itemBuilder: (context, index) {
-                  return CustomCard(
-                    title:
-                        "${workingProcesses[index].profileId} - ${workingProcesses[index].workingprocessId}",
-                    subttile: workingProcesses[index].workingprocessStatus == -1
-                        ? "Từ Chối Duyệt"
-                        : workingProcesses[index].workingprocessStatus == 0
-                            ? "Đợi Duyệt"
-                            : workingProcesses[index].workingprocessStatus == 1
-                                ? "Đã Duyệt"
-                                : "Trạng Thái Không Hợp Lệ",
-                    subttile1: workingProcesses[index].workingprocessStatus ==
-                            -1
-                        ? "Từ Chối Duyệt"
-                        : workingProcesses[index].workingprocessStatus == 0
-                            ? "Đợi Duyệt"
-                            : workingProcesses[index].workingprocessStatus == 1
-                                ? "Đã Duyệt"
-                                : "Trạng Thái Không Hợp Lệ",
-                  ).onInkTap(
+                  return Card(
+                      child: ListTile(
+                    title: Text(
+                        "${workingProcesses[index].profileId} - ${workingProcesses[index].workingprocessId}"),
+                    subtitle: Text(
+                      workingProcesses[index].workingprocessStatus == -1
+                          ? "Từ Chối Duyệt"
+                          : workingProcesses[index].workingprocessStatus == 0
+                              ? "Đợi Duyệt"
+                              : workingProcesses[index].workingprocessStatus ==
+                                      1
+                                  ? "Đã Duyệt"
+                                  : "Trạng Thái Không Hợp Lệ",
+                      style: TextStyle(
+                        color: workingProcesses[index].workingprocessStatus ==
+                                -1
+                            ? Colors.red
+                            : workingProcesses[index].workingprocessStatus == 0
+                                ? Colors.yellow
+                                : workingProcesses[index]
+                                            .workingprocessStatus ==
+                                        1
+                                    ? Colors.green
+                                    : Colors
+                                        .black, // Default color if status is not in the defined range
+                      ),
+                    ),
+                  )).onInkTap(
                     () async {
                       if (workingProcesses[index].workingprocessStatus == 1) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                               content: Text("Đã duyệt. Không thể chỉnh sửa!")),
                         );
-                        return; 
+                        return;
                       }
                       final updatedWorkingProcesses = await Navigator.push(
                         context,

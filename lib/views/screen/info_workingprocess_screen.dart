@@ -1,88 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
-import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
-import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/working.processes_model.dart';
+import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class InfoTrainingprocessesEmloyeeScreen extends StatefulWidget {
-  final Trainingprocesses? trainingprocesses;
-  const InfoTrainingprocessesEmloyeeScreen({super.key, this.trainingprocesses});
+class InfoWorkingprocessHRScreen extends StatefulWidget {
+  final WorkingProcesses? workingProcesses;
+  const InfoWorkingprocessHRScreen({super.key, this.workingProcesses});
 
   @override
-  State<InfoTrainingprocessesEmloyeeScreen> createState() =>
-      _InfoTrainingprocessesEmloyeeScreenState();
+  State<InfoWorkingprocessHRScreen> createState() =>
+      _InfoWorkingprocessHRScreenState();
 }
 
-class _InfoTrainingprocessesEmloyeeScreenState
-    extends State<InfoTrainingprocessesEmloyeeScreen> {
+class _InfoWorkingprocessHRScreenState
+    extends State<InfoWorkingprocessHRScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  final _trainingprocessesIdController = TextEditingController();
-  final _trainingprocessesNameController = TextEditingController();
-  final _trainingprocessesContentController = TextEditingController();
+  final _workingprocessIdController = TextEditingController();
+  final _workplaceNameController = TextEditingController();
+  final _workingprocessContentController = TextEditingController();
   final _startTimeController = TextEditingController();
   final _endTimeController = TextEditingController();
-  bool _isEditing = false;
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-
-  @override
+  bool _isEditing = false;
+  int _statusWorkingprocesses = 0;
   void initState() {
     super.initState();
-    _profileIDController.text = widget.trainingprocesses!.profileId;
-    _trainingprocessesIdController.text =
-        widget.trainingprocesses!.trainingprocessesId;
-    _trainingprocessesNameController.text =
-        widget.trainingprocesses!.trainingprocessesName;
-    _trainingprocessesContentController.text =
-        widget.trainingprocesses!.trainingprocessesContent;
+    _statusWorkingprocesses = widget.workingProcesses!.workingprocessStatus;
+    _profileIDController.text = widget.workingProcesses!.profileId;
+    _workingprocessIdController.text =
+        widget.workingProcesses!.workingprocessId;
+    _workplaceNameController.text = widget.workingProcesses!.workplaceName;
+    _workingprocessContentController.text =
+        widget.workingProcesses!.workingprocessContent!;
     _startTimeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.trainingprocesses!.startTime);
+        DateFormat('yyyy-MM-dd').format(widget.workingProcesses!.startTime);
     _endTimeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.trainingprocesses!.endTime!);
+        DateFormat('yyyy-MM-dd').format(widget.workingProcesses!.endTime!);
   }
 
-  void _updateTrainingProcesses() async {
+  void _updateWorkingprocess() async {
     if (_formKey.currentState!.validate()) {
-      final updateTrainingProcesses = Trainingprocesses(
+      final updatedWorkingprocess = WorkingProcesses(
           profileId: _profileIDController.text,
-          trainingprocessesId: _trainingprocessesIdController.text,
-          trainingprocessesName: _trainingprocessesNameController.text,
-          trainingprocessesContent: _trainingprocessesContentController.text,
+          workingprocessId: _workingprocessIdController.text,
+          workplaceName: _workplaceNameController.text,
+          workingprocessContent: _workingprocessContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          trainingprocessesStatus: 0);
+          workingprocessStatus: 0);
       try {
-        await Provider.of<TrainingprocessesViewModel>(context, listen: false)
-            .updateTrainingProcesses(updateTrainingProcesses);
+        await Provider.of<WorkingprocessesViewModel>(context, listen: false)
+            .updateWorkingprocess(updatedWorkingprocess);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('TrainingProcesses Updated successfully!')),
+          SnackBar(content: Text('Workingprocess Updated successfully!')),
         );
-        Navigator.pop(context, updateTrainingProcesses);
+        Navigator.pop(context, updatedWorkingprocess);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to Update TrainingProcesses: $e')),
+          SnackBar(content: Text('Failed to Update Workingprocess: $e')),
         );
       }
     }
   }
 
-  void _deleteTrainingProcesses() async {
+  void _deleteWorkingprocess() async {
     try {
-      await Provider.of<TrainingprocessesViewModel>(context, listen: false)
-          .deleteTrainingProcesses(
-              widget.trainingprocesses!.trainingprocessesId);
+      await Provider.of<WorkingprocessesViewModel>(context, listen: false)
+          .deleteWorkingprocess(widget.workingProcesses!.workingprocessId);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('TrainingProcesses deleted successfully')),
+        SnackBar(content: Text('Workingprocess deleted successfully')),
       );
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete TrainingProcesses: $e')),
+        SnackBar(content: Text('Failed to delete Workingprocess: $e')),
       );
     }
   }
@@ -169,10 +168,11 @@ class _InfoTrainingprocessesEmloyeeScreenState
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Info TrainingProcesses Screen',
+      titletext: 'Workingprocesses Info HR Screen',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
-      body: SingleChildScrollView(
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Card(
@@ -188,11 +188,11 @@ class _InfoTrainingprocessesEmloyeeScreenState
                   SizedBox(height: 16),
                   CustomTextFormField(
                     enabled: false,
-                    textEditingController: _trainingprocessesIdController,
-                    labelText: 'trainingprocesses ID',
+                    textEditingController: _workingprocessIdController,
+                    labelText: 'workingprocess ID',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_trainingprocesses_id';
+                        return 'please_enter_workingprocess_id';
                       }
                       return null;
                     },
@@ -212,11 +212,11 @@ class _InfoTrainingprocessesEmloyeeScreenState
                   SizedBox(height: 16),
                   CustomTextFormField(
                     enabled: _isEditing,
-                    textEditingController: _trainingprocessesNameController,
-                    labelText: 'trainingprocesses name',
+                    textEditingController: _workplaceNameController,
+                    labelText: 'workplace name',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_trainingprocesses_name';
+                        return 'please_enter_workplace_name';
                       }
                       return null;
                     },
@@ -224,11 +224,11 @@ class _InfoTrainingprocessesEmloyeeScreenState
                   SizedBox(height: 16),
                   CustomTextFormField(
                     enabled: _isEditing,
-                    textEditingController: _trainingprocessesContentController,
-                    labelText: 'trainingprocesses content',
+                    textEditingController: _workingprocessContentController,
+                    labelText: 'workingprocess content',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_trainingprocesses_content';
+                        return 'please_enter_workingprocess_content';
                       }
                       return null;
                     },
@@ -267,7 +267,22 @@ class _InfoTrainingprocessesEmloyeeScreenState
                       ),
                     ],
                   ),
-                  
+                  SizedBox(height: 16),
+                  AppStrings.ROLE_PERMISSIONS
+                          .contains('Manage Staffs info only')
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Status Workingprocess').px(8),
+                            _buildDropdownField('Status Workingprocess',
+                                _statusWorkingprocesses, (value) {
+                              setState(() {
+                                _statusWorkingprocesses = value!;
+                              });
+                            }).px(8),
+                          ],
+                        )
+                      : SizedBox.shrink(),
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -275,7 +290,7 @@ class _InfoTrainingprocessesEmloyeeScreenState
                       IconButton(
                         icon: Icon(Icons.save,
                             color: const Color.fromARGB(255, 33, 243, 61)),
-                        onPressed: _updateTrainingProcesses,
+                        onPressed: _updateWorkingprocess,
                       ),
                       IconButton(
                         icon: Icon(Icons.edit, color: Colors.blue),
@@ -307,7 +322,7 @@ class _InfoTrainingprocessesEmloyeeScreenState
                                     onPressed: () {
                                       Navigator.of(context)
                                           .pop(); // Đóng dialog
-                                      _deleteTrainingProcesses(); // Thực hiện xóa
+                                      _deleteWorkingprocess(); // Thực hiện xóa
                                     },
                                     child: Text('Delete'),
                                   ),
@@ -327,5 +342,26 @@ class _InfoTrainingprocessesEmloyeeScreenState
       ),
     );
   }
-  
+
+  Widget _buildDropdownField(
+      String label, int currentValue, Function(int?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<int>(
+        value: currentValue,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(color: Colors.black),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        items: [
+          DropdownMenuItem(value: -1, child: Text('Từ Chối Duyệt')),
+          DropdownMenuItem(value: 0, child: Text('Đợi Duyệt')),
+          DropdownMenuItem(value: 1, child: Text('Đã Duyệt')),
+        ],
+        onChanged: _isEditing ? onChanged : null,
+        validator: (value) =>
+            value == null ? 'Please select a status project' : null,
+      ),
+    );
+  }
 }
