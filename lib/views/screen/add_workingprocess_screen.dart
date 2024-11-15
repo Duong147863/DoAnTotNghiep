@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
@@ -26,7 +27,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
   final _endTimeController = TextEditingController();
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-
+  int status = 0; // Mặc định là 0
   @override
   void initState() {
     super.initState();
@@ -48,15 +49,17 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
+      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        status = 1;
+      }
       final newWorkingprocess = WorkingProcesses(
-        profileId: _profileIDController.text,
-        workingprocessId: _workingprocessIdController.text,
-        workplaceName: _workplaceNameController.text,
-        workingprocessContent: _workingprocessContentController.text,
-        startTime: _startTime,
-        endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-        workingprocessStatus: 0
-      );
+          profileId: _profileIDController.text,
+          workingprocessId: _workingprocessIdController.text,
+          workplaceName: _workplaceNameController.text,
+          workingprocessContent: _workingprocessContentController.text,
+          startTime: _startTime,
+          endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
+          workingprocessStatus: status);
       Provider.of<WorkingprocessesViewModel>(context, listen: false)
           .createNewWorkingprocess(newWorkingprocess)
           .then((_) {

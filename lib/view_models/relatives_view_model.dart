@@ -34,7 +34,7 @@ class RelativesViewModel extends ChangeNotifier {
       await repository.updatedRelatives(relatives);
 
       int index =
-          _list.indexWhere((relav) => relav.profileId == relatives.profileId);
+          _list.indexWhere((relav) => relav.relativeId == relatives.relativeId);
       if (index != -1) {
         _list[index] = relatives;
         notifyListeners();

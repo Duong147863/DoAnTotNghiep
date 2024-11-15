@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
@@ -28,21 +29,25 @@ class _AddTrainingprocessesScreenState
   final _endTimeController = TextEditingController();
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-   void initState() {
+  int status = 0; // Mặc định là 0
+  void initState() {
     super.initState();
     _profileIDController.text = widget.profiles!.profileId;
   }
-   void _submit() {
+
+  void _submit() {
     if (_formKey.currentState!.validate()) {
+      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        status = 1;
+      }
       final newTrainingprocesses = Trainingprocesses(
-        profileId: _profileIDController.text,
-        trainingprocessesId: _trainingprocessesIdController.text,
-        trainingprocessesName: _trainingprocessesNameController.text,
-        trainingprocessesContent: _trainingprocessesContentController.text,
-        startTime: _startTime,
-       endTime: _endTimeController.text.isNotEmpty ? _endTime : null, 
-        trainingprocessesStatus: 0
-      );
+          profileId: _profileIDController.text,
+          trainingprocessesId: _trainingprocessesIdController.text,
+          trainingprocessesName: _trainingprocessesNameController.text,
+          trainingprocessesContent: _trainingprocessesContentController.text,
+          startTime: _startTime,
+          endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
+          trainingprocessesStatus: status);
       Provider.of<TrainingprocessesViewModel>(context, listen: false)
           .createTrainingProcesses(newTrainingprocesses)
           .then((_) {
@@ -56,6 +61,7 @@ class _AddTrainingprocessesScreenState
       });
     }
   }
+
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -68,7 +74,8 @@ class _AddTrainingprocessesScreenState
       onDateSelected(picked);
     }
   }
-   Widget _buildDateStartTime(String label, TextEditingController controller,
+
+  Widget _buildDateStartTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
       onTap: () => _selectDate(context, initialDate, (selectedDate) {
@@ -128,6 +135,7 @@ class _AddTrainingprocessesScreenState
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
