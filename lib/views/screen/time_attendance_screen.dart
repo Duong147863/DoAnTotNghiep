@@ -4,7 +4,13 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/views/screen/qr_scan.dart';
 
+import '../../models/profiles_model.dart';
+
 class TimeAttendance extends StatefulWidget {
+  Profiles loginUser;
+
+  TimeAttendance({super.key, required this.loginUser});
+
   @override
   _TimeAttendanceState createState() => _TimeAttendanceState();
 }
@@ -61,7 +67,9 @@ class _TimeAttendanceState extends State<TimeAttendance>
             child: TabBarView(
               controller: _tabController,
               children: [
-                Center(child: QrScan()),
+                QrScan(
+                  user: widget.loginUser,
+                ),
                 HistoryTab(),
               ],
             ),
