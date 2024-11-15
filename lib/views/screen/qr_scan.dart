@@ -50,11 +50,11 @@ class _QrScanState extends State<QrScan> {
                 print(barcode);
                 Provider.of<TimeKeepingViewModel>(context, listen: false)
                     .checkin(Timekeepings(
-                  checkin: DateFormat("HH:mm:ss")
+                  checkin: DateTime
                       .parse(capture.barcodes.toString().trim()),
                   shiftId: 'CH',
                   profileId: widget.user.profileId,
-                  date: DateFormat("yyyy-MM-dd")
+                  date: DateTime
                       .parse(capture.barcodes.toString().trim()),
                 ));
               },

@@ -9,6 +9,7 @@ class Trainingprocesses {
     required this.trainingprocessesStatus,
     required this.startTime,
     this.endTime,
+    this.isExpanded=false,
   });
   String profileId;
   String trainingprocessesId;
@@ -17,6 +18,7 @@ class Trainingprocesses {
   int trainingprocessesStatus;
   DateTime startTime;
   DateTime? endTime;
+  bool isExpanded;
   factory Trainingprocesses.fromJson(Map<String, dynamic> json) {
     return Trainingprocesses(
       profileId: json["profile_id"],

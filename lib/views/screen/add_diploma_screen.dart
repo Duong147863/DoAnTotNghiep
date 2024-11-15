@@ -129,9 +129,9 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
         );
         Navigator.pop(context);
       }).catchError((error) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        // SnackBar(content: Text('Failed to add profile: $error')),
-        // );
+        ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to add Diplomar: $error')),
+        );
       });
     }
   }
