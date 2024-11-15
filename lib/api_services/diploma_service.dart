@@ -25,7 +25,24 @@ class DiplomaService {
     );
   }
 
-  Future<http.Response> updatExistedDiploma() async {
-    return await http.put(Uri.parse(''));
+   Future<http.Response>updateDiplomas(Diplomas diploma) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}diploma/update'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(diploma.toJson()),
+    );
+  }
+  Future<http.Response> deleteDiplomas(String dilomaId) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}diploma/delete/$dilomaId'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Accept': 'application/json',
+      },
+    );
   }
 }

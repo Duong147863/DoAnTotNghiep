@@ -127,7 +127,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'position_info',
+      titletext: 'Relative Info',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
