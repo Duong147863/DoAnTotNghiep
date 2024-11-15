@@ -68,7 +68,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                           child: SizedBox(
                             width: 60,
                             height: 60,
-                            child: profiles[index].profileImage != null &&
+                            child: 
                                     profiles[index].profileImage.isNotEmpty
                                 ? Image.memory(
                                     base64Decode(profiles[index].profileImage),

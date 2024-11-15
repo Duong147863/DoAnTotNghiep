@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:intl/intl.dart';
+
 class Timekeepings {
   Timekeepings({
-    required this.timekeepingId,
+    this.timekeepingId,
     required this.checkin,
     this.checkout,
     required this.shiftId,
@@ -12,7 +14,7 @@ class Timekeepings {
     this.leavingSoon,
     this.status = 0,
   });
-  int timekeepingId;
+  int? timekeepingId;
   DateTime checkin;
   DateTime? checkout;
   String shiftId;
@@ -37,14 +39,18 @@ class Timekeepings {
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map["timekeeping_id"] = timekeepingId;
-    map["checkin"] = checkin;
-    map["checkout"] = checkout;
+    map["checkin"] = _formatTime(checkin);
+    map["checkout"] = _formatTime(checkout!);
     map["shift_id"] = shiftId;
     map["profile_id"] = profileId;
     map["late"] = late;
-    map["date"] = date;
+    map["date"] = _formatTime(date);
     map["leaving_soon"] = leavingSoon;
     map["status"] = status;
     return map;
+  }
+
+  static String _formatTime(DateTime time) {
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
   }
 }

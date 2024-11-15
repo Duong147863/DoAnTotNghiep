@@ -17,7 +17,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
   final _shiftNameControler = TextEditingController();
   final _startTimeController = TextEditingController();
   final _endTimeController = TextEditingController();
-   DateTime _startTime = DateTime.now();
+  DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
   @override
   void dispose() {
@@ -27,37 +27,41 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
     _endTimeController.dispose();
     super.dispose();
   }
- Future<void> _selectTime(
-    BuildContext context, TextEditingController controller, bool isStartTime) async {
-  TimeOfDay? pickedTime = await showTimePicker(
-    context: context,
-    initialTime: TimeOfDay.now(),
-  );
 
-  if (pickedTime != null) {
-    final selectedTime = DateTime(
-      DateTime.now().year,
-      DateTime.now().month,
-      DateTime.now().day,
-      pickedTime.hour,
-      pickedTime.minute,
+  Future<void> _selectTime(BuildContext context,
+      TextEditingController controller, bool isStartTime) async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
     );
 
-    // Đặt thời gian vào biến tương ứng và định dạng đúng khi gán vào TextEditingController
-    if (isStartTime) {
-      _startTime = selectedTime;
-    } else {
-      _endTime = selectedTime;
-    }
+    if (pickedTime != null) {
+      final selectedTime = DateTime(
+        // DateTime.now().year,
+        // DateTime.now().month,
+        // DateTime.now().day,
+        pickedTime.hour,
+        pickedTime.minute,
+      );
 
-    controller.text =
-        "${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}";
+      // Đặt thời gian vào biến tương ứng và định dạng đúng khi gán vào TextEditingController
+      if (isStartTime) {
+        _startTime = selectedTime;
+      } else {
+        _endTime = selectedTime;
+      }
+
+      controller.text =
+          "${pickedTime.hour.toString().padLeft(2, '0')}:${pickedTime.minute.toString().padLeft(2, '0')}";
+    }
   }
-}
-    void _submit() {
+
+  void _submit() {
     if (_formKey.currentState!.validate()) {
-       final parsedStartTime = DateTime.parse("1970-01-01 ${_startTimeController.text}:00");
-       final parsedEndTime = DateTime.parse("1970-01-01 ${_endTimeController.text}:00");
+      final parsedStartTime =
+          DateTime.parse("1970-01-01 ${_startTimeController.text}:00");
+      final parsedEndTime =
+          DateTime.parse("1970-01-01 ${_endTimeController.text}:00");
       final newShifts = Shifts(
         shiftId: _shiftIdController.text,
         shiftName: _shiftNameControler.text,
@@ -126,7 +130,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
                   },
                 ),
               ),
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextFormField(
                   controller: _startTimeController,
@@ -147,7 +151,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
                   },
                 ),
               ),
-                Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextFormField(
                   controller: _endTimeController,
