@@ -9,15 +9,17 @@ class DiplomasViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Diplomas> get listDiplomas => _list;
 
-  Future<void> fetchAllDiplomasByEnterpriseID(int enterpriseID) async {
-    fetchingData = true;
+ Future<void> getDiplomasOf(String profileID) async {
     try {
-      _list = await repository.fetchAllDiplomasOfEnterprises(enterpriseID);
+      List<Diplomas> diplomasList =
+          await repository.getDiplomasOf(profileID);
+      _list = diplomasList
+          .where((dip) => dip.profileId == profileID)
+          .toList();
       notifyListeners();
     } catch (e) {
-      throw Exception('Failed to load datas: $e');
+      throw Exception('Failed to load working processes: $e');
     }
-    fetchingData = false;
   }
   Future<void> AddDiploma(Diplomas diploma) async {
     try {

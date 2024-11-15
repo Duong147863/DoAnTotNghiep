@@ -8,21 +8,28 @@ import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/constant/input.styles.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
+import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/repository/profiles_repo.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
+import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
+import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
 import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 
@@ -82,7 +89,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Salaries? selectedSalarys;
   List<WorkingProcesses> workingProcesses = [];
   WorkingProcesses? selectedWorkingProcesses;
-
+  List<Trainingprocesses> trainingProcess = [];
+  Trainingprocesses? selectedtrainingProcess;
+  List<Relatives> relatives = [];
+  Relatives? selectedRelatives;
+  List<Diplomas> diplomas = [];
+  Diplomas? selectedDiplomas;
+  //
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
@@ -107,6 +120,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadPositions();
     _loadSalaries();
     _loadworkingProcesses();
+    _loadtrainingProcess();
+    _loadRelative();
+    _loadDiplomas();
+  }
+
+  void _handleUpdate(Relatives updatedRelative) {
+    setState(() {
+      int index = relatives
+          .indexWhere((rela) => rela.relativeId == updatedRelative.relativeId);
+      if (index != -1) {
+        relatives[index] = updatedRelative;
+      }
+    });
   }
 
   // Method to load departments
@@ -172,6 +198,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _loadRelative() async {
+    try {
+      await Provider.of<RelativesViewModel>(context, listen: false)
+          .fetchAllRelatives(widget.profile!.profileId);
+      setState(() {
+        relatives = Provider.of<RelativesViewModel>(context, listen: false)
+            .listRelatives;
+        if (relatives.isNotEmpty) {
+          selectedRelatives = relatives.firstWhere(
+            (rel) => rel.profileId == widget.profile!.profileId,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Relative')),
+      );
+    }
+  }
+
   void _loadworkingProcesses() async {
     try {
       await Provider.of<WorkingprocessesViewModel>(context, listen: false)
@@ -189,6 +235,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Workingprocesses')),
+      );
+    }
+  }
+  void _loadDiplomas() async {
+    try {
+      await Provider.of<DiplomasViewModel>(context, listen: false)
+          .getDiplomasOf(widget.profile!.profileId);
+      setState(() {
+        diplomas =
+            Provider.of<DiplomasViewModel>(context, listen: false)
+                .listDiplomas;
+        if (diplomas.isNotEmpty) {
+          selectedDiplomas = diplomas.firstWhere(
+            (dip) => dip.profileId == widget.profile!.profileId,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Workingprocesses')),
+      );
+    }
+  }
+
+  void _loadtrainingProcess() async {
+    try {
+      await Provider.of<TrainingprocessesViewModel>(context, listen: false)
+          .getTrainingProcessesOf(widget.profile!.profileId);
+      setState(() {
+        trainingProcess =
+            Provider.of<TrainingprocessesViewModel>(context, listen: false)
+                .listTrainingprocesses;
+        if (trainingProcess.isNotEmpty) {
+          selectedtrainingProcess = trainingProcess.firstWhere(
+            (tra) => tra.profileId == widget.profile!.profileId,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load TrainingProcess')),
       );
     }
   }
@@ -460,6 +547,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
+
               // Gender + Marriage
               Row(
                 children: [
@@ -600,12 +688,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 enabled: _isEditing,
               ).p8(),
-              //
+              SizedBox(height: 16),
+              // Thân nhân
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  color: Colors.grey[200],
+                  child: Text(
+                    "Thông tin thân nhân",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildRelativeList(),
+              ]),
+              SizedBox(height: 16),
+              //WorkingProcess
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  color: Colors.grey[200],
+                  child: Text(
+                    "Quá trình làm việc",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildWorkingProcessList(),
+              ]),
+              SizedBox(height: 16),
+              // TrainingProcess
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  color: Colors.grey[200],
+                  child: Text(
+                    "Quá trình đào tạo",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildTrainingProcessesList(),
+              ]),
+              _buildDiplomasList()
             ],
           ),
         ),
       ]),
-      fab: AppStrings.ROLE_PERMISSIONS.contains('Manage Staffs info only')
+      fab: AppStrings.ROLE_PERMISSIONS.containsAny(
+              ['Manage BoD & HR accounts', 'Manage Staffs info only'])
           ? SpeedDial(
               elevation: 0,
               icon: Icons.menu,
@@ -656,6 +796,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               builder: (BuildContext context) =>
                                   ListWorkingprocessScreen(
                                 profiles: widget.profile,
+                              ),
+                            ));
+                      }),
+                  SpeedDialChild(
+                      label: "Thêm bằng cấp",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  AddDiplomaScreen(
+                                profile: widget.profile,
                               ),
                             ));
                       })
@@ -765,6 +917,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // Widget _buildWorkingProcessText() {
+  //   if (selectedWorkingProcesses == null) {
+  //     return Text("Loading...");
+  //   }
+
+  //   if (selectedWorkingProcesses!.workingprocessStatus != 1) {
+  //     return Text("Không có thông tin làm việc");
+  //   }
+  //   return ExpansionPanelList(
+  //     expansionCallback: (int index, bool isExpanded) {
+  //       setState(() {
+  //         selectedWorkingProcesses!.isExpanded = isExpanded;
+  //       });
+  //     },
+  //     children: [
+  //       ExpansionPanel(
+  //         headerBuilder: (BuildContext context, bool isExpanded) {
+  //           return ListTile(
+  //             title: Text(selectedWorkingProcesses!.workplaceName),
+  //           );
+  //         },
+  //         body: ListTile(
+  //           title: Text("Chi tiết:"),
+  //           subtitle: Text(
+  //               "Status: ${selectedWorkingProcesses!.workingprocessStatus}"),
+  //         ),
+  //         isExpanded: selectedWorkingProcesses!.isExpanded,
+  //       ),
+  //     ],
+  //   );
+  // }
+
   Widget _buildSalaryDropdown(String hint) {
     return DropdownButtonFormField<Salaries>(
       value: selectedSalarys,
@@ -786,6 +970,234 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: InputDecoration(
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           enabled: _isEditing),
+    );
+  }
+  //
+
+  Widget _buildRelativeList() {
+    if (relatives.isEmpty) {
+      return Center(
+        child: Text("Không có thông tin thân nhân"),
+      );
+    }
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          relatives[index].isExpanded = isExpanded;
+        });
+      },
+      children: relatives.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text("Tên thân nhân ${process.relativesName}"),
+            );
+          },
+          body: ListTile(
+              title: Text("Chi tiết:"),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text("Quan hệ: ${process.relationship}"),
+                  Text("Số điện thoại: ${process.relativesPhone}"),
+                  Text("Tạm trú: ${process.relativesTempAddress}"),
+                  Text("Thường trú: ${process.relativesCurrentAddress}"),
+                ],
+              ).onInkTap(
+                () async {
+                  // Gọi màn hình thông tin chức vụ và chờ kết quả
+                  final updatedRelative = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          InfoRelativeScreen(profile: process),
+                    ),
+                  );
+
+                  // Kiểm tra xem có dữ liệu cập nhật không
+                  if (updatedRelative != null) {
+                    _handleUpdate(updatedRelative);
+                  }
+                },
+              )),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+  //
+
+   Widget _buildDiplomasList() {
+    if (diplomas.isEmpty) {
+      return Center(
+        child: Text("Không có thông tin bằng cấp"),
+      );
+    }
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+           setState(() {
+          diplomas[index].isExpanded = isExpanded;
+        });
+      },
+      children: diplomas.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text("Bằng Cấp"),
+            );
+          },
+          body: Container(
+              child: 
+               Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        'BẰNG TỐT NGHIỆP',
+                        style: TextStyle(fontSize: 18, color: Colors.red, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    Center(
+                      child: Text(
+                        "${process.major}",
+                        style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text('Cho:${widget.profile!.profileName}', style: TextStyle(fontSize: 16)),
+                    Text('Giới tính: ${widget.profile!.gender}', style: TextStyle(fontSize: 16)),
+                    Text('Ngày sinh: ${widget.profile!.birthday}', style: TextStyle(fontSize: 16)),
+                    Text('Xếp hạng: ${process.diplomaType}', style: TextStyle(fontSize: 16)),
+                    Text('Xếp loại tốt nghiệp: ${process.ranking}', style: TextStyle(fontSize: 16)),
+                    Text('Được cấp bởi: ${process.grantedBy}', style: TextStyle(fontSize: 16)),
+                    Text('Hình thức đào tạo:  ${process.modeOfStudy}', style: TextStyle(fontSize: 16)),
+                    SizedBox(height: 20),
+                    Divider(),
+                    SizedBox(height: 20),
+                    Center(
+                      child: Column(
+                        children: [
+                          Text(
+                            'Hiệu trưởng',
+                            style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                          ),
+                          SizedBox(height: 40),
+                          Text(
+                            'Trịnh Văn Thắng',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Text('Số hiệu: ${process.diplomaId}', style: TextStyle(fontSize: 14)),
+                    Text('Sổ vào cấp bằng: ${process.licenseDate}', style: TextStyle(fontSize: 14)),
+                  ],
+                ),
+              ),
+            ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+
+  //
+
+  Widget _buildWorkingProcessList() {
+    List<WorkingProcesses> filteredProcesses = workingProcesses
+        .where((process) => process.workingprocessStatus == 1)
+        .toList();
+
+    if (filteredProcesses.isEmpty) {
+      return Center(
+        child: Text("Không có thông tin làm việc"),
+      );
+    }
+
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          filteredProcesses[index].isExpanded = isExpanded;
+        });
+      },
+      children: filteredProcesses.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text("Tên nơi làm việc ${process.workplaceName}"),
+            );
+          },
+          body: ListTile(
+            title: Text("Chi tiết:"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Nội dung: ${process.workingprocessContent}"),
+                Text("Thời gian bắt đâu ${process.startTime}"),
+                Text("Thời gian kết thúc ${process.endTime}")
+              ],
+            ),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+  //
+
+  Widget _buildTrainingProcessesList() {
+    List<Trainingprocesses> filteredProcesses = trainingProcess
+        .where((process) => process.trainingprocessesStatus == 1)
+        .toList();
+
+    if (filteredProcesses.isEmpty) {
+      return Center(
+        child: Text("Không có thông tin làm việc"),
+      );
+    }
+
+    return ExpansionPanelList(
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          filteredProcesses[index].isExpanded = isExpanded;
+        });
+      },
+      children: filteredProcesses.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              title: Text(
+                  "Tên quá trình đào tạo ${process.trainingprocessesName}"),
+            );
+          },
+          body: ListTile(
+            title: Text("Chi tiết:"),
+            subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text("Nội dung: ${process.trainingprocessesContent}"),
+                  Text("Thời gian bắt đâu ${process.startTime}"),
+                  Text("Thời gian kết thúc ${process.endTime}")
+                ]),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
     );
   }
 }

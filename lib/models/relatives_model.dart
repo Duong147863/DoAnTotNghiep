@@ -15,6 +15,7 @@ class Relatives {
       required this.relativesTempAddress,
       required this.relativesCurrentAddress,
       required this.relativeJob,
+      this.isExpanded=false
       });
   int? relativeId;
   String profileId;
@@ -26,6 +27,7 @@ class Relatives {
   String relativesTempAddress;
   String relativesCurrentAddress;
   String relativeJob;
+  bool isExpanded;
   factory Relatives.fromJson(Map<String,dynamic>json){
     return Relatives(
       profileId: json["profile_id"],
