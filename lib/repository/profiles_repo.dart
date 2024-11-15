@@ -9,9 +9,7 @@ class ProfilesRepository {
   final ProfileService service = ProfileService();
 
   Future<List<Profiles>> fetchAllProfiles() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppStrings.TOKEN);
-    final response = await service.getAllProfile(token!);
+    final response = await service.getAllProfile();
     if (response.statusCode == 200) {
       return List<Profiles>.from(
           json.decode(response.body).map((x) => Profiles.fromJson(x)));

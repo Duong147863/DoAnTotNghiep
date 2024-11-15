@@ -34,7 +34,7 @@ class WorkingprocessesViewModel extends ChangeNotifier {
     try {
       await repository.updateWorkingprocess(workingprocess);
       int index =
-          _list.indexWhere((wor) => wor.profileId == workingprocess.profileId);
+          _list.indexWhere((wor) => wor.workingprocessId == workingprocess.workingprocessId);
       if (index != -1) {
         _list[index] = workingprocess;
         notifyListeners();

@@ -30,13 +30,13 @@ import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_trainingprocesses_HR_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_trainingprocesses_emloyee_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_workingprocess_HR_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_workingprocess_emloyee_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -185,116 +185,155 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
-                ? ListTile(
-                    title: Text("Doanh nghiệp"),
-                    onTap: () {},
-                  )
-                : UiSpacer.emptySpace(),
-            ListTile(
-              title: Text("Đổi mật khẩu"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ChangePasswordScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Add Workingprocess"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => AddWorkingprocesScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("List Workingprocess Screen Dành Cho Nhân Viên"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListWorkingprocessEmloyeeScreen(
-                      profiles: widget.profile
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("List Workingprocess Screen HR"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListWorkingprocessHRScreen(
-                      profiles: widget.profile
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Add TrainingProcesses"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => AddTrainingprocessesScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-               ListTile(
-              title: Text("List TrainingProcesses Screen Dành Cho Nhân Viên"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListTrainingprocessesEmloyeeScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-              ListTile(
-              title: Text("List TrainingProcesses Screen HR"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListTrainingprocessesHRScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
             Expanded(
-              child: Align(
-                alignment: FractionalOffset.bottomCenter,
-                child: ListTile(
-                  title: Text('Đăng xuất'),
-                  leading: const Icon(Icons.logout),
+              child: ListView(children: [
+                AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
+                    ? ListTile(
+                        title: Text("Doanh nghiệp"),
+                        onTap: () {},
+                      )
+                    : UiSpacer.emptySpace(),
+                ListTile(
+                  title: Text("Đổi mật khẩu"),
                   onTap: () {
-                    profilesViewModel.logOut();
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        AppRoutes.loginRoute, (route) => false);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => ChangePasswordScreen(
+                          profiles: widget.profile,
+                        ),
+                      ),
+                    );
                   },
                 ),
-              ),
+                ListTile(
+                  title: Text("Add TrainingProcesses"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddWorkingprocesScreen(
+                          profiles: widget.profile,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("Add WorkingProcess"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddTrainingprocessesScreen(
+                          profiles: widget.profile,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("List Workingprocess Screen HR"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            ListWorkingprocessScreen(profiles: widget.profile),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("List TrainingProcesses Screen HR"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            ListTrainingprocessesScreen(
+                          profiles: widget.profile,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("List Salaries Screen"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => SalaryListScreen(
+                          profiles: widget.profile,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("List Relative Screen"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            RelativeListScreen(profiles: widget.profile),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("List Shifts Screen"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => ListShiftsScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("List Project Screen"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => ListProjectScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: Text("Add LaborContact Screen"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddLaborContractScreen(),
+                      ),
+                    );
+                  },
+                ),
+                Expanded(
+                  child: Align(
+                    alignment: FractionalOffset.bottomCenter,
+                    child: ListTile(
+                      title: Text('Đăng xuất'),
+                      leading: const Icon(Icons.logout),
+                      onTap: () {
+                        profilesViewModel.logOut();
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            AppRoutes.loginRoute, (route) => false);
+                      },
+                    ),
+                  ),
+                ),
+              ]),
             ),
           ],
         ),
@@ -375,433 +414,692 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-        AppStrings.ROLE_PERMISSIONS.containsAny([
-          'Manage BoD & HR accounts',
-          'Manage Staffs info only'
-        ]) //Hiện danh sách phòng ban nếu là giám đốc hoặc HR
-            ? Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Consumer<DeparmentsViewModel>(
-                        builder: (context, viewModel, child) {
-                      if (!viewModel.fetchingData &&
-                          viewModel.listDepartments.isEmpty) {
-                        Provider.of<DeparmentsViewModel>(context, listen: false)
-                            .fetchAllDepartments();
-                      }
-                      if (viewModel.fetchingData) {
-                        // While data is being fetched
-                        return Center(child: CircularProgressIndicator());
-                      } else {
-                        // If data is successfully fetched
-                        List<Departments> departments =
-                            viewModel.listDepartments;
-                        return CustomGridView(
-                            childAspectRatio: 2,
-                            dataSet: departments,
-                            itemBuilder: (context, index) {
-                              return Card(
-                                color: Color.fromARGB(255, 243, 243, 242),
-                                elevation: 1,
-                                // margin: EdgeInsets.all(13),
-                                child: Wrap(
-                                  clipBehavior: Clip.antiAlias,
-                                  direction: Axis.vertical,
-                                  children: [
-                                    Text(
-                                      departments[index].departmentName,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.clip,
-                                    ),
-                                  ],
-                                ).p(13),
-                              ).onTap(() => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => DepartmentInfoScreen(
-                                      departments: departments[index],
-                                    ),
-                                  )));
-                            });
-                      }
-                    }),
-                    Divider().p12(),
-                    ExpansionPanelList(
-                      expansionCallback: (int panelIndex, bool isExpanded) {
-                        setState(() {
-                          isExpandedList[panelIndex] = isExpanded;
-                        });
-                      },
-                      children: [
-                        ExpansionPanel(
-                          headerBuilder:
-                              (BuildContext context, bool isExpanded) {
-                            return Text("Nhân sự công ty");
-                          },
-                          isExpanded: true,
-                          body: Consumer<ProfilesViewModel>(
-                              builder: (context, viewModel, child) {
-                            if (!viewModel.fetchingData &&
-                                viewModel.allProfiles.isEmpty) {
-                              Provider.of<ProfilesViewModel>(context)
-                                  .fetchAllProfiles();
-                            }
-                            List<Profiles> listProfiles = viewModel.allProfiles;
-                            return CustomListView(
-                                dataSet: listProfiles,
-                                itemBuilder: (context, index) {
-                                  return ListTile(
-                                    leading: CircleAvatar(),
-                                    title:
-                                        Text(listProfiles[index].profileName),
-                                    subtitle:
-                                        Text(listProfiles[index].positionId!),
-                                  );
-                                });
-                          }),
-                        ),
-                      ],
-                    ).p8()
-                  ],
-                ),
-              )
-            : Column(
-                children: [
-                  Text("Lương của bạn",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      )).p8(),
-                  Divider().px12(),
-                  Text("Công việc của bạn",
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      )).p8(),
-                  Divider().px12(),
-                  ExpansionPanelList(
-                    expansionCallback: (int panelIndex, bool isExpanded) {
-                      setState(() {
-                        isExpandedList[panelIndex] = isExpanded;
-                      });
-                    },
-                    children: [
-                      ExpansionPanel(
-                        headerBuilder: (BuildContext context, bool isExpanded) {
-                          return const Row(
-                            children: [
-                              Text("Mã dự án - Tên dự án"),
-                            ],
-                          );
-                        },
-                        body: Card(),
-                      ),
-                    ],
-                  ).p8()
-                ],
-              ),
+        buildbodyChildren(),
+        // AppStrings.ROLE_PERMISSIONS.containsAny([
+        //   'Manage BoD & HR accounts',
+        //   'Manage Staffs info only'
+        // ]) //Hiện danh sách phòng ban nếu là giám đốc hoặc HR
+        //     ? Padding(
+        //         padding: EdgeInsets.all(16.0),
+        //         child: Column(
+        //           crossAxisAlignment: CrossAxisAlignment.start,
+        //           children: [
+        //             Consumer<DeparmentsViewModel>(
+        //                 builder: (context, viewModel, child) {
+        //               if (!viewModel.fetchingData &&
+        //                   viewModel.listDepartments.isEmpty) {
+        //                 Provider.of<DeparmentsViewModel>(context, listen: false)
+        //                     .fetchAllDepartments();
+        //               }
+        //               if (viewModel.fetchingData) {
+        //                 // While data is being fetched
+        //                 return Center(child: CircularProgressIndicator());
+        //               } else {
+        //                 // If data is successfully fetched
+        //                 List<Departments> departments =
+        //                     viewModel.listDepartments;
+        //                 return CustomGridView(
+        //                     childAspectRatio: 2,
+        //                     dataSet: departments,
+        //                     itemBuilder: (context, index) {
+        //                       return Card(
+        //                         color: Color.fromARGB(255, 243, 243, 242),
+        //                         elevation: 1,
+        //                         // margin: EdgeInsets.all(13),
+        //                         child: Wrap(
+        //                           clipBehavior: Clip.antiAlias,
+        //                           direction: Axis.vertical,
+        //                           children: [
+        //                             Text(
+        //                               departments[index].departmentName,
+        //                               maxLines: 2,
+        //                               overflow: TextOverflow.clip,
+        //                             ),
+        //                           ],
+        //                         ).p(13),
+        //                       ).onTap(() => Navigator.push(
+        //                           context,
+        //                           MaterialPageRoute(
+        //                             builder: (context) => DepartmentInfoScreen(
+        //                               departments: departments[index],
+        //                             ),
+        //                           )));
+        //                     });
+        //               }
+        //             }),
+        //             Divider().p12(),
+        //             ExpansionPanelList(
+        //               expansionCallback: (int panelIndex, bool isExpanded) {
+        //                 setState(() {
+        //                   isExpandedList[panelIndex] = isExpanded;
+        //                 });
+        //               },
+        //               children: [
+        //                 ExpansionPanel(
+        //                   headerBuilder:
+        //                       (BuildContext context, bool isExpanded) {
+        //                     return Text("Nhân sự công ty");
+        //                   },
+        //                   isExpanded: true,
+        //                   body: Consumer<ProfilesViewModel>(
+        //                       builder: (context, viewModel, child) {
+        //                     if (!viewModel.fetchingData &&
+        //                         viewModel.allProfiles.isEmpty) {
+        //                       Provider.of<ProfilesViewModel>(context)
+        //                           .fetchAllProfiles();
+        //                     }
+        //                     List<Profiles> listProfiles = viewModel.allProfiles;
+        //                     return CustomListView(
+        //                         dataSet: listProfiles,
+        //                         itemBuilder: (context, index) {
+        //                           return ListTile(
+        //                             leading: CircleAvatar(),
+        //                             title:
+        //                                 Text(listProfiles[index].profileName),
+        //                             subtitle:
+        //                                 Text(listProfiles[index].positionId!),
+        //                           );
+        //                         });
+        //                   }),
+        //                 ),
+        //               ],
+        //             ).p8()
+        //           ],
+        //         ),
+        //       )
+        //     : Column(
+        //         children: [
+        //           Text("Lương của bạn",
+        //               style: TextStyle(
+        //                 fontSize: 18.0,
+        //                 fontWeight: FontWeight.bold,
+        //               )).p8(),
+        //           Divider().px12(),
+        //           Text("Công việc của bạn",
+        //               style: TextStyle(
+        //                 fontSize: 18.0,
+        //                 fontWeight: FontWeight.bold,
+        //               )).p8(),
+        //           Divider().px12(),
+        //           ExpansionPanelList(
+        //             expansionCallback: (int panelIndex, bool isExpanded) {
+        //               setState(() {
+        //                 isExpandedList[panelIndex] = isExpanded;
+        //               });
+        //             },
+        //             children: [
+        //               ExpansionPanel(
+        //                 headerBuilder: (BuildContext context, bool isExpanded) {
+        //                   return const Row(
+        //                     children: [
+        //                       Text("Mã dự án - Tên dự án"),
+        //                     ],
+        //                   );
+        //                 },
+        //                 body: Card(),
+        //               ),
+        //             ],
+        //           ).p8()
+        //         ],
+        //       ),
         SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) =>
-                    AddRelativeScreen(profile: widget.profile),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(10.0), // Button rounded corners
-            ),
-          ),
-          child: Text(
-            "Add Relative",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) =>
-                    RelativeListScreen(profiles: widget.profile),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(10.0), // Button rounded corners
-            ),
-          ),
-          child: Text(
-            "List Relative",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {},
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(10.0), // Button rounded corners
-            ),
-          ),
-          child: Text(
-            "List Shifts Screen",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => ListProjectScreen(),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(10.0), // Button rounded corners
-            ),
-          ),
-          child: Text(
-            "List Project Screen",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (BuildContext context) => AddLaborContractScreen(),
-              ),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 30.0),
-            shape: RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(10.0), // Button rounded corners
-            ),
-          ),
-          child: Text(
-            "Add Labor Contract Screen",
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
       ],
-      fab: AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
-          ? SpeedDial(
-              elevation: 0,
-              icon: Icons.menu,
-              buttonSize: Size(50, 50),
-              children: [
-                SpeedDialChild(
-                    label: "Thêm nhân viên",
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(AppRoutes.addprofileRoute);
-                    }),
-                SpeedDialChild(
-                    label: "Thêm lương",
-                    onTap: () {
-                      Navigator.of(context)
-                          .pushNamed(AppRoutes.salariesAddRoute);
-                    }),
-                SpeedDialChild(
-                    label: "Thêm phòng ban",
-                    onTap: () => showDialog<Widget>(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: Container(
-                              height: 300,
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Form(
-                                    key: _formKey,
-                                    child: ListView(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: TextFormField(
-                                            controller: _departmentIdController,
-                                            decoration: InputDecoration(
-                                              labelText: 'Department ID',
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                              ),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter department ID';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: TextFormField(
-                                            controller:
-                                                _departmentNameController,
-                                            decoration: InputDecoration(
-                                              labelText: 'Department Name',
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                              ),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter department name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(height: 16.0),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              final newDepartment = Departments(
-                                                departmentID:
-                                                    _departmentIdController
-                                                        .text,
-                                                departmentName:
-                                                    _departmentNameController
-                                                        .text,
-                                              );
-                                              context
-                                                  .read<DeparmentsViewModel>()
-                                                  .addNewDepartment(
-                                                      newDepartment);
+      fab: buildFab(),
+      // AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
+      //     ? SpeedDial(
+      //         elevation: 0,
+      //         icon: Icons.menu,
+      //         buttonSize: Size(50, 50),
+      //         children: [
+      //           SpeedDialChild(
+      //               label: "Thêm nhân viên",
+      //               onTap: () {
+      //                 Navigator.of(context)
+      //                     .pushNamed(AppRoutes.addprofileRoute);
+      //               }),
+      //           SpeedDialChild(
+      //               label: "Thêm lương",
+      //               onTap: () {
+      //                 Navigator.of(context)
+      //                     .pushNamed(AppRoutes.salariesAddRoute);
+      //               }),
+      //           SpeedDialChild(
+      //               label: "Thêm phòng ban",
+      //               onTap: () => showDialog<Widget>(
+      //                     context: context,
+      //                     builder: (context) => Dialog(
+      //                       child: Container(
+      //                         height: 300,
+      //                         child: Padding(
+      //                           padding: EdgeInsets.all(16.0),
+      //                           child: Form(
+      //                               key: _formKey,
+      //                               child: ListView(
+      //                                 children: [
+      //                                   Padding(
+      //                                     padding: const EdgeInsets.symmetric(
+      //                                         vertical: 8.0),
+      //                                     child: TextFormField(
+      //                                       controller: _departmentIdController,
+      //                                       decoration: InputDecoration(
+      //                                         labelText: 'Department ID',
+      //                                         border: OutlineInputBorder(
+      //                                           borderRadius: BorderRadius.all(
+      //                                               Radius.circular(10)),
+      //                                         ),
+      //                                       ),
+      //                                       validator: (value) {
+      //                                         if (value == null ||
+      //                                             value.isEmpty) {
+      //                                           return 'Please enter department ID';
+      //                                         }
+      //                                         return null;
+      //                                       },
+      //                                     ),
+      //                                   ),
+      //                                   Padding(
+      //                                     padding: const EdgeInsets.symmetric(
+      //                                         vertical: 8.0),
+      //                                     child: TextFormField(
+      //                                       controller:
+      //                                           _departmentNameController,
+      //                                       decoration: InputDecoration(
+      //                                         labelText: 'Department Name',
+      //                                         border: OutlineInputBorder(
+      //                                           borderRadius: BorderRadius.all(
+      //                                               Radius.circular(10)),
+      //                                         ),
+      //                                       ),
+      //                                       validator: (value) {
+      //                                         if (value == null ||
+      //                                             value.isEmpty) {
+      //                                           return 'Please enter department name';
+      //                                         }
+      //                                         return null;
+      //                                       },
+      //                                     ),
+      //                                   ),
+      //                                   SizedBox(height: 16.0),
+      //                                   ElevatedButton(
+      //                                     onPressed: () {
+      //                                       if (_formKey.currentState!
+      //                                           .validate()) {
+      //                                         final newDepartment = Departments(
+      //                                           departmentID:
+      //                                               _departmentIdController
+      //                                                   .text,
+      //                                           departmentName:
+      //                                               _departmentNameController
+      //                                                   .text,
+      //                                         );
+      //                                         context
+      //                                             .read<DeparmentsViewModel>()
+      //                                             .addNewDepartment(
+      //                                                 newDepartment);
 
-                                              Navigator.pop(context);
-                                              initState();
-                                            }
-                                          },
-                                          child: Text('Add Department'),
-                                        ),
-                                      ],
-                                    )),
-                              ),
-                            ),
-                          ),
-                        )),
-                SpeedDialChild(
-                    label: "Thêm chức vụ",
-                    onTap: () => showDialog<Widget>(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: Container(
-                              height: 300,
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Form(
-                                    key: _formKey,
-                                    child: ListView(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: TextFormField(
-                                            controller: _positionIdController,
-                                            decoration: InputDecoration(
-                                              labelText: 'Position ID',
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                              ),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter department ID';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: TextFormField(
-                                            controller: _positionNameController,
-                                            decoration: InputDecoration(
-                                              labelText: 'Position Name',
-                                              border: OutlineInputBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(10)),
-                                              ),
-                                            ),
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return 'Please enter department name';
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(height: 16.0),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              final newPositions = Positions(
-                                                positionId:
-                                                    _positionIdController.text,
-                                                positionName:
-                                                    _positionIdController.text,
-                                              );
-                                              Provider.of<PositionsViewModel>(
-                                                      context)
-                                                  .addNewPosition(newPositions);
-                                              Navigator.pop(context);
-                                              initState();
-                                            }
-                                          },
-                                          child: Text('Add Department'),
-                                        ),
-                                      ],
-                                    )),
-                              ),
-                            ),
-                          ),
-                        )),
-                SpeedDialChild(
-                    label: "Thêm ca làm việc",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (BuildContext context) => ListShiftsScreen(),
-                        ),
-                      );
-                    }),
-              ],
-            )
-          : UiSpacer.emptySpace(),
+      //                                         Navigator.pop(context);
+      //                                         initState();
+      //                                       }
+      //                                     },
+      //                                     child: Text('Add Department'),
+      //                                   ),
+      //                                 ],
+      //                               )),
+      //                         ),
+      //                       ),
+      //                     ),
+      //                   )),
+      //           SpeedDialChild(
+      //               label: "Thêm chức vụ",
+      //               onTap: () => showDialog<Widget>(
+      //                     context: context,
+      //                     builder: (context) => Dialog(
+      //                       child: Container(
+      //                         height: 300,
+      //                         child: Padding(
+      //                           padding: EdgeInsets.all(16.0),
+      //                           child: Form(
+      //                               key: _formKey,
+      //                               child: ListView(
+      //                                 children: [
+      //                                   Padding(
+      //                                     padding: const EdgeInsets.symmetric(
+      //                                         vertical: 8.0),
+      //                                     child: TextFormField(
+      //                                       controller: _positionIdController,
+      //                                       decoration: InputDecoration(
+      //                                         labelText: 'Position ID',
+      //                                         border: OutlineInputBorder(
+      //                                           borderRadius: BorderRadius.all(
+      //                                               Radius.circular(10)),
+      //                                         ),
+      //                                       ),
+      //                                       validator: (value) {
+      //                                         if (value == null ||
+      //                                             value.isEmpty) {
+      //                                           return 'Please enter department ID';
+      //                                         }
+      //                                         return null;
+      //                                       },
+      //                                     ),
+      //                                   ),
+      //                                   Padding(
+      //                                     padding: const EdgeInsets.symmetric(
+      //                                         vertical: 8.0),
+      //                                     child: TextFormField(
+      //                                       controller: _positionNameController,
+      //                                       decoration: InputDecoration(
+      //                                         labelText: 'Position Name',
+      //                                         border: OutlineInputBorder(
+      //                                           borderRadius: BorderRadius.all(
+      //                                               Radius.circular(10)),
+      //                                         ),
+      //                                       ),
+      //                                       validator: (value) {
+      //                                         if (value == null ||
+      //                                             value.isEmpty) {
+      //                                           return 'Please enter department name';
+      //                                         }
+      //                                         return null;
+      //                                       },
+      //                                     ),
+      //                                   ),
+      //                                   SizedBox(height: 16.0),
+      //                                   ElevatedButton(
+      //                                     onPressed: () {
+      //                                       if (_formKey.currentState!
+      //                                           .validate()) {
+      //                                         final newPositions = Positions(
+      //                                           positionId:
+      //                                               _positionIdController.text,
+      //                                           positionName:
+      //                                               _positionIdController.text,
+      //                                         );
+      //                                         Provider.of<PositionsViewModel>(
+      //                                                 context)
+      //                                             .addNewPosition(newPositions);
+      //                                         Navigator.pop(context);
+      //                                         initState();
+      //                                       }
+      //                                     },
+      //                                     child: Text('Add Department'),
+      //                                   ),
+      //                                 ],
+      //                               )),
+      //                         ),
+      //                       ),
+      //                     ),
+      //                   )),
+      //           SpeedDialChild(
+      //               label: "Thêm ca làm việc",
+      //               onTap: () {
+      //                 Navigator.push(
+      //                   context,
+      //                   MaterialPageRoute<void>(
+      //                     builder: (BuildContext context) => AddShiftsScreen(),
+      //                   ),
+      //                 );
+      //               }),
+      //         ],
+      //       )
+      //     : UiSpacer.emptySpace(),
     );
+  }
+
+  Widget buildFab() {
+    if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+      return SpeedDial(
+        elevation: 0,
+        icon: Icons.menu,
+        buttonSize: Size(50, 50),
+        children: [
+          SpeedDialChild(
+              label: "Thêm nhân viên",
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
+              }),
+          SpeedDialChild(
+              label: "Thêm lương",
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.salariesAddRoute);
+              }),
+          SpeedDialChild(
+              label: "Thêm phòng ban",
+              onTap: () => showDialog<Widget>(
+                    context: context,
+                    builder: (context) => Dialog(
+                      child: Container(
+                        height: 300,
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Form(
+                              key: _formKey,
+                              child: ListView(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: TextFormField(
+                                      controller: _departmentIdController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Department ID',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter department ID';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: TextFormField(
+                                      controller: _departmentNameController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Department Name',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter department name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        final newDepartment = Departments(
+                                          departmentID:
+                                              _departmentIdController.text,
+                                          departmentName:
+                                              _departmentNameController.text,
+                                        );
+                                        context
+                                            .read<DeparmentsViewModel>()
+                                            .addNewDepartment(newDepartment);
+
+                                        Navigator.pop(context);
+                                        initState();
+                                      }
+                                    },
+                                    child: Text('Add Department'),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
+                  )),
+          SpeedDialChild(
+              label: "Thêm chức vụ",
+              onTap: () => showDialog<Widget>(
+                    context: context,
+                    builder: (context) => Dialog(
+                      child: Container(
+                        height: 300,
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Form(
+                              key: _formKey,
+                              child: ListView(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: TextFormField(
+                                      controller: _positionIdController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Position ID',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter department ID';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: TextFormField(
+                                      controller: _positionNameController,
+                                      decoration: InputDecoration(
+                                        labelText: 'Position Name',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10)),
+                                        ),
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter department name';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(height: 16.0),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        final newPositions = Positions(
+                                          positionId:
+                                              _positionIdController.text,
+                                          positionName:
+                                              _positionIdController.text,
+                                        );
+                                        Provider.of<PositionsViewModel>(context)
+                                            .addNewPosition(newPositions);
+                                        Navigator.pop(context);
+                                        initState();
+                                      }
+                                    },
+                                    child: Text('Add Department'),
+                                  ),
+                                ],
+                              )),
+                        ),
+                      ),
+                    ),
+                  )),
+          SpeedDialChild(
+              label: "Thêm ca làm việc",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => AddShiftsScreen(),
+                  ),
+                );
+              }),
+          SpeedDialChild(
+              label: "Thêm thân nhân",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddRelativeScreen(profile: widget.profile)));
+              }),
+        ],
+      );
+    } else if (AppStrings.ROLE_PERMISSIONS
+        .contains('Manage Staffs info only')) {
+      return SpeedDial(
+          elevation: 0,
+          icon: Icons.menu,
+          buttonSize: Size(50, 50),
+          children: [
+            SpeedDialChild(
+                label: "Thêm Nhân Viên",
+                onTap: () {
+                  Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
+                }),
+            SpeedDialChild(
+                label: "List Nhân Viên",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => EmployeeListScreen(),
+                      ));
+                }),
+            SpeedDialChild(
+                label: "List Thân Nhân",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => RelativeListScreen(
+                          profiles: widget.profile,
+                        ),
+                      ));
+                }),
+          ]);
+    } else {
+      return UiSpacer.emptySpace();
+    }
+  }
+
+  Widget buildbodyChildren() {
+    if (AppStrings.ROLE_PERMISSIONS
+        .containsAny(['Manage BoD & HR accounts', 'Manage Staffs info only'])) {
+      return Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData &&
+                  viewModel.listDepartments.isEmpty) {
+                Provider.of<DeparmentsViewModel>(context, listen: false)
+                    .fetchAllDepartments();
+              }
+              if (viewModel.fetchingData) {
+                // While data is being fetched
+                return Center(child: CircularProgressIndicator());
+              } else {
+                // If data is successfully fetched
+                List<Departments> departments = viewModel.listDepartments;
+                return CustomGridView(
+                    childAspectRatio: 2,
+                    dataSet: departments,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        color: Color.fromARGB(255, 243, 243, 242),
+                        elevation: 1,
+                        // margin: EdgeInsets.all(13),
+                        child: Wrap(
+                          clipBehavior: Clip.antiAlias,
+                          direction: Axis.vertical,
+                          children: [
+                            Text(
+                              departments[index].departmentName,
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                            ),
+                          ],
+                        ).p(13),
+                      ).onTap(() => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DepartmentInfoScreen(
+                              departments: departments[index],
+                            ),
+                          )));
+                    });
+              }
+            }),
+            Divider().p12(),
+            ExpansionPanelList(
+              expansionCallback: (int panelIndex, bool isExpanded) {
+                setState(() {
+                  isExpandedList[panelIndex] = isExpanded;
+                });
+              },
+              children: [
+                ExpansionPanel(
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return Text("Nhân sự công ty");
+                  },
+                  isExpanded: true,
+                  body: Consumer<ProfilesViewModel>(
+                      builder: (context, viewModel, child) {
+                    if (!viewModel.fetchingData &&
+                        viewModel.allProfiles.isEmpty) {
+                      Provider.of<ProfilesViewModel>(context)
+                          .fetchAllProfiles();
+                    }
+                    List<Profiles> listProfiles = viewModel.allProfiles;
+                    return CustomListView(
+                        dataSet: listProfiles,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            leading: CircleAvatar(),
+                            title: Text(listProfiles[index].profileName),
+                            subtitle: Text(listProfiles[index].positionId!),
+                          );
+                        });
+                  }),
+                ),
+              ],
+            ).p8()
+          ],
+        ),
+      );
+    } else {
+      return Column(
+        children: [
+          Text("Lương của bạn",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              )).p8(),
+          Divider().px12(),
+          Text("Công việc của bạn",
+              style: TextStyle(
+                fontSize: 18.0,
+                fontWeight: FontWeight.bold,
+              )).p8(),
+          Divider().px12(),
+          ExpansionPanelList(
+            expansionCallback: (int panelIndex, bool isExpanded) {
+              setState(() {
+                isExpandedList[panelIndex] = isExpanded;
+              });
+            },
+            children: [
+              ExpansionPanel(
+                headerBuilder: (BuildContext context, bool isExpanded) {
+                  return const Row(
+                    children: [
+                      Text("Mã dự án - Tên dự án"),
+                    ],
+                  );
+                },
+                body: Card(),
+              ),
+            ],
+          ).p8()
+        ],
+      );
+    }
   }
 }

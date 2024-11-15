@@ -54,6 +54,20 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
       }
     }
   }
+    void _deleteSalary() async {
+    try {
+      await Provider.of<SalariesViewModel>(context, listen: false)
+          .deleteSalary(widget.salaries!.salaryId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Salary deleted successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete Salary: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,7 +176,7 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                                     onPressed: () {
                                       Navigator.of(context)
                                           .pop(); // Đóng dialog
-                                      // Thực hiện xóa
+                                     _deleteSalary();
                                     },
                                     child: Text('Delete'),
                                   ),

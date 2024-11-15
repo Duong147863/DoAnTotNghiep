@@ -1,23 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class InfoTrainingprocessesHRScreen extends StatefulWidget {
+class InfoTrainingprocessesScreen extends StatefulWidget {
   final Trainingprocesses? trainingprocesses;
-  const InfoTrainingprocessesHRScreen({super.key,this.trainingprocesses});
+  const InfoTrainingprocessesScreen({super.key, this.trainingprocesses});
 
   @override
-  State<InfoTrainingprocessesHRScreen> createState() => _InfoTrainingprocessesHRScreenState();
+  State<InfoTrainingprocessesScreen> createState() =>
+      _InfoTrainingprocessesScreenState();
 }
 
-class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRScreen> {
-    final _formKey = GlobalKey<FormState>();
+class _InfoTrainingprocessesScreenState
+    extends State<InfoTrainingprocessesScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
   final _trainingprocessesIdController = TextEditingController();
   final _trainingprocessesNameController = TextEditingController();
@@ -27,11 +31,12 @@ class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRS
   bool _isEditing = false;
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-    int _statusTrainingProcesses = 0;
-    @override
+  int _statusTrainingProcesses = 0;
+  @override
   void initState() {
     super.initState();
-    _statusTrainingProcesses = widget.trainingprocesses!.trainingprocessesStatus;
+    _statusTrainingProcesses =
+        widget.trainingprocesses!.trainingprocessesStatus;
     _profileIDController.text = widget.trainingprocesses!.profileId;
     _trainingprocessesIdController.text =
         widget.trainingprocesses!.trainingprocessesId;
@@ -44,6 +49,7 @@ class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRS
     _endTimeController.text =
         DateFormat('yyyy-MM-dd').format(widget.trainingprocesses!.endTime!);
   }
+
   void _updateTrainingProcesses() async {
     if (_formKey.currentState!.validate()) {
       final updateTrainingProcesses = Trainingprocesses(
@@ -53,7 +59,7 @@ class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRS
           trainingprocessesContent: _trainingprocessesContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          trainingprocessesStatus: _statusTrainingProcesses);
+          trainingprocessesStatus: 0);
       try {
         await Provider.of<TrainingprocessesViewModel>(context, listen: false)
             .updateTrainingProcesses(updateTrainingProcesses);
@@ -162,6 +168,7 @@ class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRS
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -265,13 +272,24 @@ class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRS
                     ],
                   ),
                   SizedBox(height: 16),
-                  Text('Status TrainingProcesses').px(8),
-                  _buildDropdownField('Status Status TrainingProcesses', _statusTrainingProcesses,
-                      (value) {
-                    setState(() {
-                      _statusTrainingProcesses = value!;
-                    });
-                  }).px(8),
+                  AppStrings.ROLE_PERMISSIONS
+                          .contains('Manage Staffs info only')
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Status TrainingProcesses').px(8),
+                            _buildDropdownField(
+                              'Status Status TrainingProcesses',
+                              _statusTrainingProcesses,
+                              (value) {
+                                setState(() {
+                                  _statusTrainingProcesses = value!;
+                                });
+                              },
+                            ).px(8),
+                          ],
+                        )
+                      : SizedBox.shrink(),
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -331,6 +349,7 @@ class _InfoTrainingprocessesHRScreenState extends State<InfoTrainingprocessesHRS
       ),
     );
   }
+
   Widget _buildDropdownField(
       String label, int currentValue, Function(int?) onChanged) {
     return Padding(
