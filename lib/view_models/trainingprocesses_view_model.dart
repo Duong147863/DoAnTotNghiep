@@ -34,7 +34,7 @@ class TrainingprocessesViewModel extends ChangeNotifier {
     try {
       await repository.updateTrainingProcesses(trainingprocesses);
       int index =
-          _list.indexWhere((tra) => tra.profileId == trainingprocesses.profileId);
+          _list.indexWhere((tra) => tra.trainingprocessesId == trainingprocesses.trainingprocessesId);
       if (index != -1) {
         _list[index] = trainingprocesses;
         notifyListeners();

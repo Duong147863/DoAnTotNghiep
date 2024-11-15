@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 class CustomCard extends StatefulWidget {
   String title;
-  String? subttile;
-  String? subttile1;
+  String subttile;
+
   Function? onTap;
   CustomCard(
       {super.key,
       required this.title,
       this.onTap,
-      this.subttile,
-      this.subttile1});
+      required this.subttile,
+      });
 
   @override
   State<CustomCard> createState() => _CustomCardState();
@@ -39,22 +39,10 @@ class _CustomCardState extends State<CustomCard> {
             ),
             SizedBox(height: 8.0),
             Text(
-              widget.subttile!,
+              widget.subttile,
               style: TextStyle(
                 fontSize: 16.0,
                 color: Colors.grey,
-              ),
-            ),
-            Text(
-              widget.subttile1!,
-              style: TextStyle(
-                fontSize: 16.0,
-                color: widget.subttile1!.contains("Từ Chối Duyệt")
-                    ? Colors.red 
-                    : widget.subttile1!.contains("Đợi Duyệt")
-                        ? Colors.yellow 
-                        : Colors
-                            .green, 
               ),
             ),
           ],

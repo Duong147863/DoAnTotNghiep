@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
@@ -20,6 +21,10 @@ import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
+import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 
 import 'package:provider/provider.dart';
 import 'package:velocity_x/src/extensions/context_ext.dart';
@@ -102,7 +107,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadPositions();
     _loadSalaries();
     _loadworkingProcesses();
-
   }
 
   // Method to load departments
@@ -167,13 +171,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-    void _loadworkingProcesses() async {
+
+  void _loadworkingProcesses() async {
     try {
       await Provider.of<WorkingprocessesViewModel>(context, listen: false)
           .fetchWorkingProcess(widget.profile!.profileId);
       setState(() {
         workingProcesses =
-            Provider.of<WorkingprocessesViewModel>(context, listen: false).listWorkingProcess;
+            Provider.of<WorkingprocessesViewModel>(context, listen: false)
+                .listWorkingProcess;
         if (workingProcesses.isNotEmpty) {
           selectedWorkingProcesses = workingProcesses.firstWhere(
             (wor) => wor.profileId == widget.profile!.profileId,
@@ -258,7 +264,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -278,8 +283,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.of(context).pop(); // Quay lại trang trước đó
           },
         ),
-        actions: AppStrings.ROLE_PERMISSIONS
-                .containsAny(['Manage BoD & HR accounts', ''])
+        actions: AppStrings.ROLE_PERMISSIONS.containsAny(
+                ['Manage BoD & HR accounts', 'Manage Staffs info only'])
             ? <Widget>[
                 IconButton(
                   enableFeedback: true,
@@ -600,6 +605,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ]),
+      fab: AppStrings.ROLE_PERMISSIONS.contains('Manage Staffs info only')
+          ? SpeedDial(
+              elevation: 0,
+              icon: Icons.menu,
+              buttonSize: Size(50, 50),
+              children: [
+                  SpeedDialChild(
+                      label: "Thêm Thân Nhân",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  AddRelativeScreen(
+                                profile: widget.profile,
+                              ),
+                            ));
+                      }),
+                  SpeedDialChild(
+                      label: "Thêm Bằng Cấp",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  AddDiplomaScreen(
+                                profile: widget.profile,
+                              ),
+                            ));
+                      }),
+                  SpeedDialChild(
+                      label: "Phê Duyệt Quá Trình Đạo Tạo",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ListTrainingprocessesScreen(
+                                profiles: widget.profile,
+                              ),
+                            ));
+                      }),
+                  SpeedDialChild(
+                      label: "Phê Duyệt Quá Trình Làm Việc",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ListWorkingprocessScreen(
+                                profiles: widget.profile,
+                              ),
+                            ));
+                      })
+                ])
+          : UiSpacer.emptySpace(),
     );
   }
 
@@ -728,4 +789,3 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
-
