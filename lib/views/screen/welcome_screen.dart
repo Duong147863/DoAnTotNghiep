@@ -1,13 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:nloffice_hrm/api_services/profile_service.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/repository/profiles_repo.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
-import 'package:nloffice_hrm/views/screen/home_screen.dart';
-import 'package:rx_shared_preferences/rx_shared_preferences.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
@@ -25,26 +20,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   void checkUserIsLogged() async {
-    final prefs = await SharedPreferences.getInstance();
-    // final services = ProfileService();
-    print(prefs.getBool(AppStrings.SHARED_LOGGED));
-    if (prefs.getBool(AppStrings.SHARED_LOGGED)! == false) {
-      // setState(() {
-      //   doLogin = true;
-      // });
-      // services
-      //     .emailLogin(prefs.getString(AppStrings.SHARED_PASSWORD)!,
-      //         prefs.getString(AppStrings.SHARED_PASSWORD)!)
-      //     .then((response) {
+    if (AppStrings.TOKEN.trim().isNotEmptyAndNotNull) {
       Navigator.of(context).pushReplacementNamed(AppRoutes.loginRoute);
-    } else  if (prefs.getBool(AppStrings.SHARED_LOGGED)! == true) {
-      // Navigator.pushReplacement(
-      //   context,
-      //   MaterialPageRoute<void>(
-      //     builder: (BuildContext context) => HomeScreen(profile: ,),
-      //   ),
-      // );
-    }
+    } else {}
   }
 
   @override
@@ -54,6 +32,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BasePage();
+    return BasePage(
+      body: Center(
+        child: Image.asset(
+          "assets/images/logos/black_logo.png",
+          height: 280,
+          width: 280,
+        ),
+      ),
+    );
   }
 }

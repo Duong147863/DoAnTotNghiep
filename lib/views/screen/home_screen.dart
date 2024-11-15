@@ -1,46 +1,28 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
-import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
-import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
-import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
-import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
-import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:velocity_x/velocity_x.dart';
-
 import '../../models/positions_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -60,49 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final _positionNameController = TextEditingController();
   final _positionIdController = TextEditingController();
   List<bool> isExpandedList = [];
-  List<Map<String, dynamic>> _getData() {
-    if (AppStrings.ROLE_PERMISSIONS
-        .containsAny(['Manage BoD & HR accounts', 'Manage Staffs info only'])) {
-      return [
-        {
-          'icon': Icons.supervisor_account,
-          'text': 'Quản lí nhân sự',
-          'route': AppRoutes.employeeManagmentScreen
-        },
-        {
-          'icon': Icons.currency_exchange,
-          'text': 'Quản lí lương',
-          'route': AppRoutes.salariListRoute,
-        },
-        {
-          'icon': Icons.business_center_rounded,
-          'text': 'Quản lí chức vụ',
-          'route': AppRoutes.positionListRoute
-        },
-        {
-          'icon': Icons.work_off_sharp,
-          'text': 'Quản lí nghỉ phép',
-          'route': AppRoutes.leaveRequestList
-        },
-      ];
-    } else if (AppStrings.ROLE_PERMISSIONS
-        .containsAny(['Manage your department members only'])) {
-      return [
-        {
-          'icon': Icons.supervisor_account,
-          'text': 'Quản lí phòng ban',
-          'route': AppRoutes.employeeManagmentScreen
-        },
-      ];
-    }
-    return [];
-  }
-
-  bool light = true;
 
   @override
   void initState() {
     super.initState();
+    Provider.of<DeparmentsViewModel>(context, listen: false)
+        .fetchAllDepartments();
   }
 
   @override
@@ -113,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final profilesViewModel = Provider.of<ProfilesViewModel>(context);
-    final data = _getData();
     return BasePage(
       appBarItemColor: AppColor.boneWhite,
       showAppBar: true,
@@ -203,84 +147,84 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            ListTile(
-              title: Text("Add Workingprocess"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => AddWorkingprocesScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("List Workingprocess Screen Dành Cho Nhân Viên"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListWorkingprocessEmloyeeScreen(
-                      profiles: widget.profile
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("List Workingprocess Screen HR"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListWorkingprocessHRScreen(
-                      profiles: widget.profile
-                    ),
-                  ),
-                );
-              },
-            ),
-            ListTile(
-              title: Text("Add TrainingProcesses"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => AddTrainingprocessesScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-               ListTile(
-              title: Text("List TrainingProcesses Screen Dành Cho Nhân Viên"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListTrainingprocessesEmloyeeScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
-              ListTile(
-              title: Text("List TrainingProcesses Screen HR"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => ListTrainingprocessesHRScreen(
-                      profiles: widget.profile,
-                    ),
-                  ),
-                );
-              },
-            ),
+            // ListTile(
+            //   title: Text("Add Workingprocess"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute<void>(
+            //         builder: (BuildContext context) => AddWorkingprocesScreen(
+            //           profiles: widget.profile,
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
+            // ListTile(
+            //   title: Text("List Workingprocess Screen Dành Cho Nhân Viên"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute<void>(
+            //         builder: (BuildContext context) => ListWorkingprocessEmloyeeScreen(
+            //           profiles: widget.profile
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
+            // ListTile(
+            //   title: Text("List Workingprocess Screen HR"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute<void>(
+            //         builder: (BuildContext context) => ListWorkingprocessHRScreen(
+            //           profiles: widget.profile
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
+            // ListTile(
+            //   title: Text("Add TrainingProcesses"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute<void>(
+            //         builder: (BuildContext context) => AddTrainingprocessesScreen(
+            //           profiles: widget.profile,
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
+            //    ListTile(
+            //   title: Text("List TrainingProcesses Screen Dành Cho Nhân Viên"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute<void>(
+            //         builder: (BuildContext context) => ListTrainingprocessesEmloyeeScreen(
+            //           profiles: widget.profile,
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
+            //   ListTile(
+            //   title: Text("List TrainingProcesses Screen HR"),
+            //   onTap: () {
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute<void>(
+            //         builder: (BuildContext context) => ListTrainingprocessesHRScreen(
+            //           profiles: widget.profile,
+            //         ),
+            //       ),
+            //     );
+            //   },
+            // ),
             Expanded(
               child: Align(
                 alignment: FractionalOffset.bottomCenter,
