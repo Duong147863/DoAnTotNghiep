@@ -15,6 +15,7 @@ import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
+import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
 import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
 import 'package:nloffice_hrm/views/route_service.dart' as router;
@@ -97,6 +98,9 @@ void main() {
     ),
     ChangeNotifierProvider<TrainingprocessesViewModel>(
       create: (context) => TrainingprocessesViewModel(),
+    ),
+    ChangeNotifierProvider<TimeKeepingViewModel>(
+      create: (context) => TimeKeepingViewModel(),
     )
   ], child: MainApp()));
 }
@@ -114,7 +118,7 @@ class MainApp extends StatelessWidget {
         // open your app when is executed from outside when is terminated.
         return router.generateRoute(settings);
       },
-      home: LoginScreen(),
+      home: WelcomeScreen(),
     );
   }
 }

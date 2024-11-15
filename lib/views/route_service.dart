@@ -67,7 +67,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-       case AppRoutes.absentListRoute:
+    case AppRoutes.absentListRoute:
       return MaterialPageRoute(
           builder: (context) => const ListAbsentScreen(),
           settings: const RouteSettings(
@@ -108,7 +108,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       );
 
     ///
-     case AppRoutes.salariesAddRoute:
+    case AppRoutes.salariesAddRoute:
       return MaterialPageRoute(
           builder: (context) => SalaryAddScreen(),
           settings: const RouteSettings(
@@ -176,12 +176,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
             name: AppRoutes.departmentDetailRoute,
           ));
     //
-    case AppRoutes.timeAttendanceRoute:
-      return MaterialPageRoute(
-          builder: (context) => TimeAttendance(),
-          settings: const RouteSettings(
-            name: AppRoutes.timeAttendanceRoute,
-          ));
+    // case AppRoutes.timeAttendanceRoute:
+    //   return MaterialPageRoute(
+    //       builder: (context) => TimeAttendance(),
+    //       settings: const RouteSettings(
+    //         name: AppRoutes.timeAttendanceRoute,
+    //       ));
 
     ///
     case AppRoutes.employeeListRoute:

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/shared_preferences.dart';
@@ -37,139 +38,131 @@ class _TapBarState extends State<LoginScreen> {
     return BasePage(
       backgroundColor: AppColor.seaShell,
       showAppBar: false,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 20, top: 20, right: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Welcome Back",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 30,
-                    color: Colors.black,
-                  ),
-                ),
-                Text(
-                  'Login to continue',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                ),
-              ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/images/logos/black_logo.png",
+              width: 100,
+              height: 100,
             ),
-          ),
-          Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                //Email/ Phone number text field
-                CustomTextFormField(
-                  textEditingController: emailOrPhoneController,
-                  prefixIcon: const Icon(Icons.person),
-                  labelText: "Email or Phone number",
-                  fillColor: AppColor.primaryDarkColor,
-                  filled: true,
-                  validator: (value) {
-                    if (value.isEmptyOrNull) {
-                      return 'Please enter your email or phone number';
-                    } else if (isEmail(value!) == false &&
-                        SPUtill.isPhoneNumber(value) == false) {
-                      return 'Please enter a valid email or phone number';
-                    }
-                    return null;
-                  },
-                ).py(10),
-                CustomTextFormField(
-                  textEditingController: passwordController,
-                  obscureText: !_passwordVisible,
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _passwordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+            Image.asset(
+              "assets/images/male_avatar.png",
+              width: 300,
+              height: 260,
+            ),
+            Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  //Email/ Phone number text field
+                  CustomTextFormField(
+                    textEditingController: emailOrPhoneController,
+                    prefixIcon: const Icon(Icons.person),
+                    labelText: "Email hoặc Số điện thoại",
+                    fillColor: AppColor.primaryDarkColor,
+                    filled: true,
+                    validator: (value) {
+                      if (value.isEmptyOrNull) {
+                        return 'Please enter your email or phone number';
+                      } else if (isEmail(value!) == false &&
+                          SPUtill.isPhoneNumber(value) == false) {
+                        return 'Please enter a valid email or phone number';
+                      }
+                      return null;
+                    },
+                  ).py(10),
+                  CustomTextFormField(
+                    textEditingController: passwordController,
+                    obscureText: !_passwordVisible,
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _passwordVisible = !_passwordVisible;
-                      });
+                    labelText: "Mật khẩu",
+                    filled: true,
+                    validator: (value) {
+                      if (value.isEmptyOrNull) {
+                        return 'Please enter your password';
+                      } else if (value!.length < 6) {
+                        return 'Password must be at least 6 characters long';
+                      }
+                      return null;
                     },
                   ),
-                  labelText: "Password",
-                  filled: true,
-                  validator: (value) {
-                    if (value.isEmptyOrNull) {
-                      return 'Please enter your password';
-                    } else if (value!.length < 6) {
-                      return 'Password must be at least 6 characters long';
-                    }
-                    return null;
-                  },
-                ),
-              ],
-            ),
-          ).p(10),
-          //forgot pass text
-          Container(
-            width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(vertical: 0),
-            alignment: Alignment.bottomRight,
-            child: TextButton(
-              onPressed: () => Navigator.of(context)
-                  .pushNamed(AppRoutes.forgotPasswordRoute),
-              child: Text(
-                'Forget password?',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                ],
               ),
-            ),
-          ),
-          //Login Button
-          CustomButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                String emailOrPhone = emailOrPhoneController.text;
-                String password = passwordController.text;
-                try {
-                  if (isEmail(emailOrPhone)) {
-                    // Đăng nhập bằng email
-                    userProfile = await profilesViewModel.loginEmail(
-                        emailOrPhone, password);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            HomeScreen(profile: userProfile),
-                      ),
+            ).p(10),
+            //forgot pass text
+            // Container(
+            //   width: MediaQuery.of(context).size.width,
+            //   padding: EdgeInsets.symmetric(vertical: 0),
+            //   alignment: Alignment.bottomRight,
+            //   child: TextButton(
+            //     onPressed: () => Navigator.of(context)
+            //         .pushNamed(AppRoutes.forgotPasswordRoute),
+            //     child: Text(
+            //       'Forget password?',
+            //       style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            //     ),
+            //   ),
+            // ),
+            //Login Button
+            CustomButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  String emailOrPhone = emailOrPhoneController.text;
+                  String password = passwordController.text;
+                  try {
+                    if (isEmail(emailOrPhone)) {
+                      // Đăng nhập bằng email
+                      userProfile = await profilesViewModel.loginEmail(
+                          emailOrPhone, password);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              HomeScreen(profile: userProfile),
+                        ),
+                      );
+                    } else if (SPUtill.isPhoneNumber(emailOrPhone)) {
+                      // Đăng nhập bằng số điện thoại
+                      userProfile = await profilesViewModel.loginPhone(
+                          emailOrPhone, password);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              HomeScreen(profile: userProfile),
+                        ),
+                      );
+                    } else {
+                      throw Exception(
+                          'Please enter a valid email or phone number');
+                    }
+                  } catch (e) {
+                    print('Error: $e'); // In thông tin lỗi
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Lỗi kết nối')),
                     );
-                  } else if (SPUtill.isPhoneNumber(emailOrPhone)) {
-                    // Đăng nhập bằng số điện thoại
-                    userProfile = await profilesViewModel.loginPhone(
-                        emailOrPhone, password);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            HomeScreen(profile: userProfile),
-                      ),
-                    );
-                  } else {
-                    throw Exception(
-                        'Please enter a valid email or phone number');
                   }
-                } catch (e) {
-                  print('Error: $e'); // In thông tin lỗi
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Lỗi kết nối')),
-                  );
                 }
-              }
-            },
-            title: 'login',
-            titleStyle: TextStyle(fontSize: 20, color: Colors.white),
-          ).p(10)
-        ],
+              },
+              title: 'Đăng nhập',
+              titleStyle: TextStyle(fontSize: 20, color: Colors.white),
+            ).p(10)
+          ],
+        ),
       ),
     );
   }
