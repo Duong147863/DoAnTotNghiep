@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/models/assignments_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/projects_model.dart';
+import 'package:nloffice_hrm/models/tasks_model.dart';
+import 'package:nloffice_hrm/view_models/assignment_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
@@ -20,20 +24,30 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
   final _projectIdController = TextEditingController();
   final _projectNameController = TextEditingController();
   bool _isEditing = false;
-  int _statusProject=0;
-    @override
+  int _statusProject = 0;
+  List<Assignments> assignments = [];
+  Assignments? selectedassignments;
+  List<Projects> project=[];
+  Projects? selectedProjects;
+  List<Tasks> tasks = [];
+  Tasks? selectedTasks;
+  List<Profiles> profiles = [];
+  Profiles? selectedProfiles;
+  @override
   void initState() {
     super.initState();
-    _projectIdController.text=widget.projects!.projectId;
-    _projectNameController.text=widget.projects!.projectName;
-    _statusProject=widget.projects!.projectStatus;
+    _projectIdController.text = widget.projects!.projectId;
+    _projectNameController.text = widget.projects!.projectName;
+    _statusProject = widget.projects!.projectStatus;
+    // _loadProject();
   }
+
   void _updateProject() async {
     if (_formKey.currentState!.validate()) {
       final updatedProjects = Projects(
         projectId: _projectIdController.text,
         projectName: _projectNameController.text,
-        projectStatus: _statusProject, 
+        projectStatus: _statusProject,
       );
       try {
         await Provider.of<ProjectsViewModel>(context, listen: false)
@@ -64,12 +78,30 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
       );
     }
   }
-
+  // void _loadProject() async {
+  //   try {
+  //     await Provider.of<AssignmentsViewModel>(context, listen: false)
+  //         .getAssignmentsDetails(widget.projects!.projectId);
+  //     setState(() {
+  //       assignments =
+  //           Provider.of<AssignmentsViewModel>(context, listen: false).listAssignments;
+  //       if (assignments.isNotEmpty) {
+  //         selectedassignments = assignments.firstWhere(
+  //           (ass) => ass.projectId == widget.projects!.projectId,
+  //         );
+  //       }
+  //     });
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to load Project $e')),
+  //     );
+  //   }
+  // }
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Shifts Info Screen',
+      titletext: 'Project Info Screen',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -86,17 +118,20 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomTextFormField(
-                    textEditingController: _projectIdController,
-                    labelText: 'project ID',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_project_ID';
-                      }
-                      return null;
-                    },
-                    enabled: false,
-                  ).px8(),
+                  Visibility(
+                    visible: false, // Đặt thành false để ẩn widget
+                    child: CustomTextFormField(
+                      textEditingController: _projectIdController,
+                      labelText: 'project ID',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'please_enter_project_ID';
+                        }
+                        return null;
+                      },
+                      enabled: false,
+                    ).px8(),
+                  ),
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _projectNameController,
@@ -109,12 +144,14 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
                     },
                     enabled: _isEditing,
                   ).px8(),
-                     Text('Status Project').px(8),
-                  _buildDropdownField('Status Project', _statusProject, (value) {
+                  Text('Status Project').px(8),
+                  _buildDropdownField('Status Project', _statusProject,
+                      (value) {
                     setState(() {
                       _statusProject = value!;
                     });
                   }).px(8),
+                  _buildAssignmentList(),
                   Spacer(),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -141,7 +178,7 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
                               return AlertDialog(
                                 title: Text('Confirm Delete'),
                                 content: Text(
-                                    'Are you sure you want to delete this shifts?'),
+                                    'Are you sure you want to delete this project?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {
@@ -174,25 +211,127 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
       ),
     );
   }
+
   Widget _buildDropdownField(
-    String label, int currentValue, Function(int?) onChanged) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: DropdownButtonFormField<int>(
-      value: currentValue,
-      decoration: InputDecoration(
-        labelStyle: TextStyle(color: Colors.black),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      String label, int currentValue, Function(int?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<int>(
+        value: currentValue,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(color: Colors.black),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        items: [
+          DropdownMenuItem(value: 0, child: Text('Đang làm')), // Trạng thái 0
+          DropdownMenuItem(value: 1, child: Text('Hoàn Thành')), // Trạng thái 1
+        ],
+        onChanged: _isEditing
+            ? onChanged
+            : null, // Nếu không cho phép chọn, onChanged = null
+        validator: (value) =>
+            value == null ? 'Please select a status project' : null,
       ),
-      items: [
-        DropdownMenuItem(value: 0, child: Text('Đang làm')),  // Trạng thái 0
-        DropdownMenuItem(value: 1, child: Text('Hoàn Thành')), // Trạng thái 1
-      ],
-      onChanged: _isEditing
-          ? onChanged
-          : null, // Nếu không cho phép chọn, onChanged = null
-      validator: (value) => value == null ? 'Please select a status project' : null,
-    ),
-  );
-}
+    );
+  }
+  Widget _buildAssignmentList() {
+    if (assignments.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có thông tin task nào",
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+        ),
+      );
+    }
+
+    return ExpansionPanelList(
+      elevation: 1,
+      expandedHeaderPadding: EdgeInsets.all(0),
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          assignments[index].isExpanded = isExpanded;
+        });
+      },
+      children: assignments.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              leading: Icon(Icons.personal_injury,
+                  color: const Color.fromARGB(255, 68, 218, 255)),
+              // title: Text(
+              //   "Tên Task: ${selectedProjects!.projectName}",
+              //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              // ),
+            );
+          },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Tiêu đề
+                    Text(
+                      "Chi tiết:",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue),
+                    ),
+                    SizedBox(height: 10),
+                    Text("Tên nhân viên: ${process.profileId}",
+                        style: TextStyle(fontSize: 16)),
+                    Text("Tên Task ${process.projectId}",
+                        style: TextStyle(fontSize: 16)),
+                    Text("Tên Dự án ${process.taskId}",
+                        style: TextStyle(fontSize: 16)),
+                    SizedBox(height: 20),
+                    Divider(color: Colors.grey),
+                    SizedBox(height: 10),
+                    // Thêm hiệu ứng khi bấm vào để chuyển đến màn hình chi tiết
+                    // Center(
+                    //   child: InkWell(
+                    //     onTap: () async {
+                    //       final updatedRelative = await Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (context) =>
+                    //               InfoRelativeScreen(profile: process),
+                    //         ),
+                    //       );
+
+                    //       if (updatedRelative != null) {
+                    //         _handleUpdateRelative(updatedRelative);
+                    //       }
+                    //     },
+                    //     child: Container(
+                    //       padding:
+                    //           EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    //       decoration: BoxDecoration(
+                    //         color: Colors.blue,
+                    //         borderRadius: BorderRadius.circular(8),
+                    //       ),
+                    //       child: Text(
+                    //         "Xem chi tiết",
+                    //         style: TextStyle(fontSize: 16, color: Colors.white),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
 }

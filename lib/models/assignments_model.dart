@@ -7,13 +7,14 @@ class Assignments {
     required this.profileId,
     required this.projectId,
     this.taskId,
+    this.isExpanded=false
   });
 
   int? assignmentId;
   String profileId;
   String projectId;
   int? taskId;
-
+  bool isExpanded;
   factory Assignments.fromJson(Map<String, dynamic> json) {
     return Assignments(
       assignmentId: json["assignment_id"],

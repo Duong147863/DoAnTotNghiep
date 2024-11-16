@@ -34,6 +34,7 @@ import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/enterprise_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
@@ -687,8 +688,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext context) => AddTaskScreen(
-                        ),
+                        builder: (BuildContext context) => AddTaskScreen(),
                       ));
                 }),
             SpeedDialChild(
@@ -697,8 +697,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext context) => AddAssignmentScreen(
-                        ),
+                        builder: (BuildContext context) =>
+                            AddAssignmentScreen(),
                       ));
                 }),
           ]);
@@ -773,7 +773,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, viewModel, child) {
                     if (!viewModel.fetchingData &&
                         viewModel.allProfiles.isEmpty) {
-                      Provider.of<ProfilesViewModel>(context,listen: false)
+                      Provider.of<ProfilesViewModel>(context, listen: false)
                           .fetchAllProfiles();
                     }
                     List<Profiles> listProfiles = viewModel.allProfiles;
@@ -809,27 +809,92 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 )).p8(),
             Divider().px12(),
-            ExpansionPanelList(
-              expansionCallback: (int panelIndex, bool isExpanded) {
-                setState(() {
-                  isExpandedList[panelIndex] = isExpanded;
-                });
-              },
-              children: [
-                ExpansionPanel(
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return const Row(
-                      children: [
-                        // Text("Mã dự án - Tên dự án"),
-
-                      ],
-                    );
-                  },
-                  body: Card(),
-                ),
-              ],
-            ).p8(),
-            _buildProductList()
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Consumer<ProjectsViewModel>(
+                      builder: (context, viewModel, child) {
+                    if (!viewModel.fetchingData &&
+                        viewModel.listProjects.isEmpty) {
+                      Provider.of<ProjectsViewModel>(context, listen: false)
+                          .getAllProject();
+                    }
+                    if (viewModel.fetchingData) {
+                      // While data is being fetched
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      // If data is successfully fetched
+                      List<Projects> projects = viewModel.listProjects;
+                      return CustomGridView(
+                          childAspectRatio: 2,
+                          dataSet: projects,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              color: Color.fromARGB(255, 243, 243, 242),
+                              elevation: 1,
+                              // margin: EdgeInsets.all(13),
+                              child: Wrap(
+                                clipBehavior: Clip.antiAlias,
+                                direction: Axis.vertical,
+                                children: [
+                                  Text(
+                                    projects[index].projectName,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.clip,
+                                  ),
+                                ],
+                              ).p(13),
+                            ).onTap(() => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => InfoProjectScreen(
+                                    projects: projects[index],
+                                  ),
+                                )));
+                          });
+                    }
+                  }),
+                  Divider().p12(),
+                  ExpansionPanelList(
+                    expansionCallback: (int panelIndex, bool isExpanded) {
+                      setState(() {
+                        isExpandedList[panelIndex] = isExpanded;
+                      });
+                    },
+                    children: [
+                      ExpansionPanel(
+                        headerBuilder: (BuildContext context, bool isExpanded) {
+                          return Text("Nhân sự công ty");
+                        },
+                        isExpanded: true,
+                        body: Consumer<ProfilesViewModel>(
+                            builder: (context, viewModel, child) {
+                          if (!viewModel.fetchingData &&
+                              viewModel.allProfiles.isEmpty) {
+                            Provider.of<ProfilesViewModel>(context,
+                                    listen: false)
+                                .fetchAllProfiles();
+                          }
+                          List<Profiles> listProfiles = viewModel.allProfiles;
+                          return CustomListView(
+                              dataSet: listProfiles,
+                              itemBuilder: (context, index) {
+                                return ListTile(
+                                  leading: CircleAvatar(),
+                                  title: Text(listProfiles[index].profileName),
+                                  subtitle:
+                                      Text(listProfiles[index].positionId!),
+                                );
+                              });
+                        }),
+                      ),
+                    ],
+                  ).p8()
+                ],
+              ),
+            )
           ],
         );
       }
