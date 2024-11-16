@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20)),
-                color: Colors.blueAccent,
+                color: Color(0xFF0B258A),
               ),
               child: Center(
                 child: Column(
@@ -310,10 +310,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ? UiSpacer.emptySpace()
             : InkWell(
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            TimeAttendance(loginUser: widget.profile!,),
-                      ),);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => TimeAttendance(
+                        loginUser: widget.profile!,
+                      ),
+                    ),
+                  );
                 },
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
@@ -369,6 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildFab() {
     if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+      //Giám đốc
       return SpeedDial(
         elevation: 0,
         icon: Icons.menu,
@@ -380,7 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
               }),
           SpeedDialChild(
-              label: "Tạo quyết định",
+              label: "Thêm quyết định",
               onTap: () {
                 Navigator.of(context).pushNamed(AppRoutes.decisionListRoute);
               }),
@@ -403,7 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: TextFormField(
                                       controller: _departmentIdController,
                                       decoration: const InputDecoration(
-                                        labelText: 'Mã phòng',
+                                        labelText: 'Mã phòng ban',
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10)),
@@ -411,7 +416,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter department ID';
+                                          return 'Vui lòng nhập mã phòng';
                                         }
                                         return null;
                                       },
@@ -431,7 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter department name';
+                                          return 'Vui lòng nhập tên phòng';
                                         }
                                         return null;
                                       },
@@ -493,7 +498,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter department ID';
+                                          return 'Vui lòng nhập department ID';
                                         }
                                         return null;
                                       },
@@ -513,7 +518,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Please enter department name';
+                                          return 'Vui lòng nhập department name';
                                         }
                                         return null;
                                       },
@@ -557,6 +562,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     } else if (AppStrings.ROLE_PERMISSIONS
         .contains('Manage Staffs info only')) {
+      // HR
       return SpeedDial(
           elevation: 0,
           icon: Icons.menu,
@@ -596,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
           buttonSize: const Size(50, 50),
           children: [
             SpeedDialChild(
-                label: "Thêm task",
+                label: "Task mới",
                 onTap: () {
                   Navigator.push(
                       context,
@@ -606,7 +612,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ));
                 }),
             SpeedDialChild(
-                label: "Thêm phân công",
+                label: "Phân công dự án",
                 onTap: () {
                   Navigator.push(
                       context,
@@ -616,6 +622,106 @@ class _HomeScreenState extends State<HomeScreen> {
                       ));
                 }),
           ]);
+    } else if (AppStrings.ROLE_PERMISSIONS
+        .contains('Create & Delete Project')) {
+      final formKey = GlobalKey<FormState>();
+      final projectIdController = TextEditingController();
+      final projectNameController = TextEditingController();
+
+      return SpeedDial(
+        elevation: 0,
+        icon: Icons.menu,
+        buttonSize: const Size(50, 50),
+        children: [
+          SpeedDialChild(
+            label: "Thêm dự án",
+            onTap: () => showDialog<Widget>(
+              context: context,
+              builder: (context) => Dialog(
+                child: Container(
+                  height: 300,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Form(
+                        key: formKey,
+                        child: ListView(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: TextFormField(
+                                controller: projectIdController,
+                                decoration: InputDecoration(
+                                  labelText: 'Mã dự án',
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter project ID';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              child: TextFormField(
+                                controller: projectNameController,
+                                decoration: InputDecoration(
+                                  labelText: 'Tên dự án',
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10)),
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter project name';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  final newProject = Projects(
+                                    projectId: projectIdController.text,
+                                    projectName: projectNameController.text,
+                                  );
+                                  Provider.of<ProjectsViewModel>(context,
+                                          listen: false)
+                                      .addNewProject(newProject);
+                                  Navigator.pop(context);
+                                  initState();
+                                }
+                              },
+                              child: Text('Tạo'),
+                            ),
+                          ],
+                        )),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SpeedDialChild(
+              label: "Phân công dự án",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) =>
+                          const AddAssignmentScreen(),
+                    ));
+              }),
+        ],
+      );
     } else {
       return UiSpacer.emptySpace();
     }

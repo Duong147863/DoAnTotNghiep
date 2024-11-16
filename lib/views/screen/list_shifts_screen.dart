@@ -113,10 +113,9 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
                           title:
                               "${shifts[index].shiftId} - ${shifts[index].shiftName}",
                           subttile:
-                              "${shifts[index].startTime.toIso8601String()} - ${shifts[index].endTime}")
+                              "${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].startTime))} - ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].endTime))}")
                       .onInkTap(
                     () async {
-                      // Gọi màn hình thông tin chức vụ và chờ kết quả
                       final updatedShift = await Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -124,7 +123,6 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
                               ShiftInfoScreen(shifts: shifts[index]),
                         ),
                       );
-
                       // Kiểm tra xem có dữ liệu cập nhật không
                       if (updatedShift != null) {
                         _handleUpdate(updatedShift);
@@ -147,7 +145,6 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
           );
         },
         child: Icon(Icons.add),
-        backgroundColor: Colors.blue,
       ),
     );
   }

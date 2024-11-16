@@ -633,21 +633,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _identifiNumController,
-                    labelText: 'id_num',
+                    labelText: 'Số CCCD/CMND',
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_phone_number';
                       }
                       if (value.length != 12) {
-                        return 'please_enter_valid_id_num'; // Thông báo nhập đúng 10 chữ số
+                        return 'please_enter_valid_Số CCCD/CMND'; // Thông báo nhập đúng 10 chữ số
                       }
                       return null;
                     },
                     enabled: _isEditing,
                   ).w(200).px8(),
                   _buildDateField(
-                      'id_license_date', _idLicenseDayController, _idLicenseDay,
+                      'id ngày cấp', _idLicenseDayController, _idLicenseDay,
                       (date) {
                     setState(() {
                       _idLicenseDay = date;
@@ -719,59 +719,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
                 enabled: _isEditing,
               ).p8(),
-              SizedBox(height: 16),
               // Thân nhân
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Thông tin thân nhân",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildRelativeList(),
-              ]),
-              SizedBox(height: 16),
+              _buildRelativeList().p8(),
               //WorkingProcess
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Quá trình làm việc",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildWorkingProcessList(),
-              ]),
-              SizedBox(height: 16),
+              _buildWorkingProcessList(),
               // TrainingProcess
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Quá trình đào tạo",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildTrainingProcessesList(),
-              ]),
-              //
-              SizedBox(height: 16),
+              _buildTrainingProcessesList().p8(),
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -895,7 +848,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date';
+                return 'please_id ngày cấp';
               }
               return null;
             },
@@ -1034,75 +987,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
               leading: Icon(Icons.personal_injury,
                   color: const Color.fromARGB(255, 68, 218, 255)),
               title: Text(
-                "Tên thân nhân: ${process.relativesName}",
+                "Thân nhân",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             );
           },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Tiêu đề
-                    Text(
-                      "Chi tiết:",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue),
-                    ),
-                    SizedBox(height: 10),
-                    Text("Quan hệ: ${process.relationship}",
-                        style: TextStyle(fontSize: 16)),
-                    Text("Số điện thoại: ${process.relativesPhone}",
-                        style: TextStyle(fontSize: 16)),
-                    Text("Tạm trú: ${process.relativesTempAddress}",
-                        style: TextStyle(fontSize: 16)),
-                    Text("Thường trú: ${process.relativesCurrentAddress}",
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 20),
-                    Divider(color: Colors.grey),
-                    SizedBox(height: 10),
-                    // Thêm hiệu ứng khi bấm vào để chuyển đến màn hình chi tiết
-                    Center(
-                      child: InkWell(
-                        onTap: () async {
-                          final updatedRelative = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  InfoRelativeScreen(profile: process),
-                            ),
-                          );
-
-                          if (updatedRelative != null) {
-                            _handleUpdateRelative(updatedRelative);
-                          }
-                        },
-                        child: Container(
-                          padding:
-                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            "Xem chi tiết",
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Tiêu đề
+              Text(
+                process.relativesName,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-          ),
+              SizedBox(height: 10),
+              Text("Quan hệ: ${process.relationship}",
+                  style: TextStyle(fontSize: 16)),
+              Text("Số điện thoại: ${process.relativesPhone}",
+                  style: TextStyle(fontSize: 16)),
+              Text("Tạm trú: ${process.relativesTempAddress}",
+                  style: TextStyle(fontSize: 16)),
+              Text("Thường trú: ${process.relativesCurrentAddress}",
+                  style: TextStyle(fontSize: 16)),
+              SizedBox(height: 20),
+              Divider(color: Colors.grey),
+              SizedBox(height: 10),
+              // Thêm hiệu ứng khi bấm vào để chuyển đến màn hình chi tiết
+              Center(
+                child: InkWell(
+                  onTap: () async {
+                    final updatedRelative = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            InfoRelativeScreen(profile: process),
+                      ),
+                    );
+                    if (updatedRelative != null) {
+                      _handleUpdateRelative(updatedRelative);
+                    }
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      "Xem chi tiết",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ).px4(),
           isExpanded: process.isExpanded,
         );
       }).toList(),
@@ -1112,16 +1054,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //
 
   Widget _buildDiplomasList() {
-    if (diplomas.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin bằng cấp",
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
-        ),
-      );
-    }
-
     return ExpansionPanelList(
       elevation: 1,
       expandedHeaderPadding: EdgeInsets.all(0),
@@ -1144,110 +1076,69 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             );
           },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: InkWell(
-              onTap: () async {
-                final updatediplomas = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => InfoDiplomaScreen(diplomas: process),
+          body: diplomas.isEmpty
+              ? Center(
+                  child: Text(
+                    "Chưa có thông tin",
+                    style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey),
                   ),
-                );
-                if (updatediplomas != null) {
-                  _handleUpdateDiplomas(updatediplomas);
-                }
-              },
-              child: Card(
-                elevation: 2,
-                child: Padding(
+                )
+              : Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Text(
-                          'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue),
+                  child: InkWell(
+                    onTap: () async {
+                      final updatediplomas = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              InfoDiplomaScreen(diplomas: process),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: Text(
-                          'BẰNG TỐT NGHIỆP',
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      Center(
-                        child: Text(
-                          "${process.major}",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black54),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-
-                      // Thông tin cá nhân và bằng cấp
-                      Text('Cho: ${widget.profile!.profileName}',
-                          style: TextStyle(fontSize: 16)),
-                      Text(
-                        'Giới tính: ${widget.profile!.gender ? "Nữ" : "Nam"}',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      Text('Ngày sinh: ${widget.profile!.birthday}',
-                          style: TextStyle(fontSize: 16)),
-                      SizedBox(height: 10),
-                      Text('Xếp hạng: ${process.diplomaType}',
-                          style: TextStyle(fontSize: 16)),
-                      Text('Xếp loại tốt nghiệp: ${process.ranking}',
-                          style: TextStyle(fontSize: 16)),
-                      Text('Được cấp bởi: ${process.grantedBy}',
-                          style: TextStyle(fontSize: 16)),
-                      Text('Hình thức đào tạo: ${process.modeOfStudy}',
-                          style: TextStyle(fontSize: 16)),
-                      SizedBox(height: 20),
-                      Divider(color: Colors.grey),
-                      SizedBox(height: 20),
-
-                      // Thông tin hiệu trưởng và bằng cấp
-                      Center(
+                      );
+                      if (updatediplomas != null) {
+                        _handleUpdateDiplomas(updatediplomas);
+                      }
+                    },
+                    child: Card(
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Hiệu trưởng',
-                              style: TextStyle(
-                                  fontSize: 16, fontStyle: FontStyle.italic),
+                            Center(
+                              child: Text(
+                                "${process.major}",
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.black54),
+                              ),
                             ),
                             SizedBox(height: 20),
-                            Text(
-                              'Trịnh Văn Thắng',
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                            Text('Loại: ${process.diplomaType}',
+                                style: TextStyle(fontSize: 16)),
+                            Text('Xếp loại: ${process.ranking}',
+                                style: TextStyle(fontSize: 16)),
+                            Text('Được cấp bởi: ${process.grantedBy}',
+                                style: TextStyle(fontSize: 16)),
+                            Text('Hình thức đào tạo: ${process.modeOfStudy}',
+                                style: TextStyle(fontSize: 16)),
+                            SizedBox(height: 20),
+                            Divider(color: Colors.grey),
+                            SizedBox(height: 20),
+                            Text('Số hiệu: ${process.diplomaId}',
+                                style: TextStyle(fontSize: 14)),
+                            Text('Ngày cấp: ${process.licenseDate}',
+                                style: TextStyle(fontSize: 14)),
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Text('Số hiệu: ${process.diplomaId}',
-                          style: TextStyle(fontSize: 14)),
-                      Text('Sổ vào cấp bằng: ${process.licenseDate}',
-                          style: TextStyle(fontSize: 14)),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ),
           isExpanded: process.isExpanded,
         );
       }).toList(),
@@ -1260,16 +1151,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .where((process) => process.workingprocessStatus == 1)
         .toList();
 
-    if (filteredProcesses.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin làm việc",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
-
+    // if (filteredProcesses.isEmpty) {
+    //   return Center(
+    //     child: Text(
+    //       "Không có thông tin làm việc",
+    //       style: TextStyle(
+    //           fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+    //     ),
+    //   );
+    // }
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1284,7 +1174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return ListTile(
               leading: Icon(Icons.work, color: Colors.blueAccent),
               title: Text(
-                process.workplaceName,
+                "Tóm tắt quá trình công tác",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             );
@@ -1302,7 +1192,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Chi tiết công việc:",
+                      "Nơi làm việc:",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -1311,8 +1201,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 8),
                     Text("Nội dung: ${process.workingprocessContent}"),
                     SizedBox(height: 8),
-                    Text("Thời gian bắt đầu: ${process.startTime}"),
-                    Text("Thời gian kết thúc: ${process.endTime}"),
+                    Row(
+                      children: [
+                        Text("Từ: ${process.startTime}"),
+                        Text(" - Đến: ${process.endTime}"),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -1330,17 +1224,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     List<Trainingprocesses> filteredProcesses = trainingProcess
         .where((process) => process.trainingprocessesStatus == 1)
         .toList();
-
-    if (filteredProcesses.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin đào tạo",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
-
+    // if (filteredProcesses.isEmpty) {
+    //   return Center(
+    //     child: Text(
+    //       "Không có thông tin đào tạo",
+    //       style: TextStyle(
+    //           fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+    //     ),
+    //   );
+    // }
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1355,7 +1247,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return ListTile(
               leading: Icon(Icons.school, color: Colors.green),
               title: Text(
-                process.trainingprocessesName,
+                "Tóm tắt quá trình đào tạo",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             );
@@ -1372,18 +1264,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Chi tiết đào tạo:",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 94, 76, 175)),
+                    Text("Nội dung đào tạo: ${process.trainingprocessesContent}")
+                        .p8(),
+                    Row(
+                      children: [
+                        Text("Bắt đầu từ: ${process.startTime}"),
+                        Text(process.endTime == null
+                            ? "Hiện tại"
+                            : "Đến: ${process.endTime!}"),
+                      ],
                     ),
-                    SizedBox(height: 8),
-                    Text("Nội dung: ${process.trainingprocessesContent}"),
-                    SizedBox(height: 8),
-                    Text("Thời gian bắt đầu: ${process.startTime}"),
-                    Text("Thời gian kết thúc: ${process.endTime}"),
                   ],
                 ),
               ),
@@ -1437,19 +1327,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Bảo hiểm chi tiết:",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green),
+                    Text("${process.insuranceTypeName}"),
+                    Text("Tỉ lệ: ${process.insurancePercent} %").p8(),
+                    Row(
+                      children: [
+                        Text("Thời hạn từ: ${process.startTime}"),
+                        Text(" - Đến: ${process.endTime}"),
+                      ],
                     ),
-                    Text("Tên bảo hiểm: ${process.insuranceTypeName}"),
-                    SizedBox(height: 8),
-                    Text("Tỉ lệ: ${process.insurancePercent} %"),
-                    SizedBox(height: 8),
-                    Text("Thời gian bắt đầu: ${process.startTime}"),
-                    Text("Thời gian kết thúc: ${process.endTime}"),
                   ],
                 ),
               ),

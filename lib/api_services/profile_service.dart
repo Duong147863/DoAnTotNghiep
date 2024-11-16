@@ -42,11 +42,11 @@ class ProfileService {
   }
 
   Future<http.Response> getDepartmentMembers(
-      String departmentID, String token) async {
+      String departmentID) async {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profiles/department/$departmentID'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
 

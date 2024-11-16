@@ -26,15 +26,15 @@ class ProfilesViewModel extends ChangeNotifier {
   }
 
   Future<void> membersOfDepartment(String departmentID) async {
-    // fetchingData = true;
+    fetchingData = true;
     try {
       membersDepartment =
           await repository.fetchMembersOfDepartment(departmentID);
-      // notifyListeners();
+      notifyListeners();
     } catch (e) {
       throw Exception('Failed to load datas: $e');
     }
-    // fetchingData = false;
+    fetchingData = false;
   }
 
   Future<void> addProfile(Profiles profile) async {

@@ -19,9 +19,7 @@ class ProfilesRepository {
   }
 
   Future<List<Profiles>> fetchMembersOfDepartment(String departmentID) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppStrings.TOKEN);
-    final response = await service.getDepartmentMembers(departmentID, token!);
+    final response = await service.getDepartmentMembers(departmentID);
     print(json.decode(response.body));
     if (response.statusCode == 200) {
       return List<Profiles>.from(json

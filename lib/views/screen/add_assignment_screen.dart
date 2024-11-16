@@ -45,14 +45,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
       Provider.of<AssignmentsViewModel>(context, listen: false)
           .createNewAssignments(newAssignmet)
           .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Assignments added successfully!')),
-        );
         Navigator.pop(context);
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add Assignments: $error')),
-        );
       });
     }
   }
@@ -63,7 +56,6 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           .getAllProject();
       projects =
           Provider.of<ProjectsViewModel>(context, listen: false).listProjects;
-      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load project')),
@@ -75,7 +67,6 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     try {
       await Provider.of<TaskViewModel>(context, listen: false).getAllTask();
       tasks = Provider.of<TaskViewModel>(context, listen: false).listTasks;
-      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load task')),
@@ -89,7 +80,6 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
           .fetchAllProfiles();
       profiles =
           Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
-      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load profile')),
@@ -101,12 +91,12 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-        showLeadingAction: true,
-        defaultBody: false,
-        appBarItemColor: AppColor.boneWhite,
-        backgroundColor: AppColor.aliceBlue,
-        titletext: "thêm phân công",
-        appBarColor: AppColor.primaryLightColor,
+      showLeadingAction: true,
+      defaultBody: false,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.aliceBlue,
+      titletext: "thêm phân công",
+      appBarColor: AppColor.primaryLightColor,
       actions: [
         TextButton.icon(
           onPressed: () {
@@ -159,91 +149,86 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
   }
 
   // Profile Dropdown
-Widget _buildProfileDropdown(String hint) {
-  return DropdownButtonFormField<Profiles>(
-    value: selectedProfiles,
-    hint: Text(hint),
-    onChanged: (Profiles? newValue) {
-      setState(() {
-        selectedProfiles = newValue;
-      });
-    },
-    validator: (value) {
-      if (value == null) {
-        return 'Vui lòng chọn Profile';
-      }
-      return null;
-    },
-    items: profiles.map((Profiles profile) {
-      return DropdownMenuItem<Profiles>(
-        value: profile,
-        child: Text(profile.profileName),
-      );
-    }).toList(),
-    decoration: InputDecoration(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-    ),
-  );
-}
+  Widget _buildProfileDropdown(String hint) {
+    return DropdownButtonFormField<Profiles>(
+      value: selectedProfiles,
+      hint: Text(hint),
+      onChanged: (Profiles? newValue) {
+        setState(() {
+          selectedProfiles = newValue;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Vui lòng chọn Profile';
+        }
+        return null;
+      },
+      items: profiles.map((Profiles profile) {
+        return DropdownMenuItem<Profiles>(
+          value: profile,
+          child: Text(profile.profileName),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
 
 // Project Dropdown
-Widget _buildProjectDropdown(String hint) {
-  return DropdownButtonFormField<Projects>(
-    value: selectedProjects,
-    hint: Text(hint),
-    onChanged: (Projects? newValue) {
-      setState(() {
-        selectedProjects = newValue;
-      });
-    },
-    validator: (value) {
-      if (value == null) {
-        return 'Vui lòng chọn Project';
-      }
-      return null;
-    },
-    items: projects.map((Projects project) {
-      return DropdownMenuItem<Projects>(
-        value: project,
-        child: Text(project.projectName),
-      );
-    }).toList(),
-    decoration: InputDecoration(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-    ),
-  );
-}
+  Widget _buildProjectDropdown(String hint) {
+    return DropdownButtonFormField<Projects>(
+      value: selectedProjects,
+      hint: Text(hint),
+      onChanged: (Projects? newValue) {
+        setState(() {
+          selectedProjects = newValue;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Vui lòng chọn Project';
+        }
+        return null;
+      },
+      items: projects.map((Projects project) {
+        return DropdownMenuItem<Projects>(
+          value: project,
+          child: Text(project.projectName),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
 
 // Task Dropdown
-Widget _buildTaskDropdown(String hint) {
-  return DropdownButtonFormField<Tasks>(
-    value: selectedTask,
-    hint: Text(hint),
-    onChanged: (Tasks? newValue) {
-      setState(() {
-        selectedTask = newValue;
-      });
-    },
-    validator: (value) {
-      if (value == null) {
-        return 'Vui lòng chọn Task';
-      }
-      return null;
-    },
-    items: tasks
-        .where((task) => task.taskStatus == 0) 
-        .map((Tasks task) {
-          return DropdownMenuItem<Tasks>(
-            value: task,
-            child: Text(task.taskName),
-          );
-        })
-        .toList(),
-    decoration: InputDecoration(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-    ),
-  );
-}
-
-
+  Widget _buildTaskDropdown(String hint) {
+    return DropdownButtonFormField<Tasks>(
+      value: selectedTask,
+      hint: Text(hint),
+      onChanged: (Tasks? newValue) {
+        setState(() {
+          selectedTask = newValue;
+        });
+      },
+      validator: (value) {
+        if (value == null) {
+          return 'Vui lòng chọn Task';
+        }
+        return null;
+      },
+      items: tasks.where((task) => task.taskStatus == 0).map((Tasks task) {
+        return DropdownMenuItem<Tasks>(
+          value: task,
+          child: Text(task.taskName),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
 }
