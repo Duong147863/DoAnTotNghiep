@@ -63,10 +63,6 @@ class ProfilesRepository {
     final response = await service.emailLogin(email, password);
     if (response.statusCode == 200 || response.statusCode == 201) {
       //save on the shared preferences that the user is logged in
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(AppStrings.SHARED_LOGGED, true);
-      await prefs.setString(AppStrings.SHARED_USER, email);
-      await prefs.setString(AppStrings.SHARED_PASSWORD, password);
       AppStrings.TOKEN = json.decode(response.body)['token']; // CHUỖI TOKEN
       print(AppStrings.TOKEN);
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
@@ -83,16 +79,12 @@ class ProfilesRepository {
   Future<Profiles> phoneLogin(String phone, String password) async {
     final response = await service.phoneLogin(phone, password);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(AppStrings.SHARED_LOGGED, true);
-      await prefs.setString(AppStrings.SHARED_USER, phone);
-      await prefs.setString(AppStrings.SHARED_PASSWORD, password);
-      await prefs.setString(
-          AppStrings.TOKEN, json.decode(response.body)['token']); // CHUỖI TOKEN
+      AppStrings.TOKEN = json.decode(response.body)['token']; // CHUỖI TOKEN
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
       print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
+      print(AppStrings.TOKEN);
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
       throw Exception(

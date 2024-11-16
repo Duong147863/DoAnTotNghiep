@@ -25,6 +25,7 @@ import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
@@ -32,6 +33,7 @@ import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
+import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -173,69 +175,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : UiSpacer.emptySpace(),
                 ListTile(
-                  title: const Text("Đổi mật khẩu"),
+                  title: const Text("Nghỉ phép"),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext context) => ChangePasswordScreen(
-                          profiles: widget.profile,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Add TrainingProcesses"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            AddWorkingprocesScreen(
-                          profiles: widget.profile,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Add WorkingProcess"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            AddTrainingprocessesScreen(
-                          profiles: widget.profile,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("List Workingprocess Screen HR"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            ListWorkingprocessScreen(profiles: widget.profile),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("List TrainingProcesses Screen HR"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            ListTrainingprocessesScreen(
-                          profiles: widget.profile,
-                        ),
-                      ),
+                          builder: (BuildContext context) => ListAbsentScreen(
+                                profiles: widget.profile,
+                              )),
                     );
                   },
                 ),
@@ -300,21 +247,37 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                Expanded(
-                  child: Align(
-                    alignment: FractionalOffset.bottomCenter,
-                    child: ListTile(
-                      title: const Text('Đăng xuất'),
-                      leading: const Icon(Icons.logout),
-                      onTap: () {
-                        profilesViewModel.logOut();
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            AppRoutes.loginRoute, (route) => false);
-                      },
-                    ),
-                  ),
-                ),
               ]),
+            ),
+            Align(
+              alignment: FractionalOffset.bottomCenter,
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text("Đổi mật khẩu"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) =>
+                              ChangePasswordScreen(
+                            profiles: widget.profile,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: const Text('Đăng xuất'),
+                    leading: const Icon(Icons.logout),
+                    onTap: () {
+                      profilesViewModel.logOut();
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          AppRoutes.loginRoute, (route) => false);
+                    },
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -347,8 +310,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ? UiSpacer.emptySpace()
             : InkWell(
                 onTap: () {
-                  Navigator.of(context)
-                      .pushNamed(AppRoutes.timeAttendanceRoute);
+                  Navigator.push(context, MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            TimeAttendance(loginUser: widget.profile!,),
+                      ),);
                 },
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
