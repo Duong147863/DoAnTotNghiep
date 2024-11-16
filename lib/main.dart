@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_languages.dart';
 import 'package:nloffice_hrm/constant/internet_connect.dart';
 import 'package:nloffice_hrm/view_models/absent_view_model.dart';
+import 'package:nloffice_hrm/view_models/assignment_view_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
+import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
 import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
@@ -15,6 +17,7 @@ import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
+import 'package:nloffice_hrm/view_models/task_view_model.dart';
 import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
 import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
@@ -101,6 +104,15 @@ void main() {
     ),
     ChangeNotifierProvider<TimeKeepingViewModel>(
       create: (context) => TimeKeepingViewModel(),
+    ),
+     ChangeNotifierProvider<InsuranceViewModel>(
+      create: (context) => InsuranceViewModel(),
+    ),
+       ChangeNotifierProvider<TaskViewModel>(
+      create: (context) => TaskViewModel(),
+    ),
+        ChangeNotifierProvider<AssignmentsViewModel>(
+      create: (context) => AssignmentsViewModel(),
     )
   ], child: MainApp()));
 }

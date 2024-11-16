@@ -9,6 +9,7 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/constant/input.styles.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
+import 'package:nloffice_hrm/models/insurance_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
@@ -18,6 +19,7 @@ import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/repository/profiles_repo.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
+import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
@@ -28,7 +30,9 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
@@ -95,6 +99,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Relatives? selectedRelatives;
   List<Diplomas> diplomas = [];
   Diplomas? selectedDiplomas;
+  List<Insurance> insurance = [];
+  Insurance? selectedinsurance;
   //
   void initState() {
     super.initState();
@@ -123,14 +129,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadtrainingProcess();
     _loadRelative();
     _loadDiplomas();
+    _loadInsurance();
   }
 
-  void _handleUpdate(Relatives updatedRelative) {
+  void _handleUpdateRelative(Relatives updatedRelative) {
     setState(() {
       int index = relatives
           .indexWhere((rela) => rela.relativeId == updatedRelative.relativeId);
       if (index != -1) {
         relatives[index] = updatedRelative;
+      }
+    });
+  }
+
+  void _handleUpdateDiplomas(Diplomas updatedDiplomas) {
+    setState(() {
+      int index = diplomas
+          .indexWhere((dip) => dip.diplomaId == updatedDiplomas.diplomaId);
+      if (index != -1) {
+        diplomas[index] = updatedDiplomas;
       }
     });
   }
@@ -270,6 +287,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (trainingProcess.isNotEmpty) {
           selectedtrainingProcess = trainingProcess.firstWhere(
             (tra) => tra.profileId == widget.profile!.profileId,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load TrainingProcess')),
+      );
+    }
+  }
+   void _loadInsurance() async {
+    try {
+      await Provider.of<InsuranceViewModel>(context, listen: false)
+          .getInsurancesOf(widget.profile!.profileId);
+      setState(() {
+        insurance =
+            Provider.of<InsuranceViewModel>(context, listen: false)
+                .listInsurance;
+        if (insurance.isNotEmpty) {
+          selectedinsurance = insurance.firstWhere(
+            (ins) => ins.profileId == widget.profile!.profileId,
           );
         }
       });
@@ -739,6 +776,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 16),
                 _buildTrainingProcessesList(),
               ]),
+              //
               SizedBox(height: 16),
               Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
                 Container(
@@ -754,6 +792,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 16),
                 _buildDiplomasList()
+              ]),
+              //
+              SizedBox(height: 16),
+              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  color: Colors.grey[200],
+                  child: Text(
+                    "Bảo Hiểm",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildInsuranceList()
               ])
             ],
           ),
@@ -774,18 +829,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) =>
                                   AddRelativeScreen(
-                                profile: widget.profile,
-                              ),
-                            ));
-                      }),
-                  SpeedDialChild(
-                      label: "Thêm Bằng Cấp",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  AddDiplomaScreen(
                                 profile: widget.profile,
                               ),
                             ));
@@ -825,7 +868,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 profile: widget.profile,
                               ),
                             ));
-                      })
+                      }),
+                  SpeedDialChild(
+                      label: "Thêm bảo hiểm",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  AddInsuranceScreen(
+                                profiles: widget.profile,
+                              ),
+                            ));
+                      }),
                 ])
           : UiSpacer.emptySpace(),
     );
@@ -932,38 +987,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // Widget _buildWorkingProcessText() {
-  //   if (selectedWorkingProcesses == null) {
-  //     return Text("Loading...");
-  //   }
-
-  //   if (selectedWorkingProcesses!.workingprocessStatus != 1) {
-  //     return Text("Không có thông tin làm việc");
-  //   }
-  //   return ExpansionPanelList(
-  //     expansionCallback: (int index, bool isExpanded) {
-  //       setState(() {
-  //         selectedWorkingProcesses!.isExpanded = isExpanded;
-  //       });
-  //     },
-  //     children: [
-  //       ExpansionPanel(
-  //         headerBuilder: (BuildContext context, bool isExpanded) {
-  //           return ListTile(
-  //             title: Text(selectedWorkingProcesses!.workplaceName),
-  //           );
-  //         },
-  //         body: ListTile(
-  //           title: Text("Chi tiết:"),
-  //           subtitle: Text(
-  //               "Status: ${selectedWorkingProcesses!.workingprocessStatus}"),
-  //         ),
-  //         isExpanded: selectedWorkingProcesses!.isExpanded,
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget _buildSalaryDropdown(String hint) {
     return DropdownButtonFormField<Salaries>(
       value: selectedSalarys,
@@ -1014,6 +1037,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return ListTile(
               contentPadding:
                   EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              leading: Icon(Icons.personal_injury,
+                  color: const Color.fromARGB(255, 68, 218, 255)),
               title: Text(
                 "Tên thân nhân: ${process.relativesName}",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
@@ -1062,7 +1087,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           );
 
                           if (updatedRelative != null) {
-                            _handleUpdate(updatedRelative);
+                            _handleUpdateRelative(updatedRelative);
                           }
                         },
                         child: Container(
@@ -1117,99 +1142,114 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return ListTile(
               contentPadding:
                   EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              leading: Icon(Icons.school,
+                  color: const Color.fromARGB(255, 183, 255, 68)),
               title: Text(
-                "Bằng Cấp:",
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                "Bằng Cấp",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             );
           },
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Text(
-                        'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue),
+            child: InkWell(
+              onTap: () async {
+                final updatediplomas = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InfoDiplomaScreen(diplomas: process),
+                  ),
+                );
+                if (updatediplomas != null) {
+                  _handleUpdateDiplomas(updatediplomas);
+                }
+              },
+              child: Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Text(
+                          'CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM\nĐộc lập - Tự do - Hạnh phúc',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blue),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Center(
-                      child: Text(
-                        'BẰNG TỐT NGHIỆP',
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.red,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(height: 20),
+                      Center(
+                        child: Text(
+                          'BẰNG TỐT NGHIỆP',
+                          style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Center(
-                      child: Text(
-                        "${process.major}",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.black54),
+                      SizedBox(height: 10),
+                      Center(
+                        child: Text(
+                          "${process.major}",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black54),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 20),
+                      SizedBox(height: 20),
 
-                    // Thông tin cá nhân và bằng cấp
-                    Text('Cho: ${widget.profile!.profileName}',
-                        style: TextStyle(fontSize: 16)),
-                    Text(
-                      'Giới tính: ${widget.profile!.gender ? "Nữ" : "Nam"}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    Text('Ngày sinh: ${widget.profile!.birthday}',
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 10),
-                    Text('Xếp hạng: ${process.diplomaType}',
-                        style: TextStyle(fontSize: 16)),
-                    Text('Xếp loại tốt nghiệp: ${process.ranking}',
-                        style: TextStyle(fontSize: 16)),
-                    Text('Được cấp bởi: ${process.grantedBy}',
-                        style: TextStyle(fontSize: 16)),
-                    Text('Hình thức đào tạo: ${process.modeOfStudy}',
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 20),
-                    Divider(color: Colors.grey),
-                    SizedBox(height: 20),
-
-                    // Thông tin hiệu trưởng và bằng cấp
-                    Center(
-                      child: Column(
-                        children: [
-                          Text(
-                            'Hiệu trưởng',
-                            style: TextStyle(
-                                fontSize: 16, fontStyle: FontStyle.italic),
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            'Trịnh Văn Thắng',
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                      // Thông tin cá nhân và bằng cấp
+                      Text('Cho: ${widget.profile!.profileName}',
+                          style: TextStyle(fontSize: 16)),
+                      Text(
+                        'Giới tính: ${widget.profile!.gender ? "Nữ" : "Nam"}',
+                        style: TextStyle(fontSize: 16),
                       ),
-                    ),
-                    SizedBox(height: 20),
-                    Text('Số hiệu: ${process.diplomaId}',
-                        style: TextStyle(fontSize: 14)),
-                    Text('Sổ vào cấp bằng: ${process.licenseDate}',
-                        style: TextStyle(fontSize: 14)),
-                  ],
+                      Text('Ngày sinh: ${widget.profile!.birthday}',
+                          style: TextStyle(fontSize: 16)),
+                      SizedBox(height: 10),
+                      Text('Xếp hạng: ${process.diplomaType}',
+                          style: TextStyle(fontSize: 16)),
+                      Text('Xếp loại tốt nghiệp: ${process.ranking}',
+                          style: TextStyle(fontSize: 16)),
+                      Text('Được cấp bởi: ${process.grantedBy}',
+                          style: TextStyle(fontSize: 16)),
+                      Text('Hình thức đào tạo: ${process.modeOfStudy}',
+                          style: TextStyle(fontSize: 16)),
+                      SizedBox(height: 20),
+                      Divider(color: Colors.grey),
+                      SizedBox(height: 20),
+
+                      // Thông tin hiệu trưởng và bằng cấp
+                      Center(
+                        child: Column(
+                          children: [
+                            Text(
+                              'Hiệu trưởng',
+                              style: TextStyle(
+                                  fontSize: 16, fontStyle: FontStyle.italic),
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              'Trịnh Văn Thắng',
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      Text('Số hiệu: ${process.diplomaId}',
+                          style: TextStyle(fontSize: 14)),
+                      Text('Sổ vào cấp bằng: ${process.licenseDate}',
+                          style: TextStyle(fontSize: 14)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -1343,10 +1383,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green),
+                          color: const Color.fromARGB(255, 94, 76, 175)),
                     ),
                     SizedBox(height: 8),
                     Text("Nội dung: ${process.trainingprocessesContent}"),
+                    SizedBox(height: 8),
+                    Text("Thời gian bắt đầu: ${process.startTime}"),
+                    Text("Thời gian kết thúc: ${process.endTime}"),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildInsuranceList() {
+    if (insurance.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có thông tin bảo hiểm",
+          style: TextStyle(
+              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
+
+    return ExpansionPanelList(
+      elevation: 2,
+      animationDuration: Duration(milliseconds: 300),
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          insurance[index].isExpanded = isExpanded;
+        });
+      },
+      children: insurance.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              leading: Icon(Icons.health_and_safety, color: Colors.green),
+              title: Text(
+                "Bảo hiểm",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            );
+          },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              color: Colors.green.shade50,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Bảo hiểm chi tiết:",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green),
+                    ),
+                    Text("Tên bảo hiểm: ${process.insuranceTypeName}"),
+                    SizedBox(height: 8),
+                    Text("Tỉ lệ: ${process.insurancePercent} %"),
                     SizedBox(height: 8),
                     Text("Thời gian bắt đầu: ${process.startTime}"),
                     Text("Thời gian kết thúc: ${process.endTime}"),

@@ -1,13 +1,13 @@
-class Tasks {
+  class Tasks {
   Tasks({
-    required this.taskId,
+     this.taskId,
     required this.taskName,
     required this.taskStatus,
     required this.taskContent,
   });
-  int taskId;
+  int? taskId;
   String taskName;
-  String taskStatus;
+  int taskStatus;
   String taskContent;
   factory Tasks.fromJson(Map<String, dynamic> json) {
     return Tasks(

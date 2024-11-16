@@ -11,19 +11,23 @@ import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/projects_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/empty_widget.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_assignment_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_task_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
@@ -61,6 +65,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final _positionNameController = TextEditingController();
   final _positionIdController = TextEditingController();
   List<bool> isExpandedList = [];
+  List<Projects> project = [];
+  Projects? selectedProject;
   List<Map<String, dynamic>> _getData() {
     if (AppStrings.ROLE_PERMISSIONS
         .containsAny(['Manage BoD & HR accounts', 'Manage Staffs info only'])) {
@@ -104,12 +110,33 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // _loadProject();
   }
 
   @override
   void dispose() {
     super.dispose();
   }
+
+  // void _loadProject() async {
+  //   try {
+  //     await Provider.of<ProjectsViewModel>(context, listen: false)
+  //         .getAllProject();
+  //     setState(() {
+  //       project =
+  //           Provider.of<ProjectsViewModel>(context, listen: false).listProjects;
+  //       if (project.isNotEmpty) {
+  //         selectedProject = project.firstWhere(
+  //           (pro) => pro.projectId == widget.profile!.profileId,
+  //         );
+  //       }
+  //     });
+  //   } catch (error) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to load salaries')),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -648,6 +675,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       ));
                 }),
           ]);
+    } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
+      return SpeedDial(
+          elevation: 0,
+          icon: Icons.menu,
+          buttonSize: Size(50, 50),
+          children: [
+            SpeedDialChild(
+                label: "Thêm task",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => AddTaskScreen(
+                        ),
+                      ));
+                }),
+            SpeedDialChild(
+                label: "Thêm phân công",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => AddAssignmentScreen(
+                        ),
+                      ));
+                }),
+          ]);
     } else {
       return UiSpacer.emptySpace();
     }
@@ -719,7 +773,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context, viewModel, child) {
                     if (!viewModel.fetchingData &&
                         viewModel.allProfiles.isEmpty) {
-                      Provider.of<ProfilesViewModel>(context)
+                      Provider.of<ProfilesViewModel>(context,listen: false)
                           .fetchAllProfiles();
                     }
                     List<Profiles> listProfiles = viewModel.allProfiles;
@@ -739,42 +793,114 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       );
+    } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
+      {
+        return Column(
+          children: [
+            Text("Lương của bạn",
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                )).p8(),
+            Divider().px12(),
+            Text("Công việc của bạn",
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                )).p8(),
+            Divider().px12(),
+            ExpansionPanelList(
+              expansionCallback: (int panelIndex, bool isExpanded) {
+                setState(() {
+                  isExpandedList[panelIndex] = isExpanded;
+                });
+              },
+              children: [
+                ExpansionPanel(
+                  headerBuilder: (BuildContext context, bool isExpanded) {
+                    return const Row(
+                      children: [
+                        // Text("Mã dự án - Tên dự án"),
+
+                      ],
+                    );
+                  },
+                  body: Card(),
+                ),
+              ],
+            ).p8(),
+            _buildProductList()
+          ],
+        );
+      }
     } else {
-      return Column(
-        children: [
-          Text("Lương của bạn",
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              )).p8(),
-          Divider().px12(),
-          Text("Công việc của bạn",
-              style: TextStyle(
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
-              )).p8(),
-          Divider().px12(),
-          ExpansionPanelList(
-            expansionCallback: (int panelIndex, bool isExpanded) {
-              setState(() {
-                isExpandedList[panelIndex] = isExpanded;
-              });
-            },
-            children: [
-              ExpansionPanel(
-                headerBuilder: (BuildContext context, bool isExpanded) {
-                  return const Row(
-                    children: [
-                      Text("Mã dự án - Tên dự án"),
-                    ],
-                  );
-                },
-                body: Card(),
-              ),
-            ],
-          ).p8()
-        ],
+      return UiSpacer.emptySpace();
+    }
+  }
+
+  Widget _buildProductList() {
+    if (project.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có dự án",
+          style: TextStyle(
+              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+        ),
       );
     }
+
+    return ExpansionPanelList(
+      elevation: 2,
+      animationDuration: Duration(milliseconds: 300),
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          project[index].isExpanded = isExpanded;
+        });
+      },
+      children: project.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              leading: Icon(Icons.production_quantity_limits_outlined,
+                  color: Colors.green),
+              title: Text(
+                "Dự án",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            );
+          },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              color: Colors.green.shade50,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Chi tiết dự án:",
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green),
+                    ),
+                    Text("Tên dự án: ${process.projectName}"),
+                    SizedBox(height: 8),
+                    Text(
+                      "Trạng thái: ${process.projectStatus == 0 ? 'Đang làm' : 'Hoàn thành'}",
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
   }
 }

@@ -354,37 +354,6 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
         ),
       ),
       onTap: () async {
-        // final Enterprises? selectedEnterprise = await showDialog<Enterprises>(
-        //   context: context,
-        //   builder: (BuildContext context) {
-        //     return AlertDialog(
-        //       title: Text('Choose Enterprise'),
-        //       content: SizedBox(
-        //         height: 300, // Adjust height if necessary
-        //         width: 300,
-        //         child: ListView.builder(
-        //           itemCount: enterprises.length,
-        //           itemBuilder: (BuildContext context, int index) {
-        //             return ListTile(
-        //               title: Text(enterprises[index].name),
-        //               onTap: () {
-        //                 Navigator.pop(context, enterprises[index]);
-        //               },
-        //             );
-        //           },
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // );
-
-        // if (selectedEnterprise != null) {
-        //   setState(() {
-        //     selectedEnterprises = selectedEnterprise;
-        //     _enterpriseController.text =
-        //         selectedEnterprise.name; // Display the name in TextFormField
-        //   });
-        // }
       },
       validator: (value) {
         if (value == null || value.isEmpty) {
