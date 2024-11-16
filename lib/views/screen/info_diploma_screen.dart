@@ -1,21 +1,24 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
+import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
-import 'package:nloffice_hrm/views/screen/edit_diploma_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class InfoDiplomaScreen extends StatefulWidget {
   final Diplomas? diplomas;
 
-  const InfoDiplomaScreen({super.key,this.diplomas});
+  const InfoDiplomaScreen({super.key, this.diplomas});
 
   @override
   _InfoDiplomaScreenState createState() => _InfoDiplomaScreenState();
@@ -33,33 +36,84 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
   final _diplomaTypeController = TextEditingController();
   final _profileIDController = TextEditingController();
   DateTime _liscenseDate = DateTime.now();
-
-  File? _diplomaImageFile;
+  bool _isEditing = false;
+  bool isImagePickerActive = false; 
   String? _diplomaImageBase64;
-  final ImagePicker _picker = ImagePicker();
+  
   @override
   void initState() {
     super.initState();
-    _profileIDController.text=widget.diplomas!.profileId;
-    _diplomaIDController.text=widget.diplomas!.diplomaId;
-    _diplomaDegreeNameController.text=widget.diplomas!.diplomaName;
-    _diplomaImageBase64=widget.diplomas!.diplomaImage;
-    _modeOfStudyController.text=widget.diplomas!.modeOfStudy;
-    _liscenseDateController.text=widget.diplomas!.licenseDate.toIso8601String();
-    _majorController.text=widget.diplomas!.major!;
-    _rankingController.text=widget.diplomas!.ranking;
-    _grantedByController.text=widget.diplomas!.grantedBy;
-    _diplomaTypeController.text=widget.diplomas!.diplomaType;
+    _profileIDController.text = widget.diplomas!.profileId;
+    _diplomaIDController.text = widget.diplomas!.diplomaId;
+    _diplomaDegreeNameController.text = widget.diplomas!.diplomaName;
+    _diplomaImageBase64 = widget.diplomas!.diplomaImage;
+    _modeOfStudyController.text = widget.diplomas!.modeOfStudy;
+    _liscenseDateController.text =
+        widget.diplomas!.licenseDate.toIso8601String();
+    _majorController.text = widget.diplomas!.major!;
+    _rankingController.text = widget.diplomas!.ranking;
+    _grantedByController.text = widget.diplomas!.grantedBy;
+    _diplomaTypeController.text = widget.diplomas!.diplomaType;
   }
 
-   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        _diplomaImageFile = File(image.path);
-      });
+   void _updateDiploma() async {
+    if (_formKey.currentState!.validate()) {
+      final updatedDiplomas = Diplomas(
+        diplomaId: _diplomaIDController.text,
+        diplomaName: _diplomaDegreeNameController.text,
+        diplomaImage: _diplomaImageBase64 ?? "",
+        modeOfStudy: _modeOfStudyController.text,
+        ranking: _rankingController.text,
+        licenseDate: _liscenseDate,
+        major: _majorController.text,
+        grantedBy: _grantedByController.text,
+        diplomaType: _diplomaTypeController.text,
+        profileId: _profileIDController.text);
+
+      try {
+        await Provider.of<DiplomasViewModel>(context, listen: false)
+            .updateDiplomas(updatedDiplomas);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Diplomas Updated successfully!')),
+        );
+        Navigator.pop(context, updatedDiplomas);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to Update Diplomas: $e')),
+        );
+      }
     }
   }
+ Future<void> _pickImage() async {
+  if (isImagePickerActive) {
+    return;
+  }
+
+  try {
+    isImagePickerActive = true;
+
+    final ImagePicker picker = ImagePicker();
+    final XFile? imageFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+
+    if (imageFile != null) {
+      File file = File(imageFile.path);
+      String base64String = await AppStrings.ImagetoBase64(file);
+      setState(() {
+        _diplomaImageBase64 = base64String;
+      });
+    }
+  } catch (error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error picking image: $error')),
+    );
+  } finally {
+    isImagePickerActive = false; 
+  }
+}
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -79,7 +133,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onTap: () => _selectDate(context, initialDate, onDateSelected),
+        onTap:_isEditing? () => _selectDate(context, initialDate, onDateSelected):null,
         child: AbsorbPointer(
           child: TextFormField(
             readOnly: true,
@@ -102,6 +156,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -113,6 +168,36 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
       resizeToAvoidBottomInset: true,
       titletext: "Info Diploma Screen",
       appBarColor: AppColor.primaryLightColor,
+      actions: [
+        TextButton.icon(
+            onPressed: () {
+              setState(() {
+                      _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+                    });
+            },
+            icon: Icon(
+              Icons.edit,
+              color: AppColor.boneWhite,
+            ),
+            label: Text(
+              "Sửa",
+              style: TextStyle(color: AppColor.boneWhite),
+            ),
+          ),
+         TextButton.icon(
+            onPressed: () {
+            _updateDiploma();
+            },
+            icon: Icon(
+              Icons.save,
+              color: AppColor.boneWhite,
+            ),
+            label: Text(
+              "Save",
+              style: TextStyle(color: AppColor.boneWhite),
+            ),
+          )
+      ],
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -120,20 +205,50 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
           child: ListView(
             children: [
               GestureDetector(
-                onTap: _pickImage,
-                child: _diplomaImageFile == null
-                    ? Container(
-                        height: 150,
-                        width: double.infinity,
-                        color: Colors.grey[300],
-                        child: Icon(Icons.add_a_photo, color: Colors.grey[700]),
-                      )
-                    : Image.file(_diplomaImageFile!, height: 150),
-              ).pOnly(bottom: 16),
+                onTap: _isEditing
+                      ? _pickImage
+                      : null,
+                child: Container(
+                  width: 400, // Chiều rộng của ảnh
+                  height: 400, // Chiều cao của ảnh
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300], // Màu nền mặc định
+                    image: _diplomaImageBase64 != null
+                        ? DecorationImage(
+                            image:
+                                MemoryImage(base64Decode(_diplomaImageBase64!)),
+                            fit: BoxFit.cover,
+                            onError: (error, stackTrace) {
+                              print("Error loading image: $error");
+                            },
+                          )
+                        : (widget.diplomas!.diplomaImage != null &&
+                                widget.diplomas!.diplomaImage!.isNotEmpty)
+                            ? DecorationImage(
+                                image: MemoryImage(base64Decode(
+                                    widget.diplomas!.diplomaImage!)),
+                                fit: BoxFit.cover,
+                                onError: (error, stackTrace) {
+                                  print("Error loading image: $error");
+                                },
+                              )
+                            : null, // Không có ảnh thì không cần decoration image
+                  ),
+                  child: _diplomaImageBase64 == null &&
+                          (widget.diplomas!.diplomaImage == null ||
+                              widget.diplomas!.diplomaImage!.isEmpty)
+                      ? Icon(Icons.person,
+                          size: 30,
+                          color: Colors.grey) // Hiển thị icon khi không có ảnh
+                      : null, // Khi có ảnh, không hiển thị icon
+                ),
+              ),
+
               Divider(),
               Row(
                 children: [
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _diplomaIDController,
                     labelText: 'ID Diploma',
                     validator: (value) {
@@ -144,6 +259,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
+                     enabled: _isEditing,
                     textEditingController: _diplomaDegreeNameController,
                     labelText: 'Diploma Degree Name',
                     validator: (value) {
@@ -157,7 +273,9 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               ).py16(),
               Row(
                 children: [
+                  
                   CustomTextFormField(
+                     enabled: _isEditing,
                     textEditingController: _grantedByController,
                     labelText: 'Granted By',
                     validator: (value) {
@@ -168,6 +286,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
+                     enabled: _isEditing,
                     textEditingController: _modeOfStudyController,
                     labelText: 'Mode Of Study',
                     validator: (value) {
@@ -181,7 +300,9 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               ).py16(),
               Row(
                 children: [
+                  
                   CustomTextFormField(
+                     enabled: _isEditing,
                     textEditingController: _rankingController,
                     labelText: 'Ranking',
                     validator: (value) {
@@ -192,6 +313,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
+                     enabled: _isEditing,
                     textEditingController: _majorController,
                     labelText: 'Major',
                     validator: (value) {
@@ -206,6 +328,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               Row(
                 children: [
                   CustomTextFormField(
+                     enabled: _isEditing,
                     textEditingController: _diplomaTypeController,
                     labelText: 'Diploma Type',
                     validator: (value) {
@@ -238,20 +361,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                 });
               }).px(8).w(150),
               SizedBox(height: 24),
-              // Center(
-              //   child: ElevatedButton(
-              //     onPressed: ,
-              //     style: ElevatedButton.styleFrom(
-              //       padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-              //       backgroundColor: AppColor.primaryDarkColor,
-              //       textStyle: TextStyle(fontSize: 18),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(12),
-              //       ),
-              //     ),
-              //     child: Text('Add Diploma'),
-              //   ),
-              // ),
+             
             ],
           ),
         ),
@@ -259,5 +369,3 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     );
   }
 }
-
-

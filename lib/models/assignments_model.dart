@@ -3,13 +3,13 @@ import 'package:nloffice_hrm/models/absents_model.dart';
 
 class Assignments {
   Assignments({
-    required this.assignmentId,
+    this.assignmentId,
     required this.profileId,
     required this.projectId,
     this.taskId,
   });
 
-  String assignmentId;
+  int? assignmentId;
   String profileId;
   String projectId;
   int? taskId;

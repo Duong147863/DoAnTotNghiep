@@ -3,11 +3,12 @@ class Projects {
       {required this.projectId,
       required this.projectName,
       this.projectStatus=0,
+      this.isExpanded=false
       });
   String projectId;
   String projectName;
   int projectStatus;
-
+   bool isExpanded;
   factory Projects.fromJson(Map<String, dynamic> json) {
     return Projects(
       projectId: json["project_id"],

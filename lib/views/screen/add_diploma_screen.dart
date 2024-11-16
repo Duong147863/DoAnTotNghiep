@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
@@ -33,13 +35,13 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   DateTime _liscenseDate = DateTime.now();
 
   //
-  File? _diplomaImageFile;
-  final ImagePicker _picker = ImagePicker();
+  String? _diplomaImageBase64;
   @override
   void initState() {
     super.initState();
-    _profileIDController.text=widget.profile!.profileId;
+    _profileIDController.text = widget.profile!.profileId;
   }
+
   void dispose() {
     _diplomaIDController.dispose();
     _diplomaDegreeNameController.dispose();
@@ -54,10 +56,17 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
+    final ImagePicker picker = ImagePicker();
+    final XFile? imageFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 600,
+      maxHeight: 600,
+    );
+    if (imageFile != null) {
+      File file = File(imageFile.path);
+      String base64String = await AppStrings.ImagetoBase64(file);
       setState(() {
-        _diplomaImageFile = File(image.path);
+        _diplomaImageBase64 = base64String;
       });
     }
   }
@@ -109,7 +118,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
       final createNewDiploma = Diplomas(
         diplomaId: _diplomaIDController.text,
         diplomaName: _diplomaDegreeNameController.text,
-        diplomaImage: _diplomaImageFile?.path ?? '',
+        diplomaImage: _diplomaImageBase64 ?? "",
         modeOfStudy: _modeOfStudyController.text,
         ranking: _rankingController.text,
         licenseDate: _liscenseDate,
@@ -127,7 +136,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
         Navigator.pop(context);
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add Diplomar: $error')),
+          SnackBar(content: Text('Failed to add Diplomar: $error')),
         );
       });
     }
@@ -152,15 +161,25 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
             children: [
               GestureDetector(
                 onTap: _pickImage,
-                child: _diplomaImageFile == null
-                    ? Container(
-                        height: 150,
-                        width: double.infinity,
-                        color: Colors.grey[300],
-                        child: Icon(Icons.add_a_photo, color: Colors.grey[700]),
-                      )
-                    : Image.file(_diplomaImageFile!, height: 150),
-              ).pOnly(bottom: 16),
+                child: Container(
+                  width: 400, // Chiều rộng của ảnh
+                  height: 400, // Chiều cao của ảnh
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300], // Màu nền mặc định
+                    image: _diplomaImageBase64 != null
+                        ? DecorationImage(
+                            image:
+                                MemoryImage(base64Decode(_diplomaImageBase64!)),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                    border: Border.all(color: Colors.grey), // Viền (nếu cần)
+                  ),
+                  child: _diplomaImageBase64 == null
+                      ? Icon(Icons.add_a_photo, size: 30)
+                      : null,
+                ),
+              ),
               Divider(),
               Row(
                 children: [
