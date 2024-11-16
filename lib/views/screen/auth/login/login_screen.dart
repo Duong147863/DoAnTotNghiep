@@ -34,7 +34,8 @@ class _TapBarState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final profilesViewModel = Provider.of<ProfilesViewModel>(context);
+    final profilesViewModel =
+        Provider.of<ProfilesViewModel>(context, listen: false);
     return BasePage(
       backgroundColor: AppColor.seaShell,
       showAppBar: false,
@@ -153,7 +154,7 @@ class _TapBarState extends State<LoginScreen> {
                   } catch (e) {
                     print('Error: $e'); // In thông tin lỗi
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Lỗi kết nối')),
+                      SnackBar(content: Text('Lỗi kết nối $e')),
                     );
                   }
                 }
