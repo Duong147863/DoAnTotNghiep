@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/constant/input.styles.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
@@ -16,7 +14,6 @@ import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/models/working.processes_model.dart';
-import 'package:nloffice_hrm/repository/profiles_repo.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
@@ -36,10 +33,7 @@ import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
-
 import 'package:provider/provider.dart';
-import 'package:velocity_x/src/extensions/context_ext.dart';
-import 'package:velocity_x/src/velocity_xx.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -296,14 +290,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-   void _loadInsurance() async {
+
+  void _loadInsurance() async {
     try {
       await Provider.of<InsuranceViewModel>(context, listen: false)
           .getInsurancesOf(widget.profile!.profileId);
       setState(() {
-        insurance =
-            Provider.of<InsuranceViewModel>(context, listen: false)
-                .listInsurance;
+        insurance = Provider.of<InsuranceViewModel>(context, listen: false)
+            .listInsurance;
         if (insurance.isNotEmpty) {
           selectedinsurance = insurance.firstWhere(
             (ins) => ins.profileId == widget.profile!.profileId,
@@ -447,9 +441,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   image: _profileImageBase64 != null &&
                           _profileImageBase64!.isNotEmpty
                       ? MemoryImage(base64Decode(_profileImageBase64!))
-                      : (widget.profile!.profileImage.isNotEmpty
+                      : (widget.profile!.profileImage.isNotEmptyAndNotNull
                           ? MemoryImage(
-                              base64Decode(widget.profile!.profileImage))
+                              base64Decode(widget.profile!.profileImage!))
                           : AssetImage('assets/images/male_avatar.png')
                               as ImageProvider), // Default avatar
                   fit: BoxFit.cover,

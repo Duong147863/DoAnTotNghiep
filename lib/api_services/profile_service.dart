@@ -81,7 +81,6 @@ class ProfileService {
       Uri.parse('${AppStrings.baseUrlApi}logout'),
       headers: {
         'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
       },
     );
   }
@@ -92,7 +91,7 @@ class ProfileService {
       Uri.parse('${AppStrings.baseUrlApi}auth/login/email'),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
       },
       body: json.encode({"email": email, "password": password}),
     );
