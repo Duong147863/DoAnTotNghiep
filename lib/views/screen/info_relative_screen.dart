@@ -126,7 +126,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Relative Info',
+      titletext: 'Thông tin thân nhân',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -144,20 +144,8 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTextFormField(
-                    textEditingController: _profileIDController,
-                    labelText: 'profile_id',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id';
-                      }
-                      return null;
-                    },
-                    enabled: _isEditing,
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
                     textEditingController: _relativeNameController,
-                    labelText: 'relative_name',
+                    labelText: 'Tên thân nhân',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_relative_name';

@@ -7,6 +7,7 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -106,17 +107,14 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                   },
                   enabled: _isEditing,
                 ).px8(),
+
                 Consumer<ProfilesViewModel>(
                     builder: (context, viewModel, child) {
-                  // if (!viewModel.fetchingData &&
-                  //     viewModel.listMembersOfDepartment.isEmpty) {
-                  // Provider.of<ProfilesViewModel>(context, listen: false)
-                  //     .membersOfDepartment(widget.departments!.departmentID);
-                  // }
-                  // if (viewModel.fetchingData) {
-                  //   // While data is being fetched
-                  //   return Center(child: CircularProgressIndicator());
-                  // } else {
+                  if (!viewModel.fetchingData &&
+                      viewModel.listMembersOfDepartment.isEmpty) {
+                    Provider.of<ProfilesViewModel>(context, listen: false)
+                        .membersOfDepartment(widget.departments!.departmentID);
+                  }
                   // If data is successfully fetched
                   List<Profiles> profiles = viewModel.listMembersOfDepartment;
                   return CustomListView(
@@ -125,32 +123,38 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                         return ListTile(
                           leading: CircleAvatar(),
                           title: Text(profiles[index].profileName),
+                          onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      ProfileScreen(
+                                        profile: profiles[index],
+                                      ))),
                         );
                       });
-                  // }
                 }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    IconButton(
-                      icon: Icon(Icons.save,
-                          color: const Color.fromARGB(255, 33, 243, 61)),
-                      onPressed: _updateDepartment,
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = true;
-                        });
-                      },
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.delete, color: Colors.red),
-                      onPressed: _deleteDepartment,
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //   children: [
+                //     IconButton(
+                //       icon: Icon(Icons.save,
+                //           color: const Color.fromARGB(255, 33, 243, 61)),
+                //       onPressed: _updateDepartment,
+                //     ),
+                //     IconButton(
+                //       icon: Icon(Icons.edit, color: Colors.blue),
+                //       onPressed: () {
+                //         setState(() {
+                //           _isEditing = true;
+                //         });
+                //       },
+                //     ),
+                //     IconButton(
+                //       icon: Icon(Icons.delete, color: Colors.red),
+                //       onPressed: _deleteDepartment,
+                //     ),
+                //   ],
+                // ),
               ],
             ),
           ),

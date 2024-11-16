@@ -58,15 +58,11 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      final parsedStartTime =
-          DateTime.parse("1970-01-01 ${_startTimeController.text}:00");
-      final parsedEndTime =
-          DateTime.parse("1970-01-01 ${_endTimeController.text}:00");
       final newShifts = Shifts(
         shiftId: _shiftIdController.text,
         shiftName: _shiftNameControler.text,
-        startTime: parsedStartTime,
-        endTime: parsedEndTime,
+        startTime: DateTime.parse("1970-01-01 ${_startTimeController.text}:00"),
+        endTime: DateTime.parse("1970-01-01 ${_endTimeController.text}:00"),
       );
       Provider.of<ShiftsViewModel>(context, listen: false)
           .addShifts(newShifts)

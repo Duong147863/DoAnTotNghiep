@@ -65,7 +65,7 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
               // Fetch data if not already loaded
               if (!viewModel.fetchingData && viewModel.listAbsents.isEmpty) {
                 Provider.of<AbsentsViewModel>(context, listen: false)
-                    .fetchAllAbsents("dev-001");
+                    .fetchAllAbsents();
               }
               // Show loading indicator while fetching data
               if (viewModel.fetchingData) {

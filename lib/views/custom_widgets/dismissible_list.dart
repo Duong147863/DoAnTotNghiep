@@ -8,7 +8,7 @@ class DismissibleList extends StatefulWidget {
 }
 
 class _DismissibleListState extends State<DismissibleList> {
-  final List<String> notiList = []; 
+  final List<String> notiList = [];
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -17,9 +17,7 @@ class _DismissibleListState extends State<DismissibleList> {
           final item = notiList[index];
           return Dismissible(
               key: Key(item),
-              onDismissed: (direction) {
-                setState(() {});
-              },
+              onDismissed: (direction) {},
               confirmDismiss: (direction) async {
                 return await showDialog(
                     context: context,

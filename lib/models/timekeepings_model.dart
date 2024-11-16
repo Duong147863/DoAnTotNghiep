@@ -43,14 +43,14 @@ class Timekeepings {
     map["checkout"] = _formatTime(checkout!);
     map["shift_id"] = shiftId;
     map["profile_id"] = profileId;
-    map["late"] = late;
-    map["date"] = _formatTime(date);
-    map["leaving_soon"] = leavingSoon;
+    map["late"] = _formatTime(late!);
+    map["date"] = DateFormat("yyyy-MM-dd").format(date);
+    map["leaving_soon"] = _formatTime(leavingSoon!);
     map["status"] = status;
     return map;
   }
 
   static String _formatTime(DateTime time) {
-    return "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+    return "${time.hour.toString().padLeft(2, '0')}:${time.minute..toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}";
   }
 }

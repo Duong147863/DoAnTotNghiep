@@ -37,20 +37,21 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
   @override
   void initState() {
     super.initState();
-    _profileIDController.text=widget.profile!.profileId;
+    _profileIDController.text = widget.profile!.profileId;
   }
 
-  // void dispose() {
-  //   _profileIDController.dispose();
-  //   _relativeNameController.dispose();
-  //   _relationshipController.dispose();
-  //   _phoneRelativeController.dispose();
-  //   _birthdayRelativeController.dispose();
-  //   _nationRelativeController.dispose();
-  //   _temporaryAddressRelativeController.dispose();
-  //   _currentAddressRelativeController.dispose();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    _profileIDController.dispose();
+    _relativeNameController.dispose();
+    _relationshipController.dispose();
+    _phoneRelativeController.dispose();
+    _birthdayRelativeController.dispose();
+    _nationRelativeController.dispose();
+    _temporaryAddressRelativeController.dispose();
+    _currentAddressRelativeController.dispose();
+    super.dispose();
+  }
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
@@ -65,18 +66,10 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         relativesCurrentAddress: _currentAddressRelativeController.text,
         relativeJob: _relativeJobController.text,
       );
-      print('Data to submit: ${addNewRelative.toJson()}');
       Provider.of<RelativesViewModel>(context, listen: false)
           .addRelative(addNewRelative)
           .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Relative added successfully!')),
-        );
         Navigator.pop(context);
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add relative: $error')),
-        );
       });
     }
   }
@@ -112,13 +105,13 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               color: AppColor.boneWhite,
             ),
             label: Text(
-              "save",
+              "Lưu",
               style: TextStyle(color: AppColor.boneWhite),
             ),
           )
         ],
         resizeToAvoidBottomInset: true,
-        titletext: "Add New Relatives",
+        titletext: "Thân nhân",
         appBarColor: AppColor.primaryLightColor,
         body: SingleChildScrollView(
           child: Form(
@@ -139,7 +132,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                   ).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _relativeNameController,
-                    labelText: 'full_name_relative',
+                    labelText: 'Họ tên thân nhân',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_full_name_relative';
@@ -154,7 +147,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _relationshipController,
-                    labelText: 'relationship',
+                    labelText: 'Quan hệ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_relationship';
@@ -173,7 +166,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                             return null;
                           },
                           textEditingController: _phoneRelativeController,
-                          labelText: 'phone',
+                          labelText: 'Điện thoại',
                           maxLines: 1,
                           keyboardType: TextInputType.number)
                       .w(254),
@@ -184,7 +177,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 validator: (value) =>
                     value.isEmptyOrNull ? 'Please enter nation' : null,
                 textEditingController: _nationRelativeController,
-                labelText: 'relative_nation',
+                labelText: 'Quê quán',
               ).p(8),
               //Phone
               Row(
@@ -212,7 +205,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               //Address
               CustomTextFormField(
                 textEditingController: _temporaryAddressRelativeController,
-                labelText: 'temp_address',
+                labelText: 'Địa chỉ tạm trú',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'please_enter_temp_address';
@@ -222,7 +215,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               ).p8(),
               CustomTextFormField(
                 textEditingController: _currentAddressRelativeController,
-                labelText: 'current_address',
+                labelText: 'Nơi ở hiện tại',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'please_enter_current_address';

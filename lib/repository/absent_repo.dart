@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/absents_services.dart';
 import 'package:nloffice_hrm/models/absents_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 
 final AbsentsService service = AbsentsService();
 
@@ -18,20 +19,27 @@ class AbsentsRepository {
     }
   }
 
-  Future<List<Absents>> fetchAllAbsents(String profileId) async {
-    final response = await service.getAllAbsents(profileId);
+  Future<List<Absents>> fetchAllAbsents() async {
+    final response = await service.getAllAbsents();
 
     if (response.statusCode == 200) {
-      print("add successful. Response body: ${response.body}");
-      if (response.body.isNotEmpty) {
-        return List<Absents>.from(
-          json.decode(response.body).map((x) => Absents.fromJson(x)),
-        );
-      } else {
-        return []; // Return an empty list if no data is returned
-      }
+      return List<Absents>.from(
+        json.decode(response.body).map((x) => Absents.fromJson(x)),
+      );
     } else {
-      print("Failed to load absents: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      throw Exception('Failed to load absents: ${response.statusCode}');
+    }
+  }
+
+  Future<List<Absents>> getPersonalAbsents(String profileID) async {
+    final response = await service.getPersonalAbsents(profileID);
+
+    if (response.statusCode == 200) {
+      return List<Absents>.from(
+        json.decode(response.body).map((x) => Absents.fromJson(x)),
+      );
+    } else {
       print("Response body: ${response.body}");
       throw Exception('Failed to load absents: ${response.statusCode}');
     }

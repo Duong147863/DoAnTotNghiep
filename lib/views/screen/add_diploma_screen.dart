@@ -97,7 +97,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date';
+                return 'Ngày cấp không được để trống';
               }
               return null;
             },
@@ -130,14 +130,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
       Provider.of<DiplomasViewModel>(context, listen: false)
           .AddDiploma(createNewDiploma)
           .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile added successfully!')),
-        );
         Navigator.pop(context);
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add Diplomar: $error')),
-        );
       });
     }
   }
@@ -151,7 +144,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
       resizeToAvoidBottomInset: true,
-      titletext: "Add New Diploma",
+      titletext: "Thêm bằng cấp/ chứng chỉ",
       appBarColor: AppColor.primaryLightColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -185,7 +178,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _diplomaIDController,
-                    labelText: 'ID Diploma',
+                    labelText: 'Mã bằng/ chứng chỉ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_id_diploma';
