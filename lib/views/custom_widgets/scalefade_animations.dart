@@ -27,17 +27,13 @@ class ScaleFadeAnimationState extends State<ScaleFadeAnimation>
       end: 1,
     ).animate(
       CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-    )..addListener(() {
-        setState(() {});
-      });
+    )..addListener(() {});
     scaleAnimation = Tween<double>(
       begin: 0.5,
       end: 1,
     ).animate(
       CurvedAnimation(parent: controller, curve: Curves.easeInOut),
-    )..addListener(() {
-        setState(() {});
-      });
+    )..addListener(() {});
     controller.forward();
   }
 

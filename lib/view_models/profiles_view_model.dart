@@ -38,6 +38,7 @@ class ProfilesViewModel extends ChangeNotifier {
     } catch (e) {
       throw Exception('Failed to load quit members count: $e');
     }
+    fetchingData = false;
   }
 
   ///////

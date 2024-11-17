@@ -46,9 +46,6 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
 
     if (pickedTime != null) {
       final selectedTime = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
         pickedTime.hour,
         pickedTime.minute,
       );
@@ -68,9 +65,8 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
   void _updateShifts() async {
     if (_formKey.currentState!.validate()) {
       final parsedStartTime =
-          DateTime.parse("1970-01-01 ${_startTimeController.text}:00");
-      final parsedEndTime =
-          DateTime.parse("1970-01-01 ${_endTimeController.text}:00");
+          DateFormat("HH:mm").parse(_startTimeController.text);
+      final parsedEndTime = DateFormat("HH:mm").parse(_endTimeController.text);
       final updatedShifts = Shifts(
           shiftId: _shiftIdController.text,
           shiftName: _shiftNameControler.text,
@@ -79,15 +75,8 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
       try {
         await Provider.of<ShiftsViewModel>(context, listen: false)
             .updateShifts(updatedShifts);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Shifts Updated successfully!')),
-        );
         Navigator.pop(context, updatedShifts);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to Update Shifts: $e')),
-        );
-      }
+      } catch (e) {}
     }
   }
 
@@ -95,9 +84,6 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
     try {
       await Provider.of<ShiftsViewModel>(context, listen: false)
           .deleteShifts(widget.shifts!.shiftId);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Shifts deleted successfully')),
-      );
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,7 +96,7 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Shifts Info Screen',
+      titletext: 'Ca làm việc',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: Padding(
@@ -129,7 +115,7 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _shiftIdController,
-                    labelText: 'shift_id',
+                    labelText: 'Mã ca làm việc',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_shift_id';
@@ -141,7 +127,7 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _shiftNameControler,
-                    labelText: 'shift_name',
+                    labelText: 'Tên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_shift_name';
@@ -149,15 +135,14 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
                       return null;
                     },
                     enabled: _isEditing,
-                  ).px8(),
-                  SizedBox(height: 16),
+                  ).py8(),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: TextFormField(
                       enabled: _isEditing,
                       controller: _startTimeController,
-                      decoration: InputDecoration(
-                        labelText: 'Start Time',
+                      decoration: const InputDecoration(
+                        labelText: 'Bắt đầu',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),
@@ -181,7 +166,7 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
                       enabled: _isEditing,
                       controller: _endTimeController,
                       decoration: InputDecoration(
-                        labelText: 'End Time',
+                        labelText: 'Kết thúc',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                         ),

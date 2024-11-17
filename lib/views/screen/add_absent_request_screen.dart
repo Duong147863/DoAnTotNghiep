@@ -57,13 +57,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       Provider.of<AbsentsViewModel>(context, listen: false)
           .addNewAbsent(newAbsents)
           .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Absent added successfully!')),
-        );
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add absent: $error')),
-        );
+        Navigator.pop(context);
       });
     }
   }

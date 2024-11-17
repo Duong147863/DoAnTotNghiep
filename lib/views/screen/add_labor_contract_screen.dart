@@ -39,7 +39,8 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   @override
   void initState() {
     super.initState();
-    _loadDepartments();
+    Provider.of<DeparmentsViewModel>(context, listen: false)
+        .fetchAllDepartments();
     _loadEnterpriseID();
   }
 
@@ -65,12 +66,8 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
           .fetchAllDepartments();
       departments = Provider.of<DeparmentsViewModel>(context, listen: false)
           .listDepartments;
-      setState(() {});
     } catch (error) {
       print('Error loading departments: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load departments')),
-      );
     }
   }
 
@@ -106,12 +103,9 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       Provider.of<LaborContactsViewModel>(context, listen: false)
           .addNewLaborContact(newLaborContact)
           .then((_) {
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('LaborContact added successfully!')),
-        );
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add LaborContact: $error')),
         );
       });
     }
@@ -134,7 +128,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Add Labor Contract',
+      titletext: 'Tạo hợp đồng lao động',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: SingleChildScrollView(
@@ -177,7 +171,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _laborContractIDController,
-                    labelText: 'Labor Contract ID',
+                    labelText: 'Mã hợp đồng',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_labor_contract_id';
@@ -197,7 +191,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                   SizedBox(height: 16),
                   Row(
                     children: [
-                      Text('Department').px8(),
+                      Text('Phòng').px8(),
                       Expanded(
                           child: _buildDepartmentDropdown('Choose Department')),
                     ],
@@ -207,7 +201,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                     children: [
                       Expanded(
                         child: _buildDateStartTime(
-                          'Start Time',
+                          'Thời hạn hợp đồng từ:',
                           _startTimeController,
                           _startTime,
                           (date) {
@@ -222,7 +216,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                       SizedBox(width: 16),
                       Expanded(
                         child: _buildDateEndTime(
-                          'End Time',
+                          'Đến',
                           _endTimeController,
                           _endTime,
                           (date) {
@@ -355,8 +349,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      onTap: () async {
-      },
+      onTap: () async {},
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please select an enterprise';

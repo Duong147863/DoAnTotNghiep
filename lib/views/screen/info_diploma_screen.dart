@@ -37,9 +37,9 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
   final _profileIDController = TextEditingController();
   DateTime _liscenseDate = DateTime.now();
   bool _isEditing = false;
-  bool isImagePickerActive = false; 
+  bool isImagePickerActive = false;
   String? _diplomaImageBase64;
-  
+
   @override
   void initState() {
     super.initState();
@@ -56,19 +56,19 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     _diplomaTypeController.text = widget.diplomas!.diplomaType;
   }
 
-   void _updateDiploma() async {
+  void _updateDiploma() async {
     if (_formKey.currentState!.validate()) {
       final updatedDiplomas = Diplomas(
-        diplomaId: _diplomaIDController.text,
-        diplomaName: _diplomaDegreeNameController.text,
-        diplomaImage: _diplomaImageBase64 ?? "",
-        modeOfStudy: _modeOfStudyController.text,
-        ranking: _rankingController.text,
-        licenseDate: _liscenseDate,
-        major: _majorController.text,
-        grantedBy: _grantedByController.text,
-        diplomaType: _diplomaTypeController.text,
-        profileId: _profileIDController.text);
+          diplomaId: _diplomaIDController.text,
+          diplomaName: _diplomaDegreeNameController.text,
+          diplomaImage: _diplomaImageBase64 ?? "",
+          modeOfStudy: _modeOfStudyController.text,
+          ranking: _rankingController.text,
+          licenseDate: _liscenseDate,
+          major: _majorController.text,
+          grantedBy: _grantedByController.text,
+          diplomaType: _diplomaTypeController.text,
+          profileId: _profileIDController.text);
 
       try {
         await Provider.of<DiplomasViewModel>(context, listen: false)
@@ -84,36 +84,37 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
       }
     }
   }
- Future<void> _pickImage() async {
-  if (isImagePickerActive) {
-    return;
-  }
 
-  try {
-    isImagePickerActive = true;
-
-    final ImagePicker picker = ImagePicker();
-    final XFile? imageFile = await picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 600,
-      maxHeight: 600,
-    );
-
-    if (imageFile != null) {
-      File file = File(imageFile.path);
-      String base64String = await AppStrings.ImagetoBase64(file);
-      setState(() {
-        _diplomaImageBase64 = base64String;
-      });
+  Future<void> _pickImage() async {
+    if (isImagePickerActive) {
+      return;
     }
-  } catch (error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error picking image: $error')),
-    );
-  } finally {
-    isImagePickerActive = false; 
+
+    try {
+      isImagePickerActive = true;
+
+      final ImagePicker picker = ImagePicker();
+      final XFile? imageFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 600,
+        maxHeight: 600,
+      );
+
+      if (imageFile != null) {
+        File file = File(imageFile.path);
+        String base64String = await AppStrings.ImagetoBase64(file);
+        setState(() {
+          _diplomaImageBase64 = base64String;
+        });
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error picking image: $error')),
+      );
+    } finally {
+      isImagePickerActive = false;
+    }
   }
-}
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
@@ -133,7 +134,9 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onTap:_isEditing? () => _selectDate(context, initialDate, onDateSelected):null,
+        onTap: _isEditing
+            ? () => _selectDate(context, initialDate, onDateSelected)
+            : null,
         child: AbsorbPointer(
           child: TextFormField(
             readOnly: true,
@@ -141,7 +144,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date';
+                return 'please_id ngày cấp';
               }
               return null;
             },
@@ -170,33 +173,33 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
       appBarColor: AppColor.primaryLightColor,
       actions: [
         TextButton.icon(
-            onPressed: () {
-              setState(() {
-                      _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
-                    });
-            },
-            icon: Icon(
-              Icons.edit,
-              color: AppColor.boneWhite,
-            ),
-            label: Text(
-              "Sửa",
-              style: TextStyle(color: AppColor.boneWhite),
-            ),
+          onPressed: () {
+            setState(() {
+              _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+            });
+          },
+          icon: Icon(
+            Icons.edit,
+            color: AppColor.boneWhite,
           ),
-         TextButton.icon(
-            onPressed: () {
+          label: Text(
+            "Sửa",
+            style: TextStyle(color: AppColor.boneWhite),
+          ),
+        ),
+        TextButton.icon(
+          onPressed: () {
             _updateDiploma();
-            },
-            icon: Icon(
-              Icons.save,
-              color: AppColor.boneWhite,
-            ),
-            label: Text(
-              "Save",
-              style: TextStyle(color: AppColor.boneWhite),
-            ),
-          )
+          },
+          icon: Icon(
+            Icons.save,
+            color: AppColor.boneWhite,
+          ),
+          label: Text(
+            "Save",
+            style: TextStyle(color: AppColor.boneWhite),
+          ),
+        )
       ],
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -205,9 +208,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
           child: ListView(
             children: [
               GestureDetector(
-                onTap: _isEditing
-                      ? _pickImage
-                      : null,
+                onTap: _isEditing ? _pickImage : null,
                 child: Container(
                   width: 400, // Chiều rộng của ảnh
                   height: 400, // Chiều cao của ảnh
@@ -243,7 +244,6 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                       : null, // Khi có ảnh, không hiển thị icon
                 ),
               ),
-
               Divider(),
               Row(
                 children: [
@@ -259,7 +259,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _diplomaDegreeNameController,
                     labelText: 'Diploma Degree Name',
                     validator: (value) {
@@ -273,9 +273,8 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               ).py16(),
               Row(
                 children: [
-                  
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _grantedByController,
                     labelText: 'Granted By',
                     validator: (value) {
@@ -286,7 +285,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _modeOfStudyController,
                     labelText: 'Mode Of Study',
                     validator: (value) {
@@ -300,9 +299,8 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               ).py16(),
               Row(
                 children: [
-                  
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _rankingController,
                     labelText: 'Ranking',
                     validator: (value) {
@@ -313,7 +311,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                     },
                   ).px8().w(150),
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _majorController,
                     labelText: 'Major',
                     validator: (value) {
@@ -328,7 +326,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               Row(
                 children: [
                   CustomTextFormField(
-                     enabled: _isEditing,
+                    enabled: _isEditing,
                     textEditingController: _diplomaTypeController,
                     labelText: 'Diploma Type',
                     validator: (value) {
@@ -361,7 +359,6 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                 });
               }).px(8).w(150),
               SizedBox(height: 24),
-             
             ],
           ),
         ),

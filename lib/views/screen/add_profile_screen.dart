@@ -111,7 +111,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
           .fetchPositions();
       positions =
           Provider.of<PositionsViewModel>(context, listen: false).listPositions;
-      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
@@ -125,7 +124,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
           .fetchAllSalaries();
       salarys =
           Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
-      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load salaries')),
@@ -348,20 +346,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
               children: [
                 CustomTextFormField(
                   textEditingController: _identifiNumController,
-                  labelText: 'id_num',
+                  labelText: 'Số CCCD/CMND',
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'please_enter_phone_number';
                     }
                     if (value.length != 12) {
-                      return 'please_enter_valid_id_num'; // Thông báo nhập đúng 10 chữ số
+                      return 'please_enter_valid_Số CCCD/CMND'; // Thông báo nhập đúng 10 chữ số
                     }
                     return null;
                   },
                 ).w(200).px8(),
                 _buildDateField(
-                    'id_license_date', _idLicenseDayController, _idLicenseDay,
+                    'id ngày cấp', _idLicenseDayController, _idLicenseDay,
                     (date) {
                   setState(() {
                     _idLicenseDay = date;
@@ -464,7 +462,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_id_license_date';
+                return 'please_id ngày cấp';
               }
               return null;
             },

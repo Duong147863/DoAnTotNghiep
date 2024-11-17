@@ -7,6 +7,7 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -172,7 +173,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                                                     'ID: ${profile.profileId}'),
                                                 Text(
                                                     'Tên: ${profile.profileName}'),
-                                        
+                                                // Thêm các thông tin chi tiết khác ở đây
                                               ],
                                             ),
                                           ),

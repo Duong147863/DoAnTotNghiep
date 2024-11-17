@@ -71,7 +71,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
         }
       });
     }
-    setState(() {});
   }
 
   @override
