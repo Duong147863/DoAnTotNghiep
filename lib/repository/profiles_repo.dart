@@ -8,6 +8,33 @@ import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 class ProfilesRepository {
   final ProfileService service = ProfileService();
 
+  Future<int> getAllQuitMembers() async {
+    final response = await service.getAllQuitMembers();
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['totals']; // Trả về số lượng nhân viên đã nghỉ việc
+    } else {
+      throw Exception('Failed to load quit members count');
+    }
+  }
+
+  // Hàm gọi API để lấy số lượng nhân viên đã nghỉ việc và đang làm việc
+  Future<Map<String, int>> getQuitAndActiveMembersCount() async {
+    final response = await service.getQuitAndActiveMembersCount();
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Trả về số lượng nhân viên đã nghỉ việc và đang làm việc
+      return {
+        'quitCount': data['quitCount'],
+        'activeCount': data['activeCount']
+      };
+    } else {
+      throw Exception('Failed to load members count');
+    }
+  }
+
   Future<List<Profiles>> fetchAllProfiles() async {
     final response = await service.getAllProfile();
     if (response.statusCode == 200) {
@@ -18,19 +45,25 @@ class ProfilesRepository {
     }
   }
 
-  Future<List<Profiles>> fetchMembersOfDepartment(String departmentID) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(AppStrings.TOKEN);
-    final response = await service.getDepartmentMembers(departmentID, token!);
-    print(json.decode(response.body));
-    if (response.statusCode == 200) {
-      return List<Profiles>.from(json
-          .decode(response.body)['profiles']
-          .map((x) => Profiles.fromJson(x)));
-    } else {
-      throw Exception('Failed to load data');
-    }
+Future<Map<String, dynamic>> fetchMembersOfDepartment(String departmentID) async {
+  final response = await service.getDepartmentMembers(departmentID);
+
+  if (response.statusCode == 200) {
+    var data = json.decode(response.body);
+    List<Profiles> profiles = List<Profiles>.from(
+      data['profiles'].map((x) => Profiles.fromJson(x)),
+    );
+    int totalMembers = data['totals'];
+
+    return {
+      'profiles': profiles,
+      'totals': totalMembers,
+    };
+  } else {
+    throw Exception('Failed to load data');
   }
+}
+
 
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //
@@ -63,10 +96,6 @@ class ProfilesRepository {
     final response = await service.emailLogin(email, password);
     if (response.statusCode == 200 || response.statusCode == 201) {
       //save on the shared preferences that the user is logged in
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(AppStrings.SHARED_LOGGED, true);
-      await prefs.setString(AppStrings.SHARED_USER, email);
-      await prefs.setString(AppStrings.SHARED_PASSWORD, password);
       AppStrings.TOKEN = json.decode(response.body)['token']; // CHUỖI TOKEN
       print(AppStrings.TOKEN);
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
@@ -83,16 +112,12 @@ class ProfilesRepository {
   Future<Profiles> phoneLogin(String phone, String password) async {
     final response = await service.phoneLogin(phone, password);
     if (response.statusCode == 200 || response.statusCode == 201) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(AppStrings.SHARED_LOGGED, true);
-      await prefs.setString(AppStrings.SHARED_USER, phone);
-      await prefs.setString(AppStrings.SHARED_PASSWORD, password);
-      await prefs.setString(
-          AppStrings.TOKEN, json.decode(response.body)['token']); // CHUỖI TOKEN
+      AppStrings.TOKEN = json.decode(response.body)['token']; // CHUỖI TOKEN
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
       print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
+      print(AppStrings.TOKEN);
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
       throw Exception(

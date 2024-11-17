@@ -25,10 +25,17 @@ class ProfileService {
     });
   }
 
-  Future<http.Response> getAllQuitMembers(String token) async {
+  Future<http.Response> getAllQuitMembers() async {
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}profiles/quit'), headers: {
-      'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
+
+  Future<http.Response> getQuitAndActiveMembersCount() async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}profiles/count'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
 
@@ -37,16 +44,16 @@ class ProfileService {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profiles/position/$positionID'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
 
   Future<http.Response> getDepartmentMembers(
-      String departmentID, String token) async {
+      String departmentID) async {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profiles/department/$departmentID'),
-        headers: {
-          'Authorization': 'Bearer $token',
+       headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
 
@@ -81,7 +88,6 @@ class ProfileService {
       Uri.parse('${AppStrings.baseUrlApi}logout'),
       headers: {
         'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
       },
     );
   }
@@ -92,7 +98,7 @@ class ProfileService {
       Uri.parse('${AppStrings.baseUrlApi}auth/login/email'),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Accept': 'application/json',
       },
       body: json.encode({"email": email, "password": password}),
     );

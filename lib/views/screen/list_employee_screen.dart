@@ -11,6 +11,7 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class EmployeeListScreen extends StatefulWidget {
   const EmployeeListScreen({super.key});
@@ -69,9 +70,9 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                             width: 100,
                             height: 100,
                             child: profiles[index].profileImage != null &&
-                                    profiles[index].profileImage.isNotEmpty
+                                    profiles[index].profileImage.isNotEmptyAndNotNull
                                 ? Image.memory(
-                                    base64Decode(profiles[index].profileImage),
+                                    base64Decode(profiles[index].profileImage!),
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Icon(Icons.error,

@@ -45,7 +45,7 @@ class Profiles {
   String temporaryAddress;
   String currentAddress;
   int roleID;
-  String profileImage;
+  String? profileImage;
 
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(

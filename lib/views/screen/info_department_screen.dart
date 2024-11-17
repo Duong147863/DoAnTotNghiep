@@ -106,29 +106,87 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                   },
                   enabled: _isEditing,
                 ).px8(),
-                Consumer<ProfilesViewModel>(
-                    builder: (context, viewModel, child) {
-                  // if (!viewModel.fetchingData &&
-                  //     viewModel.listMembersOfDepartment.isEmpty) {
-                  // Provider.of<ProfilesViewModel>(context, listen: false)
-                  //     .membersOfDepartment(widget.departments!.departmentID);
-                  // }
-                  // if (viewModel.fetchingData) {
-                  //   // While data is being fetched
-                  //   return Center(child: CircularProgressIndicator());
-                  // } else {
-                  // If data is successfully fetched
-                  List<Profiles> profiles = viewModel.listMembersOfDepartment;
-                  return CustomListView(
-                      dataSet: profiles,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: CircleAvatar(),
-                          title: Text(profiles[index].profileName),
+                // Consumer<ProfilesViewModel>(
+                //     builder: (context, viewModel, child) {
+                //   // if (!viewModel.fetchingData &&
+                //   //     viewModel.listMembersOfDepartment.isEmpty) {
+                //   // Provider.of<ProfilesViewModel>(context, listen: false)
+                //   //     .membersOfDepartment(widget.departments!.departmentID);
+                //   // }
+                //   // if (viewModel.fetchingData) {
+                //   //   // While data is being fetched
+                //   //   return Center(child: CircularProgressIndicator());
+                //   // } else {
+                //   // If data is successfully fetched
+                //   List<Profiles> profiles = viewModel.listMembersOfDepartment;
+                //   return CustomListView(
+                //       dataSet: profiles,
+                //       itemBuilder: (context, index) {
+                //         return ListTile(
+                //           leading: CircleAvatar(),
+                //           title: Text(profiles[index].profileName),
+                //         );
+                //       });
+                //   // }
+                // }),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Consumer<ProfilesViewModel>(
+                        builder: (context, viewModel, child) {
+                      if (!viewModel.fetchingData &&
+                          viewModel.listMembersOfDepartment.isEmpty) {
+                        Provider.of<ProfilesViewModel>(context, listen: false)
+                            .membersOfDepartment(
+                                widget.departments!.departmentID);
+                      }
+                      if (viewModel.fetchingData) {
+                        return const Center(child: CircularProgressIndicator());
+                      } else {
+                        // Thêm trạng thái mở rộng cho các panel
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Tổng thành viên: ${viewModel.totalMembers}'),
+                            SingleChildScrollView(
+                              child: ExpansionPanelList.radio(
+                                expandedHeaderPadding: EdgeInsets.all(8),
+                                elevation: 1,
+                                children: viewModel.membersDepartment
+                                    .map<ExpansionPanelRadio>((profile) =>
+                                        ExpansionPanelRadio(
+                                          value: profile.profileId,
+                                          headerBuilder: (context, isExpanded) {
+                                            return Text("Thông tin nhân viên");
+                                          },
+                                          body: Padding(
+                                            padding: const EdgeInsets.all(16.0),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                    'ID: ${profile.profileId}'),
+                                                Text(
+                                                    'Tên: ${profile.profileName}'),
+                                                // Thêm các thông tin chi tiết khác ở đây
+                                              ],
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
+                            ),
+                          ],
                         );
-                      });
-                  // }
-                }),
+                      }
+                    }),
+                  ],
+                ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
