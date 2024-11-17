@@ -8,6 +8,33 @@ import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 class ProfilesRepository {
   final ProfileService service = ProfileService();
 
+  Future<int> getAllQuitMembers() async {
+    final response = await service.getAllQuitMembers();
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['totals']; // Trả về số lượng nhân viên đã nghỉ việc
+    } else {
+      throw Exception('Failed to load quit members count');
+    }
+  }
+
+  // Hàm gọi API để lấy số lượng nhân viên đã nghỉ việc và đang làm việc
+  Future<Map<String, int>> getQuitAndActiveMembersCount() async {
+    final response = await service.getQuitAndActiveMembersCount();
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      // Trả về số lượng nhân viên đã nghỉ việc và đang làm việc
+      return {
+        'quitCount': data['quitCount'],
+        'activeCount': data['activeCount']
+      };
+    } else {
+      throw Exception('Failed to load members count');
+    }
+  }
+
   Future<List<Profiles>> fetchAllProfiles() async {
     final response = await service.getAllProfile();
     if (response.statusCode == 200) {
@@ -18,17 +45,25 @@ class ProfilesRepository {
     }
   }
 
-  Future<List<Profiles>> fetchMembersOfDepartment(String departmentID) async {
-    final response = await service.getDepartmentMembers(departmentID);
-    print(json.decode(response.body));
-    if (response.statusCode == 200) {
-      return List<Profiles>.from(json
-          .decode(response.body)['profiles']
-          .map((x) => Profiles.fromJson(x)));
-    } else {
-      throw Exception('Failed to load data');
-    }
+Future<Map<String, dynamic>> fetchMembersOfDepartment(String departmentID) async {
+  final response = await service.getDepartmentMembers(departmentID);
+
+  if (response.statusCode == 200) {
+    var data = json.decode(response.body);
+    List<Profiles> profiles = List<Profiles>.from(
+      data['profiles'].map((x) => Profiles.fromJson(x)),
+    );
+    int totalMembers = data['totals'];
+
+    return {
+      'profiles': profiles,
+      'totals': totalMembers,
+    };
+  } else {
+    throw Exception('Failed to load data');
   }
+}
+
 
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //

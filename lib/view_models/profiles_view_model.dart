@@ -12,30 +12,65 @@ class ProfilesViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Profiles> get listProfiles => allProfiles;
   List<Profiles> get listMembersOfDepartment => membersDepartment;
+  int quitCount = 0; // Số lượng nhân viên đã nghỉ việc
+  int activeCount = 0; // Số lượng nhân viên đang làm việc
+  int totalMembers = 0; // Biến lưu trữ tổng số nhân viên
   //
   Profiles? selectedProfile;
   Future<void> fetchAllProfiles() async {
     fetchingData = true;
     try {
+      // Lấy toàn bộ danh sách nhân viên
       allProfiles = await repository.fetchAllProfiles();
       notifyListeners();
     } catch (e) {
-      throw Exception('Failed to load datas: $e');
+      throw Exception('Failed to load profiles: $e');
     }
     fetchingData = false;
   }
 
-  Future<void> membersOfDepartment(String departmentID) async {
-    fetchingData = true;
+  //////
+  Future<void> fetchQuitMembersCount() async {
     try {
-      membersDepartment =
-          await repository.fetchMembersOfDepartment(departmentID);
-      notifyListeners();
+      quitCount = await repository
+          .getAllQuitMembers(); // Lấy số lượng nhân viên đã nghỉ việc
+      notifyListeners(); // Cập nhật lại UI
     } catch (e) {
-      throw Exception('Failed to load datas: $e');
+      throw Exception('Failed to load quit members count: $e');
     }
     fetchingData = false;
   }
+
+  ///////
+  Future<void> fetchQuitAndActiveMembersCount() async {
+    try {
+      final counts = await repository.getQuitAndActiveMembersCount();
+
+      // Cập nhật số lượng nhân viên đã nghỉ việc và đang làm việc
+      quitCount = counts['quitCount'] ?? 0;
+      activeCount = counts['activeCount'] ?? 0;
+      fetchingData = false;
+      // Gọi notifyListeners để cập nhật UI
+      notifyListeners();
+    } catch (e) {
+      fetchingData = false;
+      throw Exception('Failed to fetch members count: $e');
+    }
+  }
+
+ Future<void> membersOfDepartment(String departmentID) async {
+  fetchingData = true;
+  notifyListeners();
+  try {
+    var result = await repository.fetchMembersOfDepartment(departmentID);
+    membersDepartment = result['profiles'];
+    totalMembers = result['totals'];
+  } catch (e) {   
+      throw Exception('Failed to load data: $e');
+  }
+  fetchingData = false;
+  notifyListeners();
+}
 
   Future<void> addProfile(Profiles profile) async {
     try {
