@@ -172,7 +172,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                                                     'ID: ${profile.profileId}'),
                                                 Text(
                                                     'Tên: ${profile.profileName}'),
-                                                // Thêm các thông tin chi tiết khác ở đây
+                                        
                                               ],
                                             ),
                                           ),

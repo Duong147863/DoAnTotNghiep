@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/assignments_model.dart';
 class AssignmentsServices {
-    Future<http.Response> getAssignmentsDetails() async {
+    Future<http.Response> getAssignmentsDetails(String projectId) async {
     return await http.get(
-        Uri.parse('${AppStrings.baseUrlApi}assign/task'),
+        Uri.parse('${AppStrings.baseUrlApi}assign/task/detail/$projectId'),
         headers: {
           'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });

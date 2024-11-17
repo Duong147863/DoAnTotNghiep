@@ -10,12 +10,9 @@ class ProjectsRepository {
     final response = await service.getAllProject();
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
       return List<Projects>.from(
           json.decode(response.body).map((x) => Projects.fromJson(x)));
     } else {
-      print("Load faild Project: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
