@@ -6,6 +6,7 @@ import 'package:nloffice_hrm/models/projects_model.dart';
 import 'package:nloffice_hrm/models/tasks_model.dart';
 import 'package:nloffice_hrm/view_models/assignment_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
+import 'package:nloffice_hrm/view_models/task_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
@@ -27,19 +28,17 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
   int _statusProject = 0;
   List<Assignments> assignments = [];
   Assignments? selectedassignments;
-  List<Projects> project=[];
+  List<Projects> project = [];
   Projects? selectedProjects;
   List<Tasks> tasks = [];
   Tasks? selectedTasks;
-  List<Profiles> profiles = [];
-  Profiles? selectedProfiles;
   @override
   void initState() {
     super.initState();
     _projectIdController.text = widget.projects!.projectId;
     _projectNameController.text = widget.projects!.projectName;
     _statusProject = widget.projects!.projectStatus;
-    // _loadProject();
+    _loadAssignments();
   }
 
   void _updateProject() async {
@@ -78,25 +77,30 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
       );
     }
   }
-  // void _loadProject() async {
-  //   try {
-  //     await Provider.of<AssignmentsViewModel>(context, listen: false)
-  //         .getAssignmentsDetails(widget.projects!.projectId);
-  //     setState(() {
-  //       assignments =
-  //           Provider.of<AssignmentsViewModel>(context, listen: false).listAssignments;
-  //       if (assignments.isNotEmpty) {
-  //         selectedassignments = assignments.firstWhere(
-  //           (ass) => ass.projectId == widget.projects!.projectId,
-  //         );
-  //       }
-  //     });
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to load Project $e')),
-  //     );
-  //   }
-  // }
+
+  
+ void _loadAssignments() async {
+  try {
+    await Provider.of<AssignmentsViewModel>(context, listen: false)
+        .getAssignmentsDetails(widget.projects!.projectId);
+    assignments =
+            Provider.of<AssignmentsViewModel>(context, listen: false).listAssignments;
+    setState(() {
+        if (assignments.isNotEmpty) {
+          selectedassignments = assignments.firstWhere(
+            (ass) => ass.projectId == widget.projects!.projectId,
+          );
+        }
+      });
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to load Assignments $e')),
+    );
+  }
+}
+
+
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -234,104 +238,72 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
       ),
     );
   }
+
   Widget _buildAssignmentList() {
-    if (assignments.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin task nào",
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
-        ),
-      );
-    }
+  if (assignments.isEmpty) {
+    return Center(
+      child: Text(
+        "Không có thông tin task nào",
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+      ),
+    );
+  }
 
-    return ExpansionPanelList(
-      elevation: 1,
-      expandedHeaderPadding: EdgeInsets.all(0),
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          assignments[index].isExpanded = isExpanded;
-        });
-      },
-      children: assignments.map((process) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-              leading: Icon(Icons.personal_injury,
-                  color: const Color.fromARGB(255, 68, 218, 255)),
-              // title: Text(
-              //   "Tên Task: ${selectedProjects!.projectName}",
-              //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              // ),
-            );
-          },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              elevation: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Tiêu đề
-                    Text(
-                      "Chi tiết:",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue),
-                    ),
-                    SizedBox(height: 10),
-                    Text("Tên nhân viên: ${process.profileId}",
-                        style: TextStyle(fontSize: 16)),
-                    Text("Tên Task ${process.projectId}",
-                        style: TextStyle(fontSize: 16)),
-                    Text("Tên Dự án ${process.taskId}",
-                        style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 20),
-                    Divider(color: Colors.grey),
-                    SizedBox(height: 10),
-                    // Thêm hiệu ứng khi bấm vào để chuyển đến màn hình chi tiết
-                    // Center(
-                    //   child: InkWell(
-                    //     onTap: () async {
-                    //       final updatedRelative = await Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (context) =>
-                    //               InfoRelativeScreen(profile: process),
-                    //         ),
-                    //       );
-
-                    //       if (updatedRelative != null) {
-                    //         _handleUpdateRelative(updatedRelative);
-                    //       }
-                    //     },
-                    //     child: Container(
-                    //       padding:
-                    //           EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                    //       decoration: BoxDecoration(
-                    //         color: Colors.blue,
-                    //         borderRadius: BorderRadius.circular(8),
-                    //       ),
-                    //       child: Text(
-                    //         "Xem chi tiết",
-                    //         style: TextStyle(fontSize: 16, color: Colors.white),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
+  return ExpansionPanelList(
+    elevation: 1,
+    expandedHeaderPadding: EdgeInsets.all(0),
+    expansionCallback: (int index, bool isExpanded) {
+      setState(() {
+        assignments[index].isExpanded = isExpanded;
+      });
+    },
+    children: assignments.map((process) {
+      
+      return ExpansionPanel(
+        headerBuilder: (BuildContext context, bool isExpanded) {
+          return ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            leading: Icon(Icons.personal_injury,
+                color: const Color.fromARGB(255, 68, 218, 255)),
+          );
+        },
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Chi tiết:",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Tên nhân viên: ${process.profileId}",
+                      style: TextStyle(fontSize: 16)),       
+                    Text("Ten id bảng assignments: ${process.taskId ?? 'N/A'}", // Safely access taskName
+                      style: TextStyle(fontSize: 16)),   
+                  Text("Tên Dự án: ${process.projectId}",
+                      style: TextStyle(fontSize: 16)),
+                  SizedBox(height: 20),
+                  Divider(color: Colors.grey),
+                  SizedBox(height: 10),
+                ],
               ),
             ),
           ),
-          isExpanded: process.isExpanded,
-        );
-      }).toList(),
-    );
-  }
+        ),
+        isExpanded: process.isExpanded,
+      );
+    }).toList(),
+  );
 }
+}
+

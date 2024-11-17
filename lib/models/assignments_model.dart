@@ -18,8 +18,8 @@ class Assignments {
   factory Assignments.fromJson(Map<String, dynamic> json) {
     return Assignments(
       assignmentId: json["assignment_id"],
-      profileId: json["	profile_id"],
-      projectId: json["project_id "],
+      profileId: json["profile_id"],
+      projectId: json["project_id"],
       taskId: json["task_id"],
     );
   }
@@ -31,4 +31,9 @@ class Assignments {
     map["task_id"] = taskId;
     return map;
   }
+  @override
+  String toString() {
+    return 'Assignments(projectId: $projectId, assignmentName: $profileId, Task Id:$taskId)';
+  }
+
 }

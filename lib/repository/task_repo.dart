@@ -9,13 +9,18 @@ class TaskRepository {
 
     if (response.statusCode == 200) {
       if (response.body.isNotEmpty) {
+           print("Delete successful. Response body: ${response.body}");
         return List<Tasks>.from(
           json.decode(response.body).map((x) => Tasks.fromJson(x)),
         );
       } else {
+          print("Failed to delete Relative: ${response.statusCode}");
+      print("Response body: ${response.body}");
         return []; // Return an empty list if no data is returned
       }
     } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+      print("Response body: ${response.body}");
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }

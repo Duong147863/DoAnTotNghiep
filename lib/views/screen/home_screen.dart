@@ -26,6 +26,7 @@ import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
@@ -833,26 +834,67 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontWeight: FontWeight.bold,
                 )).p8(),
             Divider().px12(),
-            ExpansionPanelList(
-              expansionCallback: (int panelIndex, bool isExpanded) {
-                setState(() {
-                  isExpandedList[panelIndex] = isExpanded;
-                });
-              },
-              children: [
-                ExpansionPanel(
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return const Row(
-                      children: [
-                        // Text("Mã dự án - Tên dự án"),
-                      ],
-                    );
-                  },
-                  body: Card(),
-                ),
-              ],
-            ).p8(),
-            _buildProductList()
+            // ExpansionPanelList(
+            //   expansionCallback: (int panelIndex, bool isExpanded) {
+            //     setState(() {
+            //       isExpandedList[panelIndex] = isExpanded;
+            //     });
+            //   },
+            //   children: [
+            //     ExpansionPanel(
+            //       headerBuilder: (BuildContext context, bool isExpanded) {
+            //         return const Row(
+            //           children: [
+            //             // Text("Mã dự án - Tên dự án"),
+            //           ],
+            //         );
+            //       },
+            //       body: Card(),
+            //     ),
+            //   ],
+            // ).p8(),
+             Consumer<ProjectsViewModel>(builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData &&
+                  viewModel.listProjects.isEmpty) {
+                Provider.of<ProjectsViewModel>(context, listen: false)
+                    .getAllProject();
+              }
+              if (viewModel.fetchingData) {
+                // While data is being fetched
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                // If data is successfully fetched
+                List<Projects> projects = viewModel.listProjects;
+                return CustomGridView(
+                    childAspectRatio: 2,
+                    dataSet: projects,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        color: const Color.fromARGB(255, 243, 243, 242),
+                        elevation: 1,
+                        // margin: EdgeInsets.all(13),
+                        child: Wrap(
+                          clipBehavior: Clip.antiAlias,
+                          direction: Axis.vertical,
+                          children: [
+                            Text(
+                              projects[index].projectName,
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                            ),
+                          ],
+                        ).p(13),
+                      ).onTap(() => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InfoProjectScreen(
+                              projects: projects[index],
+                            ),
+                          )));
+                    });
+              }
+            }),
+            
           ],
         );
       }
@@ -860,71 +902,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return UiSpacer.emptySpace();
     }
   }
-
-  Widget _buildProductList() {
-    if (project.isEmpty) {
-      return const Center(
-        child: Text(
-          "Không có dự án",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
-
-    return ExpansionPanelList(
-      elevation: 2,
-      animationDuration: const Duration(milliseconds: 300),
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          project[index].isExpanded = isExpanded;
-        });
-      },
-      children: project.map((process) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return const ListTile(
-              leading: Icon(Icons.production_quantity_limits_outlined,
-                  color: Colors.green),
-              title: Text(
-                "Dự án",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            );
-          },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.green.shade50,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Chi tiết dự án:",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green),
-                    ),
-                    Text("Tên dự án: ${process.projectName}"),
-                    const SizedBox(height: 8),
-                    Text(
-                      "Trạng thái: ${process.projectStatus == 0 ? 'Đang làm' : 'Hoàn thành'}",
-                    )
-                  ],
-                ),
-              ),
-            ),
-          ),
-          isExpanded: process.isExpanded,
-        );
-      }).toList(),
-    );
   }
 
   Widget _buildEmployeeStats() {
@@ -971,4 +948,3 @@ class _HomeScreenState extends State<HomeScreen> {
   },
 );
   }
-}
