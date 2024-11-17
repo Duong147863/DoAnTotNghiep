@@ -77,7 +77,15 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
           .fetchAllEnterprises();
       enterprises =
           Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
-    } catch (error) {}
+      setState(() {
+        
+      });
+    } catch (error) {
+      print('Error loading enterprises: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load enterprises')),
+      );
+    }
   }
 
   void _submit() {
@@ -88,7 +96,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
         endTime: _endTimeController.text.isNotEmpty
             ? _endTime
             : null, // Nếu End Time trống, truyền null
-        enterpriseId: selectedEnterprises!.enterpriseId,
+        enterpriseId: 0,
         image: _laborContractImageBase64 ?? "",
         departmentId: selectedDepartment!.departmentID,
       );

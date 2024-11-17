@@ -9,6 +9,29 @@ class AssignmentsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Assignments> get listAssignments => _list;
 
+  //  Future<void> getAssignmentsDetails(String projectid) async {
+  //   try {
+  //     List<Assignments> assignmentsList =
+  //         await repository.getAssignmentsDetails(projectid);
+  //     _list = assignmentsList
+  //         .where((ass) => ass.projectId == projectid)
+  //         .toList();
+  //     notifyListeners();
+  //   } catch (e) {
+  //     throw Exception('Failed to load working processes: $e');
+  //   }
+  // }
+   Future<void> getAssignmentsDetails() async {
+    fetchingData = true;
+    notifyListeners();
+    try {
+      _list = await repository.getAssignmentsDetails();
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load data: $e');
+    }
+    fetchingData = false;
+  }
   Future<void> createNewAssignments(Assignments assignmeents) async {
     try {
       await repository.createNewAssignments(assignmeents);

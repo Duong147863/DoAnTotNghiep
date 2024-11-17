@@ -7,6 +7,7 @@ import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/employeeStatus.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/projects_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
@@ -35,6 +36,7 @@ import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../models/positions_model.dart';
@@ -305,8 +307,10 @@ class _HomeScreenState extends State<HomeScreen> {
       defaultBody: true,
       bodyChildren: [
         const SizedBox(height: 20),
-        AppStrings.ROLE_PERMISSIONS
-                .contains('Manage BoD & HR accounts') // Ẩn nút chấm công
+        AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts') ||
+                (DateTime.now().hour.toInt() >= 22 ||
+                    DateTime.now().hour.toInt() <=
+                        5) // Ẩn nút chấm công nếu ngoài giờ làm việc hoặc là ban giám đốc
             ? UiSpacer.emptySpace()
             : InkWell(
                 onTap: () {
@@ -583,17 +587,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             const AddShiftsScreen(),
                       ));
                 }),
-            // SpeedDialChild(
-            //     label: "Thân Nhân",
-            //     onTap: () {
-            //       Navigator.push(
-            //           context,
-            //           MaterialPageRoute<void>(
-            //             builder: (BuildContext context) => RelativeListScreen(
-            //               profiles: widget.profile,
-            //             ),
-            //           ));
-            //     }),
+            SpeedDialChild(
+                label: "Thân Nhân",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => RelativeListScreen(
+                          profiles: widget.profile,
+                        ),
+                      ));
+                }),
           ]);
     } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
       return SpeedDial(
@@ -607,8 +611,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            const AddTaskScreen(),
+                        builder: (BuildContext context) => AddTaskScreen(),
                       ));
                 }),
             SpeedDialChild(
@@ -618,7 +621,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) =>
-                            const AddAssignmentScreen(),
+                            AddAssignmentScreen(),
                       ));
                 }),
           ]);
@@ -777,39 +780,40 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }),
             const Divider().p12(),
-            ExpansionPanelList(
-              expansionCallback: (int panelIndex, bool isExpanded) {
-                setState(() {
-                  isExpandedList[panelIndex] = isExpanded;
-                });
-              },
-              children: [
-                ExpansionPanel(
-                  headerBuilder: (BuildContext context, bool isExpanded) {
-                    return const Text("Nhân sự công ty");
-                  },
-                  isExpanded: true,
-                  body: Consumer<ProfilesViewModel>(
-                      builder: (context, viewModel, child) {
-                    if (!viewModel.fetchingData &&
-                        viewModel.allProfiles.isEmpty) {
-                      Provider.of<ProfilesViewModel>(context, listen: false)
-                          .fetchAllProfiles();
-                    }
-                    List<Profiles> listProfiles = viewModel.allProfiles;
-                    return CustomListView(
-                        dataSet: listProfiles,
-                        itemBuilder: (context, index) {
-                          return ListTile(
-                            leading: const CircleAvatar(),
-                            title: Text(listProfiles[index].profileName),
-                            subtitle: Text(listProfiles[index].positionId!),
-                          );
-                        });
-                  }),
-                ),
-              ],
-            ).p8()
+            _buildEmployeeStats()
+            // ExpansionPanelList(
+            //   expansionCallback: (int panelIndex, bool isExpanded) {
+            //     setState(() {
+            //       isExpandedList[panelIndex] = isExpanded;
+            //     });
+            //   },
+            //   children: [
+            //     ExpansionPanel(
+            //       headerBuilder: (BuildContext context, bool isExpanded) {
+            //         return const Text("Nhân sự công ty");
+            //       },
+            //       isExpanded: true,
+            //       body: Consumer<ProfilesViewModel>(
+            //           builder: (context, viewModel, child) {
+            //         if (!viewModel.fetchingData &&
+            //             viewModel.allProfiles.isEmpty) {
+            //           Provider.of<ProfilesViewModel>(context, listen: false)
+            //               .fetchAllProfiles();
+            //         }
+            //         List<Profiles> listProfiles = viewModel.allProfiles;
+            //         return CustomListView(
+            //             dataSet: listProfiles,
+            //             itemBuilder: (context, index) {
+            //               return ListTile(
+            //                 leading: const CircleAvatar(),
+            //                 title: Text(listProfiles[index].profileName),
+            //                 subtitle: Text(listProfiles[index].positionId!),
+            //               );
+            //             });
+            //       }),
+            //     ),
+            //   ],
+            // ).p8()
           ],
         ),
       );
@@ -828,7 +832,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                 )).p8(),
-            const Divider().px12(),
+            Divider().px12(),
             ExpansionPanelList(
               expansionCallback: (int panelIndex, bool isExpanded) {
                 setState(() {
@@ -844,7 +848,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     );
                   },
-                  body: const Card(),
+                  body: Card(),
                 ),
               ],
             ).p8(),
@@ -921,5 +925,50 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }).toList(),
     );
+  }
+
+  Widget _buildEmployeeStats() {
+    return Consumer<ProfilesViewModel>(
+  builder: (context, viewModel, child) {
+    if (!viewModel.fetchingData) {
+      viewModel.fetchQuitAndActiveMembersCount();
+    }
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SfCircularChart(
+        title: ChartTitle(text: 'Thống kê nhân viên'),  // Tiêu đề cho biểu đồ
+        legend: Legend(isVisible: true, position: LegendPosition.bottom),  // Hiển thị legend ở dưới
+        series: <CircularSeries<EmployeeStat, String>>[
+          PieSeries<EmployeeStat, String>(
+            dataSource: [
+              EmployeeStat('Đang làm việc', viewModel.activeCount),
+              EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+            ],
+            xValueMapper: (EmployeeStat stats, _) => stats.status,
+            yValueMapper: (EmployeeStat stats, _) => stats.count,
+            dataLabelSettings: DataLabelSettings(
+              isVisible: true,
+              labelPosition: ChartDataLabelPosition.outside,  // Đặt nhãn ra ngoài
+              textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),  // Cải thiện kiểu nhãn
+            ),
+            pointColorMapper: (EmployeeStat stats, _) {
+              // Thay đổi màu sắc của từng phần trong biểu đồ
+              if (stats.status == 'Đang làm việc') {
+                return Colors.blue;
+              } else {
+                return Colors.red;
+              }
+            },
+            explode: true,  // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
+            explodeIndex: 0,  // Tạo hiệu ứng phóng to phần "Đang làm việc"
+            explodeOffset: "10%",  // Điều chỉnh độ phóng to của phần explode
+            radius: '70%',  // Đặt kích thước biểu đồ tròn
+          ),
+        ],
+        tooltipBehavior: TooltipBehavior(enable: true),  // Hiển thị tooltip khi hover qua phần tử
+      ),
+    );
+  },
+);
   }
 }

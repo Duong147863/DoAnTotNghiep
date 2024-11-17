@@ -25,10 +25,17 @@ class ProfileService {
     });
   }
 
-  Future<http.Response> getAllQuitMembers(String token) async {
+  Future<http.Response> getAllQuitMembers() async {
     return await http
         .get(Uri.parse('${AppStrings.baseUrlApi}profiles/quit'), headers: {
-      'Authorization': 'Bearer $token',
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
+
+  Future<http.Response> getQuitAndActiveMembersCount() async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}profiles/count'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
 
@@ -37,7 +44,7 @@ class ProfileService {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profiles/position/$positionID'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
 
@@ -45,7 +52,7 @@ class ProfileService {
       String departmentID) async {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profiles/department/$departmentID'),
-        headers: {
+       headers: {
           'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
