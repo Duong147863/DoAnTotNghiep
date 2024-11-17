@@ -305,8 +305,10 @@ class _HomeScreenState extends State<HomeScreen> {
       defaultBody: true,
       bodyChildren: [
         const SizedBox(height: 20),
-        AppStrings.ROLE_PERMISSIONS
-                .contains('Manage BoD & HR accounts') // Ẩn nút chấm công
+        AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts') ||
+                (DateTime.now().hour.toInt() >= 22 ||
+                    DateTime.now().hour.toInt() <=
+                        5) // Ẩn nút chấm công nếu ngoài giờ làm việc hoặc là ban giám đốc
             ? UiSpacer.emptySpace()
             : InkWell(
                 onTap: () {

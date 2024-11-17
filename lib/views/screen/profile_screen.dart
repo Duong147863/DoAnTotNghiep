@@ -568,13 +568,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               Row(
                 children: [
-                  Text('Chức vụ').px(8),
+                  Text('Chức vụ:').px(8),
                   _buildPositionsDropdown('Choose Postion').p(8).w(300),
                 ],
               ),
               Row(
                 children: [
-                  Text('Lương').px(8),
+                  Text('Lương cơ bản:').px(8),
                   _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
@@ -637,10 +637,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_phone_number';
+                        return 'Không được trống';
                       }
                       if (value.length != 12) {
-                        return 'please_enter_valid_Số CCCD/CMND'; // Thông báo nhập đúng 10 chữ số
+                        return 'Chiều dài không hợp lệ'; // Thông báo nhập đúng 10 chữ số
                       }
                       return null;
                     },
@@ -769,7 +769,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               buttonSize: Size(50, 50),
               children: [
                   SpeedDialChild(
-                      label: "Thêm Thân Nhân",
+                      label: "Thêm thân Nhân",
                       onTap: () {
                         Navigator.push(
                             context,
@@ -780,30 +780,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ));
                       }),
-                  SpeedDialChild(
-                      label: "Phê Duyệt Quá Trình Đạo Tạo",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  ListTrainingprocessesScreen(
-                                profiles: widget.profile,
-                              ),
-                            ));
-                      }),
-                  SpeedDialChild(
-                      label: "Phê Duyệt Quá Trình Làm Việc",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  ListWorkingprocessScreen(
-                                profiles: widget.profile,
-                              ),
-                            ));
-                      }),
+                  // SpeedDialChild(
+                  //     label: "Phê Duyệt Quá Trình Đạo Tạo",
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute<void>(
+                  //             builder: (BuildContext context) =>
+                  //                 ListTrainingprocessesScreen(
+                  //               profiles: widget.profile,
+                  //             ),
+                  //           ));
+                  //     }),
+                  // SpeedDialChild(
+                  //     label: "Phê Duyệt Quá Trình Làm Việc",
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute<void>(
+                  //             builder: (BuildContext context) =>
+                  //                 ListWorkingprocessScreen(
+                  //               profiles: widget.profile,
+                  //             ),
+                  //           ));
+                  //     }),
                   SpeedDialChild(
                       label: "Thêm bằng cấp",
                       onTap: () {
@@ -817,7 +817,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ));
                       }),
                   SpeedDialChild(
-                      label: "Thêm bảo hiểm",
+                      label: "Bảo hiểm",
                       onTap: () {
                         Navigator.push(
                             context,
@@ -829,7 +829,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ));
                       }),
                 ])
-          : UiSpacer.emptySpace(),
+          : SpeedDial(
+              elevation: 0,
+              icon: Icons.menu,
+              buttonSize: Size(50, 50),
+              children: [
+                  SpeedDialChild(
+                      label: "Thêm quá trình đào tạo",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ListTrainingprocessesScreen(
+                                profiles: widget.profile,
+                              ),
+                            ));
+                      }),
+                  SpeedDialChild(
+                      label: "Thêm quá trình công tác",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ListWorkingprocessScreen(
+                                profiles: widget.profile,
+                              ),
+                            ));
+                      }),
+                ]),
     );
   }
 
@@ -957,8 +986,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           enabled: _isEditing),
     );
   }
-  //
 
+  //
   Widget _buildRelativeList() {
     if (relatives.isEmpty) {
       return Center(
@@ -969,7 +998,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     }
-
     return ExpansionPanelList(
       elevation: 1,
       expandedHeaderPadding: EdgeInsets.all(0),
@@ -1052,7 +1080,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   //
-
   Widget _buildDiplomasList() {
     return ExpansionPanelList(
       elevation: 1,
@@ -1144,8 +1171,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
   }
-  //
 
+  //
   Widget _buildWorkingProcessList() {
     List<WorkingProcesses> filteredProcesses = workingProcesses
         .where((process) => process.workingprocessStatus == 1)
@@ -1219,7 +1246,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   //
-
   Widget _buildTrainingProcessesList() {
     List<Trainingprocesses> filteredProcesses = trainingProcess
         .where((process) => process.trainingprocessesStatus == 1)
