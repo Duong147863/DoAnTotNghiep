@@ -36,7 +36,7 @@ class Diplomas {
       diplomaImage: json["diploma_image"],
       modeOfStudy: json["mode_of_study"],
       ranking: json["ranking"],
-      licenseDate: DateFormat("dd-MM-yyyy").parse(json['license_date']),
+      licenseDate:DateTime.parse(json['license_date']),
       major: json["major"],
       grantedBy: json["granted_by"],
       diplomaType: json["diploma_type"],

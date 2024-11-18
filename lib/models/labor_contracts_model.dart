@@ -24,9 +24,9 @@ class LaborContracts {
   factory LaborContracts.fromJson(Map<String, dynamic> json) {
     return LaborContracts(
       image: json["image"],
-      startTime: DateFormat("dd-MM-yyyy").parse(json['start_time']),
+      startTime: DateTime.parse(json['start_time']),
       endTime: json['end_time'] != null
-          ? DateFormat("dd-MM-yyyy").parse(json['end_time'])
+          ? DateTime.parse(json['end_time'])
           : null,
       laborContractId: json["labor_contract_id"],
       enterpriseId: json["enterprise_id"],

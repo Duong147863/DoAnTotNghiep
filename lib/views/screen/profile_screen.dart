@@ -12,6 +12,7 @@ import 'package:nloffice_hrm/models/labor_contracts_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
+import 'package:nloffice_hrm/models/roles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/models/working.processes_model.dart';
@@ -22,6 +23,7 @@ import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
+import 'package:nloffice_hrm/view_models/roles_view_models.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/view_models/trainingprocesses_view_model.dart';
 import 'package:nloffice_hrm/view_models/workingprocesses_view_model.dart';
@@ -103,6 +105,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Insurance? selectedinsurance;
   List<LaborContracts> laborContracts = [];
   LaborContracts? selectedlaborContracts;
+  List<Roles> roles = [];
+  Roles? selectedRoles;
   //
   void initState() {
     super.initState();
@@ -134,6 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadDiplomas();
     _loadInsurance();
     _loadLaborContact();
+    
   }
 
   void _handleUpdateRelative(Relatives updatedRelative) {
@@ -165,10 +170,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     });
   }
-    void _handleUpdateLaborContact(LaborContracts updatelaborContracts) {
+
+  void _handleUpdateLaborContact(LaborContracts updatelaborContracts) {
     setState(() {
-      int index = laborContracts
-          .indexWhere((lab) => lab.laborContractId == updatelaborContracts.laborContractId);
+      int index = laborContracts.indexWhere(
+          (lab) => lab.laborContractId == updatelaborContracts.laborContractId);
       if (index != -1) {
         laborContracts[index] = updatelaborContracts;
       }
@@ -180,15 +186,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<DeparmentsViewModel>(context, listen: false)
           .fetchAllDepartments();
-     
-        departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-            .listDepartments;
-        if (departments.isNotEmpty) {
-          selectedDepartment = departments.firstWhere(
-            (department) =>
-                department.departmentID == widget.profile!.departmentId,
-          );
-        }
+      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+          .listDepartments;
+      if (departments.isNotEmpty) {
+        selectedDepartment = departments.firstWhere(
+          (department) =>
+              department.departmentID == widget.profile!.departmentId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
@@ -237,6 +242,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  // void _loadRoles() async {
+  //   try {
+  //     await Provider.of<RolesViewModels>(context, listen: false).getAllRoles();
+  //     List<Roles> allRoles =
+  //         Provider.of<RolesViewModels>(context, listen: false).listRoles;
+  //     if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+  //       roles = allRoles
+  //           .where((role) => [1, 2, 3, 4, 5].contains(role.roleID))
+  //           .toList();
+  //     } else if (AppStrings.ROLE_PERMISSIONS
+  //         .contains('Manage Staffs info only')) {
+  //       roles =
+  //           allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
+  //     } else {
+  //       roles = [];
+  //     }    
+  //     setState(() {
+  //       if (roles.isNotEmpty) {
+  //       selectedRoles = roles.firstWhere(
+  //         (rol) => rol.roleID == widget.profile!.roleID,
+  //       );
+  //     }
+  //     });
+  //   } catch (error) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to load Roles $error')),
+  //     );
+  //   }
+  // }
+
+//
   void _loadRelative() async {
     try {
       await Provider.of<RelativesViewModel>(context, listen: false)
@@ -373,7 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           nation: _nationController.text,
           email: _emailController.text,
           phone: _phoneController.text,
-          roleID: widget.profile!.roleID,
+          roleID: selectedRoles!.roleID,
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
@@ -628,6 +664,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
+              // Row(
+              //   children: [
+              //     Text('Roles').px(8),
+              //     _buildRolesDropdown('Choose Roles').p(8).w(300),
+              //   ],
+              // ),
               // Gender + Marriage
               Row(
                 children: [
@@ -805,7 +847,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 16),
                 _buildInsuranceList(),
                 //Hợp đồng
-                 SizedBox(height: 16),
+                SizedBox(height: 16),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -1054,7 +1096,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           enabled: _isEditing),
     );
   }
+  //
 
+   Widget _buildRolesDropdown(String hint) {
+    return DropdownButtonFormField<Roles>(
+      value: selectedRoles,
+      hint: Text(hint),
+      onChanged:_isEditing? (Roles? newValue) {
+        setState(() {
+          selectedRoles = newValue;
+        });
+      }:null,
+      items: roles.map((Roles role) {
+        return DropdownMenuItem<Roles>(
+          value: role,
+          child: Text(role.roleName),
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        enabled: _isEditing
+      ),
+    );
+  }
   //
   Widget _buildRelativeList() {
     if (relatives.isEmpty) {
@@ -1226,7 +1290,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             SizedBox(height: 20),
                             Text('Số hiệu: ${process.diplomaId}',
                                 style: TextStyle(fontSize: 14)),
-                            Text('Ngày cấp: ${process.licenseDate}',
+                            Text(
+                                'Ngày cấp: ${DateFormat('dd/MM/yyyy').format(process.licenseDate).toString()}',
                                 style: TextStyle(fontSize: 14)),
                           ],
                         ),
@@ -1298,8 +1363,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(height: 8),
                     Row(
                       children: [
-                        Text("Từ: ${process.startTime}"),
-                        Text(" - Đến: ${process.endTime}"),
+                        Text(
+                            "Từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
+                        Text(
+                            " - Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
                       ],
                     ),
                   ],
@@ -1362,10 +1429,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         .p8(),
                     Row(
                       children: [
-                        Text("Bắt đầu từ: ${process.startTime}"),
+                        Text(
+                            "Bắt đầu từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
                         Text(process.endTime == null
                             ? "Hiện tại"
-                            : "Đến: ${process.endTime!}"),
+                            : "Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
                       ],
                     ),
                   ],
@@ -1425,8 +1493,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Text("Tỉ lệ: ${process.insurancePercent} %").p8(),
                     Row(
                       children: [
-                        Text("Thời hạn từ: ${process.startTime}"),
-                        Text(" - Đến: ${process.endTime}"),
+                        Text(
+                            "Thời hạn từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
+                        Text(
+                            " - Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime).toString()}"),
                       ],
                     ),
                   ],
@@ -1540,10 +1610,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Row(
                       children: [
-                        Text("Bắt đầu từ: ${process.startTime}"),
+                        Text(
+                            "Bắt đầu từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
                         Text(process.endTime == null
                             ? "Hiện tại"
-                            : "Đến: ${process.endTime!}"),
+                            : "Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
                       ],
                     ),
                   ],
@@ -1570,4 +1641,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
   }
+
+ 
 }

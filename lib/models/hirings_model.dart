@@ -37,7 +37,7 @@ class Hirings{
     return Hirings(
       hiringProfileId: json["hiring_profile_id"],
       profileName: json["profile_name"],
-      birthday: json["birthday"],
+      birthday: DateTime.parse(json["birthday"]),
       placeOfBirth: json["place_of_birth"],
       gender: json["gender"],
       phone: json["phone"],

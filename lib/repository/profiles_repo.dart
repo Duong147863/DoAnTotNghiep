@@ -34,6 +34,7 @@ class ProfilesRepository {
       throw Exception('Failed to load members count');
     }
   }
+  
   Future<Map<String, int>> getMembersCountGenderAndMaritalStatus() async {
     final response = await service.getMembersCountGenderAndMaritalStatus();
 

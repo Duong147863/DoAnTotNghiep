@@ -12,10 +12,12 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/roles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
+import 'package:nloffice_hrm/view_models/roles_view_models.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
@@ -56,6 +58,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
   Positions? selectedPositions;
   List<Salaries> salarys = [];
   Salaries? selectedSalarys;
+  List<Roles> roles = [];
+  Roles? selectedRoles;
   String? _profileImageBase64;
   @override
   void dispose() {
@@ -80,6 +84,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
     _loadDepartments();
     _loadPositions();
     _loadSalaries();
+    _loadRoles();
   }
 
   // Method to load departments
@@ -89,7 +94,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
           .fetchAllDepartments();
       departments = Provider.of<DeparmentsViewModel>(context, listen: false)
           .listDepartments;
-      print("Departments loaded: $departments"); // In chi tiết phòng ban đã tải
       setState(() {
         // Check if widget.profile and widget.profile!.departmentId are not null
         if (widget.profile != null && widget.profile!.departmentId != 'BoD') {
@@ -97,7 +101,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
         }
       });
     } catch (error) {
-      print('Error loading departments: $error');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
       );
@@ -114,6 +117,33 @@ class _AddProfilePageState extends State<AddProfilePage> {
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
+      );
+    }
+  }
+
+  void _loadRoles() async {
+    try {
+      await Provider.of<RolesViewModels>(context, listen: false).getAllRoles();
+      List<Roles> allRoles =
+          Provider.of<RolesViewModels>(context, listen: false).listRoles;
+      print("AppStrings.ROLE_PERMISSIONS: ${AppStrings.ROLE_PERMISSIONS}");
+      print("All roles: ${allRoles.map((role) => role.roleID).toList()}");
+      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        roles = allRoles
+            .where((role) => [1, 2, 3, 4, 5].contains(role.roleID))
+            .toList();
+      } else if (AppStrings.ROLE_PERMISSIONS
+          .contains('Manage Staffs info only')) {
+        roles =
+            allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
+      } else {
+        roles = [];
+      }
+      print("Filtered roles: ${roles.map((role) => role.roleID).toList()}");
+      setState(() {});
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Roles')),
       );
     }
   }
@@ -147,10 +177,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
         placeOfBirth: _placeOfBirthController.text,
         nation: _nationController.text,
         gender: _gender,
-        roleID: 1,
         marriage: _marriage,
         profileStatus: 1,
         //
+        roleID: selectedRoles!.roleID,
         departmentId: selectedDepartment!.departmentID,
         positionId: selectedPositions!.positionId,
         salaryId: selectedSalarys!.salaryId,
@@ -309,6 +339,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 _buildSalaryDropdown('Choose Salary').p(8).w(300),
               ],
             ),
+            Row(
+              children: [
+                Text('Roles').px(8),
+                _buildRolesDropdown('Choose Roles').p(8).w(300),
+              ],
+            ),
+
             //Gender + Marriage
             Row(
               children: [
@@ -556,6 +593,27 @@ class _AddProfilePageState extends State<AddProfilePage> {
           value: salary,
           child:
               Text(salary.salaryId), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  Widget _buildRolesDropdown(String hint) {
+    return DropdownButtonFormField<Roles>(
+      value: selectedRoles,
+      hint: Text(hint),
+      onChanged: (Roles? newValue) {
+        setState(() {
+          selectedRoles = newValue;
+        });
+      },
+      items: roles.map((Roles role) {
+        return DropdownMenuItem<Roles>(
+          value: role,
+          child: Text(role.roleName),
         );
       }).toList(),
       decoration: InputDecoration(

@@ -18,7 +18,7 @@ class PayrollDetailsModel {
         salaryID: json["salary_id"],
         sum: json["sum"],
         minus: json["minus"],
-        month: DateFormat("MM-yyyy").parse(json['month']),
+        month: DateTime.parse(json['month']),
         bonus: json["bonus"]);
   }
   Map<String, dynamic> toJson() {
@@ -27,7 +27,7 @@ class PayrollDetailsModel {
     map["bonus"] = bonus;
     map["minus"] = minus;
     map["sum"] = sum;
-    map["month"] = month.toIso8601String();
+    map["month"] = DateFormat("dd-MM-yyyy").format(month);
     return map;
   }
 }

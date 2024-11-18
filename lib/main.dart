@@ -15,6 +15,7 @@ import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
+import 'package:nloffice_hrm/view_models/roles_view_models.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
 import 'package:nloffice_hrm/view_models/task_view_model.dart';
@@ -38,7 +39,6 @@ import 'package:nloffice_hrm/views/screen/salary_increase_decision.dart';
 import 'package:nloffice_hrm/views/screen/home_screen.dart';
 import 'package:nloffice_hrm/views/screen/employee_managment_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/payslipscreen.dart';
@@ -59,11 +59,11 @@ void main() {
   // await NotificationService.listenToActions();
   // Run app!
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider<EnterprisesViewModel>(
-      create: (context) => EnterprisesViewModel(),
-    ),
     ChangeNotifierProvider<ProjectsViewModel>(
       create: (context) => ProjectsViewModel(),
+    ),
+    ChangeNotifierProvider<EnterprisesViewModel>(
+      create: (context) => EnterprisesViewModel(),
     ),
     ChangeNotifierProvider<RelativesViewModel>(
       create: (context) => RelativesViewModel(),
@@ -104,14 +104,17 @@ void main() {
     ChangeNotifierProvider<TimeKeepingViewModel>(
       create: (context) => TimeKeepingViewModel(),
     ),
-     ChangeNotifierProvider<InsuranceViewModel>(
+    ChangeNotifierProvider<InsuranceViewModel>(
       create: (context) => InsuranceViewModel(),
     ),
-       ChangeNotifierProvider<TaskViewModel>(
+    ChangeNotifierProvider<TaskViewModel>(
       create: (context) => TaskViewModel(),
     ),
-        ChangeNotifierProvider<AssignmentsViewModel>(
+    ChangeNotifierProvider<AssignmentsViewModel>(
       create: (context) => AssignmentsViewModel(),
+    ),
+    ChangeNotifierProvider<RolesViewModels>(
+      create: (context) => RolesViewModels(),
     )
   ], child: MainApp()));
 }

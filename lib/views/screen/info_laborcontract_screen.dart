@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
@@ -42,10 +43,10 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   void initState() {
     super.initState();
     _laborContractIDController.text = widget.laborContracts!.laborContractId;
-    _startTimeController.text = widget.laborContracts!.startTime.toString();
+    _startTimeController.text = DateFormat('dd/MM/yyyy').format(widget.laborContracts!.startTime).toString();
     _endTimeController.text = widget.laborContracts!.endTime == null
         ? "Hiện tại"
-        : widget.laborContracts!.endTime.toString();
+        : DateFormat('dd/MM/yyyy').format(widget.laborContracts!.endTime!).toString();
     _laborContractImageBase64 = widget.laborContracts!.image;
    Provider.of<DeparmentsViewModel>(context, listen: false)
           .fetchAllDepartments();

@@ -26,9 +26,9 @@ class Trainingprocesses {
       trainingprocessesName: json["trainingprocesses_name"],
       trainingprocessesContent: json["trainingprocesses_content"],
       trainingprocessesStatus: json["trainingprocesses_status"],
-      startTime: DateFormat("dd-MM-yyyy").parse(json['start_time']),
+      startTime:DateTime.parse(json['start_time']),
       endTime: json['end_time'] != null
-          ? DateFormat("dd-MM-yyyy").parse(json['end_time'])
+          ? DateTime.parse(json['end_time'])
           : null,
     );
   }

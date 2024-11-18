@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
@@ -48,8 +49,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     _diplomaDegreeNameController.text = widget.diplomas!.diplomaName;
     _diplomaImageBase64 = widget.diplomas!.diplomaImage;
     _modeOfStudyController.text = widget.diplomas!.modeOfStudy;
-    _liscenseDateController.text =
-        widget.diplomas!.licenseDate.toIso8601String();
+    _liscenseDateController.text =DateFormat('dd/MM/yyyy').format(widget.diplomas!.licenseDate).toString();
     _majorController.text = widget.diplomas!.major!;
     _rankingController.text = widget.diplomas!.ranking;
     _grantedByController.text = widget.diplomas!.grantedBy;

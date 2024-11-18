@@ -24,9 +24,9 @@ class WorkingProcesses {
       profileId: json["profile_id"],
       workplaceName: json["workplace_name"],
       workingprocessContent: json["workingprocess_content"],
-      startTime: DateFormat("dd-MM-yyyy").parse(json['start_time']),
+      startTime: DateTime.parse(json['start_time']),
       endTime: json['end_time'] != null
-          ? DateFormat("dd-MM-yyyy").parse(json['end_time'])
+          ? DateTime.parse(json['end_time'])
           : null,
       workingprocessStatus: json["workingprocess_status"],
     );

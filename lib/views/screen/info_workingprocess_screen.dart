@@ -41,9 +41,9 @@ class _InfoWorkingprocessHRScreenState
     _workingprocessContentController.text =
         widget.workingProcesses!.workingprocessContent!;
     _startTimeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.workingProcesses!.startTime);
+        DateFormat('dd/MM/yyyy').format(widget.workingProcesses!.startTime).toString();
     _endTimeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.workingProcesses!.endTime!);
+       DateFormat('dd/MM/yyyy').format(widget.workingProcesses!.endTime!).toString();
   }
 
   void _updateWorkingprocess() async {

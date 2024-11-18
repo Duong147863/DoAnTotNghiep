@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
 import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
@@ -32,8 +33,8 @@ class _InfoInsuranceScreenState extends State<InfoInsuranceScreen> {
     _insuranceIdController.text=widget.insurance!.insuranceId;
     _insuranceTypeNameController.text=widget.insurance!.insuranceTypeName;
     _insurancePercentController.text=widget.insurance!.insurancePercent.toString();
-    _startTimeController.text=widget.insurance!.startTime.toString();
-    _endTimeController.text=widget.insurance!.endTime.toString(); 
+    _startTimeController.text=DateFormat('dd/MM/yyyy').format(widget.insurance!.startTime).toString();
+    _endTimeController.text=DateFormat('dd/MM/yyyy').format(widget.insurance!.endTime).toString(); 
   }
 
   @override

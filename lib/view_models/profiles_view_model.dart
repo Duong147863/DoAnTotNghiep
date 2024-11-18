@@ -15,10 +15,10 @@ class ProfilesViewModel extends ChangeNotifier {
   int quitCount = 0; // Số lượng nhân viên đã nghỉ việc
   int activeCount = 0; // Số lượng nhân viên đang làm việc
   int totalMembers = 0; // Biến lưu trữ tổng số nhân viên
-  int genderMan = 0;
-  int genderWoman = 0;
-  int married = 0;
-  int unmarried = 0;
+  int? genderMan = 0;
+  int? genderWoman = 0;
+  int? married = 0;
+  int? unmarried = 0;
   //
   Profiles? selectedProfile;
   Future<void> fetchAllProfiles() async {
@@ -64,22 +64,22 @@ class ProfilesViewModel extends ChangeNotifier {
   }
 
  Future<void> getMembersCountGenderAndMaritalStatus() async {
-  fetchingData = true;
-  notifyListeners();
-  try {
-    final counts = await repository.getMembersCountGenderAndMaritalStatus();
-    genderMan = counts['genderMan'] ?? 0;
-    genderWoman = counts['genderWoman'] ?? 0;
-    married = counts['married'] ?? 0;
-    unmarried = counts['unmarried'] ?? 0;
-  } catch (e) {
-    print('Error occurred: $e');
-    throw Exception('Failed to fetch members count: $e');
-  } finally {
-    fetchingData = false;
+    fetchingData = true;
     notifyListeners();
+    try {
+      final counts = await repository.getMembersCountGenderAndMaritalStatus();
+      genderMan = counts['genderMan'];
+      genderWoman = counts['genderWoman'];
+      married = counts['married'] ;
+      unmarried = counts['unmarried'] ;
+    } catch (e) {
+      print('Error occurred: $e');
+      throw Exception('Failed to fetch members count: $e');
+    } finally {
+      fetchingData = false;
+      notifyListeners();
+    }
   }
-}
 
   Future<void> membersOfDepartment(String departmentID) async {
     fetchingData = true;

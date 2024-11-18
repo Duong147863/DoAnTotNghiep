@@ -23,8 +23,8 @@ class Insurance {
     return Insurance(
       profileId: json["profile_id"],
       insuranceTypeName: json["insurance_type_name"],
-      startTime: DateFormat("dd-MM-yyyy").parse(json['start_time']),
-      endTime: DateFormat("dd-MM-yyyy").parse(json['end_time']),
+      startTime: DateTime.parse(json['start_time']),
+      endTime:DateTime.parse(json['end_time']),
       insurancePercent: (json["insurance_percent"] is int)
           ? (json["insurance_percent"] as int).toDouble()
           : json["insurance_percent"] as double,
