@@ -75,7 +75,8 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
       defaultBody: true,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.primaryLightColor,
-      titletext: "List Relative Screen".tr(),
+      appBarColor: AppColor.primaryLightColor,
+      titletext: "Thân nhân nhân viên".tr(),
       bodyChildren: [
         Padding(
           padding: const EdgeInsets.all(16.0),
@@ -105,11 +106,20 @@ class _RelativeListScreenState extends State<RelativeListScreen> {
                   dataSet: relatives,
                   itemBuilder: (context, index) {
                     return CustomCard(
-                      title:
-                          "${relatives[index].profileId} - ${relatives[index].relativeJob}",
-                      subttile:
-                          "Tên Thân Nhân: ${relatives[index].relativesName}",
-                    ).onInkTap(
+                      title: Text(
+                        "${relatives[index].profileId}",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subttile: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                              "Tên Thân Nhân: ${relatives[index].relativesName}"),
+                          Text("Quan hệ: ${relatives[index].relationship}"),
+                          Text("Liên hệ: ${relatives[index].relativesPhone}"),
+                        ],
+                      ),
+                    ).p8().onInkTap(
                       () async {
                         // Gọi màn hình thông tin chức vụ và chờ kết quả
                         final updatedPosition = await Navigator.push(

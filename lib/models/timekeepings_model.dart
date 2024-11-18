@@ -40,17 +40,17 @@ class Timekeepings {
     final map = <String, dynamic>{};
     map["timekeeping_id"] = timekeepingId;
     map["checkin"] = _formatTime(checkin);
-    map["checkout"] = _formatTime(checkout!);
+    map["checkout"] = _formatTime(checkout);
     map["shift_id"] = shiftId;
     map["profile_id"] = profileId;
-    map["late"] = _formatTime(late!);
+    map["late"] = _formatTime(late);
     map["date"] = DateFormat("yyyy-MM-dd").format(date);
-    map["leaving_soon"] = _formatTime(leavingSoon!);
+    map["leaving_soon"] = _formatTime(leavingSoon);
     map["status"] = status;
     return map;
   }
 
-  static String _formatTime(DateTime time) {
-    return "${time.hour.toString().padLeft(2, '0')}:${time.minute..toString().padLeft(2, '0')}:${time.second.toString().padLeft(2, '0')}";
+  static String _formatTime(DateTime? time) {
+    return "${time?.hour.toString().padLeft(2, '0')}:${time?.minute..toString().padLeft(2, '0')}:${time?.second.toString().padLeft(2, '0')}";
   }
 }

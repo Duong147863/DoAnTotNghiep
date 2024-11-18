@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/insurance_services.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
+
 class InsuranceRepository {
   final InsuranceServices service = InsuranceServices();
   Future<List<Insurance>> getInsurancesOf(String profileID) async {
     final response = await service.getInsurancesOf(profileID);
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
-
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => Insurance.fromJson(x)).toList();
@@ -35,7 +34,6 @@ class InsuranceRepository {
     try {
       final response = await service.updateInsurances(insurance);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to Update Trainingprocesses: ${response.statusCode}");
@@ -52,7 +50,6 @@ class InsuranceRepository {
     try {
       final response = await service.deleteInsurances(insurancesId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete Trainingprocesses: ${response.statusCode}");

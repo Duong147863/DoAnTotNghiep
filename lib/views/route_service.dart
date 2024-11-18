@@ -69,7 +69,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     ///
     case AppRoutes.absentListRoute:
       return MaterialPageRoute(
-          builder: (context) => const ListAbsentScreen(),
+          builder: (context) => ListAbsentScreen(),
           settings: const RouteSettings(
             name: AppRoutes.absentListRoute,
           ));

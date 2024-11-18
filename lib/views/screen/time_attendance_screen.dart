@@ -33,48 +33,47 @@ class _TimeAttendanceState extends State<TimeAttendance>
   @override
   Widget build(BuildContext context) {
     return BasePage(
-        showAppBar: true,
-        showLeadingAction: true,
-        defaultBody: true,
-        appBarItemColor: AppColor.boneWhite,
-        backgroundColor: AppColor.offWhite,
-        appBar: AppBar(
-          backgroundColor: Color(0xFF0B258A),
-          elevation: 0,
-          automaticallyImplyLeading: true,
-          title: Text(
-            'Time Attendance',
-            style: TextStyle(color: Colors.white),
-          ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
-            child: Container(
-              color: Colors.white,
-              child: TabBar(
-                controller: _tabController,
-                indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
-                labelColor: Colors.black, // Màu cho tab đang chọn
-                tabs: [
-                  Tab(text: 'Check-in'),
-                  Tab(text: 'History'),
-                ],
-              ),
-            ),
-          ),
+      showAppBar: true,
+      showLeadingAction: true,
+      // defaultBody: true,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.offWhite,
+      appBar: AppBar(
+        backgroundColor: Color(0xFF0B258A),
+        elevation: 0,
+        automaticallyImplyLeading: true,
+        title: Text(
+          'Time Attendance',
+          style: TextStyle(color: Colors.white),
         ),
-        bodyChildren: [
-          Expanded(
-            child: TabBarView(
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(kToolbarHeight),
+          child: Container(
+            color: Colors.white,
+            child: TabBar(
               controller: _tabController,
-              children: [
-                QrScan(
-                  user: widget.loginUser,
-                ),
-                HistoryTab(),
+              indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
+              labelColor: Colors.black, // Màu cho tab đang chọn
+              tabs: [
+                Tab(text: 'Check-in'),
+                Tab(text: 'History'),
               ],
             ),
           ),
-        ]);
+        ),
+      ),
+      body: Expanded(
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            QrScan(
+              user: widget.loginUser,
+            ),
+            HistoryTab(),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -71,35 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // _loadData();
   }
 
   @override
   void dispose() {
     super.dispose();
   }
-
-  // void _loadData() async {
-  //   try {
-  //     await Provider.of<ProjectsViewModel>(context, listen: false)
-  //         .getAllProject();
-  //     await Provider.of<DeparmentsViewModel>(context, listen: false)
-  //         .fetchAllDepartments();
-  //     setState(() {
-  //       project =
-  //           Provider.of<ProjectsViewModel>(context, listen: false).listProjects;
-  //       if (project.isNotEmpty) {
-  //         selectedProject = project.firstWhere(
-  //           (pro) => pro.projectId == widget.profile!.profileId,
-  //         );
-  //       }
-  //     });
-  //   } catch (error) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Failed to load salaries')),
-  //     );
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -176,87 +153,193 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Expanded(
-              child: ListView(children: [
-                AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
-                    ? ListTile(
-                        title: const Text("Doanh nghiệp"),
-                        onTap: () {},
-                      )
-                    : UiSpacer.emptySpace(),
-                ListTile(
-                  title: const Text("Nghỉ phép"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                          builder: (BuildContext context) => ListAbsentScreen(
-                                profiles: widget.profile,
-                              )),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Lương"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => SalaryListScreen(
-                          profiles: widget.profile,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Thân nhân nhân viên"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            RelativeListScreen(profiles: widget.profile),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Ca làm việc"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            const ListShiftsScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Danh sách dự án"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            const ListProjectScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Hợp đồng lao động"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            const AddLaborContractScreen(),
-                      ),
-                    );
-                  },
-                ),
-              ]),
+              child: ListView(
+                  children: AppStrings.ROLE_PERMISSIONS
+                          .contains('Manage BoD & HR accounts')
+                      ? <Widget>[
+                          ListTile(
+                            title: const Text("Doanh nghiệp"),
+                            onTap: () {
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute<void>(
+                              //       builder: (BuildContext context) =>
+                              //           ListAbsentScreen(
+                              //             profiles: widget.profile,
+                              //           )),
+                              // );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Nghỉ phép"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        ListAbsentScreen(
+                                          profiles: widget.profile,
+                                        )),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Lương"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      SalaryListScreen(
+                                    profiles: widget.profile,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Thân nhân nhân viên"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      RelativeListScreen(
+                                          profiles: widget.profile),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Ca làm việc"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const ListShiftsScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Tuyển dụng"),
+                            onTap: () {
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute<void>(
+                              //     builder: (BuildContext context) =>
+                              //         const ListProjectScreen(),
+                              //   ),
+                              // );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Dự án"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const ListProjectScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Hợp đồng lao động"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const AddLaborContractScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                        ]
+                      : AppStrings.ROLE_PERMISSIONS
+                              .contains('Manage Staffs info only')
+                          ? [
+                              ListTile(
+                                title: const Text("Nghỉ phép"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                            ListAbsentScreen(
+                                              profiles: widget.profile,
+                                            )),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Lương"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          SalaryListScreen(
+                                        profiles: widget.profile,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Thân nhân nhân viên"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          RelativeListScreen(
+                                              profiles: widget.profile),
+                                    ),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Ca làm việc"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          const ListShiftsScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Tuyển dụng"),
+                                onTap: () {
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute<void>(
+                                  //     builder: (BuildContext context) =>
+                                  //         const ListProjectScreen(),
+                                  //   ),
+                                  // );
+                                },
+                              ),
+                              ListTile(
+                                title: const Text("Hợp đồng lao động"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          const AddLaborContractScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ]
+                          : []),
             ),
             Align(
               alignment: FractionalOffset.bottomCenter,
@@ -294,6 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF0B258A),
         elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -712,7 +796,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter project ID';
+                                    return 'Please enter Mã dự án';
                                   }
                                   return null;
                                 },
@@ -793,89 +877,83 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildbodyChildren() {
     if (AppStrings.ROLE_PERMISSIONS
         .containsAny(['Manage BoD & HR accounts', 'Manage Staffs info only'])) {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
-              if (!viewModel.fetchingData &&
-                  viewModel.listDepartments.isEmpty) {
-                Provider.of<DeparmentsViewModel>(context, listen: false)
-                    .fetchAllDepartments();
-              }
-              if (viewModel.fetchingData) {
-                // While data is being fetched
-                return const Center(child: CircularProgressIndicator());
-              } else {
-                // If data is successfully fetched
-                List<Departments> departments = viewModel.listDepartments;
-                return CustomGridView(
-                    childAspectRatio: 2,
-                    dataSet: departments,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        color: const Color.fromARGB(255, 243, 243, 242),
-                        elevation: 1,
-                        // margin: EdgeInsets.all(13),
-                        child: Wrap(
-                          clipBehavior: Clip.antiAlias,
-                          direction: Axis.vertical,
-                          children: [
-                            Text(
-                              departments[index].departmentName,
-                              maxLines: 2,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ],
-                        ).p(13),
-                      ).onTap(() => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DepartmentInfoScreen(
-                              departments: departments[index],
-                            ),
-                          )));
-                    });
-              }
-            }),
-            const Divider().p12(),
-            _buildEmployeeStats()
-            // ExpansionPanelList(
-            //   expansionCallback: (int panelIndex, bool isExpanded) {
-            //     setState(() {
-            //       isExpandedList[panelIndex] = isExpanded;
-            //     });
-            //   },
-            //   children: [
-            //     ExpansionPanel(
-            //       headerBuilder: (BuildContext context, bool isExpanded) {
-            //         return const Text("Nhân sự công ty");
-            //       },
-            //       isExpanded: true,
-            //       body: Consumer<ProfilesViewModel>(
-            //           builder: (context, viewModel, child) {
-            //         if (!viewModel.fetchingData &&
-            //             viewModel.allProfiles.isEmpty) {
-            //           Provider.of<ProfilesViewModel>(context, listen: false)
-            //               .fetchAllProfiles();
-            //         }
-            //         List<Profiles> listProfiles = viewModel.allProfiles;
-            //         return CustomListView(
-            //             dataSet: listProfiles,
-            //             itemBuilder: (context, index) {
-            //               return ListTile(
-            //                 leading: const CircleAvatar(),
-            //                 title: Text(listProfiles[index].profileName),
-            //                 subtitle: Text(listProfiles[index].positionId!),
-            //               );
-            //             });
-            //       }),
-            //     ),
-            //   ],
-            // ).p8()
-          ],
-        ),
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
+            if (!viewModel.fetchingData && viewModel.listDepartments.isEmpty) {
+              Provider.of<DeparmentsViewModel>(context, listen: false)
+                  .fetchAllDepartments();
+            }
+            if (viewModel.fetchingData) {
+              // While data is being fetched
+              return const Center(child: CircularProgressIndicator());
+            } else {
+              // If data is successfully fetched
+              List<Departments> departments = viewModel.listDepartments;
+              return CustomGridView(
+                  childAspectRatio: 2,
+                  dataSet: departments,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color: const Color.fromARGB(255, 243, 243, 242),
+                      elevation: 1,
+                      // margin: EdgeInsets.all(13),
+                      child: Wrap(
+                        clipBehavior: Clip.antiAlias,
+                        direction: Axis.vertical,
+                        children: [
+                          Text(
+                            departments[index].departmentName,
+                          ),
+                        ],
+                      ).p(13),
+                    ).onTap(() => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DepartmentInfoScreen(
+                            departments: departments[index],
+                          ),
+                        )));
+                  }).p8();
+            }
+          }),
+          const Divider().p12(),
+          _buildEmployeeStats()
+          // ExpansionPanelList(
+          //   expansionCallback: (int panelIndex, bool isExpanded) {
+          //     setState(() {
+          //       isExpandedList[panelIndex] = isExpanded;
+          //     });
+          //   },
+          //   children: [
+          //     ExpansionPanel(
+          //       headerBuilder: (BuildContext context, bool isExpanded) {
+          //         return const Text("Nhân sự công ty");
+          //       },
+          //       isExpanded: true,
+          //       body: Consumer<ProfilesViewModel>(
+          //           builder: (context, viewModel, child) {
+          //         if (!viewModel.fetchingData &&
+          //             viewModel.allProfiles.isEmpty) {
+          //           Provider.of<ProfilesViewModel>(context, listen: false)
+          //               .fetchAllProfiles();
+          //         }
+          //         List<Profiles> listProfiles = viewModel.allProfiles;
+          //         return CustomListView(
+          //             dataSet: listProfiles,
+          //             itemBuilder: (context, index) {
+          //               return ListTile(
+          //                 leading: const CircleAvatar(),
+          //                 title: Text(listProfiles[index].profileName),
+          //                 subtitle: Text(listProfiles[index].positionId!),
+          //               );
+          //             });
+          //       }),
+          //     ),
+          //   ],
+          // ).p8()
+        ],
       );
     } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
       {
@@ -912,6 +990,7 @@ class _HomeScreenState extends State<HomeScreen> {
             //     ),
             //   ],
             // ).p8(),
+
             Consumer<ProjectsViewModel>(builder: (context, viewModel, child) {
               if (!viewModel.fetchingData && viewModel.listProjects.isEmpty) {
                 Provider.of<ProjectsViewModel>(context, listen: false)
@@ -949,7 +1028,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               projects: projects[index],
                             ),
                           )));
-                    });
+                    }).p8();
               }
             }),
             Divider().px12(),

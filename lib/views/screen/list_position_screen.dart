@@ -142,8 +142,8 @@ class _PositionsListScreenState extends State<PositionsListScreen> {
                 itemBuilder: (context, index) {
                   return CustomCard(
                           title:
-                              "${positions[index].positionId} - ${positions[index].positionName}",
-                          subttile: "Tổng số lượng người nắm chức vụ: ")
+                              Text("${positions[index].positionId} - ${positions[index].positionName}"),
+                          subttile: Text("Tổng số lượng người nắm chức vụ: "))
                       .onInkTap(
                     () async {
                       // Gọi màn hình thông tin chức vụ và chờ kết quả

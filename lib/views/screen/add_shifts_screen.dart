@@ -82,7 +82,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
     return BasePage(
       showAppBar: true,
       appBar: AppBar(
-        title: Text('Add Shifts'),
+        title: Text('Tạo ca làm việc mới'),
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),
@@ -95,7 +95,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
                 child: TextFormField(
                   controller: _shiftIdController,
                   decoration: InputDecoration(
-                    labelText: 'Shifts ID',
+                    labelText: 'Mã',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
@@ -113,7 +113,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
                 child: TextFormField(
                   controller: _shiftNameControler,
                   decoration: InputDecoration(
-                    labelText: 'Shifts Name',
+                    labelText: 'Tên ca làm',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
@@ -131,7 +131,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
                 child: TextFormField(
                   controller: _startTimeController,
                   decoration: InputDecoration(
-                    labelText: 'Start Time',
+                    labelText: 'Giờ vào',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
@@ -152,7 +152,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
                 child: TextFormField(
                   controller: _endTimeController,
                   decoration: InputDecoration(
-                    labelText: 'End Time',
+                    labelText: 'Giờ ra',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                     ),
@@ -171,7 +171,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text('Add Shift'),
+                child: Text('Tạo'),
               ),
             ],
           ),

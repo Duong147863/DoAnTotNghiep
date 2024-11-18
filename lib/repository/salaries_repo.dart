@@ -41,16 +41,19 @@ class SalariesRepository {
       throw Exception('Failed to load data');
     }
   }
+
   Future<List<Salaries>> fetchAllSalaries() async {
     final response = await service.getAllSalaries();
 
     if (response.statusCode == 200) {
       return List<Salaries>.from(
           json.decode(response.body).map((x) => Salaries.fromJson(x)));
-    } else {;
+    } else {
+      ;
       throw Exception('Failed to load data');
     }
   }
+
   Future<bool> addSalary(Salaries salary) async {
     final response = await service.addNewSalary(salary);
     if (response.statusCode == 200) {
@@ -67,7 +70,6 @@ class SalariesRepository {
     try {
       final response = await service.updateSalary(salary);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to update department: ${response.statusCode}");
@@ -79,11 +81,11 @@ class SalariesRepository {
       throw Exception('Failed to update profile');
     }
   }
-   Future<bool> deleteSalary(String salaryId) async {
+
+  Future<bool> deleteSalary(String salaryId) async {
     try {
       final response = await service.deleteSalary(salaryId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete Salary: ${response.statusCode}");
@@ -95,13 +97,11 @@ class SalariesRepository {
       throw Exception('Failed to delete Salary');
     }
   }
-    Future<List<Profiles>> getAllSalariesByProfileID(
-      String profileId) async {
+
+  Future<List<Profiles>> getAllSalariesByProfileID(String profileId) async {
     final response = await service.getAllSalariesByProfileID(profileId);
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
-
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => Profiles.fromJson(x)).toList();

@@ -22,7 +22,7 @@ class Profiles {
       this.marriage = false,
       required this.temporaryAddress,
       required this.currentAddress,
-      this.roleID = 1,
+      required this.roleID,
       required this.profileImage});
 
   String profileId;
