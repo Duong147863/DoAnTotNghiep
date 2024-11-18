@@ -167,6 +167,7 @@ class _AddInsuranceScreenState extends State<AddInsuranceScreen> {
                   ).px8(),
                   SizedBox(height: 16),
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _profileIDController,
                     labelText: 'profile ID',
                     validator: (value) {

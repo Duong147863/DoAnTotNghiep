@@ -10,16 +10,21 @@ import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/employeeStatus.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/projects_model.dart';
+import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
+import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
+import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_assignment_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_task_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
@@ -27,6 +32,7 @@ import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_salari_sceen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
@@ -563,6 +569,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               }),
+          SpeedDialChild(
+              label: "Thêm nghỉ phép",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => AddAbsentRequestScreen(
+                        profiles: widget.profile,
+                      ),
+                    ));
+              }),
+          SpeedDialChild(
+              label: "Thêm lương",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => SalaryAddScreen(),
+                    ));
+              }),
         ],
       );
     } else if (AppStrings.ROLE_PERMISSIONS
@@ -586,6 +612,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) =>
                             const AddShiftsScreen(),
+                      ));
+                }),
+            SpeedDialChild(
+                label: "Thêm nghỉ phép",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddAbsentRequestScreen(
+                          profiles: widget.profile,
+                        ),
                       ));
                 }),
             SpeedDialChild(
@@ -613,6 +651,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute<void>(
                         builder: (BuildContext context) => AddTaskScreen(),
+                      ));
+                }),
+            SpeedDialChild(
+                label: "Thêm nghỉ phép",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddAbsentRequestScreen(profiles: widget.profile),
                       ));
                 }),
             SpeedDialChild(
@@ -722,6 +770,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute<void>(
                       builder: (BuildContext context) =>
                           const AddAssignmentScreen(),
+                    ));
+              }),
+          SpeedDialChild(
+              label: "Thêm nghỉ phép",
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute<void>(
+                      builder: (BuildContext context) => AddAbsentRequestScreen(
+                        profiles: widget.profile,
+                      ),
                     ));
               }),
         ],
@@ -853,9 +912,8 @@ class _HomeScreenState extends State<HomeScreen> {
             //     ),
             //   ],
             // ).p8(),
-             Consumer<ProjectsViewModel>(builder: (context, viewModel, child) {
-              if (!viewModel.fetchingData &&
-                  viewModel.listProjects.isEmpty) {
+            Consumer<ProjectsViewModel>(builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData && viewModel.listProjects.isEmpty) {
                 Provider.of<ProjectsViewModel>(context, listen: false)
                     .getAllProject();
               }
@@ -894,7 +952,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     });
               }
             }),
-            
+            Divider().px12(),
+            //Luong
           ],
         );
       }
@@ -902,49 +961,56 @@ class _HomeScreenState extends State<HomeScreen> {
       return UiSpacer.emptySpace();
     }
   }
-  }
+}
 
-  Widget _buildEmployeeStats() {
-    return Consumer<ProfilesViewModel>(
-  builder: (context, viewModel, child) {
-    if (!viewModel.fetchingData) {
-      viewModel.fetchQuitAndActiveMembersCount();
-    }
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: SfCircularChart(
-        title: ChartTitle(text: 'Thống kê nhân viên'),  // Tiêu đề cho biểu đồ
-        legend: Legend(isVisible: true, position: LegendPosition.bottom),  // Hiển thị legend ở dưới
-        series: <CircularSeries<EmployeeStat, String>>[
-          PieSeries<EmployeeStat, String>(
-            dataSource: [
-              EmployeeStat('Đang làm việc', viewModel.activeCount),
-              EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
-            ],
-            xValueMapper: (EmployeeStat stats, _) => stats.status,
-            yValueMapper: (EmployeeStat stats, _) => stats.count,
-            dataLabelSettings: DataLabelSettings(
+Widget _buildEmployeeStats() {
+  return Consumer<ProfilesViewModel>(
+    builder: (context, viewModel, child) {
+      if (!viewModel.fetchingData) {
+        viewModel.fetchQuitAndActiveMembersCount();
+      }
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SfCircularChart(
+          title: ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
+          legend: Legend(
               isVisible: true,
-              labelPosition: ChartDataLabelPosition.outside,  // Đặt nhãn ra ngoài
-              textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),  // Cải thiện kiểu nhãn
+              position: LegendPosition.bottom), // Hiển thị legend ở dưới
+          series: <CircularSeries<EmployeeStat, String>>[
+            PieSeries<EmployeeStat, String>(
+              dataSource: [
+                EmployeeStat('Đang làm việc', viewModel.activeCount),
+                EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+              ],
+              xValueMapper: (EmployeeStat stats, _) => stats.status,
+              yValueMapper: (EmployeeStat stats, _) => stats.count,
+              dataLabelSettings: DataLabelSettings(
+                isVisible: true,
+                labelPosition:
+                    ChartDataLabelPosition.outside, // Đặt nhãn ra ngoài
+                textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black), // Cải thiện kiểu nhãn
+              ),
+              pointColorMapper: (EmployeeStat stats, _) {
+                // Thay đổi màu sắc của từng phần trong biểu đồ
+                if (stats.status == 'Đang làm việc') {
+                  return Colors.blue;
+                } else {
+                  return Colors.red;
+                }
+              },
+              explode: true, // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
+              explodeIndex: 0, // Tạo hiệu ứng phóng to phần "Đang làm việc"
+              explodeOffset: "10%", // Điều chỉnh độ phóng to của phần explode
+              radius: '70%', // Đặt kích thước biểu đồ tròn
             ),
-            pointColorMapper: (EmployeeStat stats, _) {
-              // Thay đổi màu sắc của từng phần trong biểu đồ
-              if (stats.status == 'Đang làm việc') {
-                return Colors.blue;
-              } else {
-                return Colors.red;
-              }
-            },
-            explode: true,  // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
-            explodeIndex: 0,  // Tạo hiệu ứng phóng to phần "Đang làm việc"
-            explodeOffset: "10%",  // Điều chỉnh độ phóng to của phần explode
-            radius: '70%',  // Đặt kích thước biểu đồ tròn
-          ),
-        ],
-        tooltipBehavior: TooltipBehavior(enable: true),  // Hiển thị tooltip khi hover qua phần tử
-      ),
-    );
-  },
-);
-  }
+          ],
+          tooltipBehavior: TooltipBehavior(
+              enable: true), // Hiển thị tooltip khi hover qua phần tử
+        ),
+      );
+    },
+  );
+}

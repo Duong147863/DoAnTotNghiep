@@ -55,7 +55,7 @@ class _InfoWorkingprocessHRScreenState
           workingprocessContent: _workingprocessContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          workingprocessStatus: 0);
+          workingprocessStatus: _statusWorkingprocesses);
       try {
         await Provider.of<WorkingprocessesViewModel>(context, listen: false)
             .updateWorkingprocess(updatedWorkingprocess);
@@ -309,7 +309,7 @@ class _InfoWorkingprocessHRScreenState
                               return AlertDialog(
                                 title: Text('Confirm Delete'),
                                 content: Text(
-                                    'Are you sure you want to delete this position?'),
+                                    'Are you sure you want to delete this workingprocess?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

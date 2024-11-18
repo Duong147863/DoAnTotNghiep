@@ -11,6 +11,7 @@ class LaborContracts {
     required this.laborContractId,
     required this.enterpriseId,
     required this.departmentId,
+    this.isExpanded=false
   });
 
   String image;
@@ -19,7 +20,7 @@ class LaborContracts {
   String laborContractId;
   int enterpriseId;
   String departmentId;
-
+   bool isExpanded;
   factory LaborContracts.fromJson(Map<String, dynamic> json) {
     return LaborContracts(
       image: json["image"],

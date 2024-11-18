@@ -8,7 +8,9 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
+import 'package:nloffice_hrm/views/screen/info_absent_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class ListAbsentScreen extends StatefulWidget {
   final Profiles? profiles;
@@ -36,7 +38,15 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
       }
     });
   }
-
+   void _handleUpdate(Absents updatedAbsent) {
+    setState(() {
+      int index = absents.indexWhere(
+          (abs) => abs.ID == updatedAbsent.ID);
+      if (index != -1) {
+        absents[index] = updatedAbsent;
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -76,11 +86,58 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
                 return CustomListView(
                   dataSet: absents,
                   itemBuilder: (context, index) {
-                    return CustomCard(
-                      title:
-                          "${absents[index].profileID} - ${absents[index].reason}",
-                      subttile: "Ngày Nghỉ ${absents[index].daysOff}",
-                    );
+                    return Card(
+                    child: ListTile(
+                      title: Text(
+                          "${absents[index].profileID}"),
+                      subtitle: Text(
+                        absents[index].status == -1
+                            ? "Từ Chối Duyệt"
+                            : absents[index].status == 0
+                                ? "Đợi Duyệt"
+                                : absents[index].status ==
+                                        1
+                                    ? "Đã Duyệt"
+                                    : "Trạng Thái Không Hợp Lệ",
+                        style: TextStyle(
+                          color: absents[index].status ==
+                                  -1
+                              ? Colors.red
+                              : absents[index].status == 0
+                                  ? Colors.yellow
+                                  : absents[index]
+                                              .status ==
+                                          1
+                                      ? Colors.green
+                                      : Colors
+                                          .black,
+                        ),
+                      ),
+                    ),
+                  ).onInkTap(
+                    () async {
+                      if (absents[index].status == 1) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text("Đã duyệt. Không thể chỉnh sửa!")),
+                        );
+                        return; 
+                      }
+                      final updatedAbsent = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InfoAbsentScreen(
+                            absents: absents[index],
+                          ),
+                        ),
+                      );
+
+                      // Kiểm tra xem có dữ liệu cập nhật không
+                      if (updatedAbsent != null) {
+                        _handleUpdate(updatedAbsent);
+                      }
+                    },
+                  );
                   },
                 );
               }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/models/getSalarySlip.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -22,6 +23,8 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
   final _allowancesController = TextEditingController();
   final _personalTaxController = TextEditingController();
   bool _isEditing = false;
+  List<Getsalaryslip> getsalaryslip = [];
+  Getsalaryslip? selectedGetsalaryslip;
   void initState() {
     super.initState();
     if (widget.salaries != null) {
@@ -30,6 +33,7 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
           widget.salaries!.salaryCoefficient.toString();
       _personalTaxController.text = widget.salaries!.personalTax.toString();
       _allowancesController.text = widget.salaries!.allowances.toString();
+      _loadSalary();
     }
   }
 
@@ -68,7 +72,25 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
       );
     }
   }
-
+  void _loadSalary() async {
+  try {
+    await Provider.of<SalariesViewModel>(context, listen: false)
+        .getSalaryDetails(widget.salaries!.salaryId);
+    getsalaryslip =
+            Provider.of<SalariesViewModel>(context, listen: false).GetsalaryslipList;
+    setState(() {
+        if (getsalaryslip.isNotEmpty) {
+          selectedGetsalaryslip = getsalaryslip.firstWhere(
+            (get) => get.salaryId == widget.salaries!.salaryId,
+          );
+        }
+      });
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Failed to load Assignments $e')),
+    );
+  }
+}
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -76,7 +98,8 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
       titletext: 'Info Salary Screen',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
-      body: Padding(
+      body: SingleChildScrollView(
+      child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -137,7 +160,8 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
                     },
                     enabled: _isEditing,
                   ).px8(),
-                  Spacer(),
+                  _buildSalaryList(),
+                  SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -194,6 +218,71 @@ class _InfoSalariScreenState extends State<InfoSalariScreen> {
           ),
         ),
       ),
+    ),
     );
   }
+   Widget _buildSalaryList() {
+  if (getsalaryslip.isEmpty) {
+    return Center(
+      child: Text(
+        "Không có thông tin lương nhân viên nào",
+        style: TextStyle(
+            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+      ),
+    );
+  }
+
+  return ExpansionPanelList(
+    elevation: 1,
+    expandedHeaderPadding: EdgeInsets.all(0),
+    expansionCallback: (int index, bool isExpanded) {
+      setState(() {
+        getsalaryslip[index].isExpanded = isExpanded;
+      });
+    },
+    children: getsalaryslip.map((process) {
+      
+      return ExpansionPanel(
+        headerBuilder: (BuildContext context, bool isExpanded) {
+          return ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+            leading: Icon(Icons.monetization_on,
+                color: const Color.fromARGB(255, 68, 218, 255)),
+          );
+        },
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Chi tiết:",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  ),
+                  SizedBox(height: 10),
+                  Text("Tên nhân viên: ${process.profileName}",
+                      style: TextStyle(fontSize: 16)),       
+                  Text("Tên chức vụ: ${process.positionName}",
+                      style: TextStyle(fontSize: 16)),        
+                  SizedBox(height: 20),
+                  Divider(color: Colors.grey),
+                  SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ),
+        ),
+        isExpanded: process.isExpanded,
+      );
+    }).toList(),
+  );
+}
 }

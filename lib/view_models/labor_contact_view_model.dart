@@ -16,4 +16,17 @@ class LaborContactsViewModel extends ChangeNotifier {
       throw Exception('Failed to create data: $e');
     }
   }
+
+  Future<void> getLaborContactOf(String laborContactId) async {
+    try {
+      List<LaborContracts> laborContactList =
+          await repository.getLaborContactOf(laborContactId);
+      _list = laborContactList
+          .where((lab) => lab.laborContractId == laborContactId)
+          .toList();
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load LaborContracts: $e');
+    }
+  }
 }

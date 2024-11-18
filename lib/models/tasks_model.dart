@@ -13,7 +13,7 @@
     return Tasks(
       taskId: json["task_id"],
       taskName: json["task_name"],
-      taskStatus: int.parse(json["task_status"]),
+      taskStatus: json["task_status"],
       taskContent: json["task_content"],
     );
   }

@@ -42,7 +42,7 @@ class DiplomasViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> deleteTrainingProcesses(String diplomaId) async {
+  Future<void> deleteDiplomas(String diplomaId) async {
     try {
       bool success = await repository.deleteDiplomas(diplomaId);
       if (success) {
