@@ -28,7 +28,7 @@ class Absents {
     return Absents(
       ID: json["ID"],
       reason: json["reason"],
-      to: json['to'],
+      to: DateTime.parse(json['to']),
       status: json["status"],
       profileID: json["profile_id"],
       daysOff: json["days_off"] != null
@@ -36,7 +36,7 @@ class Absents {
               ? (json["days_off"] as int).toDouble()
               : json["days_off"] as double)
           : null,
-      from: json['from'],
+      from: DateTime.parse(json['from']),
     );
   }
 

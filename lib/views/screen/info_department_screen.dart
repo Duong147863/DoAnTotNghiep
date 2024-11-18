@@ -92,7 +92,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                   return null;
                 },
                 enabled: _isEditing,
-              ).w(150).px4(),
+              ).w(150).p4(),
               CustomTextFormField(
                 textEditingController: _departmentNameController,
                 labelText: 'Tên',
@@ -103,9 +103,9 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                   return null;
                 },
                 enabled: _isEditing,
-              ).w(245),
+              ).w(245).p4(),
             ],
-          ).p8().py4(),
+          ),
           Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
             if (!viewModel.fetchingData &&
                 viewModel.listMembersOfDepartment.isEmpty) {

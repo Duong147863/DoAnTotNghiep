@@ -30,16 +30,20 @@ import 'package:nloffice_hrm/views/screen/add_task_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
+import 'package:nloffice_hrm/views/screen/edit_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_salari_sceen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
+import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:provider/provider.dart';
@@ -158,16 +162,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           .contains('Manage BoD & HR accounts')
                       ? <Widget>[
                           ListTile(
-                            title: const Text("Doanh nghiệp"),
+                            title: const Text("Doanh nghiệp của bạn"),
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute<void>(
-                              //       builder: (BuildContext context) =>
-                              //           ListAbsentScreen(
-                              //             profiles: widget.profile,
-                              //           )),
-                              // );
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          InfoEnterpriseScreen()));
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Quyết định"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        DecisionsListScreen()),
+                              );
                             },
                           ),
                           ListTile(
@@ -393,6 +405,18 @@ class _HomeScreenState extends State<HomeScreen> {
             ).p(10),
           ],
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (BuildContext context) => NotificationScreen(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.notifications_none))
+        ],
       ),
       backgroundColor: AppColor.primaryLightColor,
       defaultBody: true,
@@ -460,15 +484,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
         buildbodyChildren(),
-        const SizedBox(height: 20),
       ],
       fab: buildFab(),
     );
   }
 
   Widget buildFab() {
-    if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-      //Giám đốc
+    if (AppStrings.ROLE_PERMISSIONS
+        .contains('Manage BoD & HR accounts')) //Giám đốc
+    {
       return SpeedDial(
         elevation: 0,
         icon: Icons.menu,
@@ -654,18 +678,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }),
           SpeedDialChild(
-              label: "Thêm nghỉ phép",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => AddAbsentRequestScreen(
-                        profiles: widget.profile,
-                      ),
-                    ));
-              }),
-          SpeedDialChild(
-              label: "Thêm lương",
+              label: "Thêm mức lương",
               onTap: () {
                 Navigator.push(
                     context,
@@ -763,7 +776,6 @@ class _HomeScreenState extends State<HomeScreen> {
       final formKey = GlobalKey<FormState>();
       final projectIdController = TextEditingController();
       final projectNameController = TextEditingController();
-
       return SpeedDial(
         elevation: 0,
         icon: Icons.menu,

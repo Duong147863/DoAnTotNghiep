@@ -15,8 +15,10 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
 
   @override
   void initState() {
-    Provider.of<EnterprisesViewModel>(context).fetchAllEnterprises();
-    enterprise = Provider.of<EnterprisesViewModel>(context).enterprises;
+    Provider.of<EnterprisesViewModel>(context, listen: false)
+        .fetchAllEnterprises();
+    enterprise =
+        Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
     super.initState();
   }
 
@@ -88,9 +90,7 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditEnterpriseScreen(
-                            enterprise: enterprise!,
-                          ),
+                          builder: (context) => EditEnterpriseScreen(),
                         ));
                   },
                 ),

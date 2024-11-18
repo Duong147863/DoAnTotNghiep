@@ -17,22 +17,20 @@ class Decisions {
   String? profileId;
   Image decisionImage;
   String decisionContent;
-  
-  
-  factory Decisions.fromJson(Map<String,dynamic>json){
+
+  factory Decisions.fromJson(Map<String, dynamic> json) {
     return Decisions(
-      decisionId: json["decision_id"],
-      decisionContent: json["decision_content"],
-      decisionName: json["decision_name"],
-      assignDate: json["assign_date"],
-      decisionImage: json["decision_image"],
-      decisionStatus: json['decision_status'],
-      profileId: json['profile_id']
-    );
+        decisionId: json["decision_id"],
+        decisionContent: json["decision_content"],
+        decisionName: json["decision_name"],
+        assignDate: DateTime.parse(json["assign_date"]),
+        decisionImage: json["decision_image"],
+        decisionStatus: json['decision_status'],
+        profileId: json['profile_id']);
   }
 
-  Map<String,dynamic>toJson(){
-    final map =<String,dynamic>{};
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
     map["decision_id"] = decisionId;
     map["decision_content"] = decisionContent;
     map["decision_name"] = decisionName;
