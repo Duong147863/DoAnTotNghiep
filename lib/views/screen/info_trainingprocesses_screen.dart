@@ -59,7 +59,7 @@ class _InfoTrainingprocessesScreenState
           trainingprocessesContent: _trainingprocessesContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          trainingprocessesStatus: 0);
+          trainingprocessesStatus: _statusTrainingProcesses);
       try {
         await Provider.of<TrainingprocessesViewModel>(context, listen: false)
             .updateTrainingProcesses(updateTrainingProcesses);
@@ -316,7 +316,7 @@ class _InfoTrainingprocessesScreenState
                               return AlertDialog(
                                 title: Text('Confirm Delete'),
                                 content: Text(
-                                    'Are you sure you want to delete this position?'),
+                                    'Are you sure you want to delete this trainingprocesses?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

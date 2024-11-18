@@ -43,4 +43,31 @@ class AbsentsViewModel extends ChangeNotifier {
     }
     fetchingData = false;
   }
+    Future<void> updateAbents(Absents asbents) async {
+    try {
+      await repository.updateAbents(asbents);
+
+      int index =
+          _list.indexWhere((abs) => abs.ID == asbents.ID);
+      if (index != -1) {
+        _list[index] = asbents;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to update relatives: $e');
+    }
+  }
+  Future<void> deleteAbents(int ID) async {
+    try {
+      bool success = await repository.deleteAbents(ID);
+      if (success) {
+        _list.removeWhere((abs) => abs.ID == ID);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to delete relatives');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete relatives: $e');
+    }
+  }
 }

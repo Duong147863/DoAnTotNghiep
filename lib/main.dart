@@ -41,7 +41,6 @@ import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_dot_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_absents_screen.dart';
 import 'package:nloffice_hrm/views/screen/payslipscreen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';

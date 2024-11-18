@@ -1,34 +1,35 @@
 import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/assignments_services.dart';
+import 'package:nloffice_hrm/models/assiginment_task.dart';
 import 'package:nloffice_hrm/models/assignments_model.dart';
 
 class AssignmentsRepository {
-  final AssignmentsServices service = AssignmentsServices();
+   final AssignmentsServices service = AssignmentsServices();
+   
+  Future<List<AssiginmentTask>> getAssignmentsDetails(String projectId) async {
+  try {
+    final response = await service.getAssignmentsDetails(projectId);
 
-  Future<List<Assignments>> getAssignmentsDetails(String projectId) async {
-    try {
-      final response = await service.getAssignmentsDetails(projectId);
-
-      if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = json.decode(response.body);
-        List<Assignments> assignments = jsonResponse
-            .map((assignmentJson) => Assignments.fromJson(assignmentJson))
-            .toList();
-        return assignments;
-      } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
-        throw Exception('Failed to load assignments details');
-      }
-    } catch (error) {
-      print("Error: $error");
-
+    if (response.statusCode == 200) {
+      print("load successful. Response body: ${response.body}");
+      List<dynamic> jsonResponse = json.decode(response.body);
+      List<AssiginmentTask> assignments = jsonResponse
+          .map((assignmentJson) => AssiginmentTask.fromJson(assignmentJson))
+          .toList();
+      return assignments;
+    } else {
+      print("Failed to delete Relative: ${response.statusCode}");
+      print("Response body: ${response.body}");
       throw Exception('Failed to load assignments details');
     }
+  } catch (error) {
+    print("Error: $error");
+    
+    throw Exception('Failed to load assignments details');
   }
-
-  Future<bool> createNewAssignments(Assignments assignmeents) async {
+}
+   Future<bool> createNewAssignments(Assignments assignmeents) async {
     final response = await service.createNewAssignments(assignmeents);
     if (response.statusCode == 200) {
       return true;

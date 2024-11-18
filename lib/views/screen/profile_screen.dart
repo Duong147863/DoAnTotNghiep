@@ -8,6 +8,7 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
+import 'package:nloffice_hrm/models/labor_contracts_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
@@ -17,6 +18,7 @@ import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
+import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
@@ -28,8 +30,12 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
@@ -68,7 +74,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _nationController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _temporaryAddressController = TextEditingController();
   final _currentAddressController = TextEditingController();
   DateTime _birthday = DateTime.now();
@@ -95,6 +100,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Diplomas? selectedDiplomas;
   List<Insurance> insurance = [];
   Insurance? selectedinsurance;
+  List<LaborContracts> laborContracts = [];
+  LaborContracts? selectedlaborContracts;
   //
   void initState() {
     super.initState();
@@ -125,6 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadRelative();
     _loadDiplomas();
     _loadInsurance();
+    _loadLaborContact();
   }
 
   void _handleUpdateRelative(Relatives updatedRelative) {
@@ -146,7 +154,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     });
   }
-
+    void _handleUpdateInsurance(Insurance updatedInsurance) {
+    setState(() {
+      int index = insurance.indexWhere(
+          (ins) => ins.insuranceId == updatedInsurance.insuranceId);
+      if (index != -1) {
+        insurance[index] = updatedInsurance;
+      }
+    });
+  }
   // Method to load departments
   void _loadDepartments() async {
     try {
@@ -267,6 +283,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Workingprocesses')),
+      );
+    }
+  }
+  void _loadLaborContact() async {
+    try {
+      await Provider.of<LaborContactsViewModel>(context, listen: false)
+          .getLaborContactOf(widget.profile!.laborContractId!);
+      setState(() {
+        laborContracts =
+            Provider.of<LaborContactsViewModel>(context, listen: false).listLaborContact;
+        if (laborContracts.isNotEmpty) {
+          selectedlaborContracts = laborContracts.firstWhere(
+            (lab) => lab.laborContractId == widget.profile!.laborContractId,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Workingprocesses $error')),
       );
     }
   }
@@ -756,7 +791,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 SizedBox(height: 16),
-                _buildInsuranceList()
+                _buildInsuranceList(),
+                //Hợp đồng 
+                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  color: Colors.grey[200],
+                  child: Text(
+                    "Hợp đồng",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 16),
+                _buildLaborContractList()
+              ]),
               ])
             ],
           ),
@@ -793,18 +844,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //             ),
                   //           ));
                   //     }),
-                  // SpeedDialChild(
-                  //     label: "Phê Duyệt Quá Trình Làm Việc",
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute<void>(
-                  //             builder: (BuildContext context) =>
-                  //                 ListWorkingprocessScreen(
-                  //               profiles: widget.profile,
-                  //             ),
-                  //           ));
-                  //     }),
+                  SpeedDialChild(
+                      label: "Phê Duyệt Quá Trình Làm Việc",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ListWorkingprocessScreen(
+                                profiles: widget.profile,
+                              ),
+                            ));
+                      }),
                   SpeedDialChild(
                       label: "Thêm bằng cấp",
                       onTap: () {
@@ -842,7 +893,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) =>
-                                  ListTrainingprocessesScreen(
+                                  AddTrainingprocessesScreen(
                                 profiles: widget.profile,
                               ),
                             ));
@@ -854,7 +905,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             context,
                             MaterialPageRoute<void>(
                               builder: (BuildContext context) =>
-                                  ListWorkingprocessScreen(
+                                  AddWorkingprocesScreen(
                                 profiles: widget.profile,
                               ),
                             ));
@@ -1179,15 +1230,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .where((process) => process.workingprocessStatus == 1)
         .toList();
 
-    // if (filteredProcesses.isEmpty) {
-    //   return Center(
-    //     child: Text(
-    //       "Không có thông tin làm việc",
-    //       style: TextStyle(
-    //           fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-    //     ),
-    //   );
-    // }
+    if (filteredProcesses.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có thông tin làm việc",
+          style: TextStyle(
+              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1251,15 +1302,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     List<Trainingprocesses> filteredProcesses = trainingProcess
         .where((process) => process.trainingprocessesStatus == 1)
         .toList();
-    // if (filteredProcesses.isEmpty) {
-    //   return Center(
-    //     child: Text(
-    //       "Không có thông tin đào tạo",
-    //       style: TextStyle(
-    //           fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-    //     ),
-    //   );
-    // }
+    if (filteredProcesses.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có thông tin đào tạo",
+          style: TextStyle(
+              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1360,6 +1411,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Text("Thời hạn từ: ${process.startTime}"),
                         Text(" - Đến: ${process.endTime}"),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ).onInkTap(()async{
+               final updatedInsurance = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => InfoInsuranceScreen(
+                            insurance: process,
+                          ),
+                        ),
+                      );
+
+                      // Kiểm tra xem có dữ liệu cập nhật không
+                      if (updatedInsurance != null) {
+                        _handleUpdateInsurance(updatedInsurance);
+                      }
+            }),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+  Widget _buildLaborContractList() {
+    if (laborContracts.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có thông tin hợp đồng nào",
+          style: TextStyle(
+              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
+        ),
+      );
+    }
+    return ExpansionPanelList(
+      elevation: 2,
+      animationDuration: Duration(milliseconds: 300),
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          laborContracts[index].isExpanded = isExpanded;
+        });
+      },
+      children: laborContracts.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              leading: Icon(Icons.school, color: Colors.green),
+              title: Text(
+                "Tóm tắt hợp đồng",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            );
+          },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              color: Colors.green.shade50,
+              elevation: 2,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+  radius: 20, // Tăng kích thước cho ảnh lớn hơn
+  backgroundColor: Colors.green.shade100, // Màu nền nhạt hơn
+  child: ClipOval(
+    child: SizedBox(
+      width: 70, // Kích thước ảnh
+      height: 70,
+      child: process.image.isNotEmptyAndNotNull
+          ? Image.memory(
+              base64Decode(process.image),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.error,
+                  size: 30,
+                  color: Colors.redAccent, // Icon lỗi nổi bật hơn
+                );
+              },
+            )
+          : Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.person,
+                  size: 30,
+                  color: Colors.grey.shade600,
+                ),
+                SizedBox(height: 5),
+                Text(
+                  "Không có ảnh",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ),
+    ),
+  ),
+),
+                    Row(
+                      children: [
+                        Text("Bắt đầu từ: ${process.startTime}"),
+                        Text(process.endTime == null
+                            ? "Hiện tại"
+                            : "Đến: ${process.endTime!}"),
                       ],
                     ),
                   ],

@@ -58,7 +58,8 @@ class _EmployAttendListScreenState extends State<EmployAttendListScreen> {
           reason: _reasonController.text,
           from: _fromDate,
           to: _toDate,
-          daysOff: double.parse(_daysOffController.text));
+          daysOff: double.parse(_daysOffController.text),
+          status: 0);
       Provider.of<AbsentsViewModel>(context, listen: false)
           .addNewAbsent(newAbsents)
           .then((_) {

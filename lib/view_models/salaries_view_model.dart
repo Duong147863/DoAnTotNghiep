@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/models/getSalarySlip.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
@@ -9,11 +10,25 @@ class SalariesViewModel extends ChangeNotifier {
   List<Salaries> _list = [];
   bool fetchingData = false;
   List<Salaries> get listSalaries => _list;
-  List<Profiles> _listPro = [];
-  List<Profiles> get listProfiles => _listPro;
   late Salaries _salary;
-
+   List<Getsalaryslip> _listGetsalaryslip = [];
+  List<Getsalaryslip> get GetsalaryslipList => _listGetsalaryslip;
   Salaries get salary => _salary;
+
+    Future<void> getSalaryDetails(String salaryId) async {
+    try {
+      fetchingData = true;
+      notifyListeners();
+      List<Getsalaryslip> salary = await repository.getSalaryDetails(salaryId);
+      _listGetsalaryslip = salary;
+      fetchingData = false;
+      notifyListeners();
+    } catch (e) {
+      fetchingData = false;
+      notifyListeners();
+      throw Exception('Failed to load assignments details: $e');
+    }
+  }
   Future<void> fetchAllSalariesEnter(int enterpriseID) async {
     fetchingData = true;
     try {
@@ -71,18 +86,6 @@ class SalariesViewModel extends ChangeNotifier {
       }
     } catch (e) {
       throw Exception('Failed to delete Salary: $e');
-    }
-  }
-
-  Future<void> getAllSalariesByProfileID(String profileId) async {
-    try {
-      List<Profiles> profilesList =
-          await repository.getAllSalariesByProfileID(profileId);
-      _listPro =
-          profilesList.where((pro) => pro.profileId == profileId).toList();
-      notifyListeners();
-    } catch (e) {
-      throw Exception('Failed to load training processes: $e');
     }
   }
 }
