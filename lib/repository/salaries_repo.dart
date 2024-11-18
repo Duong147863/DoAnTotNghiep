@@ -1,12 +1,35 @@
 import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/salary_service.dart';
+import 'package:nloffice_hrm/models/getSalarySlip.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 
 class SalariesRepository {
   final SalaryService service = SalaryService();
 
+   Future<List<Getsalaryslip>> getSalaryDetails(String salaryId) async {
+  try {
+    final response = await service.getAllSalariesByProfileID(salaryId);
+
+    if (response.statusCode == 200) {
+      print("load successful. Response body: ${response.body}");
+      List<dynamic> jsonResponse = json.decode(response.body);
+      List<Getsalaryslip> salaryId = jsonResponse
+          .map((SalaryJson) => Getsalaryslip.fromJson(SalaryJson))
+          .toList();
+      return salaryId;
+    } else {
+      print("Failed to delete Relative: ${response.statusCode}");
+      print("Response body: ${response.body}");
+      throw Exception('Failed to load assignments details');
+    }
+  } catch (error) {
+    print("Error: $error");
+    
+    throw Exception('Failed to load assignments details');
+  }
+}
   Future<List<Salaries>> fetchAllSalariesByEnterpriseID(
       int enterpriseID) async {
     final response = await service.getAllSalariesByEnterpriseID(enterpriseID);

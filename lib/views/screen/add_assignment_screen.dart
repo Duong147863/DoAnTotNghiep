@@ -54,11 +54,13 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     try {
       await Provider.of<ProjectsViewModel>(context, listen: false)
           .getAllProject();
-      projects =
-          Provider.of<ProjectsViewModel>(context, listen: false).listProjects;
+      setState(() {
+        projects =
+            Provider.of<ProjectsViewModel>(context, listen: false).listProjects;
+      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load project')),
+        SnackBar(content: Text('Failed to load project $error')),
       );
     }
   }
@@ -67,9 +69,12 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     try {
       await Provider.of<TaskViewModel>(context, listen: false).getAllTask();
       tasks = Provider.of<TaskViewModel>(context, listen: false).listTasks;
+      setState(() {
+        tasks = Provider.of<TaskViewModel>(context, listen: false).listTasks;
+      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load task')),
+        SnackBar(content: Text('Failed to load task $error')),
       );
     }
   }
@@ -78,11 +83,14 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
     try {
       await Provider.of<ProfilesViewModel>(context, listen: false)
           .fetchAllProfiles();
-      profiles =
-          Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
+
+      setState(() {
+        profiles =
+            Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
+      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load profile')),
+        SnackBar(content: Text('Failed to load profile $error ')),
       );
     }
   }
@@ -127,7 +135,7 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
                   'Project', _buildProjectDropdown('Choose Project')),
 
               // Task Dropdown
-              _buildDropdownRow('Task', _buildTaskDropdown('Choose Task')),
+              Expanded(child: _buildDropdownRow('Task', _buildTaskDropdown('Choose Task'))),
             ],
           ),
         ),

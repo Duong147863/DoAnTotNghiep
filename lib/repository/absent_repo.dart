@@ -44,4 +44,36 @@ class AbsentsRepository {
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }
+  Future<bool> updateAbents(Absents asbents) async {
+    try {
+      final response = await service.updateAbents(asbents);
+      if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to Update Trainingprocesses: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to update Trainingprocesses');
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to update Trainingprocesses');
+    }
+  }
+   Future<bool> deleteAbents(int ID) async {
+    try {
+      final response = await service.deleteAbents(ID);
+      if (response.statusCode == 200) {
+        print("Delete successful. Response body: ${response.body}");
+        return true;
+      } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        return false; 
+      }
+    } catch (error) {
+      print("An error occurred: $error");
+      throw Exception('Failed to delete Relative');
+    }
+  }
 }

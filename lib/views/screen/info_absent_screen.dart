@@ -1,23 +1,24 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/absents_model.dart';
-import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/absent_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class AddAbsentRequestScreen extends StatefulWidget {
-  final Profiles? profiles;
-  const AddAbsentRequestScreen({super.key, this.profiles});
+class InfoAbsentScreen extends StatefulWidget {
+  final Absents? absents;
+  const InfoAbsentScreen({super.key, this.absents});
+
   @override
-  _AddAbsentRequestScreenState createState() => _AddAbsentRequestScreenState();
+  State<InfoAbsentScreen> createState() => _InfoAbsentScreenState();
 }
 
-class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
-  String? selectedEmployee;
+class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
   final _reasonController = TextEditingController();
@@ -27,12 +28,68 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
   DateTime _fromDate = DateTime.now();
   DateTime _toDate = DateTime.now();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-  
+  int _statusAbsent = 0;
+  bool _isEditing = false;
+  @override
   void initState() {
     super.initState();
-    _profileIDController.text = widget.profiles!.profileId;
+    _profileIDController.text = widget.absents!.profileID;
+    _reasonController.text = widget.absents!.reason!;
+    _fromDateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.absents!.from);
+    _toDateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.absents!.to!);
+    _daysOffController.text =
+        widget.absents!.daysOff.toString();
   }
+  void _updateAbsent() async {
+    if (_formKey.currentState!.validate()) {
+      final updateAbents = Absents(
+          profileID: _profileIDController.text,
+          reason: _reasonController.text,
+          from: _fromDate,
+          to: _toDateController.text.isNotEmpty ? _toDate : null,
+          daysOff: _parseDouble(_daysOffController.text),
+          ID: widget.absents!.ID,
+          status: _statusAbsent);
+      try {
+        await Provider.of<AbsentsViewModel>(context, listen: false)
+            .updateAbents(updateAbents);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Absent Updated successfully!')),
+        );
+        Navigator.pop(context, updateAbents);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to Update Absent: $e')),
+        );
+      }
+    }
+  }
+   void _deleteAbsents() async {
+    try {
+      final asbentId = widget.absents!.ID;
 
+      if (asbentId != null) {
+        await Provider.of<AbsentsViewModel>(context, listen: false)
+            .deleteAbents(asbentId);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Relative deleted successfully')),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Relative ID is null. Cannot delete relative.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete Relative: $e')),
+      );
+    }
+  }
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -46,24 +103,6 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
     }
   }
 
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final newAbsents = Absents(
-          profileID: _profileIDController.text,
-          reason: _reasonController.text,
-          from: _fromDate,
-          to: _toDate,
-          daysOff: _parseDouble(_daysOffController.text),
-          status: 0);
-        
-      Provider.of<AbsentsViewModel>(context, listen: false)
-          .addNewAbsent(newAbsents)
-          .then((_) {
-        Navigator.pop(context);
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -72,7 +111,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       defaultBody: false,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
-      titletext: "Thêm đơn xin nghỉ việc",
+      titletext: "Sửa hoặc duyệt đơn xin nghỉ việc",
       appBarColor: AppColor.primaryLightColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -143,6 +182,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                 },
               ).py8(),
               CustomTextFormField(
+                enabled: _isEditing,
                 textEditingController: _reasonController,
                 labelText: 'Reason'.tr(),
                 validator: (value) {
@@ -152,17 +192,74 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   return null;
                 },
               ).py8(),
+              AppStrings.ROLE_PERMISSIONS.contains('Assign Project')
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Status Absents').px(8),
+                        _buildDropdownField(
+                          'Status Absents',
+                          _statusAbsent,
+                          (value) {
+                            setState(() {
+                              _statusAbsent = value!;
+                            });
+                          },
+                        ).px(8),
+                      ],
+                    )
+                  : SizedBox.shrink(),
+               SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      _submit();
-                    },
-                    child: Text('Lưu'),
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.save,
+                            color: const Color.fromARGB(255, 33, 243, 61)),
+                        onPressed: _updateAbsent,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Confirm Delete'),
+                                content: Text(
+                                    'Are you sure you want to delete this absent?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
+                                      _deleteAbsents(); // Thực hiện xóa
+                                    },
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
-                ],
-              ).py16(),
             ],
           ),
         ),
@@ -173,7 +270,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
   Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, onDateSelected),
+      onTap:_isEditing ? () => _selectDate(context, initialDate, onDateSelected):null,
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
@@ -227,5 +324,26 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       return 0.0; // Nếu lỗi chuyển đổi, trả về giá trị mặc định
     }
   }
- 
+
+  Widget _buildDropdownField(
+      String label, int currentValue, Function(int?) onChanged) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<int>(
+        value: currentValue,
+        decoration: InputDecoration(
+          labelStyle: TextStyle(color: Colors.black),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+        items: [
+          DropdownMenuItem(value: -1, child: Text('Từ Chối Duyệt')),
+          DropdownMenuItem(value: 0, child: Text('Đợi Duyệt')),
+          DropdownMenuItem(value: 1, child: Text('Đã Duyệt')),
+        ],
+        onChanged: _isEditing ? onChanged : null,
+        validator: (value) =>
+            value == null ? 'Please select a status project' : null,
+      ),
+    );
+  }
 }

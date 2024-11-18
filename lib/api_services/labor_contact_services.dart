@@ -15,4 +15,11 @@ class LaborContactServices {
       body: json.encode(laborContact.toJson()),
     );
   }
+  Future<http.Response> getLaborContactOf(String laborContactId) async {
+    return await http.get(
+        Uri.parse('${AppStrings.baseUrlApi}contract/ContactsOfProfile/$laborContactId'),
+        headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        });
+  }
 }

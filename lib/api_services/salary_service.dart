@@ -16,9 +16,9 @@ class SalaryService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
-  Future<http.Response> getAllSalariesByProfileID(String profileId) async {
+  Future<http.Response> getAllSalariesByProfileID(String salaryId) async {
     return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}salary/$profileId'), headers: {
+        .get(Uri.parse('${AppStrings.baseUrlApi}salary/$salaryId'), headers: {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }

@@ -28,4 +28,24 @@ class AbsentsService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
+   Future<http.Response>updateAbents(Absents asbents) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}absent/update'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(asbents.toJson()),
+    );
+  }
+    Future<http.Response> deleteAbents(int ID) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}absent/delete/$ID'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Accept': 'application/json',
+      },
+    );
+  }
 }

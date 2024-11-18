@@ -85,6 +85,21 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     }
   }
 
+  void _deleteDiploma() async {
+    try {
+      await Provider.of<DiplomasViewModel>(context, listen: false)
+          .deleteDiplomas(widget.diplomas!.diplomaId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Department deleted successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete position: $e')),
+      );
+    }
+  }
+
   Future<void> _pickImage() async {
     if (isImagePickerActive) {
       return;
@@ -199,7 +214,37 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
             "Save",
             style: TextStyle(color: AppColor.boneWhite),
           ),
-        )
+        ),
+        IconButton(
+          icon: Icon(Icons.delete, color: Colors.red),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Confirm Delete'),
+                  content:
+                      Text('Are you sure you want to delete this diploma?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Đóng dialog
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Đóng dialog
+                        _deleteDiploma(); // Thực hiện xóa
+                      },
+                      child: Text('Delete'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ],
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -11,7 +11,7 @@ class Absents {
     this.to,
     this.daysOff,
     required this.profileID,
-    this.status = -1,
+    required this.status,
   });
 
   DateTime from;
