@@ -101,7 +101,6 @@ class ProfilesRepository {
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
-      print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
       throw Exception(
@@ -116,7 +115,6 @@ class ProfilesRepository {
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
-      print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
       print(AppStrings.TOKEN);
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {

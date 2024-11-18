@@ -108,11 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _profileIDController.text = widget.profile!.profileId;
     _profileNameController.text = widget.profile!.profileName;
     _birthdayController.text =
-        widget.profile!.birthday.toString().split(' ').first;
+        DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
-    _idLicenseDayController.text = DateFormat('dd-MM-yyyy')
+    _idLicenseDayController.text = DateFormat('dd/MM/yyyy')
         .format(widget.profile!.idLicenseDay)
         .toString();
     _nationController.text = widget.profile!.nation;
@@ -154,15 +154,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     });
   }
-    void _handleUpdateInsurance(Insurance updatedInsurance) {
+
+  void _handleUpdateInsurance(Insurance updatedInsurance) {
     setState(() {
-      int index = insurance.indexWhere(
-          (ins) => ins.insuranceId == updatedInsurance.insuranceId);
+      int index = insurance
+          .indexWhere((ins) => ins.insuranceId == updatedInsurance.insuranceId);
       if (index != -1) {
         insurance[index] = updatedInsurance;
       }
     });
   }
+
   // Method to load departments
   void _loadDepartments() async {
     try {
@@ -286,13 +288,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
   void _loadLaborContact() async {
     try {
       await Provider.of<LaborContactsViewModel>(context, listen: false)
           .getLaborContactOf(widget.profile!.laborContractId!);
       setState(() {
         laborContracts =
-            Provider.of<LaborContactsViewModel>(context, listen: false).listLaborContact;
+            Provider.of<LaborContactsViewModel>(context, listen: false)
+                .listLaborContact;
         if (laborContracts.isNotEmpty) {
           selectedlaborContracts = laborContracts.firstWhere(
             (lab) => lab.laborContractId == widget.profile!.laborContractId,
@@ -792,22 +796,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 16),
                 _buildInsuranceList(),
-                //Hợp đồng 
-                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Hợp đồng",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildLaborContractList()
-              ]),
+                //Hợp đồng
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        color: Colors.grey[200],
+                        child: Text(
+                          "Hợp đồng",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      _buildLaborContractList()
+                    ]),
               ])
             ],
           ),
@@ -1416,20 +1423,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-            ).onInkTap(()async{
-               final updatedInsurance = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => InfoInsuranceScreen(
-                            insurance: process,
-                          ),
-                        ),
-                      );
+            ).onInkTap(() async {
+              final updatedInsurance = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InfoInsuranceScreen(
+                    insurance: process,
+                  ),
+                ),
+              );
 
-                      // Kiểm tra xem có dữ liệu cập nhật không
-                      if (updatedInsurance != null) {
-                        _handleUpdateInsurance(updatedInsurance);
-                      }
+              // Kiểm tra xem có dữ liệu cập nhật không
+              if (updatedInsurance != null) {
+                _handleUpdateInsurance(updatedInsurance);
+              }
             }),
           ),
           isExpanded: process.isExpanded,
@@ -1437,6 +1444,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
   }
+
   Widget _buildLaborContractList() {
     if (laborContracts.isEmpty) {
       return Center(
@@ -1479,46 +1487,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-  radius: 20, // Tăng kích thước cho ảnh lớn hơn
-  backgroundColor: Colors.green.shade100, // Màu nền nhạt hơn
-  child: ClipOval(
-    child: SizedBox(
-      width: 70, // Kích thước ảnh
-      height: 70,
-      child: process.image.isNotEmptyAndNotNull
-          ? Image.memory(
-              base64Decode(process.image),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.error,
-                  size: 30,
-                  color: Colors.redAccent, // Icon lỗi nổi bật hơn
-                );
-              },
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.person,
-                  size: 30,
-                  color: Colors.grey.shade600,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  "Không có ảnh",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-    ),
-  ),
-),
+                      radius: 20, // Tăng kích thước cho ảnh lớn hơn
+                      backgroundColor:
+                          Colors.green.shade100, // Màu nền nhạt hơn
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 70, // Kích thước ảnh
+                          height: 70,
+                          child: process.image.isNotEmptyAndNotNull
+                              ? Image.memory(
+                                  base64Decode(process.image),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.error,
+                                      size: 30,
+                                      color: Colors
+                                          .redAccent, // Icon lỗi nổi bật hơn
+                                    );
+                                  },
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.person,
+                                      size: 30,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Không có ảnh",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
                     Row(
                       children: [
                         Text("Bắt đầu từ: ${process.startTime}"),
