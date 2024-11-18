@@ -74,7 +74,7 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                "Ca làm việc",
+                "Quản lí ca làm việc",
                 style: TextStyle(
                     fontSize: 16,
                     color: Color(0xFFEFF8FF),

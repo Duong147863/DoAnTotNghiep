@@ -99,8 +99,7 @@ class _BasePageState extends State<BasePage> {
             : null,
         body: widget.defaultBody
             ? SingleChildScrollView(
-              child: Container(
-                  height: MediaQuery.of(context).size.height,
+                child: Container(
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color: Colors.white,
@@ -111,7 +110,7 @@ class _BasePageState extends State<BasePage> {
                     children: widget.bodyChildren!,
                   ),
                 ),
-            )
+              )
             : widget.body,
         bottomNavigationBar: widget.bottomNavigationBar,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

@@ -48,6 +48,17 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<ProjectsViewModel>(context, listen: false).getAllProject();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BasePage(
         showAppBar: true,
