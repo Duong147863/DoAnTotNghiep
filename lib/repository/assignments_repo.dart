@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:nloffice_hrm/api_services/assignments_services.dart';
 import 'package:nloffice_hrm/models/assiginment_task.dart';
 import 'package:nloffice_hrm/models/assignments_model.dart';
+
 class AssignmentsRepository {
    final AssignmentsServices service = AssignmentsServices();
    
@@ -52,6 +53,8 @@ class AssignmentsRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
         return false; 
       }
     } catch (error) {

@@ -6,7 +6,7 @@ class TimekeepingRepo {
 
   Future<bool> checkIn(Timekeepings checkinTime) async {
     final response = await service.checkIn(checkinTime);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201 || response.statusCode == 200) {
       return true;
     } else {
 

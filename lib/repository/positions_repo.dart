@@ -25,7 +25,8 @@ class PositionsRepository {
       throw Exception('Failed to add position: ${response.statusCode}');
     }
   }
-    Future<bool> updatedPosition(Positions postions) async {
+
+  Future<bool> updatedPosition(Positions postions) async {
     try {
       final response = await service.updatePosition(postions);
       if (response.statusCode == 200) {
@@ -37,6 +38,7 @@ class PositionsRepository {
       throw Exception('Failed to update profile');
     }
   }
+
   Future<bool> deletePosition(String positionId) async {
     try {
       final response = await service.deletePosition(positionId);

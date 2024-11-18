@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/task_services.dart';
 import 'package:nloffice_hrm/models/tasks_model.dart';
+
 class TaskRepository {
-   final TaskServices service = TaskServices();
-    Future<List<Tasks>> getAllTask() async {
+  final TaskServices service = TaskServices();
+  Future<List<Tasks>> getAllTask() async {
     final response = await service.getAllTask();
 
     if (response.statusCode == 200) {

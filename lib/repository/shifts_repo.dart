@@ -23,6 +23,7 @@ class ShiftsRepository {
       throw Exception('Failed to load data');
     }
   }
+
   Future<bool> updatedShifts(Shifts shifts) async {
     try {
       final response = await service.updateShifts(shifts);
@@ -35,6 +36,7 @@ class ShiftsRepository {
       throw Exception('Failed to update Shifts');
     }
   }
+
   Future<bool> deleteShifts(String shiftId) async {
     try {
       final response = await service.deleteShifts(shiftId);

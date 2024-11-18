@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/insurance_services.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
+
 class InsuranceRepository {
   final InsuranceServices service = InsuranceServices();
   Future<List<Insurance>> getInsurancesOf(String profileID) async {
     final response = await service.getInsurancesOf(profileID);
 
     if (response.statusCode == 200) {
-
       final List<dynamic> jsonData = json.decode(response.body);
       return jsonData.map((x) => Insurance.fromJson(x)).toList();
     } else {

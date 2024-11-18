@@ -61,25 +61,25 @@ class ProfilesRepository {
     }
   }
 
-Future<Map<String, dynamic>> fetchMembersOfDepartment(String departmentID) async {
-  final response = await service.getDepartmentMembers(departmentID);
+  Future<Map<String, dynamic>> fetchMembersOfDepartment(
+      String departmentID) async {
+    final response = await service.getDepartmentMembers(departmentID);
 
-  if (response.statusCode == 200) {
-    var data = json.decode(response.body);
-    List<Profiles> profiles = List<Profiles>.from(
-      data['profiles'].map((x) => Profiles.fromJson(x)),
-    );
-    int totalMembers = data['totals'];
+    if (response.statusCode == 200) {
+      var data = json.decode(response.body);
+      List<Profiles> profiles = List<Profiles>.from(
+        data['profiles'].map((x) => Profiles.fromJson(x)),
+      );
+      int totalMembers = data['totals'];
 
-    return {
-      'profiles': profiles,
-      'totals': totalMembers,
-    };
-  } else {
-    throw Exception('Failed to load data');
+      return {
+        'profiles': profiles,
+        'totals': totalMembers,
+      };
+    } else {
+      throw Exception('Failed to load data');
+    }
   }
-}
-
 
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //
@@ -113,7 +113,6 @@ Future<Map<String, dynamic>> fetchMembersOfDepartment(String departmentID) async
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
-      print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
       throw Exception(
@@ -128,7 +127,6 @@ Future<Map<String, dynamic>> fetchMembersOfDepartment(String departmentID) async
       AppStrings.ROLE_PERMISSIONS = List<String>.from(json
           .decode(response.body)['role_permissions']
           .map((e) => e['permission_name'] as String));
-      print(AppStrings.ROLE_PERMISSIONS); // DANH SÁCH CÁC QUYỀN HẠN CHỨC NĂNG
       print(AppStrings.TOKEN);
       return Profiles.fromJson(json.decode(response.body)['user']);
     } else {
@@ -164,6 +162,8 @@ Future<Map<String, dynamic>> fetchMembersOfDepartment(String departmentID) async
       final response = await service.changePassword(
           profileID, currentPassword, newPassword, confirmNewPassword);
       if (response.statusCode == 200) {
+        print("Password change successful");
+        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
         throw Exception('Failed to change password: ${response.statusCode}');

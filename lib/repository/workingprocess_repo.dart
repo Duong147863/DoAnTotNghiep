@@ -11,7 +11,6 @@ class WorkingprocessRepository {
     final response = await service.getWorkingProcessOf(profileID);
 
     if (response.statusCode == 200) {
-
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => WorkingProcesses.fromJson(x)).toList();

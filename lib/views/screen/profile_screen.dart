@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
@@ -108,13 +108,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
     _profileNameController.text = widget.profile!.profileName;
-    _birthdayController.text = widget.profile!.birthday.toIso8601String();
+    _birthdayController.text =
+        DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
-    // print(widget.profile!.idLicenseDay.toIso8601String());
-    _idLicenseDayController.text =
-        widget.profile!.idLicenseDay.toIso8601String();
+    _idLicenseDayController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.profile!.idLicenseDay)
+        .toString();
     _nationController.text = widget.profile!.nation;
     _emailController.text = widget.profile!.email ?? '';
     _phoneController.text = widget.profile!.phone;
@@ -372,6 +373,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           nation: _nationController.text,
           email: _emailController.text,
           phone: _phoneController.text,
+          roleID: widget.profile!.roleID,
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
@@ -458,6 +460,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           // Tắt nút sau khi nhấn
                           setState(() {
                             _isButtonEnabled = false;
+                            _isEditing = false;
                           });
                           // Thực hiện hành động
                           _updateProfile();
@@ -469,6 +472,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () {
                     setState(() {
                       _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+                      _isButtonEnabled = true;
                     });
                   },
                   icon: Icon(Icons.edit_outlined, color: Colors.red),
@@ -582,7 +586,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ).w(254),
                 ],
               ).py16(),
-
               // Birthday + Place of birth
               Row(
                 children: [
@@ -625,7 +628,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
-
               // Gender + Marriage
               Row(
                 children: [
@@ -654,7 +656,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onChanged: _isEditing
                         ? (value) {
                             setState(() {
-                              _marriage = value as bool;
+                              _marriage = value! as bool;
                             });
                           }
                         : null,
@@ -666,7 +668,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     onChanged: _isEditing
                         ? (value) {
                             setState(() {
-                              _marriage = value as bool;
+                              _marriage = value! as bool;
                             });
                           }
                         : null,
@@ -674,7 +676,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text('Chưa kết hôn'),
                 ],
               ),
-
               // ID number + license day
               Row(
                 children: [
@@ -699,7 +700,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     setState(() {
                       _idLicenseDay = date;
                       _idLicenseDayController.text =
-                          "${_idLicenseDay.toLocal()}".split(' ')[0];
+                          _idLicenseDay.toString().split(' ').first;
                     });
                   }).w(184),
                 ],
@@ -1044,8 +1045,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       items: salarys.map((Salaries salary) {
         return DropdownMenuItem<Salaries>(
           value: salary,
-          child:
-              Text(salary.salaryId), // assuming department has a `name` field
+          child: Text(
+              "${salary.salaryId} - ${salary.salaryCoefficient}"), // assuming department has a `name` field
         );
       }).toList(),
       decoration: InputDecoration(

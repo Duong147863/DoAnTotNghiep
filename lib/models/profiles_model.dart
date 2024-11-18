@@ -22,7 +22,7 @@ class Profiles {
       this.marriage = false,
       required this.temporaryAddress,
       required this.currentAddress,
-      this.roleID = 1,
+      required this.roleID,
       required this.profileImage});
 
   String profileId;
@@ -53,12 +53,14 @@ class Profiles {
       profileName: json["profile_name"],
       profileStatus: json["profile_status"],
       identifiNum: json["identify_num"],
-      idLicenseDay: DateFormat("dd-MM-yyyy").parse(json['id_license_day']),
+      idLicenseDay: DateTime.parse(
+        json['id_license_day'],
+      ),
       gender: json["gender"],
       phone: json["phone"],
       email: json["email"],
       password: json["password"],
-      birthday: DateFormat("dd-MM-yyyy").parse(json['birthday']),
+      birthday: DateTime.parse(json['birthday']),
       placeOfBirth: json["place_of_birth"],
       nation: json["nation"],
       marriage: json["marriage"],

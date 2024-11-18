@@ -6,8 +6,7 @@ import 'package:nloffice_hrm/models/diplomas_model.dart';
 class DiplomasRepository {
   final DiplomaService service = DiplomaService();
 
-Future<List<Diplomas>> getDiplomasOf(
-      String profileID) async {
+  Future<List<Diplomas>> getDiplomasOf(String profileID) async {
     final response = await service.getDiplomaOf(profileID);
 
     if (response.statusCode == 200) {
@@ -18,15 +17,16 @@ Future<List<Diplomas>> getDiplomasOf(
       throw Exception('Failed to load data');
     }
   }
+
   Future<bool> AddDiplomas(Diplomas diploma) async {
     final response = await service.createNewDiploma(diploma);
     if (response.statusCode == 200) {
-      
       return true;
     } else {
       throw Exception('Failed to add diploma: ${response.statusCode}');
     }
   }
+
   Future<bool> updateDiplomas(Diplomas diploma) async {
     try {
       final response = await service.updateDiplomas(diploma);

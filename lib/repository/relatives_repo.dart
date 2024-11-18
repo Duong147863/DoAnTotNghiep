@@ -52,6 +52,8 @@ class RelativesRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
         return false; 
       }
     } catch (error) {

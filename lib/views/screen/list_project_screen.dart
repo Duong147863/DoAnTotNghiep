@@ -48,6 +48,17 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<ProjectsViewModel>(context, listen: false).getAllProject();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BasePage(
         showAppBar: true,
@@ -65,7 +76,7 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  "Project Management",
+                  "Danh sách dự án",
                   style: TextStyle(
                       fontSize: 16,
                       color: Color(0xFFEFF8FF),
@@ -101,12 +112,11 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                   dataSet: projects,
                   itemBuilder: (context, index) {
                     return CustomCard(
-                            title:
-                                "${projects[index].projectId} - ${projects[index].projectName}",
-                                
-                            subttile: projects[index].projectStatus == 0
-                                ? "Đang Làm"
-                                : "Hoàn Thành")
+                            title: Text(
+                                "${projects[index].projectId} - ${projects[index].projectName}"),
+                            subttile: Text(projects[index].projectStatus == 0
+                                ? "Đang thực hiện"
+                                : "Hoàn Thành"))
                         .onInkTap(
                       () async {
                         // Gọi màn hình thông tin chức vụ và chờ kết quả
@@ -153,7 +163,7 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                                   child: TextFormField(
                                     controller: _projectIdController,
                                     decoration: InputDecoration(
-                                      labelText: 'project ID',
+                                      labelText: 'Mã dự án',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10)),
@@ -161,7 +171,7 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter project ID';
+                                        return 'Please enter Mã dự án';
                                       }
                                       return null;
                                     },
@@ -173,7 +183,7 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                                   child: TextFormField(
                                     controller: _projectNameController,
                                     decoration: InputDecoration(
-                                      labelText: 'project Name',
+                                      labelText: 'Tên dự án',
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(10)),
@@ -181,7 +191,7 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                                     ),
                                     validator: (value) {
                                       if (value == null || value.isEmpty) {
-                                        return 'Please enter project name';
+                                        return 'Please enter Tên dự án';
                                       }
                                       return null;
                                     },
@@ -203,7 +213,7 @@ class _ListProjectScreenState extends State<ListProjectScreen> {
                                       initState();
                                     }
                                   },
-                                  child: Text('Add Project'),
+                                  child: Text('Tạo'),
                                 ),
                               ],
                             )),

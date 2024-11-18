@@ -79,138 +79,135 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
     }
   }
 
-  
- void _loadAssignments() async {
-  try {
-    await Provider.of<AssignmentsViewModel>(context, listen: false)
-        .getAssignmentsDetails(widget.projects!.projectId);
-    assignments =
-            Provider.of<AssignmentsViewModel>(context, listen: false).assiginmentTaskList;
-    setState(() {
+  void _loadAssignments() async {
+    try {
+      await Provider.of<AssignmentsViewModel>(context, listen: false)
+          .getAssignmentsDetails(widget.projects!.projectId);
+      assignments = Provider.of<AssignmentsViewModel>(context, listen: false)
+          .assiginmentTaskList;
+      setState(() {
         if (assignments.isNotEmpty) {
           selectedassignments = assignments.firstWhere(
             (ass) => ass.projectId == widget.projects!.projectId,
           );
         }
       });
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to load Assignments $e')),
-    );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Assignments $e')),
+      );
+    }
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Project Info Screen',
+      titletext: 'Thông tin dự án',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
-      body:  SingleChildScrollView(
-  child: Padding(
-    padding: EdgeInsets.all(16.0),
-    child: Form(
-      key: _formKey,
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Visibility(
-                visible: false, // Đặt thành false để ẩn widget
-                child: CustomTextFormField(
-                  textEditingController: _projectIdController,
-                  labelText: 'project ID',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'please_enter_project_ID';
-                    }
-                    return null;
-                  },
-                  enabled: false,
-                ).px8(),
+          child: Form(
+            key: _formKey,
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
               ),
-              SizedBox(height: 16),
-              CustomTextFormField(
-                textEditingController: _projectNameController,
-                labelText: 'project Name',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'please_enter_project_Name';
-                  }
-                  return null;
-                },
-                enabled: _isEditing,
-              ).px8(),
-              Text('Status Project').px(8),
-              _buildDropdownField('Status Project', _statusProject, (value) {
-                setState(() {
-                  _statusProject = value!;
-                });
-              }).px(8),
-              _buildAssignmentList(),
-              SizedBox(height: 20), // Tạo khoảng cách cuối cùng
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.save,
-                        color: const Color.fromARGB(255, 33, 243, 61)),
-                    onPressed: _updateProject,
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
-                    onPressed: () {
-                      setState(() {
-                        _isEditing = true;
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Confirm Delete'),
-                            content: Text(
-                                'Are you sure you want to delete this project?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                  _deleteProjects();
-                                },
-                                child: Text('Delete'),
-                              ),
-                            ],
-                          );
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Visibility(
+                      visible: false, // Đặt thành false để ẩn widget
+                      child: CustomTextFormField(
+                        textEditingController: _projectIdController,
+                        labelText: 'project ID',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'please_enter_project_ID';
+                          }
+                          return null;
                         },
-                      );
-                    },
-                  ),
-                ],
+                        enabled: false,
+                      ).px8(),
+                    ),
+                    SizedBox(height: 16),
+                    CustomTextFormField(
+                      textEditingController: _projectNameController,
+                      labelText: 'project Name',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'please_enter_project_Name';
+                        }
+                        return null;
+                      },
+                      enabled: _isEditing,
+                    ).px8(),
+                    Text('Status Project').px(8),
+                    _buildDropdownField('Status Project', _statusProject,
+                        (value) {
+                      setState(() {
+                        _statusProject = value!;
+                      });
+                    }).px(8),
+                    _buildAssignmentList(),
+                    SizedBox(height: 20), // Tạo khoảng cách cuối cùng
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.save,
+                              color: const Color.fromARGB(255, 33, 243, 61)),
+                          onPressed: _updateProject,
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () {
+                            setState(() {
+                              _isEditing = true;
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Confirm Delete'),
+                                  content: Text(
+                                      'Are you sure you want to delete this project?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        _deleteProjects();
+                                      },
+                                      child: Text('Delete'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
-  
+            ),
           ),
         ),
       ),
@@ -228,85 +225,84 @@ class _InfoProjectScreenState extends State<InfoProjectScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         items: [
-          DropdownMenuItem(value: 0, child: Text('Đang làm')), // Trạng thái 0
+          DropdownMenuItem(
+              value: 0, child: Text('Đang thực hiện')), // Trạng thái 0
           DropdownMenuItem(value: 1, child: Text('Hoàn Thành')), // Trạng thái 1
         ],
         onChanged: _isEditing
             ? onChanged
             : null, // Nếu không cho phép chọn, onChanged = null
         validator: (value) =>
-            value == null ? 'Please select a status project' : null,
+            value == null ? 'Please select a Trạng thái' : null,
       ),
     );
   }
 
   Widget _buildAssignmentList() {
-  if (assignments.isEmpty) {
-    return Center(
-      child: Text(
-        "Không có thông tin task nào",
-        style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
-      ),
-    );
-  }
+    if (assignments.isEmpty) {
+      return Center(
+        child: Text(
+          "Không có thông tin task nào",
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+        ),
+      );
+    }
 
-  return ExpansionPanelList(
-    elevation: 1,
-    expandedHeaderPadding: EdgeInsets.all(0),
-    expansionCallback: (int index, bool isExpanded) {
-      setState(() {
-        assignments[index].isExpanded = isExpanded;
-      });
-    },
-    children: assignments.map((process) {
-      
-      return ExpansionPanel(
-        headerBuilder: (BuildContext context, bool isExpanded) {
-          return ListTile(
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-            leading: Icon(Icons.personal_injury,
-                color: const Color.fromARGB(255, 68, 218, 255)),
-              title:Text("Tên nhiệm vụ: ${process.taskName}",
-                      style: TextStyle(fontSize: 16)), 
-          );
-        },
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Card(
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Chi tiết:",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue),
-                  ),
-                  SizedBox(height: 10),
-                  Text("Tên nhân viên: ${process.profileName}",
-                      style: TextStyle(fontSize: 16)),       
-                  Text("Tên Dự án: ${process.projectName}",
-                      style: TextStyle(fontSize: 16)),
-                   Text("nội dung nhiệm vụ: ${process.taskContent}",
-                      style: TextStyle(fontSize: 16)),             
-                  SizedBox(height: 20),
-                  Divider(color: Colors.grey),
-                  SizedBox(height: 10),
-                ],
+    return ExpansionPanelList(
+      elevation: 1,
+      expandedHeaderPadding: EdgeInsets.all(0),
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          assignments[index].isExpanded = isExpanded;
+        });
+      },
+      children: assignments.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+              leading: Icon(Icons.personal_injury,
+                  color: const Color.fromARGB(255, 68, 218, 255)),
+              title: Text("Tên nhiệm vụ: ${process.taskName}",
+                  style: TextStyle(fontSize: 16)),
+            );
+          },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Card(
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Chi tiết:",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue),
+                    ),
+                    SizedBox(height: 10),
+                    Text("Tên nhân viên: ${process.profileName}",
+                        style: TextStyle(fontSize: 16)),
+                    Text("Tên Dự án: ${process.projectName}",
+                        style: TextStyle(fontSize: 16)),
+                    Text("nội dung nhiệm vụ: ${process.taskContent}",
+                        style: TextStyle(fontSize: 16)),
+                    SizedBox(height: 20),
+                    Divider(color: Colors.grey),
+                    SizedBox(height: 10),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        isExpanded: process.isExpanded,
-      );
-    }).toList(),
-  );
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
 }
-}
-

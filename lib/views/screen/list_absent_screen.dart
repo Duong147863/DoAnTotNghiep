@@ -13,9 +13,9 @@ import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class ListAbsentScreen extends StatefulWidget {
-  final Profiles? profiles;
+  Profiles? profiles;
 
-  const ListAbsentScreen({super.key, this.profiles});
+  ListAbsentScreen({super.key, this.profiles});
 
   @override
   State<ListAbsentScreen> createState() => _ListAbsentScreenState();
@@ -55,7 +55,8 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
       defaultBody: true,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.primaryLightColor,
-      titletext: "List Absent Screen".tr(),
+      appBarColor: AppColor.primaryLightColor,
+      titletext: "Nghỉ phép",
       bodyChildren: [
         Padding(
           padding: const EdgeInsets.all(16.0),
