@@ -11,14 +11,10 @@ Future<List<Diplomas>> getDiplomasOf(
     final response = await service.getDiplomaOf(profileID);
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
-
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => Diplomas.fromJson(x)).toList();
     } else {
-      print("Failed to load Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
@@ -28,8 +24,6 @@ Future<List<Diplomas>> getDiplomasOf(
       
       return true;
     } else {
-       print("Failed to add profile: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add diploma: ${response.statusCode}');
     }
   }
@@ -37,15 +31,11 @@ Future<List<Diplomas>> getDiplomasOf(
     try {
       final response = await service.updateDiplomas(diploma);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to Update Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update Trainingprocesses');
     }
   }
@@ -54,15 +44,11 @@ Future<List<Diplomas>> getDiplomasOf(
     try {
       final response = await service.deleteDiplomas(diplomas);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to delete Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Trainingprocesses');
     }
   }

@@ -22,4 +22,24 @@ class LaborContactServices {
           'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
+  Future<http.Response>updateLaborContact(LaborContracts laborContact) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}contract/update'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode(laborContact.toJson()),
+    );
+  }
+  Future<http.Response> deleteLaborContact(String laborContractId) async {
+    return await http.delete(
+      Uri.parse('${AppStrings.baseUrlApi}contract/delete/$laborContractId'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Accept': 'application/json',
+      },
+    );
+  }
 }

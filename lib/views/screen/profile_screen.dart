@@ -36,6 +36,7 @@ import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
@@ -153,21 +154,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     });
   }
-    void _handleUpdateInsurance(Insurance updatedInsurance) {
+
+  void _handleUpdateInsurance(Insurance updatedInsurance) {
     setState(() {
-      int index = insurance.indexWhere(
-          (ins) => ins.insuranceId == updatedInsurance.insuranceId);
+      int index = insurance
+          .indexWhere((ins) => ins.insuranceId == updatedInsurance.insuranceId);
       if (index != -1) {
         insurance[index] = updatedInsurance;
       }
     });
   }
+    void _handleUpdateLaborContact(LaborContracts updatelaborContracts) {
+    setState(() {
+      int index = laborContracts
+          .indexWhere((lab) => lab.laborContractId == updatelaborContracts.laborContractId);
+      if (index != -1) {
+        laborContracts[index] = updatelaborContracts;
+      }
+    });
+  }
+
   // Method to load departments
   void _loadDepartments() async {
     try {
       await Provider.of<DeparmentsViewModel>(context, listen: false)
           .fetchAllDepartments();
-      setState(() {
+     
         departments = Provider.of<DeparmentsViewModel>(context, listen: false)
             .listDepartments;
         if (departments.isNotEmpty) {
@@ -176,7 +188,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 department.departmentID == widget.profile!.departmentId,
           );
         }
-      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
@@ -285,13 +296,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
   void _loadLaborContact() async {
     try {
       await Provider.of<LaborContactsViewModel>(context, listen: false)
           .getLaborContactOf(widget.profile!.laborContractId!);
       setState(() {
         laborContracts =
-            Provider.of<LaborContactsViewModel>(context, listen: false).listLaborContact;
+            Provider.of<LaborContactsViewModel>(context, listen: false)
+                .listLaborContact;
         if (laborContracts.isNotEmpty) {
           selectedlaborContracts = laborContracts.firstWhere(
             (lab) => lab.laborContractId == widget.profile!.laborContractId,
@@ -359,7 +372,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           nation: _nationController.text,
           email: _emailController.text,
           phone: _phoneController.text,
-          password: "Liempn@13",
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
@@ -791,22 +803,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
                 SizedBox(height: 16),
                 _buildInsuranceList(),
-                //Hợp đồng 
-                   Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Hợp đồng",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildLaborContractList()
-              ]),
+                //Hợp đồng
+                 SizedBox(height: 16),
+                Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        color: Colors.grey[200],
+                        child: Text(
+                          "Hợp đồng",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      _buildLaborContractList()
+                    ]),
               ])
             ],
           ),
@@ -1415,20 +1431,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-            ).onInkTap(()async{
-               final updatedInsurance = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => InfoInsuranceScreen(
-                            insurance: process,
-                          ),
-                        ),
-                      );
+            ).onInkTap(() async {
+              final updatedInsurance = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InfoInsuranceScreen(
+                    insurance: process,
+                  ),
+                ),
+              );
 
-                      // Kiểm tra xem có dữ liệu cập nhật không
-                      if (updatedInsurance != null) {
-                        _handleUpdateInsurance(updatedInsurance);
-                      }
+              // Kiểm tra xem có dữ liệu cập nhật không
+              if (updatedInsurance != null) {
+                _handleUpdateInsurance(updatedInsurance);
+              }
             }),
           ),
           isExpanded: process.isExpanded,
@@ -1436,6 +1452,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
   }
+
   Widget _buildLaborContractList() {
     if (laborContracts.isEmpty) {
       return Center(
@@ -1478,46 +1495,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     CircleAvatar(
-  radius: 20, // Tăng kích thước cho ảnh lớn hơn
-  backgroundColor: Colors.green.shade100, // Màu nền nhạt hơn
-  child: ClipOval(
-    child: SizedBox(
-      width: 70, // Kích thước ảnh
-      height: 70,
-      child: process.image.isNotEmptyAndNotNull
-          ? Image.memory(
-              base64Decode(process.image),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const Icon(
-                  Icons.error,
-                  size: 30,
-                  color: Colors.redAccent, // Icon lỗi nổi bật hơn
-                );
-              },
-            )
-          : Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.person,
-                  size: 30,
-                  color: Colors.grey.shade600,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  "Không có ảnh",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-    ),
-  ),
-),
+                      radius: 20, // Tăng kích thước cho ảnh lớn hơn
+                      backgroundColor:
+                          Colors.green.shade100, // Màu nền nhạt hơn
+                      child: ClipOval(
+                        child: SizedBox(
+                          width: 70, // Kích thước ảnh
+                          height: 70,
+                          child: process.image.isNotEmptyAndNotNull
+                              ? Image.memory(
+                                  base64Decode(process.image),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.error,
+                                      size: 30,
+                                      color: Colors
+                                          .redAccent, // Icon lỗi nổi bật hơn
+                                    );
+                                  },
+                                )
+                              : Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.person,
+                                      size: 30,
+                                      color: Colors.grey.shade600,
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      "Không có ảnh",
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    ),
                     Row(
                       children: [
                         Text("Bắt đầu từ: ${process.startTime}"),
@@ -1529,7 +1548,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-            ),
+            ).onInkTap(() async {
+              final updatedLaborContact = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InfoLaborcontractScreen(
+                    laborContracts: process,
+                  ),
+                ),
+              );
+
+              // Kiểm tra xem có dữ liệu cập nhật không
+              if (updatedLaborContact != null) {
+                _handleUpdateLaborContact(updatedLaborContact);
+              }
+            }),
           ),
           isExpanded: process.isExpanded,
         );

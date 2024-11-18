@@ -10,14 +10,11 @@ class TrainingprocessesRepository {
     final response = await service.getTrainingProcessesOf(profileID);
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
 
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => Trainingprocesses.fromJson(x)).toList();
     } else {
-      print("Failed to load Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
@@ -25,11 +22,8 @@ class TrainingprocessesRepository {
   Future<bool> createTrainingProcesses(Trainingprocesses trainingprocesses) async {
     final response = await service.createTrainingProcesses(trainingprocesses);
     if (response.statusCode == 200) {
-      print("addd successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to addd Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add Trainingprocesses: ${response.statusCode}');
     }
   }
@@ -38,15 +32,11 @@ class TrainingprocessesRepository {
     try {
       final response = await service.updateTrainingProcesses(trainingprocesses);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to Update Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update Trainingprocesses');
     }
   }
@@ -55,15 +45,11 @@ class TrainingprocessesRepository {
     try {
       final response = await service.deleteTrainingProcesses(trainingprocessesId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to delete Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Trainingprocesses');
     }
   }

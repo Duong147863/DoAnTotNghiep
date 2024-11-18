@@ -840,7 +840,8 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }),
             const Divider().p12(),
-            _buildEmployeeStats()
+            _buildEmployeeStats(),
+            _buildGetMembersCountGenderAndMaritalStatus(),
             // ExpansionPanelList(
             //   expansionCallback: (int panelIndex, bool isExpanded) {
             //     setState(() {
@@ -961,56 +962,129 @@ class _HomeScreenState extends State<HomeScreen> {
       return UiSpacer.emptySpace();
     }
   }
-}
 
-Widget _buildEmployeeStats() {
-  return Consumer<ProfilesViewModel>(
-    builder: (context, viewModel, child) {
-      if (!viewModel.fetchingData) {
-        viewModel.fetchQuitAndActiveMembersCount();
-      }
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SfCircularChart(
-          title: ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
-          legend: Legend(
-              isVisible: true,
-              position: LegendPosition.bottom), // Hiển thị legend ở dưới
-          series: <CircularSeries<EmployeeStat, String>>[
-            PieSeries<EmployeeStat, String>(
-              dataSource: [
-                EmployeeStat('Đang làm việc', viewModel.activeCount),
-                EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
-              ],
-              xValueMapper: (EmployeeStat stats, _) => stats.status,
-              yValueMapper: (EmployeeStat stats, _) => stats.count,
-              dataLabelSettings: DataLabelSettings(
+  Widget _buildEmployeeStats() {
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        if (!viewModel.fetchingData) {
+          viewModel.fetchQuitAndActiveMembersCount();
+        }
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SfCircularChart(
+            title:
+                ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
+            legend: Legend(
                 isVisible: true,
-                labelPosition:
-                    ChartDataLabelPosition.outside, // Đặt nhãn ra ngoài
-                textStyle: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black), // Cải thiện kiểu nhãn
+                position: LegendPosition.bottom), // Hiển thị legend ở dưới
+            series: <CircularSeries<EmployeeStat, String>>[
+              PieSeries<EmployeeStat, String>(
+                dataSource: [
+                  EmployeeStat('Đang làm việc', viewModel.activeCount),
+                  EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+                ],
+                xValueMapper: (EmployeeStat stats, _) => stats.status,
+                yValueMapper: (EmployeeStat stats, _) => stats.count,
+                dataLabelSettings: DataLabelSettings(
+                  isVisible: true,
+                  labelPosition:
+                      ChartDataLabelPosition.outside, // Đặt nhãn ra ngoài
+                  textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black), // Cải thiện kiểu nhãn
+                ),
+                pointColorMapper: (EmployeeStat stats, _) {
+                  // Thay đổi màu sắc của từng phần trong biểu đồ
+                  if (stats.status == 'Đang làm việc') {
+                    return Colors.blue;
+                  } else {
+                    return Colors.red;
+                  }
+                },
+                explode:
+                    true, // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
+                explodeIndex: 0, // Tạo hiệu ứng phóng to phần "Đang làm việc"
+                explodeOffset: "10%", // Điều chỉnh độ phóng to của phần explode
+                radius: '70%', // Đặt kích thước biểu đồ tròn
               ),
-              pointColorMapper: (EmployeeStat stats, _) {
-                // Thay đổi màu sắc của từng phần trong biểu đồ
-                if (stats.status == 'Đang làm việc') {
-                  return Colors.blue;
-                } else {
-                  return Colors.red;
-                }
-              },
-              explode: true, // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
-              explodeIndex: 0, // Tạo hiệu ứng phóng to phần "Đang làm việc"
-              explodeOffset: "10%", // Điều chỉnh độ phóng to của phần explode
-              radius: '70%', // Đặt kích thước biểu đồ tròn
-            ),
-          ],
-          tooltipBehavior: TooltipBehavior(
-              enable: true), // Hiển thị tooltip khi hover qua phần tử
-        ),
-      );
-    },
-  );
+            ],
+            tooltipBehavior: TooltipBehavior(
+                enable: true), // Hiển thị tooltip khi hover qua phần tử
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGetMembersCountGenderAndMaritalStatus() {
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        // Kiểm tra nếu chưa lấy dữ liệu, gọi API
+        if (!viewModel.fetchingData &&
+            viewModel.genderMan == 0 &&
+            viewModel.genderWoman == 0 &&
+            viewModel.married == 0 &&
+            viewModel.unmarried == 0) {
+          viewModel.getMembersCountGenderAndMaritalStatus();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: viewModel.fetchingData
+              ? Center(child: CircularProgressIndicator())
+              : SfCartesianChart(
+                  primaryXAxis: CategoryAxis(
+                    title: AxisTitle(
+                      text: 'Loại',
+                      textStyle: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  title: ChartTitle(
+                      text: 'Thống kê giới tính và tình trạng hôn nhân'),
+                  legend: Legend(
+                    isVisible: true,
+                    position: LegendPosition.bottom,
+                  ),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <CartesianSeries<dynamic, dynamic>>[
+                    ColumnSeries<dynamic, dynamic>(
+                      dataSource: [
+                        EmployeeStat('Nam', viewModel.genderMan),
+                        EmployeeStat('Nữ', viewModel.genderWoman),
+                        EmployeeStat('Đã kết hôn', viewModel.married),
+                        EmployeeStat('Chưa kết hôn', viewModel.unmarried),
+                      ],
+                      xValueMapper: (dynamic stats, _) => stats.status,
+                      yValueMapper: (dynamic stats, _) => stats.count,
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        labelPosition: ChartDataLabelPosition.outside,
+                        textStyle: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      pointColorMapper: (dynamic stats, _) {
+                        switch (stats.status) {
+                          case 'Nam':
+                            return Colors.blue;
+                          case 'Nữ':
+                            return Colors.pink;
+                          case 'Đã kết hôn':
+                            return Colors.green;
+                          case 'Chưa kết hôn':
+                            return Colors.orange;
+                          default:
+                            return Colors.grey;
+                        }
+                      },
+                    ),
+                  ],
+                ),
+        );
+      },
+    );
+  }
 }

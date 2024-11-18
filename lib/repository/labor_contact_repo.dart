@@ -8,11 +8,8 @@ class LaborContactRepository {
   Future<bool> addLaborContact(LaborContracts laborContact) async {
     final response = await service.addNewLaborContact(laborContact); //
     if (response.statusCode == 200) {
-      print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to add laborcontact: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add laborcontact: ${response.statusCode}');
     }
   }
@@ -20,15 +17,36 @@ class LaborContactRepository {
       String laborContactId) async {
     final response = await service.getLaborContactOf(laborContactId);
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
-
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => LaborContracts.fromJson(x)).toList();
     } else {
-      print("Failed to load LaborContracts: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
+    }
+  }
+  Future<bool> updateLaborContact(LaborContracts laborContact) async {
+    try {
+      final response = await service.updateLaborContact(laborContact);
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to update Trainingprocesses');
+      }
+    } catch (error) {
+      throw Exception('Failed to update Trainingprocesses');
+    }
+  }
+
+  Future<bool> deleteLaborContact(String laborContractId) async {
+    try {
+      final response = await service.deleteLaborContact(laborContractId   );
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        throw Exception('Failed to delete Trainingprocesses');
+      }
+    } catch (error) {
+      throw Exception('Failed to delete Trainingprocesses');
     }
   }
 }

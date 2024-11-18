@@ -286,7 +286,7 @@ class _InfoInsuranceScreenState extends State<InfoInsuranceScreen> {
                               return AlertDialog(
                                 title: Text('Confirm Delete'),
                                 content: Text(
-                                    'Are you sure you want to delete this position?'),
+                                    'Are you sure you want to delete this insurance?'),
                                 actions: [
                                   TextButton(
                                     onPressed: () {

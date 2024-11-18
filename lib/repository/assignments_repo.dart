@@ -11,19 +11,15 @@ class AssignmentsRepository {
     final response = await service.getAssignmentsDetails(projectId);
 
     if (response.statusCode == 200) {
-      print("load successful. Response body: ${response.body}");
       List<dynamic> jsonResponse = json.decode(response.body);
       List<AssiginmentTask> assignments = jsonResponse
           .map((assignmentJson) => AssiginmentTask.fromJson(assignmentJson))
           .toList();
       return assignments;
     } else {
-      print("Failed to delete Relative: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load assignments details');
     }
   } catch (error) {
-    print("Error: $error");
     
     throw Exception('Failed to load assignments details');
   }
@@ -31,11 +27,8 @@ class AssignmentsRepository {
    Future<bool> createNewAssignments(Assignments assignmeents) async {
     final response = await service.createNewAssignments(assignmeents);
     if (response.statusCode == 200) {
-      print("Delete successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to delete Relative: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -49,7 +42,6 @@ class AssignmentsRepository {
         throw Exception('Failed to update department');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update profile');
     }
   }
@@ -58,15 +50,11 @@ class AssignmentsRepository {
     try {
       final response = await service.deleteAssignments(assignmeentsId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
         return false; 
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Relative');
     }
   }

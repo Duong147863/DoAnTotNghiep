@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
@@ -88,6 +89,10 @@ class _SalaryAddScreenState extends State<SalaryAddScreen> {
                   CustomTextFormField(
                     textEditingController: _salaryCoefficientController,
                     labelText: 'Salary_coefficient',
+                    keyboardType: TextInputType.number, // Hiển thị bàn phím số
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Chỉ cho phép nhập số
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_Salary_coefficient';
@@ -98,6 +103,10 @@ class _SalaryAddScreenState extends State<SalaryAddScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _allowancesController,
+                    keyboardType: TextInputType.number, // Hiển thị bàn phím số
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Chỉ cho phép nhập số
                     labelText: 'allowances',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -109,6 +118,10 @@ class _SalaryAddScreenState extends State<SalaryAddScreen> {
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _personalTaxController,
+                    keyboardType: TextInputType.number, // Hiển thị bàn phím số
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly
+                    ], // Chỉ cho phép nhập số
                     labelText: 'personal_Tax',
                     validator: (value) {
                       if (value == null || value.isEmpty) {

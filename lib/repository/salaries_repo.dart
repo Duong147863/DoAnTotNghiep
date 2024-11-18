@@ -13,15 +13,12 @@ class SalariesRepository {
     final response = await service.getAllSalariesByProfileID(salaryId);
 
     if (response.statusCode == 200) {
-      print("load successful. Response body: ${response.body}");
       List<dynamic> jsonResponse = json.decode(response.body);
       List<Getsalaryslip> salaryId = jsonResponse
           .map((SalaryJson) => Getsalaryslip.fromJson(SalaryJson))
           .toList();
       return salaryId;
     } else {
-      print("Failed to delete Relative: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load assignments details');
     }
   } catch (error) {
@@ -54,11 +51,8 @@ class SalariesRepository {
   Future<bool> addSalary(Salaries salary) async {
     final response = await service.addNewSalary(salary);
     if (response.statusCode == 200) {
-      print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to add profile: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -67,15 +61,11 @@ class SalariesRepository {
     try {
       final response = await service.updateSalary(salary);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to update department: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update department');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update profile');
     }
   }
@@ -83,11 +73,8 @@ class SalariesRepository {
     try {
       final response = await service.deleteSalary(salaryId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to delete Salary: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Salary');
       }
     } catch (error) {
@@ -100,14 +87,11 @@ class SalariesRepository {
     final response = await service.getAllSalariesByProfileID(profileId);
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
 
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => Profiles.fromJson(x)).toList();
     } else {
-      print("Failed to load Profiles: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
