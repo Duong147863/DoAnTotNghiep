@@ -15,8 +15,6 @@ class TrainingprocessesRepository {
 
       return jsonData.map((x) => Trainingprocesses.fromJson(x)).toList();
     } else {
-      print("Failed to load Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
@@ -25,13 +23,9 @@ class TrainingprocessesRepository {
       Trainingprocesses trainingprocesses) async {
     final response = await service.createTrainingProcesses(trainingprocesses);
     if (response.statusCode == 200) {
-      print("addd successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to addd Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
-      throw Exception(
-          'Failed to add Trainingprocesses: ${response.statusCode}');
+      throw Exception('Failed to add Trainingprocesses: ${response.statusCode}');
     }
   }
 
@@ -42,12 +36,9 @@ class TrainingprocessesRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to Update Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update Trainingprocesses');
     }
   }
@@ -59,12 +50,9 @@ class TrainingprocessesRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Trainingprocesses');
     }
   }

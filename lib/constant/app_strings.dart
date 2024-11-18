@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:typed_data';
 
 class AppStrings {
-  static const String baseUrlApi = "http://192.168.1.9:8000/api/v1/";
+  AppStrings._();
+
+  static const String baseUrlApi = "http://192.168.1.29:8000/api/v1/";
 
   static String notificationsKey = "notifications";
   static String SHARED_LOGGED = "USER_IS_LOGGED";

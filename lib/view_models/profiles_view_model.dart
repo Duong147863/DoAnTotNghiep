@@ -15,6 +15,10 @@ class ProfilesViewModel extends ChangeNotifier {
   int quitCount = 0; // Số lượng nhân viên đã nghỉ việc
   int activeCount = 0; // Số lượng nhân viên đang làm việc
   int totalMembers = 0; // Biến lưu trữ tổng số nhân viên
+  int genderMan = 0;
+  int genderWoman = 0;
+  int married = 0;
+  int unmarried = 0;
   //
   Profiles? selectedProfile;
   Future<void> fetchAllProfiles() async {
@@ -47,8 +51,9 @@ class ProfilesViewModel extends ChangeNotifier {
       final counts = await repository.getQuitAndActiveMembersCount();
 
       // Cập nhật số lượng nhân viên đã nghỉ việc và đang làm việc
-      quitCount = counts['quitCount'] ?? 0;
+      genderMan = counts['quitCount'] ?? 0;
       activeCount = counts['activeCount'] ?? 0;
+
       fetchingData = false;
       // Gọi notifyListeners để cập nhật UI
       notifyListeners();
@@ -58,19 +63,37 @@ class ProfilesViewModel extends ChangeNotifier {
     }
   }
 
- Future<void> membersOfDepartment(String departmentID) async {
+ Future<void> getMembersCountGenderAndMaritalStatus() async {
   fetchingData = true;
   notifyListeners();
   try {
-    var result = await repository.fetchMembersOfDepartment(departmentID);
-    membersDepartment = result['profiles'];
-    totalMembers = result['totals'];
-  } catch (e) {   
-      throw Exception('Failed to load data: $e');
+    final counts = await repository.getMembersCountGenderAndMaritalStatus();
+    genderMan = counts['genderMan'] ?? 0;
+    genderWoman = counts['genderWoman'] ?? 0;
+    married = counts['married'] ?? 0;
+    unmarried = counts['unmarried'] ?? 0;
+  } catch (e) {
+    print('Error occurred: $e');
+    throw Exception('Failed to fetch members count: $e');
+  } finally {
+    fetchingData = false;
+    notifyListeners();
   }
-  fetchingData = false;
-  notifyListeners();
 }
+
+  Future<void> membersOfDepartment(String departmentID) async {
+    fetchingData = true;
+    notifyListeners();
+    try {
+      var result = await repository.fetchMembersOfDepartment(departmentID);
+      membersDepartment = result['profiles'];
+      totalMembers = result['totals'];
+    } catch (e) {
+      throw Exception('Failed to load data: $e');
+    }
+    fetchingData = false;
+    notifyListeners();
+  }
 
   Future<void> addProfile(Profiles profile) async {
     try {

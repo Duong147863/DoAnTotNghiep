@@ -10,11 +10,8 @@ class InsuranceRepository {
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = json.decode(response.body);
-
       return jsonData.map((x) => Insurance.fromJson(x)).toList();
     } else {
-      print("Failed to load Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
@@ -24,8 +21,6 @@ class InsuranceRepository {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print("Failed to add profile: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add diploma: ${response.statusCode}');
     }
   }
@@ -36,12 +31,9 @@ class InsuranceRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to Update Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update Trainingprocesses');
     }
   }
@@ -52,12 +44,9 @@ class InsuranceRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Trainingprocesses');
     }
   }

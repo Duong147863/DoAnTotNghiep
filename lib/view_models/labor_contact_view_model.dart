@@ -29,4 +29,31 @@ class LaborContactsViewModel extends ChangeNotifier {
       throw Exception('Failed to load LaborContracts: $e');
     }
   }
+   Future<void> updateLaborContact(LaborContracts laborContact) async {
+    try {
+      await repository.updateLaborContact(laborContact);
+      int index =
+          _list.indexWhere((lab) => lab.laborContractId == laborContact.laborContractId);
+      if (index != -1) {
+        _list[index] = laborContact;
+        notifyListeners();
+      }
+    } catch (e) {
+      throw Exception('Failed to update Training Processes: $e');
+    }
+  }
+
+  Future<void> deleteLaborContact(String laborContractId) async {
+    try {
+      bool success = await repository.deleteLaborContact(laborContractId);
+      if (success) {
+        _list.removeWhere((lab) => lab.laborContractId == laborContractId);
+        notifyListeners();
+      } else {
+        throw Exception('Failed to delete Trainingprocesses');
+      }
+    } catch (e) {
+      throw Exception('Failed to delete Trainingprocesses: $e');
+    }
+  }
 }

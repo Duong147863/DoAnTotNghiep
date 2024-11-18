@@ -33,7 +33,7 @@ class Relatives {
       profileId: json["profile_id"],
       relativesName: json["relative_name"],
       relativesPhone: json["relative_phone"],
-      relativesBirthday: DateFormat("dd-MM-yyyy").parse(json['relative_birthday']),
+      relativesBirthday: DateTime.parse(json['relative_birthday']),
       relativeId: json["relative_id"],
       relationship: json["relationship"],
       relativesNation: json["relative_nation"],

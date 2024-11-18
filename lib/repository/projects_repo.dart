@@ -20,11 +20,8 @@ class ProjectsRepository {
   Future<bool> addProject(Projects projects) async {
     final response = await service.createNewProject(projects);
     if (response.statusCode == 200) {
-      print("Add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to Add Project: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add Project: ${response.statusCode}');
     }
   }
@@ -35,12 +32,9 @@ class ProjectsRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to update project: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update project');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update project');
     }
   }
@@ -51,12 +45,9 @@ class ProjectsRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete project: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete project');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete project');
     }
   }

@@ -38,6 +38,12 @@ class ProfileService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
+   Future<http.Response> getMembersCountGenderAndMaritalStatus() async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}profiles/MembersCountGenderAndMaritalStatus'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
 
   Future<http.Response> getAllProfileByPosition(
       String positionID, String token) async {

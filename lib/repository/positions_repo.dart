@@ -32,12 +32,9 @@ class PositionsRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to update department: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update department');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update profile');
     }
   }
@@ -48,12 +45,9 @@ class PositionsRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete position: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete position');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete position');
     }
   }

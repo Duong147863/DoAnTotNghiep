@@ -11,8 +11,6 @@ class EnterprisesRepository {
     if (response.statusCode == 200) {
       return json.decode(response.body).map((x) => Enterprises.fromJson(x));
     } else {
-      print("Load to Fail Enter: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }

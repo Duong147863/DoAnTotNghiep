@@ -10,11 +10,8 @@ class AbsentsRepository {
   Future<bool> addNewAbsent(Absents absents) async {
     final response = await service.createNewAbsent(absents);
     if (response.statusCode == 200) {
-      print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to add profile: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -27,7 +24,6 @@ class AbsentsRepository {
         json.decode(response.body).map((x) => Absents.fromJson(x)),
       );
     } else {
-      print("Response body: ${response.body}");
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }
@@ -40,7 +36,6 @@ class AbsentsRepository {
         json.decode(response.body).map((x) => Absents.fromJson(x)),
       );
     } else {
-      print("Response body: ${response.body}");
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }
@@ -48,11 +43,8 @@ class AbsentsRepository {
     try {
       final response = await service.updateAbents(asbents);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to Update Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {
@@ -64,15 +56,11 @@ class AbsentsRepository {
     try {
       final response = await service.deleteAbents(ID);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
         return false; 
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Relative');
     }
   }

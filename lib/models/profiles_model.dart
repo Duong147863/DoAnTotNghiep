@@ -17,7 +17,7 @@ class Profiles {
       this.departmentId,
       this.salaryId,
       this.positionId,
-      required this.password,
+      this.password,
       this.laborContractId,
       this.marriage = false,
       required this.temporaryAddress,
@@ -39,7 +39,7 @@ class Profiles {
   String? salaryId;
   String? positionId;
   String? laborContractId;
-  String password;
+  String? password;
   int profileStatus;
   bool marriage;
   String temporaryAddress;

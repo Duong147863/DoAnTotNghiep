@@ -9,7 +9,7 @@ class TimekeepingRepo {
     if (response.statusCode == 201 || response.statusCode == 200) {
       return true;
     } else {
-      print(response.body);
+
       throw Exception('Failed to checkin: ${response.statusCode}');
     }
   }

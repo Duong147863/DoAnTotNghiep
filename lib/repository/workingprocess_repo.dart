@@ -15,8 +15,6 @@ class WorkingprocessRepository {
 
       return jsonData.map((x) => WorkingProcesses.fromJson(x)).toList();
     } else {
-      print("Failed to load WorkingProcesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
@@ -24,11 +22,8 @@ class WorkingprocessRepository {
   Future<bool> createNewWorkingprocess(WorkingProcesses workingprocess) async {
     final response = await service.createNewWorkingprocess(workingprocess);
     if (response.statusCode == 200) {
-      print("addd successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Failed to addd WorkingProcesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add WorkingProcesses: ${response.statusCode}');
     }
   }
@@ -39,12 +34,9 @@ class WorkingprocessRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to Update WorkingProcesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update WorkingProcesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update WorkingProcesses');
     }
   }
@@ -55,12 +47,9 @@ class WorkingprocessRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete Workingprocess: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Workingprocess');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Workingprocess');
     }
   }

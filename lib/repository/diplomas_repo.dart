@@ -14,8 +14,6 @@ class DiplomasRepository {
 
       return jsonData.map((x) => Diplomas.fromJson(x)).toList();
     } else {
-      print("Failed to load Trainingprocesses: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load data');
     }
   }
@@ -25,8 +23,6 @@ class DiplomasRepository {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print("Failed to add profile: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add diploma: ${response.statusCode}');
     }
   }
@@ -37,12 +33,9 @@ class DiplomasRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to Update Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update Trainingprocesses');
     }
   }
@@ -53,12 +46,9 @@ class DiplomasRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete Trainingprocesses: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to delete Trainingprocesses');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Trainingprocesses');
     }
   }

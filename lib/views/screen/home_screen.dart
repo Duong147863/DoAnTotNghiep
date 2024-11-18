@@ -889,83 +889,89 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildbodyChildren() {
     if (AppStrings.ROLE_PERMISSIONS
         .containsAny(['Manage BoD & HR accounts', 'Manage Staffs info only'])) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
-            if (!viewModel.fetchingData && viewModel.listDepartments.isEmpty) {
-              Provider.of<DeparmentsViewModel>(context, listen: false)
-                  .fetchAllDepartments();
-            }
-            if (viewModel.fetchingData) {
-              // While data is being fetched
-              return const Center(child: CircularProgressIndicator());
-            } else {
-              // If data is successfully fetched
-              List<Departments> departments = viewModel.listDepartments;
-              return CustomGridView(
-                  childAspectRatio: 2,
-                  dataSet: departments,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      color: const Color.fromARGB(255, 243, 243, 242),
-                      elevation: 1,
-                      // margin: EdgeInsets.all(13),
-                      child: Wrap(
-                        clipBehavior: Clip.antiAlias,
-                        direction: Axis.vertical,
-                        children: [
-                          Text(
-                            departments[index].departmentName,
-                          ),
-                        ],
-                      ).p(13),
-                    ).onTap(() => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DepartmentInfoScreen(
-                            departments: departments[index],
-                          ),
-                        )));
-                  }).p8();
-            }
-          }),
-          const Divider().p12(),
-          _buildEmployeeStats()
-          // ExpansionPanelList(
-          //   expansionCallback: (int panelIndex, bool isExpanded) {
-          //     setState(() {
-          //       isExpandedList[panelIndex] = isExpanded;
-          //     });
-          //   },
-          //   children: [
-          //     ExpansionPanel(
-          //       headerBuilder: (BuildContext context, bool isExpanded) {
-          //         return const Text("Nhân sự công ty");
-          //       },
-          //       isExpanded: true,
-          //       body: Consumer<ProfilesViewModel>(
-          //           builder: (context, viewModel, child) {
-          //         if (!viewModel.fetchingData &&
-          //             viewModel.allProfiles.isEmpty) {
-          //           Provider.of<ProfilesViewModel>(context, listen: false)
-          //               .fetchAllProfiles();
-          //         }
-          //         List<Profiles> listProfiles = viewModel.allProfiles;
-          //         return CustomListView(
-          //             dataSet: listProfiles,
-          //             itemBuilder: (context, index) {
-          //               return ListTile(
-          //                 leading: const CircleAvatar(),
-          //                 title: Text(listProfiles[index].profileName),
-          //                 subtitle: Text(listProfiles[index].positionId!),
-          //               );
-          //             });
-          //       }),
-          //     ),
-          //   ],
-          // ).p8()
-        ],
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData &&
+                  viewModel.listDepartments.isEmpty) {
+                Provider.of<DeparmentsViewModel>(context, listen: false)
+                    .fetchAllDepartments();
+              }
+              if (viewModel.fetchingData) {
+                // While data is being fetched
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                // If data is successfully fetched
+                List<Departments> departments = viewModel.listDepartments;
+                return CustomGridView(
+                    childAspectRatio: 2,
+                    dataSet: departments,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        color: const Color.fromARGB(255, 243, 243, 242),
+                        elevation: 1,
+                        // margin: EdgeInsets.all(13),
+                        child: Wrap(
+                          clipBehavior: Clip.antiAlias,
+                          direction: Axis.vertical,
+                          children: [
+                            Text(
+                              departments[index].departmentName,
+                              maxLines: 2,
+                              overflow: TextOverflow.clip,
+                            ),
+                          ],
+                        ).p(13),
+                      ).onTap(() => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DepartmentInfoScreen(
+                              departments: departments[index],
+                            ),
+                          )));
+                    });
+              }
+            }),
+            const Divider().p12(),
+            _buildEmployeeStats()
+            // ExpansionPanelList(
+            //   expansionCallback: (int panelIndex, bool isExpanded) {
+            //     setState(() {
+            //       isExpandedList[panelIndex] = isExpanded;
+            //     });
+            //   },
+            //   children: [
+            //     ExpansionPanel(
+            //       headerBuilder: (BuildContext context, bool isExpanded) {
+            //         return const Text("Nhân sự công ty");
+            //       },
+            //       isExpanded: true,
+            //       body: Consumer<ProfilesViewModel>(
+            //           builder: (context, viewModel, child) {
+            //         if (!viewModel.fetchingData &&
+            //             viewModel.allProfiles.isEmpty) {
+            //           Provider.of<ProfilesViewModel>(context, listen: false)
+            //               .fetchAllProfiles();
+            //         }
+            //         List<Profiles> listProfiles = viewModel.allProfiles;
+            //         return CustomListView(
+            //             dataSet: listProfiles,
+            //             itemBuilder: (context, index) {
+            //               return ListTile(
+            //                 leading: const CircleAvatar(),
+            //                 title: Text(listProfiles[index].profileName),
+            //                 subtitle: Text(listProfiles[index].positionId!),
+            //               );
+            //             });
+            //       }),
+            //     ),
+            //   ],
+            // ).p8()
+          ],
+        ),
       );
     } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
       {
@@ -1052,56 +1058,129 @@ class _HomeScreenState extends State<HomeScreen> {
       return UiSpacer.emptySpace();
     }
   }
-}
 
-Widget _buildEmployeeStats() {
-  return Consumer<ProfilesViewModel>(
-    builder: (context, viewModel, child) {
-      if (!viewModel.fetchingData) {
-        viewModel.fetchQuitAndActiveMembersCount();
-      }
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SfCircularChart(
-          title: ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
-          legend: Legend(
-              isVisible: true,
-              position: LegendPosition.bottom), // Hiển thị legend ở dưới
-          series: <CircularSeries<EmployeeStat, String>>[
-            PieSeries<EmployeeStat, String>(
-              dataSource: [
-                EmployeeStat('Đang làm việc', viewModel.activeCount),
-                EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
-              ],
-              xValueMapper: (EmployeeStat stats, _) => stats.status,
-              yValueMapper: (EmployeeStat stats, _) => stats.count,
-              dataLabelSettings: DataLabelSettings(
+  Widget _buildEmployeeStats() {
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        if (!viewModel.fetchingData) {
+          viewModel.fetchQuitAndActiveMembersCount();
+        }
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SfCircularChart(
+            title:
+                ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
+            legend: Legend(
                 isVisible: true,
-                labelPosition:
-                    ChartDataLabelPosition.outside, // Đặt nhãn ra ngoài
-                textStyle: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black), // Cải thiện kiểu nhãn
+                position: LegendPosition.bottom), // Hiển thị legend ở dưới
+            series: <CircularSeries<EmployeeStat, String>>[
+              PieSeries<EmployeeStat, String>(
+                dataSource: [
+                  EmployeeStat('Đang làm việc', viewModel.activeCount),
+                  EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+                ],
+                xValueMapper: (EmployeeStat stats, _) => stats.status,
+                yValueMapper: (EmployeeStat stats, _) => stats.count,
+                dataLabelSettings: DataLabelSettings(
+                  isVisible: true,
+                  labelPosition:
+                      ChartDataLabelPosition.outside, // Đặt nhãn ra ngoài
+                  textStyle: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black), // Cải thiện kiểu nhãn
+                ),
+                pointColorMapper: (EmployeeStat stats, _) {
+                  // Thay đổi màu sắc của từng phần trong biểu đồ
+                  if (stats.status == 'Đang làm việc') {
+                    return Colors.blue;
+                  } else {
+                    return Colors.red;
+                  }
+                },
+                explode:
+                    true, // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
+                explodeIndex: 0, // Tạo hiệu ứng phóng to phần "Đang làm việc"
+                explodeOffset: "10%", // Điều chỉnh độ phóng to của phần explode
+                radius: '70%', // Đặt kích thước biểu đồ tròn
               ),
-              pointColorMapper: (EmployeeStat stats, _) {
-                // Thay đổi màu sắc của từng phần trong biểu đồ
-                if (stats.status == 'Đang làm việc') {
-                  return Colors.blue;
-                } else {
-                  return Colors.red;
-                }
-              },
-              explode: true, // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
-              explodeIndex: 0, // Tạo hiệu ứng phóng to phần "Đang làm việc"
-              explodeOffset: "10%", // Điều chỉnh độ phóng to của phần explode
-              radius: '70%', // Đặt kích thước biểu đồ tròn
-            ),
-          ],
-          tooltipBehavior: TooltipBehavior(
-              enable: true), // Hiển thị tooltip khi hover qua phần tử
-        ),
-      );
-    },
-  );
+            ],
+            tooltipBehavior: TooltipBehavior(
+                enable: true), // Hiển thị tooltip khi hover qua phần tử
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildGetMembersCountGenderAndMaritalStatus() {
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        // Kiểm tra nếu chưa lấy dữ liệu, gọi API
+        if (!viewModel.fetchingData &&
+            viewModel.genderMan == 0 &&
+            viewModel.genderWoman == 0 &&
+            viewModel.married == 0 &&
+            viewModel.unmarried == 0) {
+          viewModel.getMembersCountGenderAndMaritalStatus();
+        }
+
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: viewModel.fetchingData
+              ? Center(child: CircularProgressIndicator())
+              : SfCartesianChart(
+                  primaryXAxis: CategoryAxis(
+                    title: AxisTitle(
+                      text: 'Loại',
+                      textStyle: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  title: ChartTitle(
+                      text: 'Thống kê giới tính và tình trạng hôn nhân'),
+                  legend: Legend(
+                    isVisible: true,
+                    position: LegendPosition.bottom,
+                  ),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <CartesianSeries<dynamic, dynamic>>[
+                    ColumnSeries<dynamic, dynamic>(
+                      dataSource: [
+                        EmployeeStat('Nam', viewModel.genderMan),
+                        EmployeeStat('Nữ', viewModel.genderWoman),
+                        EmployeeStat('Đã kết hôn', viewModel.married),
+                        EmployeeStat('Chưa kết hôn', viewModel.unmarried),
+                      ],
+                      xValueMapper: (dynamic stats, _) => stats.status,
+                      yValueMapper: (dynamic stats, _) => stats.count,
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        labelPosition: ChartDataLabelPosition.outside,
+                        textStyle: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      pointColorMapper: (dynamic stats, _) {
+                        switch (stats.status) {
+                          case 'Nam':
+                            return Colors.blue;
+                          case 'Nữ':
+                            return Colors.pink;
+                          case 'Đã kết hôn':
+                            return Colors.green;
+                          case 'Chưa kết hôn':
+                            return Colors.orange;
+                          default:
+                            return Colors.grey;
+                        }
+                      },
+                    ),
+                  ],
+                ),
+        );
+      },
+    );
+  }
 }

@@ -36,6 +36,7 @@ import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
@@ -164,13 +165,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     });
   }
+    void _handleUpdateLaborContact(LaborContracts updatelaborContracts) {
+    setState(() {
+      int index = laborContracts
+          .indexWhere((lab) => lab.laborContractId == updatelaborContracts.laborContractId);
+      if (index != -1) {
+        laborContracts[index] = updatelaborContracts;
+      }
+    });
+  }
 
   // Method to load departments
   void _loadDepartments() async {
     try {
       await Provider.of<DeparmentsViewModel>(context, listen: false)
           .fetchAllDepartments();
-      setState(() {
+     
         departments = Provider.of<DeparmentsViewModel>(context, listen: false)
             .listDepartments;
         if (departments.isNotEmpty) {
@@ -179,7 +189,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 department.departmentID == widget.profile!.departmentId,
           );
         }
-      });
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load departments')),
@@ -365,7 +374,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           email: _emailController.text,
           phone: _phoneController.text,
           roleID: widget.profile!.roleID,
-          password: "Liempn@13",
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
@@ -797,6 +805,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 16),
                 _buildInsuranceList(),
                 //Hợp đồng
+                 SizedBox(height: 16),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -1540,7 +1549,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-            ),
+            ).onInkTap(() async {
+              final updatedLaborContact = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InfoLaborcontractScreen(
+                    laborContracts: process,
+                  ),
+                ),
+              );
+
+              // Kiểm tra xem có dữ liệu cập nhật không
+              if (updatedLaborContact != null) {
+                _handleUpdateLaborContact(updatedLaborContact);
+              }
+            }),
           ),
           isExpanded: process.isExpanded,
         );

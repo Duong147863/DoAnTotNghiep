@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
@@ -7,7 +8,6 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/enterprises_model.dart';
 import 'package:nloffice_hrm/models/labor_contracts_model.dart';
-import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
@@ -16,14 +16,16 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class AddLaborContractScreen extends StatefulWidget {
-  const AddLaborContractScreen({super.key});
+class InfoLaborcontractScreen extends StatefulWidget {
+  final LaborContracts? laborContracts;
+  const InfoLaborcontractScreen({super.key, this.laborContracts});
 
   @override
-  State<AddLaborContractScreen> createState() => _AddLaborContractScreenState();
+  State<InfoLaborcontractScreen> createState() =>
+      _InfoLaborcontractScreenState();
 }
 
-class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
+class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   final _formKey = GlobalKey<FormState>();
   final _laborContractIDController = TextEditingController();
   final _startTimeController = TextEditingController();
@@ -36,11 +38,75 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   Enterprises? enterprises;
   Enterprises? selectedEnterprises;
   String? _laborContractImageBase64;
-  @override
+  bool _isEditing = false;
   void initState() {
     super.initState();
-    _loadDepartments();
-    _loadEnterpriseID();
+    _laborContractIDController.text = widget.laborContracts!.laborContractId;
+    _startTimeController.text = widget.laborContracts!.startTime.toString();
+    _endTimeController.text = widget.laborContracts!.endTime == null
+        ? "Hiện tại"
+        : widget.laborContracts!.endTime.toString();
+    _laborContractImageBase64 = widget.laborContracts!.image;
+   Provider.of<DeparmentsViewModel>(context, listen: false)
+          .fetchAllDepartments();
+     departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+            .listDepartments;
+        if (departments.isNotEmpty) {
+          selectedDepartment = departments.firstWhere(
+            (dep) => dep.departmentID == widget.laborContracts!.departmentId,
+          );
+        }
+      Provider.of<EnterprisesViewModel>(context, listen: false)
+          .fetchAllEnterprises();
+      enterprises =
+          Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
+  }
+
+  void _updateLaborContract() async {
+    if (_formKey.currentState!.validate()) {
+      DateTime? endTimeToUpdate;
+      if (_endTimeController.text == "Hiện tại") {
+        endTimeToUpdate = null;
+      } else {
+        endTimeToUpdate =
+            _endTime; // Nếu có ngày tháng thì dùng giá trị của _endTime
+      }
+      final updatedLaborContract = LaborContracts(
+          laborContractId: _laborContractIDController.text,
+          startTime: _startTime,
+          endTime: endTimeToUpdate, 
+          enterpriseId: 0,
+          image: _laborContractImageBase64 ?? "",
+          departmentId: selectedDepartment!.departmentID);
+
+      try {
+        await Provider.of<LaborContactsViewModel>(context, listen: false)
+            .updateLaborContact(updatedLaborContract);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('LaborContracts Updated successfully!')),
+        );
+        Navigator.pop(context, updatedLaborContract);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to Update LaborContracts: $e')),
+        );
+      }
+    }
+  }
+
+  void _deleteLaborContract() async {
+    try {
+      await Provider.of<LaborContactsViewModel>(context, listen: false)
+          .deleteLaborContact(widget.laborContracts!.laborContractId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('LaborContracts deleted successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete LaborContracts: $e')),
+      );
+    }
   }
 
   Future<void> _pickImage() async {
@@ -55,58 +121,6 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       String base64String = await AppStrings.ImagetoBase64(file);
       setState(() {
         _laborContractImageBase64 = base64String;
-      });
-    }
-  }
-
-  void _loadDepartments() async {
-    try {
-      await Provider.of<DeparmentsViewModel>(context, listen: false)
-          .fetchAllDepartments();
-      setState(() {
-        departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-          .listDepartments;
-      });
-    } catch (error) {
-      print('Error loading departments: $error');
-    }
-  }
-
-  void _loadEnterpriseID() async {
-    try {
-      await Provider.of<EnterprisesViewModel>(context, listen: false)
-          .fetchAllEnterprises();
-      enterprises =
-          Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
-      setState(() {
-      });
-    } catch (error) {
-      print('Error loading enterprises: $error');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load enterprises')),
-      );
-    }
-  }
-
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final newLaborContact = LaborContracts(
-        laborContractId: _laborContractIDController.text,
-        startTime: _startTime,
-        endTime: _endTimeController.text.isNotEmpty
-            ? _endTime
-            : null, // Nếu End Time trống, truyền null
-        enterpriseId: 0,
-        image: _laborContractImageBase64 ?? "",
-        departmentId: selectedDepartment!.departmentID,
-      );
-      Provider.of<LaborContactsViewModel>(context, listen: false)
-          .addNewLaborContact(newLaborContact)
-          .then((_) {
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('LaborContact added successfully!')),
-        );
       });
     }
   }
@@ -128,7 +142,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Tạo hợp đồng lao động',
+      titletext: 'Sửa hợp đồng lao động',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: SingleChildScrollView(
@@ -170,6 +184,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                   ).px8(),
                   SizedBox(height: 16),
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _laborContractIDController,
                     labelText: 'Mã hợp đồng',
                     validator: (value) {
@@ -231,13 +246,55 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                     ],
                   ),
                   SizedBox(height: 24),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _submit();
-                      },
-                      child: Text('Save'),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.save,
+                            color: const Color.fromARGB(255, 33, 243, 61)),
+                        onPressed: _updateLaborContract,
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.blue),
+                        onPressed: () {
+                          setState(() {
+                            _isEditing = true;
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Confirm Delete'),
+                                content: Text(
+                                    'Are you sure you want to delete this laborcontact?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Đóng dialog
+                                      _deleteLaborContract();
+                                    },
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -251,12 +308,14 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   Widget _buildDateStartTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, (selectedDate) {
-        onDateSelected(selectedDate);
-        setState(() {
-          _startTime = selectedDate; // Cập nhật lại _startTime khi chọn
-        });
-      }),
+      onTap: _isEditing
+          ? () => _selectDate(context, initialDate, (selectedDate) {
+                onDateSelected(selectedDate);
+                setState(() {
+                  _startTime = selectedDate; // Cập nhật lại _startTime khi chọn
+                });
+              })
+          : null,
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
@@ -277,50 +336,60 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
     );
   }
 
-  Widget _buildDateEndTime(String label, TextEditingController controller,
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, onDateSelected),
-      child: AbsorbPointer(
-        child: TextFormField(
-          readOnly: true,
-          style: TextStyle(color: Colors.black),
-          controller: controller,
-          validator: (value) {
-            // Không cần kiểm tra endTime nếu nó để trống
-            if (controller.text.isNotEmpty) {
-              try {
-                DateTime selectedEndTime = DateTime.parse(controller.text);
+ Widget _buildDateEndTime(String label, TextEditingController controller,
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return GestureDetector(
+    onTap: _isEditing
+        ? () => _selectDate(context, initialDate, onDateSelected)
+        : null,
+    child: AbsorbPointer(
+      child: TextFormField(
+        readOnly: true,
+        style: TextStyle(color: Colors.black),
+        controller: controller,
+        validator: (value) {
+          // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
+          if (controller.text == "Hiện tại") {
+            return null; // Không cần kiểm tra
+          }
 
-                // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
-                if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
+          // Nếu có giá trị nhập vào
+          if (controller.text.isNotEmpty) {
+            try {
+              DateTime selectedEndTime = DateTime.parse(controller.text);
+
+              // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
+              if (selectedEndTime.isBefore(_startTime) ||
+                  selectedEndTime.difference(_startTime).inDays < 30) {
+                return 'End Time phải trong trên 1 tháng kể từ Start Time';
               }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
             }
-            return null;
-          },
-          decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildDepartmentDropdown(String hint) {
     return DropdownButtonFormField<Departments>(
       value: selectedDepartment,
       hint: Text(hint),
-      onChanged: (Departments? newValue) {
-        setState(() {
-          selectedDepartment = newValue;
-        });
-      },
+      onChanged: _isEditing
+          ? (Departments? newValue) {
+              setState(() {
+                selectedDepartment = newValue;
+              });
+            }
+          : null,
       items: departments.map((Departments department) {
         return DropdownMenuItem<Departments>(
           value: department,
@@ -349,7 +418,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
           borderRadius: BorderRadius.circular(10),
         ),
       ),
-      onTap: () async {},
+      onTap: _isEditing ? () async {} : null,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please select an enterprise';

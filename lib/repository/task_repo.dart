@@ -14,13 +14,9 @@ class TaskRepository {
           json.decode(response.body).map((x) => Tasks.fromJson(x)),
         );
       } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
         return []; // Return an empty list if no data is returned
       }
     } else {
-      print("Failed to delete Relative: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }
@@ -30,8 +26,6 @@ class TaskRepository {
     if (response.statusCode == 200) {
       return true;
     } else {
-      print("Failed to delete Relative: ${response.statusCode}");
-      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -45,7 +39,6 @@ class TaskRepository {
         throw Exception('Failed to update department');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update profile');
     }
   }
@@ -56,12 +49,9 @@ class TaskRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
-        return false;
+        return false; 
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to delete Relative');
     }
   }

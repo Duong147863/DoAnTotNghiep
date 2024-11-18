@@ -34,6 +34,22 @@ class ProfilesRepository {
       throw Exception('Failed to load members count');
     }
   }
+  Future<Map<String, int>> getMembersCountGenderAndMaritalStatus() async {
+    final response = await service.getMembersCountGenderAndMaritalStatus();
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      // Trả về số lượng nhân viên đã nghỉ việc và đang làm việc
+      return {
+        'genderMan': data['genderMan'],
+        'genderWoman': data['genderWoman'],
+        'married': data['married'],
+        'unmarried': data['unmarried']
+      };
+    } else {
+      throw Exception('Failed to load members count');
+    }
+  }
 
   Future<List<Profiles>> fetchAllProfiles() async {
     final response = await service.getAllProfile();
@@ -68,10 +84,8 @@ class ProfilesRepository {
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //
     if (response.statusCode == 200) {
-      print("add successful. Response body: ${response.body}");
       return true;
     } else {
-      print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -83,11 +97,9 @@ class ProfilesRepository {
       if (response.statusCode == 200) {
         return true; // Cập nhật thành công
       } else {
-        print("Response body: ${response.body}");
         throw Exception('Failed to update profile');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to update profile');
     }
   }
@@ -151,15 +163,12 @@ class ProfilesRepository {
           profileID, currentPassword, newPassword, confirmNewPassword);
       if (response.statusCode == 200) {
         print("Password change successful");
-
+        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
-        print("Failed to change password: ${response.statusCode}");
-        print("Response body: ${response.body}");
         throw Exception('Failed to change password: ${response.statusCode}');
       }
     } catch (error) {
-      print("An error occurred: $error");
       throw Exception('Failed to change password');
     }
   }
