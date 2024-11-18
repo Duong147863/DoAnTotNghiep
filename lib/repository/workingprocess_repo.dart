@@ -11,8 +11,6 @@ class WorkingprocessRepository {
     final response = await service.getWorkingProcessOf(profileID);
 
     if (response.statusCode == 200) {
-      print("Load successful. Response body: ${response.body}");
-
       final List<dynamic> jsonData = json.decode(response.body);
 
       return jsonData.map((x) => WorkingProcesses.fromJson(x)).toList();
@@ -39,7 +37,6 @@ class WorkingprocessRepository {
     try {
       final response = await service.updateWorkingprocess(workingprocess);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to Update WorkingProcesses: ${response.statusCode}");
@@ -56,7 +53,6 @@ class WorkingprocessRepository {
     try {
       final response = await service.deleteWorkingprocess(workingprocessId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete Workingprocess: ${response.statusCode}");

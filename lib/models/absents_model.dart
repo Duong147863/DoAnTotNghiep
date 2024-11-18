@@ -12,6 +12,7 @@ class Absents {
     this.daysOff,
     required this.profileID,
     this.status = -1,
+    this.isExpanded = false,
   });
 
   DateTime from;
@@ -21,14 +22,13 @@ class Absents {
   String profileID;
   double? daysOff;
   int? ID;
+  bool isExpanded;
 
   factory Absents.fromJson(Map<String, dynamic> json) {
     return Absents(
       ID: json["ID"],
       reason: json["reason"],
-      to: json['to'] != null
-          ? DateFormat("dd-MM-yyyy").parse(json['to'])
-          : null,
+      to: json['to'],
       status: json["status"],
       profileID: json["profile_id"],
       daysOff: json["days_off"] != null
@@ -36,7 +36,7 @@ class Absents {
               ? (json["days_off"] as int).toDouble()
               : json["days_off"] as double)
           : null,
-      from: DateFormat("dd-MM-yyyy").parse(json['from']),
+      from: json['from'],
     );
   }
 

@@ -43,8 +43,8 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     _profileIDController.text = widget.profile.profileId;
     _relativeNameController.text = widget.profile.relativesName;
     _phoneRelativeController.text = widget.profile.relativesPhone;
-    _birthdayRelativeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.profile.relativesBirthday);
+    _birthdayRelativeController.text = DateFormat('yyyy-MM-dd').format(
+        DateTime.parse(widget.profile.relativesBirthday.toLocal().toString()));
     _nationRelativeController.text = widget.profile.relativesNation;
     _temporaryAddressRelativeController.text =
         widget.profile.relativesTempAddress;
@@ -129,173 +129,156 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
       titletext: 'Thông tin thân nhân',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+      backgroundColor: AppColor.primaryLightColor,
+      appBarColor: AppColor.primaryLightColor,
+      defaultBody: true,
+      bodyChildren: [
+        CustomTextFormField(
+          textEditingController: _relativeNameController,
+          labelText: 'Tên thân nhân',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'please_enter_relative_name';
+            }
+            return null;
+          },
+          enabled: _isEditing,
+        ).p8(),
+        SizedBox(height: 16),
+        CustomTextFormField(
+          enabled: _isEditing,
+          textEditingController: _relationshipController,
+          labelText: 'Quan hệ thân nhân',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'please_enter_relationship';
+            }
+            return null;
+          },
+        ).px8(),
+        SizedBox(height: 16),
+        CustomTextFormField(
+                enabled: _isEditing,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'please_enter_phone_number';
+                  }
+                  if (value.length != 10) {
+                    return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
+                  }
+                  return null;
+                },
+                textEditingController: _phoneRelativeController,
+                labelText: 'Điện thoại liên lạc',
+                maxLines: 1,
+                keyboardType: TextInputType.number)
+            .px8(),
+        SizedBox(height: 16),
+        //Nation
+        CustomTextFormField(
+          enabled: _isEditing,
+          validator: (value) =>
+              value.isEmptyOrNull ? 'Please enter nation' : null,
+          textEditingController: _nationRelativeController,
+          labelText: 'Quê quán',
+        ).px(8),
+        SizedBox(height: 16),
+        _buildDateField(
+            'Ngày sinh', _birthdayRelativeController, _birthdayRelative,
+            (date) {
+          setState(() {
+            _birthdayRelative = date;
+            _birthdayRelativeController.text =
+                "${_birthdayRelative.toLocal()}".split(' ')[0];
+          });
+        }).px(8),
+        SizedBox(height: 16),
+        CustomTextFormField(
+          enabled: _isEditing,
+          textEditingController: _relativeJobController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'please_enter_relativeJob';
+            }
+            return null;
+          },
+          labelText: 'Nghề nghiệp',
+        ).px(8),
+        SizedBox(height: 16),
+        //Address
+        CustomTextFormField(
+          enabled: _isEditing,
+          textEditingController: _temporaryAddressRelativeController,
+          labelText: 'Địa chỉ tạm trú',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'please_enter_temp_address';
+            }
+            return null;
+          },
+        ).px8(),
+        SizedBox(height: 16),
+        CustomTextFormField(
+          enabled: _isEditing,
+          textEditingController: _currentAddressRelativeController,
+          labelText: 'Nơi ở hiện nay',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'please_enter_current_address';
+            }
+            return null;
+          },
+        ).px8(),
+        SizedBox(height: 16),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: Icon(Icons.save,
+                  color: const Color.fromARGB(255, 33, 243, 61)),
+              onPressed: _updateRelatives,
             ),
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _relativeNameController,
-                    labelText: 'Tên thân nhân',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_relative_name';
-                      }
-                      return null;
-                    },
-                    enabled: _isEditing,
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                    enabled: _isEditing,
-                    textEditingController: _relationshipController,
-                    labelText: 'relationship',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_relationship';
-                      }
-                      return null;
-                    },
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                          enabled: _isEditing,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'please_enter_phone_number';
-                            }
-                            if (value.length != 10) {
-                              return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
-                            }
-                            return null;
+            IconButton(
+              icon: Icon(Icons.edit, color: Colors.blue),
+              onPressed: () {
+                setState(() {
+                  _isEditing = true;
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.delete, color: Colors.red),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text('Confirm Delete'),
+                      content: Text(
+                          'Are you sure you want to delete this position?'),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Đóng dialog
                           },
-                          textEditingController: _phoneRelativeController,
-                          labelText: 'phone',
-                          maxLines: 1,
-                          keyboardType: TextInputType.number)
-                      .px8(),
-                  SizedBox(height: 16),
-                  //Nation
-                  CustomTextFormField(
-                    enabled: _isEditing,
-                    validator: (value) =>
-                        value.isEmptyOrNull ? 'Please enter nation' : null,
-                    textEditingController: _nationRelativeController,
-                    labelText: 'relative_nation',
-                  ).px(8),
-                  SizedBox(height: 16),
-                  _buildDateField('Ngày sinh', _birthdayRelativeController,
-                      _birthdayRelative, (date) {
-                    setState(() {
-                      _birthdayRelative = date;
-                      _birthdayRelativeController.text =
-                          "${_birthdayRelative.toLocal()}".split(' ')[0];
-                    });
-                  }).px(8),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                    enabled: _isEditing,
-                    textEditingController: _relativeJobController,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_relativeJob';
-                      }
-                      return null;
-                    },
-                    labelText: 'relative_job',
-                  ).px(8),
-                  SizedBox(height: 16),
-                  //Address
-                  CustomTextFormField(
-                    enabled: _isEditing,
-                    textEditingController: _temporaryAddressRelativeController,
-                    labelText: 'temp_address',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_temp_address';
-                      }
-                      return null;
-                    },
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                    enabled: _isEditing,
-                    textEditingController: _currentAddressRelativeController,
-                    labelText: 'current_address',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_current_address';
-                      }
-                      return null;
-                    },
-                  ).px8(),
-                  SizedBox(height: 16),
-                  Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.save,
-                            color: const Color.fromARGB(255, 33, 243, 61)),
-                        onPressed: _updateRelatives,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Confirm Delete'),
-                                content: Text(
-                                    'Are you sure you want to delete this position?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Đóng dialog
-                                    },
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Đóng dialog
-                                      _deleteRelatives(); // Thực hiện xóa
-                                    },
-                                    child: Text('Delete'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                          child: Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // Đóng dialog
+                            _deleteRelatives(); // Thực hiện xóa
+                          },
+                          child: Text('Delete'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
             ),
-          ),
+          ],
         ),
-      ),
+      ],
     );
   }
 

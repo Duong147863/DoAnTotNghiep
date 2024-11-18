@@ -4,14 +4,19 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/shifts_model.dart';
 import 'package:nloffice_hrm/models/timekeepings_model.dart';
+import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
 import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class QrScan extends StatefulWidget {
   Profiles user;
-  Shifts? shift;
-  QrScan({super.key, required this.user, this.shift});
+  // Shifts? shifts;
+  QrScan({
+    super.key,
+    required this.user,
+    // required this.shifts
+  });
   @override
   _QrScanState createState() => _QrScanState();
 }
@@ -35,6 +40,19 @@ class _QrScanState extends State<QrScan> {
     super.dispose();
   }
 
+  DateTime differentBetween(DateTime time1, DateTime time2) {
+    Duration duration = Duration(
+        hours: time2.hour,
+        minutes: time2.minute,
+        seconds: time2.second); // lấy thời gian bắt đầu ca làm
+
+    return DateFormat("H:m:s").parse(time1
+        .subtract(duration)
+        .toString()
+        .split(' ')
+        .last); // kết quả sau khi lấy tgian vào trừ tgian bắt đầu ca
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -45,21 +63,31 @@ class _QrScanState extends State<QrScan> {
           allowDuplicates: false,
           controller: controller,
           onDetect: (Barcode barcode, MobileScannerArguments? args) {
-            DateFormat timeFormat = DateFormat("H:m:s");
-            DateFormat dateFormat = DateFormat("dd/MM/yyyy");
             Provider.of<TimeKeepingViewModel>(context, listen: false)
                 .checkin(Timekeepings(
-              checkin: timeFormat.parse(barcode.rawValue!.split(' ').last),
-              late: timeFormat.parse(barcode.rawValue!.split(' ').last),
-              checkout: timeFormat.parse(barcode.rawValue!.split(' ').last),
-              leavingSoon: timeFormat.parse(barcode.rawValue!.split(' ').last),
-              shiftId: "OT",
-              profileId: widget.user.profileId,
-              date: dateFormat.parse(barcode.rawValue!.split(' ').first),
-            ))
+                    checkin: DateFormat("H:m:s")
+                        .parse(barcode.rawValue!.split(' ').last),
+                    late: differentBetween(
+                        DateFormat("H:m:s").parse(DateTime.now()
+                            .add(const Duration(
+                                minutes:
+                                    30)) //Tgian bắt đầu ca làm theo quy định
+                            .toString()
+                            .split(' ')
+                            .last),
+                        DateFormat("H:m:s").parse(barcode.rawValue!
+                            .split(' ')
+                            .last)), // Tgian thực tế check in vào
+                    checkout: null,
+                    leavingSoon: null,
+                    shiftId: 'CH',
+                    profileId: widget.user.profileId,
+                    date: DateFormat("dd/MM/yyyy")
+                        .parse(barcode.rawValue!.split(' ').first),
+                    status: 0))
                 .then((_) {
-              controller.stop();
-              Navigator.pop(context);
+              // controller.stop();
+              // Navigator.pop(context);
             });
           },
         ),

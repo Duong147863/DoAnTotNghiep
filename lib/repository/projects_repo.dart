@@ -33,7 +33,6 @@ class ProjectsRepository {
     try {
       final response = await service.updateProject(projects);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to update project: ${response.statusCode}");
@@ -50,7 +49,6 @@ class ProjectsRepository {
     try {
       final response = await service.deleteProject(projectId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete project: ${response.statusCode}");

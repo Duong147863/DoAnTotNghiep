@@ -110,10 +110,10 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
                 dataSet: shifts,
                 itemBuilder: (context, index) {
                   return CustomCard(
-                          title:
-                              "${shifts[index].shiftId} - ${shifts[index].shiftName}",
-                          subttile:
-                              "${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].startTime))} - ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].endTime))}")
+                          title: Text(
+                              "${shifts[index].shiftId} - ${shifts[index].shiftName}"),
+                          subttile: Text(
+                              "${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].startTime))} - ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].endTime))}"))
                       .onInkTap(
                     () async {
                       final updatedShift = await Navigator.push(
@@ -128,7 +128,7 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
                         _handleUpdate(updatedShift);
                       }
                     },
-                  );
+                  ).px8();
                 },
               );
             }

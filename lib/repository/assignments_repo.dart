@@ -2,35 +2,35 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/assignments_services.dart';
 import 'package:nloffice_hrm/models/assignments_model.dart';
-class AssignmentsRepository {
-   final AssignmentsServices service = AssignmentsServices();
-   
-  Future<List<Assignments>> getAssignmentsDetails(String projectId) async {
-  try {
-    final response = await service.getAssignmentsDetails(projectId);
 
-    if (response.statusCode == 200) {
-      print("load successful. Response body: ${response.body}");
-      List<dynamic> jsonResponse = json.decode(response.body);
-      List<Assignments> assignments = jsonResponse
-          .map((assignmentJson) => Assignments.fromJson(assignmentJson))
-          .toList();
-      return assignments;
-    } else {
-      print("Failed to delete Relative: ${response.statusCode}");
-      print("Response body: ${response.body}");
+class AssignmentsRepository {
+  final AssignmentsServices service = AssignmentsServices();
+
+  Future<List<Assignments>> getAssignmentsDetails(String projectId) async {
+    try {
+      final response = await service.getAssignmentsDetails(projectId);
+
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = json.decode(response.body);
+        List<Assignments> assignments = jsonResponse
+            .map((assignmentJson) => Assignments.fromJson(assignmentJson))
+            .toList();
+        return assignments;
+      } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
+        throw Exception('Failed to load assignments details');
+      }
+    } catch (error) {
+      print("Error: $error");
+
       throw Exception('Failed to load assignments details');
     }
-  } catch (error) {
-    print("Error: $error");
-    
-    throw Exception('Failed to load assignments details');
   }
-}
-   Future<bool> createNewAssignments(Assignments assignmeents) async {
+
+  Future<bool> createNewAssignments(Assignments assignmeents) async {
     final response = await service.createNewAssignments(assignmeents);
     if (response.statusCode == 200) {
-      print("Delete successful. Response body: ${response.body}");
       return true;
     } else {
       print("Failed to delete Relative: ${response.statusCode}");
@@ -57,12 +57,11 @@ class AssignmentsRepository {
     try {
       final response = await service.deleteAssignments(assignmeentsId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete Relative: ${response.statusCode}");
         print("Response body: ${response.body}");
-        return false; 
+        return false;
       }
     } catch (error) {
       print("An error occurred: $error");

@@ -39,7 +39,6 @@ class DepartmentsRepository {
     try {
       final response = await service.updateDepartment(department);
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to update department: ${response.statusCode}");
@@ -56,7 +55,6 @@ class DepartmentsRepository {
     try {
       final response = await service.deleteDepartment(departmentId);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
         print("Failed to delete department: ${response.statusCode}");

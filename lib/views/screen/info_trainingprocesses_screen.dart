@@ -367,7 +367,7 @@ class _InfoTrainingprocessesScreenState
         ],
         onChanged: _isEditing ? onChanged : null,
         validator: (value) =>
-            value == null ? 'Please select a status project' : null,
+            value == null ? 'Please select a Trạng thái' : null,
       ),
     );
   }
