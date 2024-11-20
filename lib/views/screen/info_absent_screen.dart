@@ -36,9 +36,9 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     _profileIDController.text = widget.absents!.profileID;
     _reasonController.text = widget.absents!.reason!;
     _fromDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.absents!.from);
+        DateFormat('yyyy-MM-dd').format(widget.absents!.from).toString();
     _toDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.absents!.to!);
+        DateFormat('yyyy-MM-dd').format(widget.absents!.to!).toString();
     _daysOffController.text =
         widget.absents!.daysOff.toString();
   }

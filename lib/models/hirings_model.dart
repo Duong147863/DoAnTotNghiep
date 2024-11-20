@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:intl/intl.dart';
+
 class Hirings{
   Hirings({
-    required this.hiringProfileId,
+    this.hiringProfileId,
     required this.profileName,
     required this.birthday,
     required this.placeOfBirth,
@@ -18,11 +20,11 @@ class Hirings{
     this.hiringProfileImage,
     required this.workExperience,
   });
-  int hiringProfileId;
+  int? hiringProfileId;
   String profileName;
   DateTime birthday;
   String placeOfBirth;
-  int gender;
+  bool gender;
   String phone;
   String ? email;
   String nation;
@@ -37,7 +39,7 @@ class Hirings{
     return Hirings(
       hiringProfileId: json["hiring_profile_id"],
       profileName: json["profile_name"],
-      birthday: json["birthday"],
+      birthday: DateTime.parse(json["birthday"]),
       placeOfBirth: json["place_of_birth"],
       gender: json["gender"],
       phone: json["phone"],
@@ -50,5 +52,23 @@ class Hirings{
       hiringProfileImage: json["hiring_profile_image"],
       workExperience: json["work_experience"],
     );
+  }
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map["hiring_profile_id"] = hiringProfileId;
+    map["profile_name"] = profileName;
+    map["birthday"] = DateFormat("dd-MM-yyyy").format(birthday);
+    map["place_of_birth"] = placeOfBirth;
+    map["gender"] = gender;
+    map["phone"] = phone;
+    map["email"] = email;
+    map["nation"] = nation;
+    map["apply_for"] = applyFor;
+    map["educational_level"] = educationalLevel;
+    map["current_address"] = currentAddress;
+    map["hiring_status"] = hiringStatus;
+    map["hiring_profile_image"] = hiringProfileImage;
+    map["work_experience"] = workExperience;
+    return map;
   }
 }

@@ -4,9 +4,10 @@ import 'package:nloffice_hrm/api_services/absents_services.dart';
 import 'package:nloffice_hrm/models/absents_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 
-final AbsentsService service = AbsentsService();
+
 
 class AbsentsRepository {
+  final AbsentsService service = AbsentsService();
   Future<bool> addNewAbsent(Absents absents) async {
     final response = await service.createNewAbsent(absents);
     if (response.statusCode == 200) {

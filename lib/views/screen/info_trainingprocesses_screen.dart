@@ -45,9 +45,9 @@ class _InfoTrainingprocessesScreenState
     _trainingprocessesContentController.text =
         widget.trainingprocesses!.trainingprocessesContent;
     _startTimeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.trainingprocesses!.startTime);
+        DateFormat('dd/MM/yyyy').format(widget.trainingprocesses!.startTime).toString();
     _endTimeController.text =
-        DateFormat('yyyy-MM-dd').format(widget.trainingprocesses!.endTime!);
+        DateFormat('dd/MM/yyyy').format(widget.trainingprocesses!.endTime!).toString();
   }
 
   void _updateTrainingProcesses() async {

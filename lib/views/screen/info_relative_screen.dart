@@ -43,8 +43,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     _profileIDController.text = widget.profile.profileId;
     _relativeNameController.text = widget.profile.relativesName;
     _phoneRelativeController.text = widget.profile.relativesPhone;
-    _birthdayRelativeController.text = DateFormat('yyyy-MM-dd').format(
-        DateTime.parse(widget.profile.relativesBirthday.toLocal().toString()));
+    _birthdayRelativeController.text =DateFormat('dd/MM/yyyy').format(widget.profile.relativesBirthday).toString();
     _nationRelativeController.text = widget.profile.relativesNation;
     _temporaryAddressRelativeController.text =
         widget.profile.relativesTempAddress;
