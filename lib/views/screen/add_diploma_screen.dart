@@ -33,9 +33,9 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   final _diplomaTypeController = TextEditingController();
   final _profileIDController = TextEditingController();
   DateTime _liscenseDate = DateTime.now();
-
-  //
   String? _diplomaImageBase64;
+  //
+
   @override
   void initState() {
     super.initState();

@@ -22,6 +22,7 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_assignment_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_hirings_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_salary_screen.dart';
@@ -37,6 +38,7 @@ import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_salari_sceen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
+import 'package:nloffice_hrm/views/screen/list_hirings_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
@@ -75,6 +77,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    final viewModel = Provider.of<ProfilesViewModel>(context, listen: false);
+    viewModel.fetchQuitAndActiveMembersCount();
+    viewModel.getMembersCountGenderAndMaritalStatus();
   }
 
   @override
@@ -237,13 +242,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           ListTile(
                             title: const Text("Tuyển dụng"),
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute<void>(
-                              //     builder: (BuildContext context) =>
-                              //         const ListProjectScreen(),
-                              //   ),
-                              // );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const ListHiringsScreen(),
+                                ),
+                              );
                             },
                           ),
                           ListTile(
@@ -329,13 +334,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ListTile(
                                 title: const Text("Tuyển dụng"),
                                 onTap: () {
-                                  // Navigator.push(
-                                  //   context,
-                                  //   MaterialPageRoute<void>(
-                                  //     builder: (BuildContext context) =>
-                                  //         const ListProjectScreen(),
-                                  //   ),
-                                  // );
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          const  ListHiringsScreen(),
+                                    ),
+                                  );
                                 },
                               ),
                               ListTile(
@@ -380,6 +385,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           AppRoutes.loginRoute, (route) => false);
                     },
                   ),
+                  
                 ],
               ),
             ),
@@ -938,75 +944,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider().p12(),
             _buildEmployeeStats(),
             const Divider().p12(),
-             Consumer<ProfilesViewModel>(
-              builder: (context, viewModel, child) {
-                // Kiểm tra nếu chưa lấy dữ liệu, gọi API
-                if (!viewModel.fetchingData &&
-                    viewModel.genderMan == 0 &&
-                    viewModel.genderWoman == 0 &&
-                    viewModel.married == 0 &&
-                    viewModel.unmarried == 0) {
-                  viewModel.getMembersCountGenderAndMaritalStatus();
-                }
-
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: viewModel.fetchingData
-                      ? Center(child: CircularProgressIndicator())
-                      : SfCartesianChart(
-                          primaryXAxis: CategoryAxis(
-                            title: AxisTitle(
-                              text: 'Loại',
-                              textStyle: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          title: ChartTitle(
-                              text:
-                                  'Thống kê giới tính và tình trạng hôn nhân'),
-                          legend: Legend(
-                            isVisible: true,
-                            position: LegendPosition.bottom,
-                          ),
-                          tooltipBehavior: TooltipBehavior(enable: true),
-                          series: <CartesianSeries<dynamic, dynamic>>[
-                            ColumnSeries<dynamic, dynamic>(
-                              dataSource: [
-                                EmployeeStat('Nam', viewModel.genderMan!),
-                                EmployeeStat('Nữ', viewModel.genderWoman!),
-                                EmployeeStat('Đã kết hôn', viewModel.married!),
-                                EmployeeStat('Chưa kết hôn', viewModel.unmarried!),
-                              ],
-                              xValueMapper: (dynamic stats, _) => stats.status,
-                              yValueMapper: (dynamic stats, _) => stats.count,
-                              dataLabelSettings: DataLabelSettings(
-                                isVisible: true,
-                                labelPosition: ChartDataLabelPosition.outside,
-                                textStyle: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              pointColorMapper: (dynamic stats, _) {
-                                switch (stats.status) {
-                                  case 'Nam':
-                                    return Colors.blue;
-                                  case 'Nữ':
-                                    return Colors.pink;
-                                  case 'Đã kết hôn':
-                                    return Colors.green;
-                                  case 'Chưa kết hôn':
-                                    return Colors.orange;
-                                  default:
-                                    return Colors.grey;
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                );
-              },
-            ),
+           _buildGetMembersCountGenderAndMaritalStatus(),
             // ExpansionPanelList(
             //   expansionCallback: (int panelIndex, bool isExpanded) {
             //     setState(() {
@@ -1125,80 +1063,145 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     } else {
-      return _buildGetMembersCountGenderAndMaritalStatus();
+      return UiSpacer.emptySpace();
     }
   }
 
-  Widget _buildEmployeeStats() {
-    return Consumer<ProfilesViewModel>(
-      builder: (context, viewModel, child) {
-        if (!viewModel.fetchingData) {
-          viewModel.fetchQuitAndActiveMembersCount();
-        }
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SfCircularChart(
-            title:
-                ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
-            legend: Legend(
-                isVisible: true,
-                position: LegendPosition.bottom), // Hiển thị legend ở dưới
-            series: <CircularSeries<EmployeeStat, String>>[
-              PieSeries<EmployeeStat, String>(
-                dataSource: [
-                  EmployeeStat('Đang làm việc', viewModel.activeCount),
-                  EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+Widget _buildEmployeeStats() {
+  return Consumer<ProfilesViewModel>(
+    builder: (context, viewModel, child) {
+      if (!viewModel.fetchingEmployeeStats &&
+          viewModel.activeCount == 0 &&
+          viewModel.quitCount == 0) {
+        viewModel.fetchQuitAndActiveMembersCount();
+      }
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Biểu đồ hình tròn
+            Container(
+              color: Colors.transparent, // Đảm bảo không có màu nền không mong muốn
+              child: SfCircularChart(
+                title: ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
+                series: <CircularSeries<EmployeeStat, String>>[
+                  DoughnutSeries<EmployeeStat, String>(
+                    dataSource: [
+                      EmployeeStat('Đang làm việc', viewModel.activeCount),
+                      EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+                      EmployeeStat('Chính thức', viewModel.officialContractsCount),
+                      EmployeeStat('Thời hạn', viewModel.temporaryContractsCount),
+                    ],
+                    xValueMapper: (EmployeeStat stats, _) => stats.status,
+                    yValueMapper: (EmployeeStat stats, _) => stats.count,
+                    dataLabelSettings: DataLabelSettings(
+                      isVisible: true, // Hiển thị nhãn dữ liệu
+                      labelPosition: ChartDataLabelPosition.inside, // Hiển thị nhãn bên trong vùng màu
+                      textStyle: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // Màu chữ tương phản để dễ đọc
+                      ),
+                    ),
+                    dataLabelMapper: (EmployeeStat stats, _) => '${stats.count}',
+                    pointColorMapper: (EmployeeStat stats, _) {
+                      if (stats.status == 'Đang làm việc') {
+                        return Colors.blue;
+                      } else if (stats.status == 'Đã nghỉ việc') {
+                        return Colors.red;
+                      } else if (stats.status == 'Chính thức') {
+                        return Colors.green;
+                      } else if (stats.status == 'Thời hạn') {
+                        return Colors.orange;
+                      } else {
+                        return Colors.grey;
+                      }
+                    },
+                    explode: false, // Bỏ hiệu ứng tách ra
+                    radius: '70%', // Kích thước của vòng tròn
+                    innerRadius: '50%', // Vùng rỗng bên trong để tạo hình Doughnut
+                  ),
                 ],
-                xValueMapper: (EmployeeStat stats, _) => stats.status,
-                yValueMapper: (EmployeeStat stats, _) => stats.count,
-                dataLabelSettings: DataLabelSettings(
-                  isVisible: true,
-                  labelPosition:
-                      ChartDataLabelPosition.outside, // Đặt nhãn ra ngoài
-                  textStyle: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black), // Cải thiện kiểu nhãn
-                ),
-                pointColorMapper: (EmployeeStat stats, _) {
-                  // Thay đổi màu sắc của từng phần trong biểu đồ
-                  if (stats.status == 'Đang làm việc') {
-                    return Colors.blue;
-                  } else {
-                    return Colors.red;
-                  }
-                },
-                explode:
-                    true, // Tạo hiệu ứng khi nhấn vào một phần trong biểu đồ
-                explodeIndex: 0, // Tạo hiệu ứng phóng to phần "Đang làm việc"
-                explodeOffset: "10%", // Điều chỉnh độ phóng to của phần explode
-                radius: '70%', // Đặt kích thước biểu đồ tròn
+                tooltipBehavior: TooltipBehavior(enable: true), // Hiển thị tooltip khi hover qua phần tử
               ),
-            ],
-            tooltipBehavior: TooltipBehavior(
-                enable: true), // Hiển thị tooltip khi hover qua phần tử
-          ),
-        );
-      },
-    );
-  }
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: Colors.blue,
+                      ),
+                      SizedBox(width: 8),
+                      Text('Đang làm việc: ${viewModel.activeCount}', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: Colors.red,
+                      ),
+                      SizedBox(width: 8),
+                      Text('Đã nghỉ việc: ${viewModel.quitCount}', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: Colors.green,
+                      ),
+                      SizedBox(width: 8),
+                      Text('Chính thức: ${viewModel.officialContractsCount}', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 20,
+                        height: 20,
+                        color: Colors.orange,
+                      ),
+                      SizedBox(width: 8),
+                      Text('Thời hạn: ${viewModel.temporaryContractsCount}', style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
 
   Widget _buildGetMembersCountGenderAndMaritalStatus() {
     return Consumer<ProfilesViewModel>(
       builder: (context, viewModel, child) {
-        // Kiểm tra nếu chưa lấy dữ liệu, gọi API
-        if (!viewModel.fetchingData &&
+        if (!viewModel.fetchingGenderStats &&
             viewModel.genderMan == 0 &&
             viewModel.genderWoman == 0 &&
             viewModel.married == 0 &&
             viewModel.unmarried == 0) {
           viewModel.getMembersCountGenderAndMaritalStatus();
         }
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: viewModel.fetchingData
-              ? Center(child: CircularProgressIndicator())
-              : SfCartesianChart(
+        return viewModel.fetchingGenderStats
+            ? Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SfCartesianChart(
                   primaryXAxis: CategoryAxis(
                     title: AxisTitle(
                       text: 'Loại',
@@ -1248,7 +1251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-        );
+              );
       },
     );
   }

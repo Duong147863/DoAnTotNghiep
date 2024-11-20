@@ -10,6 +10,10 @@ class ProfilesViewModel extends ChangeNotifier {
   List<Profiles> listProfilesByPosition = [];
   bool isChangingPassword = false; // Trạng thái khi đang thay đổi mật khẩu
   bool fetchingData = false;
+  bool fetchingEmployeeStats =
+      false; // Trạng thái cho widget _buildEmployeeStats
+  bool fetchingGenderStats =
+      false; // Trạng thái cho widget _buildGetMembersCountGenderAndMaritalStatus
   List<Profiles> get listProfiles => allProfiles;
   List<Profiles> get listMembersOfDepartment => membersDepartment;
   int quitCount = 0; // Số lượng nhân viên đã nghỉ việc
@@ -17,6 +21,8 @@ class ProfilesViewModel extends ChangeNotifier {
   int totalMembers = 0; // Biến lưu trữ tổng số nhân viên
   int? genderMan = 0;
   int? genderWoman = 0;
+  int officialContractsCount = 0;
+  int temporaryContractsCount = 0;
   int? married = 0;
   int? unmarried = 0;
   //
@@ -47,36 +53,38 @@ class ProfilesViewModel extends ChangeNotifier {
 
   ///////
   Future<void> fetchQuitAndActiveMembersCount() async {
+    fetchingEmployeeStats = true;
+    notifyListeners();
     try {
       final counts = await repository.getQuitAndActiveMembersCount();
 
-      // Cập nhật số lượng nhân viên đã nghỉ việc và đang làm việc
-      genderMan = counts['quitCount'] ?? 0;
+      quitCount = counts['quitCount'] ?? 0;
       activeCount = counts['activeCount'] ?? 0;
-
-      fetchingData = false;
-      // Gọi notifyListeners để cập nhật UI
-      notifyListeners();
+      officialContractsCount=counts['officialContractsCount'] ?? 0;
+      temporaryContractsCount=counts['temporaryContractsCount'] ?? 0;
+      print('Active: $activeCount, Quit: $quitCount, OfficialContractsCount: $officialContractsCount, TemporaryContractsCount: $temporaryContractsCount ');
     } catch (e) {
-      fetchingData = false;
       throw Exception('Failed to fetch members count: $e');
+    } finally {
+      fetchingEmployeeStats = false;
+      notifyListeners();
     }
   }
 
- Future<void> getMembersCountGenderAndMaritalStatus() async {
-    fetchingData = true;
+  Future<void> getMembersCountGenderAndMaritalStatus() async {
+    fetchingGenderStats = true;
     notifyListeners();
     try {
       final counts = await repository.getMembersCountGenderAndMaritalStatus();
       genderMan = counts['genderMan'];
       genderWoman = counts['genderWoman'];
-      married = counts['married'] ;
-      unmarried = counts['unmarried'] ;
+      married = counts['married'];
+      unmarried = counts['unmarried'];
     } catch (e) {
       print('Error occurred: $e');
       throw Exception('Failed to fetch members count: $e');
     } finally {
-      fetchingData = false;
+      fetchingGenderStats = false;
       notifyListeners();
     }
   }

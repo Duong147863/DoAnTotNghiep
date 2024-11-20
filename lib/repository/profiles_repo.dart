@@ -25,10 +25,11 @@ class ProfilesRepository {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
 
-      // Trả về số lượng nhân viên đã nghỉ việc và đang làm việc
       return {
         'quitCount': data['quitCount'],
-        'activeCount': data['activeCount']
+        'activeCount': data['activeCount'],
+        'officialContractsCount': data['officialContractsCount'],
+        'temporaryContractsCount': data['temporaryContractsCount'],
       };
     } else {
       throw Exception('Failed to load members count');

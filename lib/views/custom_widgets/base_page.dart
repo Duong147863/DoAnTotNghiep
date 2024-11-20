@@ -100,6 +100,7 @@ class _BasePageState extends State<BasePage> {
         body: widget.defaultBody
             ? SingleChildScrollView(
                 child: Container(
+                  height: MediaQuery.of(context).size.height * 3,
                   width: MediaQuery.of(context).size.width,
                   decoration: BoxDecoration(
                       color: Colors.white,
