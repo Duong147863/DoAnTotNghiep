@@ -1206,72 +1206,72 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildGetMembersCountGenderAndMaritalStatus() {
-    return Consumer<ProfilesViewModel>(
-      builder: (context, viewModel, child) {
-        if (!viewModel.fetchingGenderStats &&
-            viewModel.genderMan == 0 &&
-            viewModel.genderWoman == 0 &&
-            viewModel.married == 0 &&
-            viewModel.unmarried == 0) {
-          viewModel.getMembersCountGenderAndMaritalStatus();
-        }
-        return viewModel.fetchingGenderStats
-            ? Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SfCartesianChart(
-                  primaryXAxis: CategoryAxis(
-                    title: AxisTitle(
-                      text: 'Loại',
-                      textStyle: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  title: ChartTitle(
-                      text: 'Thống kê giới tính và tình trạng hôn nhân'),
-                  legend: Legend(
-                    isVisible: true,
-                    position: LegendPosition.bottom,
-                  ),
-                  tooltipBehavior: TooltipBehavior(enable: true),
-                  series: <CartesianSeries<dynamic, dynamic>>[
-                    ColumnSeries<dynamic, dynamic>(
-                      dataSource: [
-                        EmployeeStat('Nam', viewModel.genderMan!),
-                        EmployeeStat('Nữ', viewModel.genderWoman!),
-                        EmployeeStat('Đã kết hôn', viewModel.married!),
-                        EmployeeStat('Chưa kết hôn', viewModel.unmarried!),
-                      ],
-                      xValueMapper: (dynamic stats, _) => stats.status,
-                      yValueMapper: (dynamic stats, _) => stats.count,
-                      dataLabelSettings: DataLabelSettings(
-                        isVisible: true,
-                        labelPosition: ChartDataLabelPosition.outside,
-                        textStyle: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
+    Widget _buildGetMembersCountGenderAndMaritalStatus() {
+      return Consumer<ProfilesViewModel>(
+        builder: (context, viewModel, child) {
+          if (!viewModel.fetchingGenderStats &&
+              viewModel.genderMan == 0 &&
+              viewModel.genderWoman == 0 &&
+              viewModel.married == 0 &&
+              viewModel.unmarried == 0) {
+            viewModel.getMembersCountGenderAndMaritalStatus();
+          }
+          return viewModel.fetchingGenderStats
+              ? Center(child: CircularProgressIndicator())
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: SfCartesianChart(
+                    primaryXAxis: CategoryAxis(
+                      title: AxisTitle(
+                        text: 'Loại',
+                        textStyle: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      pointColorMapper: (dynamic stats, _) {
-                        switch (stats.status) {
-                          case 'Nam':
-                            return Colors.blue;
-                          case 'Nữ':
-                            return Colors.pink;
-                          case 'Đã kết hôn':
-                            return Colors.green;
-                          case 'Chưa kết hôn':
-                            return Colors.orange;
-                          default:
-                            return Colors.grey;
-                        }
-                      },
                     ),
-                  ],
-                ),
-              );
-      },
-    );
-  }
+                    title: ChartTitle(
+                        text: 'Thống kê giới tính và tình trạng hôn nhân'),
+                    legend: Legend(
+                      isVisible: true,
+                      position: LegendPosition.bottom,
+                    ),
+                    tooltipBehavior: TooltipBehavior(enable: true),
+                    series: <CartesianSeries<dynamic, dynamic>>[
+                      ColumnSeries<dynamic, dynamic>(
+                        dataSource: [
+                          EmployeeStat('Nam', viewModel.genderMan!),
+                          EmployeeStat('Nữ', viewModel.genderWoman!),
+                          EmployeeStat('Đã kết hôn', viewModel.married!),
+                          EmployeeStat('Chưa kết hôn', viewModel.unmarried!),
+                        ],
+                        xValueMapper: (dynamic stats, _) => stats.status,
+                        yValueMapper: (dynamic stats, _) => stats.count,
+                        dataLabelSettings: DataLabelSettings(
+                          isVisible: true,
+                          labelPosition: ChartDataLabelPosition.outside,
+                          textStyle: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        pointColorMapper: (dynamic stats, _) {
+                          switch (stats.status) {
+                            case 'Nam':
+                              return Colors.blue;
+                            case 'Nữ':
+                              return Colors.pink;
+                            case 'Đã kết hôn':
+                              return Colors.green;
+                            case 'Chưa kết hôn':
+                              return Colors.orange;
+                            default:
+                              return Colors.grey;
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                );
+        },
+      );
+    }
 }
