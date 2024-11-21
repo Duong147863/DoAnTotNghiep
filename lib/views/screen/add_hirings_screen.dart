@@ -82,6 +82,7 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
       });
     }
   }
+
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? imageFile = await picker.pickImage(
@@ -138,11 +139,11 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         items: [
-          DropdownMenuItem(value: false, child: Text('Man')),
-          DropdownMenuItem(value: true, child: Text('Woman')),
+          DropdownMenuItem(value: false, child: Text('Nam')),
+          DropdownMenuItem(value: true, child: Text('Nữ')),
         ],
         onChanged: onChanged,
-        validator: (value) => value == null ? 'Please select a gender' : null,
+        validator: (value) => value == null ? 'Vui lòng chọn giới tính' : null,
       ),
     );
   }
@@ -178,13 +179,13 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
             color: AppColor.boneWhite,
           ),
           label: Text(
-            "save",
+            "Lưu hồ sơ",
             style: TextStyle(color: AppColor.boneWhite),
           ),
         )
       ],
       resizeToAvoidBottomInset: true,
-      titletext: "Thêm tuyển dụng",
+      titletext: "Ứng viên mới",
       appBarColor: AppColor.primaryLightColor,
       body: SingleChildScrollView(
         child: Form(
@@ -202,21 +203,20 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
                       ? Icon(Icons.add_a_photo)
                       : null,
                 ),
-              ),
-              Divider(),
+              ).py8(),
               // Profile name and Apply For
               Row(
                 children: [
                   CustomTextFormField(
                     textEditingController: _applyForController,
-                    labelText: 'Apply for',
+                    labelText: 'Ứng tuyển vị trí',
                     validator: (value) => value == null || value.isEmpty
                         ? 'Please enter Apply For'
                         : null,
-                  ).px8().w(150),
+                  ).px4().w(177),
                   CustomTextFormField(
                     textEditingController: _profileNameController,
-                    labelText: 'Full Name',
+                    labelText: 'Họ tên',
                     validator: (value) => value == null || value.isEmpty
                         ? 'Please enter full name'
                         : null,
@@ -226,7 +226,7 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
               // Birthday and Place of Birth
               Row(
                 children: [
-                  _buildDateField('Birthday', _birthdayController, _birthday,
+                  _buildDateField('Ngày sinh', _birthdayController, _birthday,
                       (date) {
                     setState(() {
                       _birthday = date;
@@ -236,7 +236,7 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
                   }).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _placeOfBirthController,
-                    labelText: 'Place of Birth',
+                    labelText: 'Nơi sinh',
                     validator: (value) => value == null || value.isEmpty
                         ? 'Please enter place of birth'
                         : null,
@@ -246,7 +246,7 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
               // Gender and Nation
               Row(
                 children: [
-                  Text('Gender').px8(),
+                  Text('Giới tính').px8(),
                   _buildDropdownField('Chọn giới tính', _gender, (value) {
                     setState(() {
                       _gender = value!;
@@ -254,9 +254,9 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
                   }).p(8).w(130),
                   CustomTextFormField(
                     validator: (value) =>
-                        value.isEmptyOrNull ? 'Please enter nation' : null,
+                        value.isEmptyOrNull ? 'Không được để trống' : null,
                     textEditingController: _nationController,
-                    labelText: 'Nation',
+                    labelText: 'Quê quán',
                   ).p(8).w(200),
                 ],
               ),
@@ -280,7 +280,7 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
                   ).px4().w(225),
                   CustomTextFormField(
                     textEditingController: _phoneController,
-                    labelText: 'Phone',
+                    labelText: 'Điện thoại',
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -294,34 +294,30 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
                   ).w(155),
                 ],
               ).py8(),
-                 Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _workExperienceController,
-                    labelText: 'Work Experience',
-                    validator:(value) => value == null || value.isEmpty
-                    ? 'Please enter Work Experience'
-                    : null,
-                     
-                  ).px4().w(225),
-                  CustomTextFormField(
-                    textEditingController: _currentAddressController,
-                    labelText: 'Current Address',
-                    keyboardType: TextInputType.number,
-                    validator: (value) => value == null || value.isEmpty
+              CustomTextFormField(
+                textEditingController: _currentAddressController,
+                labelText: 'Nơi ở hiện tại',
+                keyboardType: TextInputType.number,
+                validator: (value) => value == null || value.isEmpty
                     ? 'Please enter Current Address'
                     : null,
-                  ).w(155),
-                ],
-              ).py8(),
+              ).px4(),
               // Education Level
               CustomTextFormField(
-                labelText: "Education Level",
+                labelText: "Học vấn",
                 textEditingController: _educationalLevelController,
                 validator: (value) => value == null || value.isEmpty
                     ? 'Please enter education level'
                     : null,
-              ).px8().py(16),
+              ).px4().py(16),
+              CustomTextFormField(
+                textEditingController: _workExperienceController,
+                labelText: 'Kinh nghiệm làm việc',
+                maxLines: 10,
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please enter Work Experience'
+                    : null,
+              ).px4(),
             ],
           ),
         ).px8(),

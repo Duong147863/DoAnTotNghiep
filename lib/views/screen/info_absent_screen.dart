@@ -36,7 +36,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     _profileIDController.text = widget.absents!.profileID;
     _reasonController.text = widget.absents!.reason!;
     _fromDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.absents!.from).toString();
+        DateFormat('dd/MM/yyyy').format(widget.absents!.from).toString();
     _toDateController.text =
         DateFormat('yyyy-MM-dd').format(widget.absents!.to!).toString();
     _daysOffController.text = widget.absents!.daysOff.toString();
@@ -82,18 +82,17 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
             .deleteAbents(asbentId);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Relative deleted successfully')),
+          SnackBar(content: Text('Deleted successfully')),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Relative ID is null. Cannot delete relative.')),
+          SnackBar(content: Text('Cannot delete.')),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete Relative: $e')),
+        SnackBar(content: Text('Failed to delete: $e')),
       );
     }
   }
@@ -119,7 +118,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
       defaultBody: false,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
-      titletext: "Sửa hoặc duyệt đơn xin nghỉ việc",
+      titletext: "Đơn xin nghỉ phép",
       appBarColor: AppColor.primaryLightColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -143,7 +142,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                 children: [
                   Expanded(
                     child: _buildDateField(
-                      'From day',
+                      'Từ ngày',
                       _fromDateController,
                       _fromDate,
                       (date) {
@@ -158,7 +157,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                   SizedBox(width: 16),
                   Expanded(
                     child: _buildDateField(
-                      'To day',
+                      'Đến ngày',
                       _toDateController,
                       _toDate,
                       (date) {
@@ -175,7 +174,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
               CustomTextFormField(
                 enabled: false,
                 textEditingController: _daysOffController,
-                labelText: 'Dayoffs'.tr(),
+                labelText: 'Số ngày nghỉ',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'please_enter_dayoffs'.tr();
@@ -205,7 +204,6 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Status Absents').px(8),
                         _buildDropdownField(
                           'Status Absents',
                           _statusAbsent,

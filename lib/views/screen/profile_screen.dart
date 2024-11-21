@@ -495,7 +495,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? () {
                           // Tắt nút sau khi nhấn
                           setState(() {
-                            _isButtonEnabled = false;
                             _isEditing = false;
                           });
                           // Thực hiện hành động

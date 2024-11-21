@@ -9,7 +9,8 @@ class EnterprisesRepository {
   Future<Enterprises> fetchAllEnterprises() async {
     final response = await service.getEnterprise();
     if (response.statusCode == 200) {
-      return json.decode(response.body).map((x) => Enterprises.fromJson(x));
+      return Enterprises.fromJson(
+          json.decode(response.body).map((x) => Enterprises.fromJson(x)));
     } else {
       throw Exception('Failed to load data');
     }

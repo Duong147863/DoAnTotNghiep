@@ -85,14 +85,14 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
         ),
       ),
       bodyChildren: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CustomSearchBar(
-            hintText: '',
-            suggestions: shifts.map((shift) => shift.shiftName!).toList(),
-            onTextChanged: _handleSearch,
-          ),
-        ),
+        // Padding(
+        //   padding: const EdgeInsets.all(16.0),
+        //   child: CustomSearchBar(
+        //     hintText: '',
+        //     suggestions: shifts.map((shift) => shift.shiftName!).toList(),
+        //     onTextChanged: _handleSearch,
+        //   ),
+        // ),
         Expanded(
           child:
               Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
@@ -130,7 +130,7 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
                     },
                   ).px8();
                 },
-              );
+              ).py12();
             }
           }),
         ),
