@@ -65,7 +65,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
           .fetchAllDepartments();
       setState(() {
         departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-          .listDepartments;
+            .listDepartments;
       });
     } catch (error) {
       print('Error loading departments: $error');
@@ -78,8 +78,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
           .fetchAllEnterprises();
       enterprises =
           Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
-      setState(() {
-      });
+      setState(() {});
     } catch (error) {
       print('Error loading enterprises: $error');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,9 +102,9 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       Provider.of<LaborContactsViewModel>(context, listen: false)
           .addNewLaborContact(newLaborContact)
           .then((_) {
-        Navigator.pop(context);
+        Navigator.pop(context,newLaborContact);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('LaborContact added successfully!')),
+          SnackBar(content: Text('Tạo thành công!')),
         );
       });
     }
@@ -128,6 +127,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
+      appBarColor: AppColor.primaryLightColor,
       titletext: 'Tạo hợp đồng lao động',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,

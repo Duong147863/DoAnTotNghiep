@@ -45,6 +45,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
     _profileNameController.text = widget.hirings!.profileName;
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.hirings!.birthday).toString();
+    _birthday = widget.hirings!.birthday;
     _hiringProfileImageBase64 = widget.hirings!.hiringProfileImage;
     _placeOfBirthController.text = widget.hirings!.placeOfBirth;
     _emailController.text = widget.hirings!.email!;
@@ -56,7 +57,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
     _workExperienceController.text = widget.hirings!.workExperience;
     _gender = widget.hirings!.gender;
     status = widget.hirings!.hiringStatus;
-    idHiringsController.text=widget.hirings!.hiringProfileId.toString();
+    idHiringsController.text = widget.hirings!.hiringProfileId.toString();
   }
 
   void _updateHirings() async {
@@ -83,7 +84,6 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
           .then((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Hirings Update successfully!')),
-        
         );
         Navigator.pop(context, updatedHirings);
       }).catchError((error) {
@@ -186,7 +186,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
           DropdownMenuItem(value: -1, child: Text('Lưu Trữ')),
           DropdownMenuItem(value: 0, child: Text('Đợi Lọc')),
           DropdownMenuItem(value: 1, child: Text('Đã Liên Hệ')),
-           DropdownMenuItem(value: 2, child: Text('Đã Phỏng Vấn')),
+          DropdownMenuItem(value: 2, child: Text('Đã Phỏng Vấn')),
         ],
         onChanged: _isEditing ? onChanged : null,
         validator: (value) =>
@@ -267,7 +267,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                     setState(() {
                       _birthday = date;
                       _birthdayController.text =
-                          "${_birthday.toLocal()}".split(' ')[0];
+                          DateFormat('dd/MM/yyyy').format(_birthday);
                     });
                   }).px8().w(150),
                   CustomTextFormField(

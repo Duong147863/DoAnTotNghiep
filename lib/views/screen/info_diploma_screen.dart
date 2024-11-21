@@ -49,7 +49,10 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     _diplomaDegreeNameController.text = widget.diplomas!.diplomaName;
     _diplomaImageBase64 = widget.diplomas!.diplomaImage;
     _modeOfStudyController.text = widget.diplomas!.modeOfStudy;
-    _liscenseDateController.text =DateFormat('dd/MM/yyyy').format(widget.diplomas!.licenseDate).toString();
+    _liscenseDateController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.diplomas!.licenseDate)
+        .toString();
+    _liscenseDate = widget.diplomas!.licenseDate;
     _majorController.text = widget.diplomas!.major!;
     _rankingController.text = widget.diplomas!.ranking;
     _grantedByController.text = widget.diplomas!.grantedBy;
@@ -400,7 +403,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                 setState(() {
                   _liscenseDate = date;
                   _liscenseDateController.text =
-                      "${_liscenseDate.toLocal()}".split(' ')[0];
+                      DateFormat('dd/MM/yyyy').format(_liscenseDate);
                 });
               }).px(8).w(150),
               SizedBox(height: 24),

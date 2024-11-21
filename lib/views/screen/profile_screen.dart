@@ -138,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadDiplomas();
     _loadInsurance();
     _loadLaborContact();
-    
+    _loadRoles();
   }
 
   void _handleUpdateRelative(Relatives updatedRelative) {
@@ -206,15 +206,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<PositionsViewModel>(context, listen: false)
           .fetchPositions();
-      setState(() {
-        positions = Provider.of<PositionsViewModel>(context, listen: false)
-            .listPositions;
-        if (positions.isNotEmpty) {
-          selectedPositions = positions.firstWhere(
-            (position) => position.positionId == widget.profile!.positionId,
-          );
-        }
-      });
+      positions =
+          Provider.of<PositionsViewModel>(context, listen: false).listPositions;
+      if (positions.isNotEmpty) {
+        selectedPositions = positions.firstWhere(
+          (position) => position.positionId == widget.profile!.positionId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Positions')),
@@ -226,15 +224,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<SalariesViewModel>(context, listen: false)
           .fetchAllSalaries();
-      setState(() {
-        salarys =
-            Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
-        if (salarys.isNotEmpty) {
-          selectedSalarys = salarys.firstWhere(
-            (salary) => salary.salaryId == widget.profile!.salaryId,
-          );
-        }
-      });
+      salarys =
+          Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
+      if (salarys.isNotEmpty) {
+        selectedSalarys = salarys.firstWhere(
+          (salary) => salary.salaryId == widget.profile!.salaryId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load salaries')),
@@ -242,50 +238,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  // void _loadRoles() async {
-  //   try {
-  //     await Provider.of<RolesViewModels>(context, listen: false).getAllRoles();
-  //     List<Roles> allRoles =
-  //         Provider.of<RolesViewModels>(context, listen: false).listRoles;
-  //     if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-  //       roles = allRoles
-  //           .where((role) => [1, 2, 3, 4, 5].contains(role.roleID))
-  //           .toList();
-  //     } else if (AppStrings.ROLE_PERMISSIONS
-  //         .contains('Manage Staffs info only')) {
-  //       roles =
-  //           allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
-  //     } else {
-  //       roles = [];
-  //     }    
-  //     setState(() {
-  //       if (roles.isNotEmpty) {
-  //       selectedRoles = roles.firstWhere(
-  //         (rol) => rol.roleID == widget.profile!.roleID,
-  //       );
-  //     }
-  //     });
-  //   } catch (error) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to load Roles $error')),
-  //     );
-  //   }
-  // }
+  void _loadRoles() async {
+    try {
+      await Provider.of<RolesViewModels>(context, listen: false).getAllRoles();
+      List<Roles> allRoles =
+          Provider.of<RolesViewModels>(context, listen: false).listRoles;
+      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        roles = allRoles
+            .where((role) => [1, 2, 3, 4, 5].contains(role.roleID))
+            .toList();
+      } else if (AppStrings.ROLE_PERMISSIONS
+          .contains('Manage Staffs info only')) {
+        roles =
+            allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
+      } else {
+        roles = [];
+      }
 
-//
+      setState(() {
+        if (roles.isNotEmpty) {
+          selectedRoles = roles.firstWhere(
+            (rol) => rol.roleID == widget.profile!.roleID,
+          );
+        }
+      });
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Roles $error')),
+      );
+    }
+  }
+
   void _loadRelative() async {
     try {
       await Provider.of<RelativesViewModel>(context, listen: false)
           .fetchAllRelatives(widget.profile!.profileId);
-      setState(() {
-        relatives = Provider.of<RelativesViewModel>(context, listen: false)
-            .listRelatives;
-        if (relatives.isNotEmpty) {
-          selectedRelatives = relatives.firstWhere(
-            (rel) => rel.profileId == widget.profile!.profileId,
-          );
-        }
-      });
+      relatives =
+          Provider.of<RelativesViewModel>(context, listen: false).listRelatives;
+      if (relatives.isNotEmpty) {
+        selectedRelatives = relatives.firstWhere(
+          (rel) => rel.profileId == widget.profile!.profileId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Relative')),
@@ -297,16 +291,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<WorkingprocessesViewModel>(context, listen: false)
           .fetchWorkingProcess(widget.profile!.profileId);
-      setState(() {
-        workingProcesses =
-            Provider.of<WorkingprocessesViewModel>(context, listen: false)
-                .listWorkingProcess;
-        if (workingProcesses.isNotEmpty) {
-          selectedWorkingProcesses = workingProcesses.firstWhere(
-            (wor) => wor.profileId == widget.profile!.profileId,
-          );
-        }
-      });
+      workingProcesses =
+          Provider.of<WorkingprocessesViewModel>(context, listen: false)
+              .listWorkingProcess;
+      if (workingProcesses.isNotEmpty) {
+        selectedWorkingProcesses = workingProcesses.firstWhere(
+          (wor) => wor.profileId == widget.profile!.profileId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Workingprocesses')),
@@ -318,15 +310,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<DiplomasViewModel>(context, listen: false)
           .getDiplomasOf(widget.profile!.profileId);
-      setState(() {
-        diplomas =
-            Provider.of<DiplomasViewModel>(context, listen: false).listDiplomas;
-        if (diplomas.isNotEmpty) {
-          selectedDiplomas = diplomas.firstWhere(
-            (dip) => dip.profileId == widget.profile!.profileId,
-          );
-        }
-      });
+      diplomas =
+          Provider.of<DiplomasViewModel>(context, listen: false).listDiplomas;
+      if (diplomas.isNotEmpty) {
+        selectedDiplomas = diplomas.firstWhere(
+          (dip) => dip.profileId == widget.profile!.profileId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Workingprocesses')),
@@ -338,16 +328,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<LaborContactsViewModel>(context, listen: false)
           .getLaborContactOf(widget.profile!.laborContractId!);
-      setState(() {
-        laborContracts =
-            Provider.of<LaborContactsViewModel>(context, listen: false)
-                .listLaborContact;
-        if (laborContracts.isNotEmpty) {
-          selectedlaborContracts = laborContracts.firstWhere(
-            (lab) => lab.laborContractId == widget.profile!.laborContractId,
-          );
-        }
-      });
+      laborContracts =
+          Provider.of<LaborContactsViewModel>(context, listen: false)
+              .listLaborContact;
+      if (laborContracts.isNotEmpty) {
+        selectedlaborContracts = laborContracts.firstWhere(
+          (lab) => lab.laborContractId == widget.profile!.laborContractId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Workingprocesses $error')),
@@ -359,16 +347,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<TrainingprocessesViewModel>(context, listen: false)
           .getTrainingProcessesOf(widget.profile!.profileId);
-      setState(() {
-        trainingProcess =
-            Provider.of<TrainingprocessesViewModel>(context, listen: false)
-                .listTrainingprocesses;
-        if (trainingProcess.isNotEmpty) {
-          selectedtrainingProcess = trainingProcess.firstWhere(
-            (tra) => tra.profileId == widget.profile!.profileId,
-          );
-        }
-      });
+      trainingProcess =
+          Provider.of<TrainingprocessesViewModel>(context, listen: false)
+              .listTrainingprocesses;
+      if (trainingProcess.isNotEmpty) {
+        selectedtrainingProcess = trainingProcess.firstWhere(
+          (tra) => tra.profileId == widget.profile!.profileId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load TrainingProcess')),
@@ -380,15 +366,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       await Provider.of<InsuranceViewModel>(context, listen: false)
           .getInsurancesOf(widget.profile!.profileId);
-      setState(() {
-        insurance = Provider.of<InsuranceViewModel>(context, listen: false)
-            .listInsurance;
-        if (insurance.isNotEmpty) {
-          selectedinsurance = insurance.firstWhere(
-            (ins) => ins.profileId == widget.profile!.profileId,
-          );
-        }
-      });
+      insurance =
+          Provider.of<InsuranceViewModel>(context, listen: false).listInsurance;
+      if (insurance.isNotEmpty) {
+        selectedinsurance = insurance.firstWhere(
+          (ins) => ins.profileId == widget.profile!.profileId,
+        );
+      }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load TrainingProcess')),
@@ -424,11 +408,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Profile Update successfully!')),
         );
+        Navigator.pop(context, updatedProfile);
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update profile: $error')),
         );
       });
+    }
+  }
+
+  void _deleteProfile() async {
+    try {
+      await Provider.of<ProfilesViewModel>(context, listen: false)
+          .deleteProfile(widget.profile!.profileId);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile deleted successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to delete Profile): $e')),
+      );
     }
   }
 
@@ -495,7 +495,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? () {
                           // Tắt nút sau khi nhấn
                           setState(() {
-                            _isButtonEnabled = false;
                             _isEditing = false;
                           });
                           // Thực hiện hành động
@@ -512,6 +511,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
                   },
                   icon: Icon(Icons.edit_outlined, color: Colors.red),
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Confirm Delete'),
+                          content: Text(
+                              'Are you sure you want to delete this Profile?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Cancel'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                _deleteProfile();
+                              },
+                              child: Text('Delete'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
                 ),
               ]
             : [],
@@ -664,12 +693,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildSalaryDropdown('Choose Salary').p(8).w(300),
                 ],
               ),
-              // Row(
-              //   children: [
-              //     Text('Roles').px(8),
-              //     _buildRolesDropdown('Choose Roles').p(8).w(300),
-              //   ],
-              // ),
+              Row(
+                children: [
+                  Text('Roles').px(8),
+                  _buildRolesDropdown('Choose Roles').p(8).w(300),
+                ],
+              ),
               // Gender + Marriage
               Row(
                 children: [
@@ -883,25 +912,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute<void>(
+                            MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   AddRelativeScreen(
                                 profile: widget.profile,
                               ),
+                            )).then((addNewRelative) {
+                          if (addNewRelative != null) {
+                            setState(() {
+                              relatives.add(addNewRelative);
+                            });
+                          }
+                      });
+                      }),
+                  SpeedDialChild(
+                      label: "Phê Duyệt Quá Trình Đạo Tạo",
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) =>
+                                  ListTrainingprocessesScreen(
+                                profiles: widget.profile,
+                              ),
                             ));
                       }),
-                  // SpeedDialChild(
-                  //     label: "Phê Duyệt Quá Trình Đạo Tạo",
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute<void>(
-                  //             builder: (BuildContext context) =>
-                  //                 ListTrainingprocessesScreen(
-                  //               profiles: widget.profile,
-                  //             ),
-                  //           ));
-                  //     }),
                   SpeedDialChild(
                       label: "Phê Duyệt Quá Trình Làm Việc",
                       onTap: () {
@@ -919,25 +954,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute<void>(
+                            MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   AddDiplomaScreen(
                                 profile: widget.profile,
                               ),
-                            ));
+                            )).then((createNewDiploma) {
+                          if (createNewDiploma != null) {
+                            setState(() {
+                              diplomas.add(createNewDiploma);
+                            });
+                          }
+                        });
                       }),
                   SpeedDialChild(
-                      label: "Bảo hiểm",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  AddInsuranceScreen(
-                                profiles: widget.profile,
-                              ),
-                            ));
-                      }),
+                    label: "Bảo hiểm",
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => AddInsuranceScreen(
+                                  profiles: widget.profile,
+                                )),
+                      ).then((newInsurance) {
+                        if (newInsurance != null) {
+                          setState(() {
+                            insurance.add(newInsurance);
+                          });
+                        }
+                      });
+                    },
+                  )
                 ])
           : SpeedDial(
               elevation: 0,
@@ -1098,15 +1145,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   //
 
-   Widget _buildRolesDropdown(String hint) {
+  Widget _buildRolesDropdown(String hint) {
     return DropdownButtonFormField<Roles>(
       value: selectedRoles,
       hint: Text(hint),
-      onChanged:_isEditing? (Roles? newValue) {
-        setState(() {
-          selectedRoles = newValue;
-        });
-      }:null,
+      onChanged: _isEditing
+          ? (Roles? newValue) {
+              setState(() {
+                selectedRoles = newValue;
+              });
+            }
+          : null,
       items: roles.map((Roles role) {
         return DropdownMenuItem<Roles>(
           value: role,
@@ -1114,11 +1163,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }).toList(),
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabled: _isEditing
-      ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          enabled: _isEditing),
     );
   }
+
   //
   Widget _buildRelativeList() {
     if (relatives.isEmpty) {
@@ -1641,6 +1690,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
   }
-
- 
 }

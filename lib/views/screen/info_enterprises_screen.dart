@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/enterprises_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -12,23 +13,24 @@ class InfoEnterpriseScreen extends StatefulWidget {
 
 class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
   Enterprises? enterprise;
-
   @override
   void initState() {
+    super.initState();
     Provider.of<EnterprisesViewModel>(context, listen: false)
         .fetchAllEnterprises();
     enterprise =
         Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
-    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      appBar: AppBar(
-        title: Text('Thông tin doanh nghiệp'),
-      ),
+      showLeadingAction: true,
+      appBarColor: AppColor.primaryLightColor,
+      appBarItemColor: Colors.white,
+      backgroundColor: Colors.white,
+      titletext: "Thông tin doanh nghiệp",
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
@@ -39,43 +41,44 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
               children: [
                 SizedBox(height: 16),
                 Center(
-                  child: Column(
-                    children: [
-                      Text(
-                        enterprise!.name,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        enterprise!.licenseNum,
-                        style: TextStyle(fontSize: 18, color: Colors.grey),
-                      ),
-                    ],
+                  child: Text(
+                    enterprise!.name,
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(height: 16),
                 Divider(),
                 InfoTile(
                   icon: Icons.business,
-                  label: 'License Number',
+                  label: 'Mã số giấy phép',
                   value: enterprise!.licenseNum,
                 ),
                 InfoTile(
                   icon: Icons.email,
-                  label: 'E-mail',
+                  label: 'Địa chỉ',
+                  value: enterprise!.address!,
+                ),
+                InfoTile(
+                  icon: Icons.email,
+                  label: 'Email',
                   value: enterprise!.email!,
                 ),
                 InfoTile(
                   icon: Icons.phone,
-                  label: 'Phone',
+                  label: 'Điện thoại',
                   value: enterprise!.phone!,
                 ),
                 InfoTile(
                   icon: Icons.calendar_today,
-                  label: 'Assign Date',
+                  label: 'Ngày thành lập',
                   value: enterprise?.assignDate != null
                       ? _formatDate(enterprise!.assignDate)
                       : 'Không có',
+                ),
+                InfoTile(
+                  icon: Icons.phone,
+                  label: 'Website',
+                  value: enterprise!.website!,
                 ),
               ],
             ),
@@ -94,12 +97,6 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
                         ));
                   },
                 ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context);
-                  },
-                ),
               ],
             ),
           ],
@@ -109,7 +106,7 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
   }
 
   String _formatDate(DateTime date) {
-    return '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString().padLeft(4, '0')}';
   }
 
   void _showDeleteConfirmationDialog(BuildContext context) {
@@ -162,6 +159,7 @@ class InfoTile extends StatelessWidget {
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
             Expanded(
                 child: Text(
+              maxLines: 2,
               value,
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             )),

@@ -22,7 +22,7 @@ class TrainingprocessesRepository {
   Future<bool> createTrainingProcesses(
       Trainingprocesses trainingprocesses) async {
     final response = await service.createTrainingProcesses(trainingprocesses);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add Trainingprocesses: ${response.statusCode}');
@@ -34,8 +34,11 @@ class TrainingprocessesRepository {
     try {
       final response = await service.updateTrainingProcesses(trainingprocesses);
       if (response.statusCode == 200) {
+        print("Delete successful. Response body: ${response.body}");
         return true;
       } else {
+          print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {

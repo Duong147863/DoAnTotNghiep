@@ -33,7 +33,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
   final _temporaryAddressRelativeController = TextEditingController();
   final _currentAddressRelativeController = TextEditingController();
   final _relativeJobController = TextEditingController();
-  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   @override
   void initState() {
     super.initState();
@@ -53,7 +53,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit()async {
     if (_formKey.currentState!.validate()) {
       final addNewRelative = Relatives(
         profileId: _profileIDController.text,
@@ -66,11 +66,23 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         relativesCurrentAddress: _currentAddressRelativeController.text,
         relativeJob: _relativeJobController.text,
       );
+    try
+    {
       Provider.of<RelativesViewModel>(context, listen: false)
           .addRelative(addNewRelative)
           .then((_) {
-        Navigator.pop(context);
-      });
+         ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Relative new create successfully!')),
+        );
+        Navigator.pop(context,addNewRelative);
+      }); 
+    }catch (e)
+    {
+       ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create Relative: $e')),
+        );
+    }
+      
     }
   }
 
@@ -99,6 +111,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
           TextButton.icon(
             onPressed: () {
               _submit();
+              Navigator.pop(context);
             },
             icon: Icon(
               Icons.save_outlined,
@@ -135,7 +148,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     labelText: 'Họ tên thân nhân',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_full_name_relative';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
@@ -150,7 +163,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     labelText: 'Quan hệ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_relationship';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
@@ -158,10 +171,10 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                   CustomTextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'please_enter_phone_number';
+                              return 'Không được để trống';
                             }
                             if (value.length != 10) {
-                              return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
+                              return 'Số điện thoại sai định dạng'; // Thông báo nhập đúng 10 chữ số
                             }
                             return null;
                           },
@@ -194,11 +207,11 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     textEditingController: _relativeJobController,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_relativeJob';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
-                    labelText: 'relative_job',
+                    labelText: 'Nghề nghiệp',
                   ).w(254),
                 ],
               ).py(8),
@@ -208,17 +221,17 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 labelText: 'Địa chỉ tạm trú',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please_enter_temp_address';
+                    return 'Không được để trống';
                   }
                   return null;
                 },
               ).p8(),
               CustomTextFormField(
                 textEditingController: _currentAddressRelativeController,
-                labelText: 'Nơi ở hiện tại',
+                labelText: 'Địa chỉ thường trú',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please_enter_current_address';
+                    return 'Không được để trống';
                   }
                   return null;
                 },
@@ -242,7 +255,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'please_enter_relative_birthday';
+                return 'Không được để trống';
               }
               return null;
             },

@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -44,9 +43,11 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     super.initState();
     _laborContractIDController.text = widget.laborContracts!.laborContractId;
     _startTimeController.text = DateFormat('dd/MM/yyyy').format(widget.laborContracts!.startTime).toString();
+    _startTime=widget.laborContracts!.startTime;
     _endTimeController.text = widget.laborContracts!.endTime == null
         ? "Hiện tại"
         : DateFormat('dd/MM/yyyy').format(widget.laborContracts!.endTime!).toString();
+    // _endTime=widget.laborContracts!.endTime!;
     _laborContractImageBase64 = widget.laborContracts!.image;
    Provider.of<DeparmentsViewModel>(context, listen: false)
           .fetchAllDepartments();

@@ -35,7 +35,7 @@ class ProfilesRepository {
       throw Exception('Failed to load members count');
     }
   }
-  
+
   Future<Map<String, int>> getMembersCountGenderAndMaritalStatus() async {
     final response = await service.getMembersCountGenderAndMaritalStatus();
 
@@ -85,7 +85,7 @@ class ProfilesRepository {
 
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');
@@ -97,12 +97,25 @@ class ProfilesRepository {
       final response = await service
           .updateProfile(profile); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
         return true; // Cập nhật thành công
       } else {
+        print("Failed to update profile: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update profile');
       }
     } catch (error) {
+      print("An error occurred: $error");
       throw Exception('Failed to update profile');
+    }
+  }
+
+  Future<bool> deleteProfile(String profileId) async {
+    final response = await service.deleteProfile(profileId); 
+    if (response.statusCode == 200) {
+      return true; 
+    } else {
+      throw Exception('Failed to deactivate profile: ${response.statusCode}');
     }
   }
 

@@ -21,7 +21,7 @@ class WorkingprocessRepository {
 
   Future<bool> createNewWorkingprocess(WorkingProcesses workingprocess) async {
     final response = await service.createNewWorkingprocess(workingprocess);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add WorkingProcesses: ${response.statusCode}');

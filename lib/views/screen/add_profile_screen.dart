@@ -248,13 +248,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
               color: AppColor.boneWhite,
             ),
             label: Text(
-              "save",
+              "Lưu",
               style: TextStyle(color: AppColor.boneWhite),
             ),
           )
         ],
         resizeToAvoidBottomInset: true,
-        titletext: "add_new_profile",
+        titletext: "Thêm nhân viên",
         appBarColor: AppColor.primaryLightColor,
         body: SingleChildScrollView(
             child: Form(
@@ -278,20 +278,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
               children: [
                 CustomTextFormField(
                   textEditingController: _profileIDController,
-                  labelText: 'profile_id',
+                  labelText: 'Mã nhân viên',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_profile_id';
+                      return 'Không được để trống';
                     }
                     return null;
                   },
                 ).px8().w(150),
                 CustomTextFormField(
                   textEditingController: _profileNameController,
-                  labelText: 'full_name',
+                  labelText: 'Họ và tên',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_full_name';
+                      return 'Không được để trống';
                     }
                     return null;
                   },
@@ -301,7 +301,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             //Birthday + Place of birth
             Row(
               children: [
-                _buildDateField('birthday', _birthdayController, _birthday,
+                _buildDateBirthday('birthday', _birthdayController, _birthday,
                     (date) {
                   setState(() {
                     _birthday = date;
@@ -311,10 +311,10 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 }).px(8).w(150),
                 CustomTextFormField(
                   textEditingController: _placeOfBirthController,
-                  labelText: 'place_of_birth',
+                  labelText: 'Nơi sinh',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_place_of_birth';
+                      return 'Không được để trống';
                     }
                     return null;
                   },
@@ -323,33 +323,33 @@ class _AddProfilePageState extends State<AddProfilePage> {
             ),
             Row(
               children: [
-                Text('Department').px(8),
-                _buildDepartmentDropdown('Choose Department').p(8).w(300),
+                Text('Phòng ban').px(8),
+                _buildDepartmentDropdown('Chọn phòng ban').p(8).w(300),
               ],
             ),
             Row(
               children: [
-                Text('Position').px(8),
-                _buildPositionsDropdown('Choose Postion').p(8).w(300),
+                Text('Chức vụ').px(8),
+                _buildPositionsDropdown('Chọn chức vụ').p(8).w(300),
               ],
             ),
             Row(
               children: [
-                Text('Salary').px(8),
-                _buildSalaryDropdown('Choose Salary').p(8).w(300),
+                Text('Lương cơ bản').px(8),
+                _buildSalaryDropdown('Chọn mức lương').p(8).w(300),
               ],
             ),
             Row(
               children: [
-                Text('Roles').px(8),
-                _buildRolesDropdown('Choose Roles').p(8).w(300),
+                Text('Loại tài khoản').px(8),
+                _buildRolesDropdown('Chọn loại tài khoản').p(8).w(300),
               ],
             ),
 
             //Gender + Marriage
             Row(
               children: [
-                Text('gender').px(8),
+                Text('Giới tính').px(8),
                 _buildDropdownField('Chọn giới tính', _gender, (value) {
                   setState(() {
                     _gender = value!;
@@ -365,7 +365,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     });
                   },
                 ),
-                Text('yes'),
+                Text('Rồi'),
                 Radio(
                   value: false,
                   groupValue: _marriage,
@@ -375,7 +375,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     });
                   },
                 ),
-                Text('no'),
+                Text('Chưa'),
               ],
             ),
             // ID number + license day
@@ -387,15 +387,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_phone_number';
+                      return 'Không được để trống';
                     }
                     if (value.length != 12) {
-                      return 'please_enter_valid_Số CCCD/CMND'; // Thông báo nhập đúng 10 chữ số
+                      return 'Số CCCD/CMND không hợp lệ'; // Thông báo nhập đúng 10 chữ số
                     }
                     return null;
                   },
                 ).w(200).px8(),
-                _buildDateField(
+                _buildDateLicenseDay(
                     'id ngày cấp', _idLicenseDayController, _idLicenseDay,
                     (date) {
                   setState(() {
@@ -411,23 +411,23 @@ class _AddProfilePageState extends State<AddProfilePage> {
               validator: (value) =>
                   value.isEmptyOrNull ? 'Please enter nation' : null,
               textEditingController: _nationController,
-              labelText: 'nation',
+              labelText: 'Quê quán',
             ).p(8),
             //Email + phone
             Row(
               children: [
                 CustomTextFormField(
                   textEditingController: _emailController,
-                  labelText: 'email',
+                  labelText: 'Email',
                   maxLines: 1,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'please_enter_email';
+                      return 'Không được để trống';
                     }
                     final emailRegex =
                         RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                     if (!emailRegex.hasMatch(value)) {
-                      return 'please_enter_valid_email';
+                      return 'Email không hợp lệ';
                     }
                     return null;
                   },
@@ -435,15 +435,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 CustomTextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'please_enter_phone_number';
+                            return 'Không được để trống';
                           }
                           if (value.length != 10) {
-                            return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
+                            return 'Số điện thoại không hợp lệ'; // Thông báo nhập đúng 10 chữ số
                           }
                           return null;
                         },
                         textEditingController: _phoneController,
-                        labelText: 'phone',
+                        labelText: 'Điện thoại',
                         maxLines: 1,
                         keyboardType: TextInputType.number)
                     .w(145),
@@ -451,11 +451,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
             ).py(8),
             //Password
             CustomTextFormField(
-              labelText: "password",
+              labelText: "Mật khẩu",
               textEditingController: _passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'please_enter_password';
+                  return 'Không được để trống';
                 }
                 return null;
               },
@@ -463,20 +463,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
             //Address
             CustomTextFormField(
               textEditingController: _temporaryAddressController,
-              labelText: 'temp_address',
+              labelText: 'Tạm trú',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'please_enter_temp_address';
+                  return 'Không được để trống';
                 }
                 return null;
               },
             ).p8(),
             CustomTextFormField(
               textEditingController: _currentAddressController,
-              labelText: 'current_address',
+              labelText: 'Địa chỉ hường trú',
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return 'please_enter_current_address';
+                  return 'Không được để trống';
                 }
                 return null;
               },
@@ -486,34 +486,73 @@ class _AddProfilePageState extends State<AddProfilePage> {
         )));
   }
 
-  Widget _buildDateField(String label, TextEditingController controller,
+   Widget _buildDateBirthday(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: GestureDetector(
-        onTap: () => _selectDate(context, initialDate, onDateSelected),
-        child: AbsorbPointer(
-          child: TextFormField(
-            readOnly: true,
-            style: TextStyle(color: Colors.black),
-            controller: controller,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'please_id ngày cấp';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: label,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+    return GestureDetector(
+      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+        onDateSelected(selectedDate);
+        setState(() {
+          _birthday = selectedDate;
+        });
+      }),
+      child: AbsorbPointer(
+        child: TextFormField(
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please select $label';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
       ),
     );
   }
+
+   Widget _buildDateLicenseDay(String label, TextEditingController controller,
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return GestureDetector(
+    onTap: () => _selectDate(context, initialDate, (selectedDate) {
+      onDateSelected(selectedDate);
+      setState(() {
+        _idLicenseDay = selectedDate;
+      });
+    }),
+    child: AbsorbPointer(
+      child: TextFormField(
+        readOnly: true,
+        style: TextStyle(color: Colors.black),
+        controller: controller,
+        validator: (value) {
+          if (controller.text.isNotEmpty) {
+            try {
+              DateTime selectedLicenseDay = DateTime.parse(controller.text);
+              // Kiểm tra nếu ngày cấp CCCD phải lớn hơn 14 tuổi tính từ ngày sinh (_birthday)
+              if (selectedLicenseDay.isBefore(_birthday.add(Duration(days: 365 * 14)))) {
+                return 'CCCD phải trên 14 tuổi';
+              }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
+            }
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ),
+    ),
+  );
+}
+
+
 
   Widget _buildDropdownField(
       String label, bool currentValue, Function(bool?) onChanged) {
@@ -526,8 +565,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         items: [
-          DropdownMenuItem(value: false, child: Text('Man')),
-          DropdownMenuItem(value: true, child: Text('Woman')),
+          DropdownMenuItem(value: false, child: Text('Nam')),
+          DropdownMenuItem(value: true, child: Text('Nữ')),
         ],
         onChanged: onChanged,
         validator: (value) => value == null ? 'Please select a gender' : null,

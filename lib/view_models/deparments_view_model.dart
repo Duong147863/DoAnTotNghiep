@@ -34,7 +34,6 @@ class DeparmentsViewModel extends ChangeNotifier {
   Future<void> updateDepartment(Departments department) async {
     try {
       await repository.updateDepartment(department);
-
       int index = _list
           .indexWhere((dep) => dep.departmentID == department.departmentID);
       if (index != -1) {

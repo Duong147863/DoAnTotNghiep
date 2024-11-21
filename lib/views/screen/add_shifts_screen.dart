@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/shifts_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:provider/provider.dart';
+import 'package:velocity_x/velocity_x.dart';
 
 class AddShiftsScreen extends StatefulWidget {
   const AddShiftsScreen({super.key});
@@ -70,6 +72,7 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Shifts added successfully!')),
         );
+        Navigator.pop(context);
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to add Shifts: $error')),
@@ -81,97 +84,88 @@ class _AddShiftsScreenState extends State<AddShiftsScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      appBar: AppBar(
-        title: Text('Tạo ca làm việc mới'),
-      ),
+      titletext: "Tạo ca làm",
+      appBarColor: AppColor.primaryLightColor,
+      showLeadingAction: true,
+      appBarItemColor: Colors.white,
+      backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _shiftIdController,
-                  decoration: InputDecoration(
-                    labelText: 'Mã',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
+              Image.asset("assets/images/addShifts.png"),
+              TextFormField(
+                controller: _shiftIdController,
+                decoration: InputDecoration(
+                  labelText: 'Mã ca làm',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Shifts ID';
-                    }
-                    return null;
-                  },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _shiftNameControler,
-                  decoration: InputDecoration(
-                    labelText: 'Tên ca làm',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).py8(),
+              TextFormField(
+                controller: _shiftNameControler,
+                decoration: InputDecoration(
+                  labelText: 'Tên ca làm',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter Shifts name';
-                    }
-                    return null;
-                  },
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _startTimeController,
-                  decoration: InputDecoration(
-                    labelText: 'Giờ vào',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    suffixIcon: Icon(Icons.access_time),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).py8(),
+              TextFormField(
+                controller: _startTimeController,
+                decoration: InputDecoration(
+                  labelText: 'Giờ vào',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  readOnly: true,
-                  onTap: () => _selectTime(context, _startTimeController, true),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select Start Time';
-                    }
-                    return null;
-                  },
+                  suffixIcon: Icon(Icons.access_time),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: TextFormField(
-                  controller: _endTimeController,
-                  decoration: InputDecoration(
-                    labelText: 'Giờ ra',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    suffixIcon: Icon(Icons.access_time),
+                readOnly: true,
+                onTap: () => _selectTime(context, _startTimeController, true),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).py8(),
+              TextFormField(
+                controller: _endTimeController,
+                decoration: InputDecoration(
+                  labelText: 'Giờ ra',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
-                  readOnly: true,
-                  onTap: () => _selectTime(context, _endTimeController, false),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please select End Time';
-                    }
-                    return null;
-                  },
+                  suffixIcon: Icon(Icons.access_time),
                 ),
-              ),
+                readOnly: true,
+                onTap: () => _selectTime(context, _endTimeController, false),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).py8(),
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _submit,
-                child: Text('Tạo'),
+                child: Text('Tạo ca'),
               ),
             ],
           ),

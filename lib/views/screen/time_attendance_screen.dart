@@ -42,8 +42,9 @@ class _TimeAttendanceState extends State<TimeAttendance>
         backgroundColor: Color(0xFF0B258A),
         elevation: 0,
         automaticallyImplyLeading: true,
+        centerTitle: true,
         title: Text(
-          'Time Attendance',
+          'Chấm công',
           style: TextStyle(color: Colors.white),
         ),
         bottom: PreferredSize(
@@ -55,8 +56,8 @@ class _TimeAttendanceState extends State<TimeAttendance>
               indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
               labelColor: Colors.black, // Màu cho tab đang chọn
               tabs: [
-                Tab(text: 'Check-in'),
-                Tab(text: 'History'),
+                Tab(text: 'Quét QR'),
+                Tab(text: 'Lịch sử chấm công'),
               ],
             ),
           ),

@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute<void>(
+                                  MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           InfoEnterpriseScreen()));
                             },
@@ -194,9 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute<void>(
                                     builder: (BuildContext context) =>
-                                        ListAbsentScreen(
-                                          profiles: widget.profile,
-                                        )),
+                                        ListAbsentScreen()),
                               );
                             },
                           ),
@@ -270,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute<void>(
                                   builder: (BuildContext context) =>
-                                      const AddLaborContractScreen(),
+                                      const Placeholder(),
                                 ),
                               );
                             },
@@ -286,9 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context,
                                     MaterialPageRoute<void>(
                                         builder: (BuildContext context) =>
-                                            ListAbsentScreen(
-                                              profiles: widget.profile,
-                                            )),
+                                            ListAbsentScreen()),
                                   );
                                 },
                               ),
@@ -338,7 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context,
                                     MaterialPageRoute<void>(
                                       builder: (BuildContext context) =>
-                                          const  ListHiringsScreen(),
+                                          const ListHiringsScreen(),
                                     ),
                                   );
                                 },
@@ -356,7 +352,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               ),
                             ]
-                          : []),
+                          : [
+                              ListTile(
+                                title: const Text("Nghỉ phép"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                            ListAbsentScreen(
+                                              profiles: widget.profile,
+                                            )),
+                                  );
+                                },
+                              ),
+                            ]),
             ),
             Align(
               alignment: FractionalOffset.bottomCenter,
@@ -385,7 +395,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           AppRoutes.loginRoute, (route) => false);
                     },
                   ),
-                  
                 ],
               ),
             ),
@@ -412,16 +421,16 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
         actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => NotificationScreen(),
-                  ),
-                );
-              },
-              icon: Icon(Icons.notifications_none))
+          // IconButton(
+          //     onPressed: () {
+          //       Navigator.push(
+          //         context,
+          //         MaterialPageRoute<void>(
+          //           builder: (BuildContext context) => NotificationScreen(),
+          //         ),
+          //       );
+          //     },
+          //     icon: Icon(Icons.notifications_none))
         ],
       ),
       backgroundColor: AppColor.primaryLightColor,
@@ -510,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
               }),
           SpeedDialChild(
-              label: "Thêm quyết định",
+              label: "Tạo quyết định mới",
               onTap: () {
                 Navigator.of(context).pushNamed(AppRoutes.decisionListRoute);
               }),
@@ -588,7 +597,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         initState();
                                       }
                                     },
-                                    child: const Text('Thêm'),
+                                    child: const Text('Tạo phòng ban'),
                                   ),
                                 ],
                               )),
@@ -635,7 +644,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: TextFormField(
                                       controller: _positionNameController,
                                       decoration: const InputDecoration(
-                                        labelText: 'Position Name',
+                                        labelText: 'Tên chức vụ',
                                         border: OutlineInputBorder(
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(10)),
@@ -665,7 +674,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         initState();
                                       }
                                     },
-                                    child: const Text('Add Department'),
+                                    child: const Text('Thêm chức vụ'),
                                   ),
                                 ],
                               )),
@@ -944,7 +953,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider().p12(),
             _buildEmployeeStats(),
             const Divider().p12(),
-           _buildGetMembersCountGenderAndMaritalStatus(),
+            _buildGetMembersCountGenderAndMaritalStatus(),
             // ExpansionPanelList(
             //   expansionCallback: (int panelIndex, bool isExpanded) {
             //     setState(() {
@@ -1063,129 +1072,139 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }
     } else {
-      return UiSpacer.emptySpace();
+      return _buildGetMembersCountGenderAndMaritalStatus();
     }
   }
 
-Widget _buildEmployeeStats() {
-  return Consumer<ProfilesViewModel>(
-    builder: (context, viewModel, child) {
-      if (!viewModel.fetchingEmployeeStats &&
-          viewModel.activeCount == 0 &&
-          viewModel.quitCount == 0) {
-        viewModel.fetchQuitAndActiveMembersCount();
-      }
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Biểu đồ hình tròn
-            Container(
-              color: Colors.transparent, // Đảm bảo không có màu nền không mong muốn
-              child: SfCircularChart(
-                title: ChartTitle(text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
-                series: <CircularSeries<EmployeeStat, String>>[
-                  DoughnutSeries<EmployeeStat, String>(
-                    dataSource: [
-                      EmployeeStat('Đang làm việc', viewModel.activeCount),
-                      EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
-                      EmployeeStat('Chính thức', viewModel.officialContractsCount),
-                      EmployeeStat('Thời hạn', viewModel.temporaryContractsCount),
-                    ],
-                    xValueMapper: (EmployeeStat stats, _) => stats.status,
-                    yValueMapper: (EmployeeStat stats, _) => stats.count,
-                    dataLabelSettings: DataLabelSettings(
-                      isVisible: true, // Hiển thị nhãn dữ liệu
-                      labelPosition: ChartDataLabelPosition.inside, // Hiển thị nhãn bên trong vùng màu
-                      textStyle: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white, // Màu chữ tương phản để dễ đọc
+  Widget _buildEmployeeStats() {
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        if (!viewModel.fetchingEmployeeStats &&
+            viewModel.activeCount == 0 &&
+            viewModel.quitCount == 0) {
+          viewModel.fetchQuitAndActiveMembersCount();
+        }
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Biểu đồ hình tròn
+              Container(
+                color: Colors
+                    .transparent, // Đảm bảo không có màu nền không mong muốn
+                child: SfCircularChart(
+                  title: ChartTitle(
+                      text: 'Thống kê nhân viên'), // Tiêu đề cho biểu đồ
+                  series: <CircularSeries<EmployeeStat, String>>[
+                    DoughnutSeries<EmployeeStat, String>(
+                      dataSource: [
+                        EmployeeStat('Đang làm việc', viewModel.activeCount),
+                        EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+                        EmployeeStat(
+                            'Chính thức', viewModel.officialContractsCount),
+                        EmployeeStat(
+                            'Thời hạn', viewModel.temporaryContractsCount),
+                      ],
+                      xValueMapper: (EmployeeStat stats, _) => stats.status,
+                      yValueMapper: (EmployeeStat stats, _) => stats.count,
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true, // Hiển thị nhãn dữ liệu
+                        labelPosition: ChartDataLabelPosition
+                            .inside, // Hiển thị nhãn bên trong vùng màu
+                        textStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Màu chữ tương phản để dễ đọc
+                        ),
                       ),
+                      dataLabelMapper: (EmployeeStat stats, _) =>
+                          '${stats.count}',
+                      pointColorMapper: (EmployeeStat stats, _) {
+                        if (stats.status == 'Đang làm việc') {
+                          return Colors.blue;
+                        } else if (stats.status == 'Đã nghỉ việc') {
+                          return Colors.red;
+                        } else if (stats.status == 'Chính thức') {
+                          return Colors.green;
+                        } else if (stats.status == 'Thời hạn') {
+                          return Colors.orange;
+                        } else {
+                          return Colors.grey;
+                        }
+                      },
+                      explode: false, // Bỏ hiệu ứng tách ra
+                      radius: '70%', // Kích thước của vòng tròn
+                      innerRadius:
+                          '50%', // Vùng rỗng bên trong để tạo hình Doughnut
                     ),
-                    dataLabelMapper: (EmployeeStat stats, _) => '${stats.count}',
-                    pointColorMapper: (EmployeeStat stats, _) {
-                      if (stats.status == 'Đang làm việc') {
-                        return Colors.blue;
-                      } else if (stats.status == 'Đã nghỉ việc') {
-                        return Colors.red;
-                      } else if (stats.status == 'Chính thức') {
-                        return Colors.green;
-                      } else if (stats.status == 'Thời hạn') {
-                        return Colors.orange;
-                      } else {
-                        return Colors.grey;
-                      }
-                    },
-                    explode: false, // Bỏ hiệu ứng tách ra
-                    radius: '70%', // Kích thước của vòng tròn
-                    innerRadius: '50%', // Vùng rỗng bên trong để tạo hình Doughnut
-                  ),
-                ],
-                tooltipBehavior: TooltipBehavior(enable: true), // Hiển thị tooltip khi hover qua phần tử
+                  ],
+                  tooltipBehavior: TooltipBehavior(
+                      enable: true), // Hiển thị tooltip khi hover qua phần tử
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.blue,
-                      ),
-                      SizedBox(width: 8),
-                      Text('Đang làm việc: ${viewModel.activeCount}', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.red,
-                      ),
-                      SizedBox(width: 8),
-                      Text('Đã nghỉ việc: ${viewModel.quitCount}', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.green,
-                      ),
-                      SizedBox(width: 8),
-                      Text('Chính thức: ${viewModel.officialContractsCount}', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        color: Colors.orange,
-                      ),
-                      SizedBox(width: 8),
-                      Text('Thời hạn: ${viewModel.temporaryContractsCount}', style: TextStyle(fontSize: 16)),
-                    ],
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          color: Colors.blue,
+                        ),
+                        SizedBox(width: 8),
+                        Text('Đang làm việc: ${viewModel.activeCount}',
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          color: Colors.red,
+                        ),
+                        SizedBox(width: 8),
+                        Text('Đã nghỉ việc: ${viewModel.quitCount}',
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          color: Colors.green,
+                        ),
+                        SizedBox(width: 8),
+                        Text('Chính thức: ${viewModel.officialContractsCount}',
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          color: Colors.orange,
+                        ),
+                        SizedBox(width: 8),
+                        Text('Thời hạn: ${viewModel.temporaryContractsCount}',
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
-
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildGetMembersCountGenderAndMaritalStatus() {
     return Consumer<ProfilesViewModel>(
