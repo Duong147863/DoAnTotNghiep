@@ -13,14 +13,13 @@ class InfoEnterpriseScreen extends StatefulWidget {
 
 class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
   Enterprises? enterprise;
-
   @override
   void initState() {
+    super.initState();
     Provider.of<EnterprisesViewModel>(context, listen: false)
         .fetchAllEnterprises();
     enterprise =
         Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
-    super.initState();
   }
 
   @override

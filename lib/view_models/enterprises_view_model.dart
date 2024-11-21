@@ -8,7 +8,6 @@ class EnterprisesViewModel extends ChangeNotifier {
   Enterprises? enterprises;
 
   Future<void> fetchAllEnterprises() async {
-    notifyListeners();
     try {
       enterprises = await repository.fetchAllEnterprises();
       notifyListeners();

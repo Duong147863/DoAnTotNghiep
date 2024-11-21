@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () {
                               Navigator.push(
                                   context,
-                                  MaterialPageRoute<void>(
+                                  MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           InfoEnterpriseScreen()));
                             },
@@ -194,9 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute<void>(
                                     builder: (BuildContext context) =>
-                                        ListAbsentScreen(
-
-                                        )),
+                                        ListAbsentScreen()),
                               );
                             },
                           ),
@@ -286,8 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context,
                                     MaterialPageRoute<void>(
                                         builder: (BuildContext context) =>
-                                            ListAbsentScreen(
-                                            )),
+                                            ListAbsentScreen()),
                                   );
                                 },
                               ),
@@ -356,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ]
                           : [
-                             ListTile(
+                              ListTile(
                                 title: const Text("Nghỉ phép"),
                                 onTap: () {
                                   Navigator.push(
@@ -369,7 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                               ),
-                          ]),
+                            ]),
             ),
             Align(
               alignment: FractionalOffset.bottomCenter,
