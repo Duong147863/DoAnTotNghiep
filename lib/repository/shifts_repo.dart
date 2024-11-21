@@ -7,7 +7,7 @@ class ShiftsRepository {
   final ShiftsServices service = ShiftsServices();
   Future<bool> addShifts(Shifts shifts) async {
     final response = await service.addShifts(shifts);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');

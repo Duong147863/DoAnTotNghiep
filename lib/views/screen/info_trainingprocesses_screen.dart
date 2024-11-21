@@ -44,14 +44,22 @@ class _InfoTrainingprocessesScreenState
         widget.trainingprocesses!.trainingprocessesName;
     _trainingprocessesContentController.text =
         widget.trainingprocesses!.trainingprocessesContent;
-    _startTimeController.text =
-        DateFormat('dd/MM/yyyy').format(widget.trainingprocesses!.startTime).toString();
-    _endTimeController.text =
-        DateFormat('dd/MM/yyyy').format(widget.trainingprocesses!.endTime!).toString();
+    _startTimeController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.trainingprocesses!.startTime)
+        .toString();
+    _endTimeController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.trainingprocesses!.endTime!)
+        .toString();
+    _startTime = widget.trainingprocesses!.startTime;
+    _endTime = widget.trainingprocesses!.endTime!;
   }
 
   void _updateTrainingProcesses() async {
+    
     if (_formKey.currentState!.validate()) {
+        if (!AppStrings.ROLE_PERMISSIONS.containsAny(['Manage Staffs info only', 'Manage BoD & HR accounts'])) {
+          _statusTrainingProcesses = 0; // Gán 0 nếu không có quyền
+      } 
       final updateTrainingProcesses = Trainingprocesses(
           profileId: _profileIDController.text,
           trainingprocessesId: _trainingprocessesIdController.text,
@@ -135,40 +143,54 @@ class _InfoTrainingprocessesScreenState
     );
   }
 
-  Widget _buildDateEndTime(String label, TextEditingController controller,
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    return GestureDetector(
-      onTap: _isEditing
-          ? () => _selectDate(context, initialDate, onDateSelected)
-          : null,
-      child: AbsorbPointer(
-        child: TextFormField(
-          readOnly: true,
-          style: TextStyle(color: Colors.black),
-          controller: controller,
-          validator: (value) {
-            if (controller.text.isNotEmpty) {
-              try {
-                DateTime selectedEndTime = DateTime.parse(controller.text);
-                if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
+ Widget _buildDateEndTime(String label, TextEditingController controller,
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return GestureDetector(
+    onTap: _isEditing
+        ? () => _selectDate(context, initialDate, (selectedDate) {
+            onDateSelected(selectedDate);
+            setState(() {
+              _endTime = selectedDate;
+              _endTimeController.text =
+                  DateFormat('dd/MM/yyyy').format(_endTime);
+            });
+          })
+        : null,
+    child: AbsorbPointer(
+      child: TextFormField(
+        readOnly: true,
+        style: TextStyle(color: Colors.black),
+        controller: controller,
+        validator: (value) {
+          if (controller.text.isNotEmpty) {
+            try {
+              // Kiểm tra nếu giá trị controller.text có thể chuyển đổi thành DateTime
+              DateTime selectedEndTime = DateFormat('dd/MM/yyyy')
+                  .parseStrict(controller.text); // Chuyển đổi ngày theo định dạng 'dd/MM/yyyy'
+
+              // Kiểm tra xem selectedEndTime có phải sau _startTime ít nhất 30 ngày không
+              if (selectedEndTime.isBefore(_startTime)) {
+                return 'End Time phải sau Start Time';
               }
+
+              // Kiểm tra sự khác biệt giữa selectedEndTime và _startTime phải lớn hơn 30 ngày
+              if (selectedEndTime.difference(_startTime).inDays <= 30) {
+                return 'End Time phải lớn hơn 30 ngày kể từ Start Time';
+              }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
             }
-            return null;
-          },
-          decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
-    );
-  }
-
+    ),
+  );
+}
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -249,7 +271,7 @@ class _InfoTrainingprocessesScreenState
                             setState(() {
                               _startTime = date;
                               _startTimeController.text =
-                                  "${_startTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(_startTime);
                             });
                           },
                         ),
@@ -264,7 +286,7 @@ class _InfoTrainingprocessesScreenState
                             setState(() {
                               _endTime = date;
                               _endTimeController.text =
-                                  "${_endTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(_endTime);
                             });
                           },
                         ),
@@ -273,7 +295,7 @@ class _InfoTrainingprocessesScreenState
                   ),
                   SizedBox(height: 16),
                   AppStrings.ROLE_PERMISSIONS
-                          .contains('Manage Staffs info only')
+                          .containsAny(['Manage Staffs info only', 'Manage BoD & HR accounts'])
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

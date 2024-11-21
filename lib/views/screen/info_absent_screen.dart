@@ -39,11 +39,17 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
         DateFormat('yyyy-MM-dd').format(widget.absents!.from).toString();
     _toDateController.text =
         DateFormat('yyyy-MM-dd').format(widget.absents!.to!).toString();
-    _daysOffController.text =
-        widget.absents!.daysOff.toString();
+    _daysOffController.text = widget.absents!.daysOff.toString();
+    _statusAbsent = widget.absents!.status;
+    _fromDate = widget.absents!.from;
+    _toDate = widget.absents!.to!;
   }
+
   void _updateAbsent() async {
     if (_formKey.currentState!.validate()) {
+      if (!AppStrings.ROLE_PERMISSIONS.containsAny(['Manage Staffs info only', 'Manage BoD & HR accounts'])) {
+          _statusAbsent = 0; 
+      } 
       final updateAbents = Absents(
           profileID: _profileIDController.text,
           reason: _reasonController.text,
@@ -66,7 +72,8 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
       }
     }
   }
-   void _deleteAbsents() async {
+
+  void _deleteAbsents() async {
     try {
       final asbentId = widget.absents!.ID;
 
@@ -90,6 +97,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
       );
     }
   }
+
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
@@ -192,7 +200,8 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                   return null;
                 },
               ).py8(),
-              AppStrings.ROLE_PERMISSIONS.contains('Assign Project')
+                AppStrings.ROLE_PERMISSIONS
+                          .containsAny(['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -209,57 +218,55 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                       ],
                     )
                   : SizedBox.shrink(),
-               SizedBox(height: 16),
+              SizedBox(height: 16),
               Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.save,
-                            color: const Color.fromARGB(255, 33, 243, 61)),
-                        onPressed: _updateAbsent,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Confirm Delete'),
-                                content: Text(
-                                    'Are you sure you want to delete this absent?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Đóng dialog
-                                    },
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Đóng dialog
-                                      _deleteAbsents(); // Thực hiện xóa
-                                    },
-                                    child: Text('Delete'),
-                                  ),
-                                ],
-                              );
-                            },
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.save,
+                        color: const Color.fromARGB(255, 33, 243, 61)),
+                    onPressed: _updateAbsent,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.edit, color: Colors.blue),
+                    onPressed: () {
+                      setState(() {
+                        _isEditing = true;
+                      });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Confirm Delete'),
+                            content: Text(
+                                'Are you sure you want to delete this absent?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                  _deleteAbsents(); // Thực hiện xóa
+                                },
+                                child: Text('Delete'),
+                              ),
+                            ],
                           );
                         },
-                      ),
-                    ],
+                      );
+                    },
                   ),
+                ],
+              ),
             ],
           ),
         ),
@@ -270,7 +277,9 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
   Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap:_isEditing ? () => _selectDate(context, initialDate, onDateSelected):null,
+      onTap: _isEditing
+          ? () => _selectDate(context, initialDate, onDateSelected)
+          : null,
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,

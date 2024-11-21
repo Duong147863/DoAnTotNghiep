@@ -20,7 +20,7 @@ class DiplomasRepository {
 
   Future<bool> AddDiplomas(Diplomas diploma) async {
     final response = await service.createNewDiploma(diploma);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add diploma: ${response.statusCode}');

@@ -24,6 +24,7 @@ class DiplomasViewModel extends ChangeNotifier {
   Future<void> AddDiploma(Diplomas diploma) async {
     try {
       await repository.AddDiplomas(diploma);
+        notifyListeners();
     } catch (e) {
       throw Exception('Failed to add datas: $e');
     }

@@ -45,6 +45,7 @@ class _InfoDecisionScreenState extends State<InfoDecisionScreen> {
     _assignDateController.text = DateFormat('dd/MM/yyyy')
         .format(widget.decisions!.assignDate)
         .toString();
+    _assignDate=widget.decisions!.assignDate;
     _decisionContentController.text = widget.decisions!.decisionContent;
     decisionStatus = widget.decisions!.decisionStatus;
     _loadProfile();
@@ -362,8 +363,8 @@ class _InfoDecisionScreenState extends State<InfoDecisionScreen> {
                         (date) {
                           setState(() {
                             _assignDate = date;
-                            _assignDateController.text =
-                                "${_assignDate.toLocal()}".split(' ')[0];
+                           _assignDateController.text =
+                                  DateFormat('dd/MM/yyyy').format(_assignDate);
                           });
                         },
                       ),

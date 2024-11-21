@@ -19,12 +19,12 @@ class ProfilesViewModel extends ChangeNotifier {
   int quitCount = 0; // Số lượng nhân viên đã nghỉ việc
   int activeCount = 0; // Số lượng nhân viên đang làm việc
   int totalMembers = 0; // Biến lưu trữ tổng số nhân viên
-  int? genderMan = 0;
-  int? genderWoman = 0;
+  int genderMan = 0;
+  int genderWoman = 0;
   int officialContractsCount = 0;
   int temporaryContractsCount = 0;
-  int? married = 0;
-  int? unmarried = 0;
+  int married = 0;
+  int unmarried = 0;
   //
   Profiles? selectedProfile;
   Future<void> fetchAllProfiles() async {
@@ -62,7 +62,6 @@ class ProfilesViewModel extends ChangeNotifier {
       activeCount = counts['activeCount'] ?? 0;
       officialContractsCount=counts['officialContractsCount'] ?? 0;
       temporaryContractsCount=counts['temporaryContractsCount'] ?? 0;
-      print('Active: $activeCount, Quit: $quitCount, OfficialContractsCount: $officialContractsCount, TemporaryContractsCount: $temporaryContractsCount ');
     } catch (e) {
       throw Exception('Failed to fetch members count: $e');
     } finally {
@@ -76,10 +75,10 @@ class ProfilesViewModel extends ChangeNotifier {
     notifyListeners();
     try {
       final counts = await repository.getMembersCountGenderAndMaritalStatus();
-      genderMan = counts['genderMan'];
-      genderWoman = counts['genderWoman'];
-      married = counts['married'];
-      unmarried = counts['unmarried'];
+      genderMan = counts['genderMan']??0;
+      genderWoman = counts['genderWoman']??0;
+      married = counts['married']??0;
+      unmarried = counts['unmarried']??0;
     } catch (e) {
       print('Error occurred: $e');
       throw Exception('Failed to fetch members count: $e');
@@ -106,6 +105,10 @@ class ProfilesViewModel extends ChangeNotifier {
   Future<void> addProfile(Profiles profile) async {
     try {
       await repository.addProfile(profile);
+      await membersOfDepartment(profile.profileId);
+      await getMembersCountGenderAndMaritalStatus();
+      await fetchQuitAndActiveMembersCount();
+      notifyListeners();
     } catch (e) {
       throw Exception('Failed to add datas: $e');
     }
@@ -114,10 +117,27 @@ class ProfilesViewModel extends ChangeNotifier {
   Future<void> updateProfile(Profiles profile) async {
     try {
       await repository.updateProfile(profile);
-    } catch (e) {
+      await membersOfDepartment(profile.profileId);
+      await getMembersCountGenderAndMaritalStatus();
+      await fetchQuitAndActiveMembersCount();
+      notifyListeners();
+      }
+    catch (e) {
       throw Exception('Failed to add datas: $e');
     }
   }
+  Future<void> deleteProfile(String profileID) async {
+  try {
+    // Gọi repository để cập nhật trạng thái của profile
+    await repository.deleteProfile(profileID);
+    await membersOfDepartment(profileID);
+    await fetchQuitAndActiveMembersCount();
+    // await fetchAllProfiles();
+    notifyListeners();
+  } catch (e) {
+    throw Exception('Failed to deactivate profile: $e');
+  }
+}
 
   Future<void> logOut() async {
     try {
