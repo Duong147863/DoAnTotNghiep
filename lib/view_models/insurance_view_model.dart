@@ -22,6 +22,7 @@ class InsuranceViewModel extends ChangeNotifier {
   Future<void> createNewInsurances(Insurance insurance) async {
     try {
       await repository.createNewInsurances(insurance);
+      notifyListeners();
     } catch (e) {
       throw Exception('Failed to add datas: $e');
     }

@@ -10,7 +10,7 @@ class AbsentsRepository {
   final AbsentsService service = AbsentsService();
   Future<bool> addNewAbsent(Absents absents) async {
     final response = await service.createNewAbsent(absents);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');

@@ -35,6 +35,8 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
         DateFormat('HH:mm').format(widget.shifts!.startTime);
     _endTimeController.text =
         DateFormat('HH:mm').format(widget.shifts!.endTime);
+    _startTime=widget.shifts!.startTime;
+    _endTime=widget.shifts!.endTime;
   }
 
   Future<void> _selectTime(BuildContext context,

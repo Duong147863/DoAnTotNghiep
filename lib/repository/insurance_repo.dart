@@ -15,15 +15,16 @@ class InsuranceRepository {
       throw Exception('Failed to load data');
     }
   }
+Future<bool> createNewInsurances(Insurance insurance) async {
+  final response = await service.createNewInsurances(insurance);
 
-  Future<bool> createNewInsurances(Insurance insurance) async {
-    final response = await service.createNewInsurances(insurance);
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      throw Exception('Failed to add diploma: ${response.statusCode}');
-    }
+  if (response.statusCode == 200 || response.statusCode == 201) {
+    return true;
+  } else {
+    throw Exception('Failed to add insurance: ${response.statusCode}');
   }
+}
+
 
   Future<bool> updateInsurances(Insurance insurance) async {
     try {
