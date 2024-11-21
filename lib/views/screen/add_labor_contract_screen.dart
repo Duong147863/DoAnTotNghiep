@@ -102,7 +102,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       Provider.of<LaborContactsViewModel>(context, listen: false)
           .addNewLaborContact(newLaborContact)
           .then((_) {
-        Navigator.pop(context);
+        Navigator.pop(context,newLaborContact);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Tạo thành công!')),
         );

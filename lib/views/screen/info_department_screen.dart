@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/projects_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
@@ -26,6 +27,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
   final _departmentIDController = TextEditingController();
   final _departmentNameController = TextEditingController();
   bool _isEditing = false;
+  List<Profiles> profile = [];
   void initState() {
     super.initState();
     _departmentIDController.text = widget.departments!.departmentID;
@@ -42,10 +44,11 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
       try {
         await Provider.of<DeparmentsViewModel>(context, listen: false)
             .updateDepartment(updatedDeparment);
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Department Updated successfully!')),
         );
-        Navigator.pop(context, updatedDeparment);
+        // Navigator.pop(context, updatedDeparment);
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update Department: $e')),
@@ -67,6 +70,16 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
         SnackBar(content: Text('Failed to delete position: $e')),
       );
     }
+  }
+
+  void _handleUpdateProfile(Profiles updatedProfile) {
+    setState(() {
+      int index = profile
+          .indexWhere((pro) => pro.profileId == updatedProfile.profileId);
+      if (index != -1) {
+        profile[index] = updatedProfile;
+      }
+    });
   }
 
   @override
@@ -134,13 +147,20 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                           child: Column(
                             children: [],
                           ),
-                        )).p8().onTap(() => Navigator.push(
+                        )).p8().onTap(() async {
+                        await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProfileScreen(
-                            profile: listMembers[index],
-                          ),
-                        )));
+                          builder: (context) =>
+                              ProfileScreen(profile: listMembers[index]),
+                        ),
+                      ).then((updatedProfile) {
+                        if (updatedProfile != null) {
+                          _handleUpdateProfile(
+                              updatedProfile); // Cập nhật lại thông tin
+                        }
+                      });
+                    });
                   });
             }
           }),

@@ -43,7 +43,10 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     _profileIDController.text = widget.profile.profileId;
     _relativeNameController.text = widget.profile.relativesName;
     _phoneRelativeController.text = widget.profile.relativesPhone;
-    _birthdayRelativeController.text =DateFormat('dd/MM/yyyy').format(widget.profile.relativesBirthday).toString();
+    _birthdayRelativeController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.profile.relativesBirthday)
+        .toString();
+    _birthdayRelative = widget.profile.relativesBirthday;
     _nationRelativeController.text = widget.profile.relativesNation;
     _temporaryAddressRelativeController.text =
         widget.profile.relativesTempAddress;
@@ -188,7 +191,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
           setState(() {
             _birthdayRelative = date;
             _birthdayRelativeController.text =
-                "${_birthdayRelative.toLocal()}".split(' ')[0];
+                DateFormat('dd/MM/yyyy').format(_birthdayRelative);
           });
         }).px(8),
         SizedBox(height: 16),

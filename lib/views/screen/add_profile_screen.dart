@@ -301,7 +301,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             //Birthday + Place of birth
             Row(
               children: [
-                _buildDateField('Ngày sinh', _birthdayController, _birthday,
+                _buildDateBirthday('birthday', _birthdayController, _birthday,
                     (date) {
                   setState(() {
                     _birthday = date;
@@ -395,8 +395,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     return null;
                   },
                 ).w(200).px8(),
-                _buildDateField(
-                    'Ngày cấp', _idLicenseDayController, _idLicenseDay, (date) {
+                _buildDateLicenseDay(
+                    'id ngày cấp', _idLicenseDayController, _idLicenseDay,
+                    (date) {
                   setState(() {
                     _idLicenseDay = date;
                     _idLicenseDayController.text =
@@ -485,34 +486,73 @@ class _AddProfilePageState extends State<AddProfilePage> {
         )));
   }
 
-  Widget _buildDateField(String label, TextEditingController controller,
+   Widget _buildDateBirthday(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: GestureDetector(
-        onTap: () => _selectDate(context, initialDate, onDateSelected),
-        child: AbsorbPointer(
-          child: TextFormField(
-            readOnly: true,
-            style: TextStyle(color: Colors.black),
-            controller: controller,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Không được để trống';
-              }
-              return null;
-            },
-            decoration: InputDecoration(
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: label,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+    return GestureDetector(
+      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+        onDateSelected(selectedDate);
+        setState(() {
+          _birthday = selectedDate;
+        });
+      }),
+      child: AbsorbPointer(
+        child: TextFormField(
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please select $label';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
       ),
     );
   }
+
+   Widget _buildDateLicenseDay(String label, TextEditingController controller,
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return GestureDetector(
+    onTap: () => _selectDate(context, initialDate, (selectedDate) {
+      onDateSelected(selectedDate);
+      setState(() {
+        _idLicenseDay = selectedDate;
+      });
+    }),
+    child: AbsorbPointer(
+      child: TextFormField(
+        readOnly: true,
+        style: TextStyle(color: Colors.black),
+        controller: controller,
+        validator: (value) {
+          if (controller.text.isNotEmpty) {
+            try {
+              DateTime selectedLicenseDay = DateTime.parse(controller.text);
+              // Kiểm tra nếu ngày cấp CCCD phải lớn hơn 14 tuổi tính từ ngày sinh (_birthday)
+              if (selectedLicenseDay.isBefore(_birthday.add(Duration(days: 365 * 14)))) {
+                return 'CCCD phải trên 14 tuổi';
+              }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
+            }
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        ),
+      ),
+    ),
+  );
+}
+
+
 
   Widget _buildDropdownField(
       String label, bool currentValue, Function(bool?) onChanged) {

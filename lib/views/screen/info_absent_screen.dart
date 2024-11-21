@@ -38,12 +38,18 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     _fromDateController.text =
         DateFormat('dd/MM/yyyy').format(widget.absents!.from).toString();
     _toDateController.text =
-        DateFormat('dd/MM/yyyy').format(widget.absents!.to!).toString();
+        DateFormat('yyyy-MM-dd').format(widget.absents!.to!).toString();
     _daysOffController.text = widget.absents!.daysOff.toString();
+    _statusAbsent = widget.absents!.status;
+    _fromDate = widget.absents!.from;
+    _toDate = widget.absents!.to!;
   }
 
   void _updateAbsent() async {
     if (_formKey.currentState!.validate()) {
+      if (!AppStrings.ROLE_PERMISSIONS.containsAny(['Manage Staffs info only', 'Manage BoD & HR accounts'])) {
+          _statusAbsent = 0; 
+      } 
       final updateAbents = Absents(
           profileID: _profileIDController.text,
           reason: _reasonController.text,
@@ -193,7 +199,8 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                   return null;
                 },
               ).py8(),
-              AppStrings.ROLE_PERMISSIONS.contains('Assign Project')
+                AppStrings.ROLE_PERMISSIONS
+                          .containsAny(['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

@@ -34,7 +34,9 @@ class _InfoInsuranceScreenState extends State<InfoInsuranceScreen> {
     _insuranceTypeNameController.text=widget.insurance!.insuranceTypeName;
     _insurancePercentController.text=widget.insurance!.insurancePercent.toString();
     _startTimeController.text=DateFormat('dd/MM/yyyy').format(widget.insurance!.startTime).toString();
-    _endTimeController.text=DateFormat('dd/MM/yyyy').format(widget.insurance!.endTime).toString(); 
+    _startTime=widget.insurance!.startTime;
+    _endTimeController.text=DateFormat('dd/MM/yyyy').format(widget.insurance!.endTime).toString();
+    _endTime= widget.insurance!.endTime;
   }
 
   @override
@@ -239,7 +241,7 @@ class _InfoInsuranceScreenState extends State<InfoInsuranceScreen> {
                             setState(() {
                               _startTime = date;
                               _startTimeController.text =
-                                  "${_startTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(_startTime);
                             });
                           },
                         ),
@@ -254,7 +256,7 @@ class _InfoInsuranceScreenState extends State<InfoInsuranceScreen> {
                             setState(() {
                               _endTime = date;
                               _endTimeController.text =
-                                  "${_endTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(_endTime);
                             });
                           },
                         ),

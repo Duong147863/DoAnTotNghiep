@@ -19,7 +19,7 @@ class ProjectsRepository {
 
   Future<bool> addProject(Projects projects) async {
     final response = await service.createNewProject(projects);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add Project: ${response.statusCode}');

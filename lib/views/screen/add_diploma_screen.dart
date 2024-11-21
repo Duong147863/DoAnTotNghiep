@@ -113,7 +113,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
     );
   }
 
-  void _submit() {
+  void _submit() async{
     if (_formKey.currentState!.validate()) {
       final createNewDiploma = Diplomas(
         diplomaId: _diplomaIDController.text,
@@ -127,12 +127,27 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
         diplomaType: _diplomaTypeController.text,
         profileId: _profileIDController.text,
       );
-      Provider.of<DiplomasViewModel>(context, listen: false)
+     try 
+     {
+       Provider.of<DiplomasViewModel>(context, listen: false)
           .AddDiploma(createNewDiploma)
           .then((_) {
-        Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Diplomant new create successfully!')),
+        );
+        Navigator.pop(context,createNewDiploma);
       });
+     }
+     catch(e)
+     {
+      {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create Diplomant: $e')),
+        );
+     }
+     
     }
+  }
   }
 
   @override
