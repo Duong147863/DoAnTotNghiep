@@ -6,6 +6,7 @@ class EnterprisesViewModel extends ChangeNotifier {
   final EnterprisesRepository repository = EnterprisesRepository();
 
   Enterprises? enterprises;
+
   Future<void> fetchAllEnterprises() async {
     notifyListeners();
     try {

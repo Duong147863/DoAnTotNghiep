@@ -17,7 +17,6 @@ import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
-import 'package:nloffice_hrm/views/screen/employee_managment_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
@@ -82,14 +81,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.employeeManagmentScreen:
-      return MaterialPageRoute(
-          builder: (context) => const EmployeeManagementScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.employeeManagmentScreen,
-          ));
-
-    ///
     case AppRoutes.languageRoute:
       return MaterialPageRoute(
           builder: (context) => const LanguageScreen(),
@@ -120,7 +111,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //         name: AppRoutes.salariListRoute,
     //       ));
 
-    // 
+    //
     case AppRoutes.relativeListRoute:
       return MaterialPageRoute(
           builder: (context) => RelativeListScreen(),

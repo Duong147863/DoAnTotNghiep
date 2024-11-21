@@ -138,7 +138,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadDiplomas();
     _loadInsurance();
     _loadLaborContact();
-    
   }
 
   void _handleUpdateRelative(Relatives updatedRelative) {
@@ -257,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //           allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
   //     } else {
   //       roles = [];
-  //     }    
+  //     }
   //     setState(() {
   //       if (roles.isNotEmpty) {
   //       selectedRoles = roles.firstWhere(
@@ -495,7 +494,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ? () {
                           // Tắt nút sau khi nhấn
                           setState(() {
-                            _isButtonEnabled = false;
                             _isEditing = false;
                           });
                           // Thực hiện hành động
@@ -1098,15 +1096,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   //
 
-   Widget _buildRolesDropdown(String hint) {
+  Widget _buildRolesDropdown(String hint) {
     return DropdownButtonFormField<Roles>(
       value: selectedRoles,
       hint: Text(hint),
-      onChanged:_isEditing? (Roles? newValue) {
-        setState(() {
-          selectedRoles = newValue;
-        });
-      }:null,
+      onChanged: _isEditing
+          ? (Roles? newValue) {
+              setState(() {
+                selectedRoles = newValue;
+              });
+            }
+          : null,
       items: roles.map((Roles role) {
         return DropdownMenuItem<Roles>(
           value: role,
@@ -1114,11 +1114,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }).toList(),
       decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabled: _isEditing
-      ),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          enabled: _isEditing),
     );
   }
+
   //
   Widget _buildRelativeList() {
     if (relatives.isEmpty) {
@@ -1641,6 +1641,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }).toList(),
     );
   }
-
- 
 }

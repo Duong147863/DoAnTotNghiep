@@ -53,6 +53,12 @@ class _QrScanState extends State<QrScan> {
         .last); // kết quả sau khi lấy tgian vào trừ tgian bắt đầu ca
   }
 
+  // Shifts getShiftAuto() {
+  //   Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
+  //   List<Shifts> allShifts =
+  //       Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Center(

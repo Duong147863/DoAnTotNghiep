@@ -48,15 +48,14 @@ class _AddDecisionScreenState extends State<AddDecisionScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-        final createNewDecision = Decisions(
-        decisionId: _decisionIdController.text,
-        decisionName: _decisionNameController.text,
-        profileId: selectedProfile!.profileId,
-        assignDate: _assignDate,
-        decisionImage: _decisionImageBase64 ?? "",
-        decisionStatus: decisionStatus,
-        decisionContent: _decisionContentController.text
-      );
+      final createNewDecision = Decisions(
+          decisionId: _decisionIdController.text,
+          decisionName: _decisionNameController.text,
+          profileId: selectedProfile!.profileId,
+          assignDate: _assignDate,
+          decisionImage: _decisionImageBase64 ?? "",
+          decisionStatus: decisionStatus,
+          decisionContent: _decisionContentController.text);
       Provider.of<DecisionsViewModel>(context, listen: false)
           .createNewDecisions(createNewDecision)
           .then((_) {
@@ -64,20 +63,21 @@ class _AddDecisionScreenState extends State<AddDecisionScreen> {
       });
     }
   }
+
   void _loadProfile() async {
     try {
       await Provider.of<ProfilesViewModel>(context, listen: false)
           .fetchAllProfiles();
-           profile = Provider.of<ProfilesViewModel>(context, listen: false)
-            .listProfiles;
-      setState(() {
-      });
+      profile =
+          Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
+      setState(() {});
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load Profile $error')),
       );
     }
   }
+
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? imageFile = await picker.pickImage(
@@ -106,6 +106,7 @@ class _AddDecisionScreenState extends State<AddDecisionScreen> {
       onDateSelected(picked);
     }
   }
+
   Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return Padding(
@@ -134,158 +135,159 @@ class _AddDecisionScreenState extends State<AddDecisionScreen> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    return  BasePage(
-    showAppBar: true,
-    showLeadingAction: true,
-    defaultBody: false,
-    appBarItemColor: AppColor.boneWhite,
-    backgroundColor: AppColor.aliceBlue,
-    resizeToAvoidBottomInset: true,
-    titletext: "Thêm quyết định",
-    appBarColor: AppColor.primaryLightColor,
-    body: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    image: _decisionImageBase64 != null
-                        ? DecorationImage(
-                            image: MemoryImage(base64Decode(_decisionImageBase64!)),
-                            fit: BoxFit.cover,
-                          )
+    return BasePage(
+      showAppBar: true,
+      showLeadingAction: true,
+      defaultBody: false,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.aliceBlue,
+      resizeToAvoidBottomInset: true,
+      titletext: "Tạo quyết định mới",
+      appBarColor: AppColor.primaryLightColor,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    width: 200,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      image: _decisionImageBase64 != null
+                          ? DecorationImage(
+                              image: MemoryImage(
+                                  base64Decode(_decisionImageBase64!)),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.grey),
+                    ),
+                    child: _decisionImageBase64 == null
+                        ? Icon(Icons.add_a_photo, size: 30)
                         : null,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey),
-                  ),
-                  child: _decisionImageBase64 == null
-                      ? Icon(Icons.add_a_photo, size: 30)
-                      : null,
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomTextFormField(
-                      textEditingController: _decisionIdController,
-                      labelText: 'Mã quyết định',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Vui lòng nhập mã quyết định';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-                    CustomTextFormField(
-                      textEditingController: _decisionNameController,
-                      labelText: 'Tên quyết định',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Vui lòng nhập tên quyết định';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-
-  
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Chọn hồ sơ", style: TextStyle(fontSize: 16)),
-                    _buildProfileDropdown('Chọn hồ sơ').pOnly(top: 8),
-                    SizedBox(height: 16),
-                    _buildDateField(
-                      'Ngày giao',
-                      _assignDateController,
-                      _assignDate,
-                      (date) {
-                        setState(() {
-                          _assignDate = date;
-                          _assignDateController.text = "${_assignDate.toLocal()}".split(' ')[0];
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 16),
-
-
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Nội dung quyết định", style: TextStyle(fontSize: 16)),
-                    SizedBox(height: 8),
-                    CustomTextFormField(
-                      textEditingController: _decisionContentController,
-                      labelText: 'Nội dung quyết định',
-                      maxLines: 5,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Vui lòng nhập nội dung quyết định';
-                        }
-                        return null;
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 24),
-
-  
-            Center(
-              child: ElevatedButton(
-                onPressed: _submit,
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                  backgroundColor: AppColor.primaryDarkColor,
-                  textStyle: TextStyle(fontSize: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text('Thêm quyết định'),
               ),
-            ),
-          ],
+              SizedBox(height: 16),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomTextFormField(
+                        textEditingController: _decisionIdController,
+                        labelText: 'Mã quyết định',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng nhập mã quyết định';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16),
+                      CustomTextFormField(
+                        textEditingController: _decisionNameController,
+                        labelText: 'Tên quyết định',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng nhập tên quyết định';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Chọn hồ sơ", style: TextStyle(fontSize: 16)),
+                      _buildProfileDropdown('Chọn hồ sơ').pOnly(top: 8),
+                      SizedBox(height: 16),
+                      _buildDateField(
+                        'Ngày giao',
+                        _assignDateController,
+                        _assignDate,
+                        (date) {
+                          setState(() {
+                            _assignDate = date;
+                            _assignDateController.text =
+                                "${_assignDate.toLocal()}".split(' ')[0];
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 16),
+              Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Nội dung quyết định",
+                          style: TextStyle(fontSize: 16)),
+                      SizedBox(height: 8),
+                      CustomTextFormField(
+                        textEditingController: _decisionContentController,
+                        labelText: 'Nội dung quyết định',
+                        maxLines: 5,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng nhập nội dung quyết định';
+                          }
+                          return null;
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 24),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    backgroundColor: AppColor.primaryDarkColor,
+                    textStyle: TextStyle(fontSize: 18),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text('Tạo quyết định mới'),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
+    );
   }
+
   Widget _buildProfileDropdown(String hint) {
     return DropdownButtonFormField<Profiles>(
       value: selectedProfile,
