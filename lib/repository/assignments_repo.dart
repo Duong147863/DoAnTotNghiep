@@ -27,7 +27,7 @@ class AssignmentsRepository {
 }
    Future<bool> createNewAssignments(Assignments assignmeents) async {
     final response = await service.createNewAssignments(assignmeents);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');

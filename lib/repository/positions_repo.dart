@@ -19,7 +19,7 @@ class PositionsRepository {
 
   Future<bool> addPosition(Positions position) async {
     final response = await service.createNewPosition(position);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add position: ${response.statusCode}');

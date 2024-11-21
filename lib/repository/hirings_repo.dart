@@ -7,7 +7,7 @@ class HiringsRepository {
   final HiringsModel service = HiringsModel();
   Future<bool> createNewHirings(Hirings hirings) async {
     final response = await service.createNewHirings(hirings);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');

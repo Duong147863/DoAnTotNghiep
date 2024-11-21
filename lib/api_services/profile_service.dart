@@ -88,6 +88,20 @@ class ProfileService {
           .encode(profile.toJson()), // Chuyển đổi đối tượng Profiles thành JSON
     );
   }
+Future<http.Response> deleteProfile(String profileId) async {
+  return await http.put(
+    Uri.parse('${AppStrings.baseUrlApi}profile/delete'),
+    headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: json.encode({
+      'profile_id': profileId,
+    }),
+  );
+}
+
 
   Future<http.Response> logout(String token) async {
     return await http.post(

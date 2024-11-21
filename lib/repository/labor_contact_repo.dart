@@ -7,7 +7,7 @@ class LaborContactRepository {
   final LaborContactServices service = LaborContactServices();
   Future<bool> addLaborContact(LaborContracts laborContact) async {
     final response = await service.addNewLaborContact(laborContact); //
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add laborcontact: ${response.statusCode}');

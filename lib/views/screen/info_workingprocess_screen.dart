@@ -40,14 +40,23 @@ class _InfoWorkingprocessHRScreenState
     _workplaceNameController.text = widget.workingProcesses!.workplaceName;
     _workingprocessContentController.text =
         widget.workingProcesses!.workingprocessContent!;
-    _startTimeController.text =
-        DateFormat('dd/MM/yyyy').format(widget.workingProcesses!.startTime).toString();
-    _endTimeController.text =
-       DateFormat('dd/MM/yyyy').format(widget.workingProcesses!.endTime!).toString();
+    _startTimeController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.workingProcesses!.startTime)
+        .toString();
+    _endTimeController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.workingProcesses!.endTime!)
+        .toString();
+    _startTime = widget.workingProcesses!.startTime;
+    _endTime = widget.workingProcesses!.endTime!;
   }
 
   void _updateWorkingprocess() async {
     if (_formKey.currentState!.validate()) {
+      if (!AppStrings.ROLE_PERMISSIONS.containsAny(
+          ['Manage Staffs info only', 'Manage BoD & HR accounts'])) {
+        _statusWorkingprocesses = 0; // Gán 0 nếu không có quyền
+      }
+
       final updatedWorkingprocess = WorkingProcesses(
           profileId: _profileIDController.text,
           workingprocessId: _workingprocessIdController.text,
@@ -141,20 +150,6 @@ class _InfoWorkingprocessHRScreenState
           readOnly: true,
           style: TextStyle(color: Colors.black),
           controller: controller,
-          validator: (value) {
-            if (controller.text.isNotEmpty) {
-              try {
-                DateTime selectedEndTime = DateTime.parse(controller.text);
-                if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
-              }
-            }
-            return null;
-          },
           decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -245,7 +240,7 @@ class _InfoWorkingprocessHRScreenState
                             setState(() {
                               _startTime = date;
                               _startTimeController.text =
-                                  "${_startTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(_startTime);
                             });
                           },
                         ),
@@ -260,7 +255,7 @@ class _InfoWorkingprocessHRScreenState
                             setState(() {
                               _endTime = date;
                               _endTimeController.text =
-                                  "${_endTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(_endTime);
                             });
                           },
                         ),
@@ -268,8 +263,10 @@ class _InfoWorkingprocessHRScreenState
                     ],
                   ),
                   SizedBox(height: 16),
-                  AppStrings.ROLE_PERMISSIONS
-                          .contains('Manage Staffs info only')
+                  AppStrings.ROLE_PERMISSIONS.containsAny([
+                    'Manage Staffs info only',
+                    'Manage BoD & HR accounts'
+                  ])
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

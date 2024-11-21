@@ -25,7 +25,7 @@ class RelativesRepository {
 
   Future<bool> addRelative(Relatives relatives) async {
     final response = await service.createNewRelative(relatives);
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       return true;
     } else {
       throw Exception('Failed to add profile: ${response.statusCode}');

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
@@ -10,7 +11,7 @@ import 'package:velocity_x/velocity_x.dart';
 
 class AddInsuranceScreen extends StatefulWidget {
   final Profiles? profiles;
-  const AddInsuranceScreen({super.key,this.profiles});
+  const AddInsuranceScreen({super.key, this.profiles});
 
   @override
   State<AddInsuranceScreen> createState() => _AddInsuranceScreenState();
@@ -21,39 +22,42 @@ class _AddInsuranceScreenState extends State<AddInsuranceScreen> {
   final _profileIDController = TextEditingController();
   final _insuranceTypeNameController = TextEditingController();
   final _insurancePercentController = TextEditingController();
-  final _insuranceIdController  = TextEditingController();
+  final _insuranceIdController = TextEditingController();
   final _endTimeController = TextEditingController();
   final _startTimeController = TextEditingController();
-   DateTime _startTime = DateTime.now();
+  DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-    void initState() {
+  void initState() {
     super.initState();
     _profileIDController.text = widget.profiles!.profileId;
   }
-  void _submit() {
+
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       final newInsurance = Insurance(
-          profileId: _profileIDController.text,
-          insuranceId: _insuranceIdController.text,
-          insuranceTypeName: _insuranceTypeNameController.text,
-          insurancePercent: _parseDouble(_insurancePercentController.text),
-          startTime: _startTime,
-          endTime: _endTime,
-          );
-      Provider.of<InsuranceViewModel>(context, listen: false)
-          .createNewInsurances(newInsurance)
-          .then((_) {
+        profileId: _profileIDController.text,
+        insuranceId: _insuranceIdController.text,
+        insuranceTypeName: _insuranceTypeNameController.text,
+        insurancePercent: _parseDouble(_insurancePercentController.text),
+        startTime: _startTime,
+        endTime: _endTime,
+      );
+      try {
+        await Provider.of<InsuranceViewModel>(context, listen: false)
+            .createNewInsurances(newInsurance);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Insurance added successfully!')),
+          SnackBar(content: Text('Insurance new create successfully!')),
         );
-      }).catchError((error) {
+        Navigator.pop(context, newInsurance);
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add Insurance: $error')),
+          SnackBar(content: Text('Failed to create Insurance: $e')),
         );
-      });
+      }
     }
   }
-   double _parseDouble(String value) {
+
+  double _parseDouble(String value) {
     if (value.isEmpty) return 0.0; // Nếu rỗng thì trả về giá trị mặc định
     try {
       return double.parse(value);
@@ -61,7 +65,8 @@ class _AddInsuranceScreenState extends State<AddInsuranceScreen> {
       return 0.0; // Nếu lỗi chuyển đổi, trả về giá trị mặc định
     }
   }
-   Future<void> _selectDate(BuildContext context, DateTime initialDate,
+
+  Future<void> _selectDate(BuildContext context, DateTime initialDate,
       Function(DateTime) onDateSelected) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -117,8 +122,8 @@ class _AddInsuranceScreenState extends State<AddInsuranceScreen> {
               try {
                 DateTime selectedEndTime = DateTime.parse(controller.text);
                 if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
+                    selectedEndTime.difference(_startTime).inDays < 365) {
+                  return 'End Time phải trong trên 1 năm kể từ Start Time';
                 }
               } catch (e) {
                 return 'Định dạng ngày không hợp lệ';
@@ -134,6 +139,7 @@ class _AddInsuranceScreenState extends State<AddInsuranceScreen> {
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -192,10 +198,18 @@ class _AddInsuranceScreenState extends State<AddInsuranceScreen> {
                   CustomTextFormField(
                     textEditingController: _insurancePercentController,
                     labelText: 'Insurance Percent',
+                    keyboardType: TextInputType.number,
+                  
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_insurance_percent';
+                        return 'Please enter insurance percent';
                       }
+
+                      final double? percent = double.tryParse(value);
+                      if (percent == null || percent < 0 || percent > 100) {
+                        return 'Value must be between 0 and 100';
+                      }
+
                       return null;
                     },
                   ).px8(),

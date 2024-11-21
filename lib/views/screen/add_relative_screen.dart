@@ -53,7 +53,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     super.dispose();
   }
 
-  void _submit() {
+  void _submit()async {
     if (_formKey.currentState!.validate()) {
       final addNewRelative = Relatives(
         profileId: _profileIDController.text,
@@ -66,11 +66,23 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         relativesCurrentAddress: _currentAddressRelativeController.text,
         relativeJob: _relativeJobController.text,
       );
+    try
+    {
       Provider.of<RelativesViewModel>(context, listen: false)
           .addRelative(addNewRelative)
           .then((_) {
-        Navigator.pop(context);
-      });
+         ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Relative new create successfully!')),
+        );
+        Navigator.pop(context,addNewRelative);
+      }); 
+    }catch (e)
+    {
+       ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to create Relative: $e')),
+        );
+    }
+      
     }
   }
 
