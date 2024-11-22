@@ -750,23 +750,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // ID number + license day
               Row(
                 children: [
-                 CustomTextFormField(
-                  textEditingController: _identifiNumController,
-                  labelText: 'Số CCCD/CMND',
-                  keyboardType: TextInputType.number,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    if (value.length != 12) {
-                      return 'Số CCCD/CMND không hợp lệ'; // Thông báo nhập đúng 10 chữ số
-                    }
-                    if (!value.startsWith('0')) {
-                      return 'Số CCCD phải bắt đầu bằng số 0';
-                    }
-                    return null;
-                  },
-                ).w(200).px8(),
+                  CustomTextFormField(
+                    textEditingController: _identifiNumController,
+                    labelText: 'Số CCCD/CMND',
+                    keyboardType: TextInputType.number,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      if (value.length != 12) {
+                        return 'Số CCCD/CMND không hợp lệ'; // Thông báo nhập đúng 10 chữ số
+                      }
+                      if (!value.startsWith('0')) {
+                        return 'Số CCCD phải bắt đầu bằng số 0';
+                      }
+                      if (!value.isNumber()) {
+                        return 'Số CCCD chỉ gồm số';
+                      }
+                      return null;
+                    },
+                  ).w(200).px8(),
                   _buildDateField(
                       'id ngày cấp', _idLicenseDayController, _idLicenseDay,
                       (date) {
@@ -800,18 +803,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     enabled: _isEditing,
                   ).px4().w(258),
                   CustomTextFormField(
-                             validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          }
-                          if (value.length != 10) {
-                            return 'Số điện thoại không hợp lệ';
-                          }
-                          if (!value.startsWith('0')) {
-                            return 'Số điện thoại phải bắt đầu bằng số 0';
-                          }
-                          return null;
-                        },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Không được để trống';
+                            }
+                            if (value.length != 10) {
+                              return 'Số điện thoại không hợp lệ';
+                            }
+                            if (!value.startsWith('0')) {
+                              return 'Số điện thoại phải bắt đầu bằng số 0';
+                            }
+                            if (!value.isNumber()) {
+                              return 'Số điện thoại chỉ gồm số';
+                            }
+                            return null;
+                          },
                           textEditingController: _phoneController,
                           labelText: 'Số điện thoại',
                           maxLines: 1,
@@ -849,58 +855,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               _buildWorkingProcessList(),
               // TrainingProcess
               _buildTrainingProcessesList().p8(),
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Bằng Cấp",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildDiplomasList()
-              ]),
+              SizedBox(height: 16),
+              _buildDiplomasList(),
               //
               SizedBox(height: 16),
-              Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  color: Colors.grey[200],
-                  child: Text(
-                    "Bảo Hiểm",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16),
-                _buildInsuranceList(),
-                //Hợp đồng
-                SizedBox(height: 16),
-                Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding:
-                            EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                        color: Colors.grey[200],
-                        child: Text(
-                          "Hợp đồng",
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      _buildLaborContractList()
-                    ]),
-              ])
+              _buildInsuranceList(),
+              //Hợp đồng
+              SizedBox(height: 16),
+              _buildLaborContractList()
             ],
           ),
         ),
@@ -928,7 +890,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               relatives.add(addNewRelative);
                             });
                           }
-                      });
+                        });
                       }),
                   SpeedDialChild(
                       label: "Phê Duyệt Quá Trình Đạo Tạo",
@@ -1175,15 +1137,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   //
   Widget _buildRelativeList() {
-    if (relatives.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin thân nhân",
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
-        ),
-      );
-    }
     return ExpansionPanelList(
       elevation: 1,
       expandedHeaderPadding: EdgeInsets.all(0),
@@ -1365,15 +1318,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .where((process) => process.workingprocessStatus == 1)
         .toList();
 
-    if (filteredProcesses.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin làm việc",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1439,15 +1383,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     List<Trainingprocesses> filteredProcesses = trainingProcess
         .where((process) => process.trainingprocessesStatus == 1)
         .toList();
-    if (filteredProcesses.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin đào tạo",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
+
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1502,16 +1438,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildInsuranceList() {
-    if (insurance.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin bảo hiểm",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
-
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1579,15 +1505,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildLaborContractList() {
-    if (laborContracts.isEmpty) {
-      return Center(
-        child: Text(
-          "Không có thông tin hợp đồng nào",
-          style: TextStyle(
-              fontSize: 16, color: Colors.grey, fontStyle: FontStyle.italic),
-        ),
-      );
-    }
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
@@ -1602,7 +1519,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return ListTile(
               leading: Icon(Icons.school, color: Colors.green),
               title: Text(
-                "Tóm tắt hợp đồng",
+                "Hợp đồng lao động",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             );

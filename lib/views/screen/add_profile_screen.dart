@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -25,6 +26,7 @@ import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
 import 'list_province.dart';
+
 class AddProfilePage extends StatefulWidget {
   final Profiles? profile;
   const AddProfilePage({super.key, this.profile});
@@ -66,7 +68,6 @@ class _AddProfilePageState extends State<AddProfilePage> {
   ///APi lấy Địa chỉ
   String? _selectedProvince;
   String? _selectedNation;
-  
 
   @override
   void dispose() {
@@ -308,6 +309,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
                     }
+                    if (!value.isLetter()) {
+                      return 'Tên chỉ gồm chữ';
+                    }
                     return null;
                   },
                 ).w(254),
@@ -387,17 +391,18 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 _buildRolesDropdown('Chọn loại tài khoản').p(8).w(300),
               ],
             ),
-
+            Row(children: [
+              Text('Giới tính').px(8),
+              _buildDropdownField('Chọn giới tính', _gender, (value) {
+                setState(() {
+                  _gender = value!;
+                });
+              }).p(8).w(130),
+            ]),
             //Gender + Marriage
             Row(
               children: [
-                Text('Giới tính').px(8),
-                _buildDropdownField('Chọn giới tính', _gender, (value) {
-                  setState(() {
-                    _gender = value!;
-                  });
-                }).p(8).w(130),
-                Text('Hôn nhân'),
+                Text('Hôn nhân').px8(),
                 Radio(
                   value: true,
                   groupValue: _marriage,
@@ -407,7 +412,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     });
                   },
                 ),
-                Text('Rồi'),
+                Text('Đã kết hôn'),
                 Radio(
                   value: false,
                   groupValue: _marriage,
@@ -417,7 +422,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     });
                   },
                 ),
-                Text('Chưa'),
+                Text('Chưa kết hôn'),
               ],
             ),
             // ID number + license day
@@ -436,6 +441,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     }
                     if (!value.startsWith('0')) {
                       return 'Số CCCD phải bắt đầu bằng số 0';
+                    }
+                    if (!value.isNumber()) {
+                      return 'Số CCCD chỉ gồm số';
                     }
                     return null;
                   },
@@ -506,6 +514,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                           }
                           if (!value.startsWith('0')) {
                             return 'Số điện thoại phải bắt đầu bằng số 0';
+                          }
+                          if (!value.isNumber()) {
+                            return 'Số điện thoại chỉ gồm số';
                           }
                           return null;
                         },
