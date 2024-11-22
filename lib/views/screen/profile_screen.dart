@@ -632,18 +632,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Mã',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
-                    enabled: _isEditing,
+                    enabled: false,
                   ).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _profileNameController,
                     labelText: 'Họ và tên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_full_name';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
@@ -667,7 +667,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     labelText: 'Nơi sinh',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_place_of_birth';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
@@ -711,7 +711,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   //Nation
                   CustomTextFormField(
                     validator: (value) =>
-                        value.isEmptyOrNull ? 'Please enter nation' : null,
+                        value.isEmptyOrNull ? 'Vui lòng quốc tịch' : null,
                     textEditingController: _nationController,
                     labelText: 'Quốc tịch',
                     enabled: _isEditing,
@@ -750,21 +750,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // ID number + license day
               Row(
                 children: [
-                  CustomTextFormField(
-                    textEditingController: _identifiNumController,
-                    labelText: 'Số CCCD/CMND',
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được trống';
-                      }
-                      if (value.length != 12) {
-                        return 'Chiều dài không hợp lệ'; // Thông báo nhập đúng 10 chữ số
-                      }
-                      return null;
-                    },
-                    enabled: _isEditing,
-                  ).w(200).px8(),
+                 CustomTextFormField(
+                  textEditingController: _identifiNumController,
+                  labelText: 'Số CCCD/CMND',
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    if (value.length != 12) {
+                      return 'Số CCCD/CMND không hợp lệ'; // Thông báo nhập đúng 10 chữ số
+                    }
+                    if (!value.startsWith('0')) {
+                      return 'Số CCCD phải bắt đầu bằng số 0';
+                    }
+                    return null;
+                  },
+                ).w(200).px8(),
                   _buildDateField(
                       'id ngày cấp', _idLicenseDayController, _idLicenseDay,
                       (date) {
@@ -798,15 +800,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     enabled: _isEditing,
                   ).px4().w(258),
                   CustomTextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'please_enter_phone_number';
-                            }
-                            if (value.length != 10) {
-                              return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
-                            }
-                            return null;
-                          },
+                             validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          if (value.length != 10) {
+                            return 'Số điện thoại không hợp lệ';
+                          }
+                          if (!value.startsWith('0')) {
+                            return 'Số điện thoại phải bắt đầu bằng số 0';
+                          }
+                          return null;
+                        },
                           textEditingController: _phoneController,
                           labelText: 'Số điện thoại',
                           maxLines: 1,

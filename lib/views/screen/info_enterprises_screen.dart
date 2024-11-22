@@ -18,12 +18,20 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
     super.initState();
     Provider.of<EnterprisesViewModel>(context, listen: false)
         .fetchAllEnterprises();
+  
     enterprise =
         Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
   }
 
   @override
   Widget build(BuildContext context) {
+               print("licenseNum: ${enterprise!.licenseNum ?? 'Không có dữ liệu'}");
+print("name: ${enterprise!.name ?? 'Không có dữ liệu'}");
+print("address: ${enterprise!.address ?? 'Không có dữ liệu'}");
+print("email: ${enterprise!.email ?? 'Không có dữ liệu'}");
+print("assignDate: ${enterprise!.assignDate ?? 'Không có dữ liệu'}");
+print("phone: ${enterprise!.phone ?? 'Không có dữ liệu'}");
+print("website: ${enterprise!.website ?? 'Không có dữ liệu'}");
     return BasePage(
       showAppBar: true,
       showLeadingAction: true,
@@ -36,7 +44,9 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+   
             Column(
+              
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 16),

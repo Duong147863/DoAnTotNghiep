@@ -17,6 +17,7 @@ class DeparmentsViewModel extends ChangeNotifier {
       _list = await repository.fetchAllDepartments();
       notifyListeners();
     } catch (e) {
+        debugPrint('Error fetching departments: $e');
       throw Exception('Failed to load data: $e');
     }
     fetchingData = false;

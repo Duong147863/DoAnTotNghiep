@@ -23,7 +23,7 @@ class Profiles {
       required this.temporaryAddress,
       required this.currentAddress,
       required this.roleID,
-      required this.profileImage});
+      this.profileImage});
 
   String profileId;
   String profileName;
