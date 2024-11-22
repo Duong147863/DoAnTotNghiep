@@ -77,9 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    final viewModel = Provider.of<ProfilesViewModel>(context, listen: false);
-    viewModel.fetchQuitAndActiveMembersCount();
-    viewModel.getMembersCountGenderAndMaritalStatus();
   }
 
   @override

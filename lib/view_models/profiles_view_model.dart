@@ -27,6 +27,29 @@ class ProfilesViewModel extends ChangeNotifier {
   int unmarried = 0;
   //
   Profiles? selectedProfile;
+  // Api lấy Map
+  List<String> provinces = []; // Added for province data
+  List<String> get listProvinces => provinces;
+
+    // Phương thức tải danh sách tỉnh/thành phố
+  Future<void> getProvincesData() async {
+    fetchingData = true;
+    notifyListeners();
+    try {
+      // Giả sử repository.getProvincesData() sẽ trả về danh sách tỉnh/thành phố
+      provinces = await repository.getProvincesData();
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load provinces data: $e');
+    }
+    fetchingData = false;
+    notifyListeners(); // Đảm bảo UI được cập nhật khi xong
+  } 
+  
+
+
+
+  
   Future<void> fetchAllProfiles() async {
     fetchingData = true;
     try {

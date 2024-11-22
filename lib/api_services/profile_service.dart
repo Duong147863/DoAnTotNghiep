@@ -6,6 +6,16 @@ import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileService {
+    Future<http.Response> getProvincesData() async {
+    // API cho provinces.open-api.vn
+    return await http.get(
+      Uri.parse('https://provinces.open-api.vn/api/?depth=2'),
+      headers: {
+         'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Accept': 'application/json',  // Đảm bảo gửi đúng header yêu cầu từ API
+      },
+    );
+  }
   Future<http.Response> getProfileInfoByID(int profileID) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(
@@ -101,6 +111,7 @@ Future<http.Response> deleteProfile(String profileId) async {
     }),
   );
 }
+
 
 
   Future<http.Response> logout(String token) async {
