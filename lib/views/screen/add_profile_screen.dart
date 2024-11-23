@@ -12,6 +12,7 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/provinces.dart';
 import 'package:nloffice_hrm/models/roles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
@@ -21,10 +22,12 @@ import 'package:nloffice_hrm/view_models/roles_view_models.dart';
 import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
 import 'list_province.dart';
+
 class AddProfilePage extends StatefulWidget {
   final Profiles? profile;
   const AddProfilePage({super.key, this.profile});
@@ -64,10 +67,31 @@ class _AddProfilePageState extends State<AddProfilePage> {
   String? _profileImageBase64;
 
   ///APi lấy Địa chỉ
-  String? _selectedProvince;
+  // String? _selectedProvince;
   String? _selectedNation;
-  
+  //  String? selectedProvince;
+  // late Future<List<Province>> futureProvinces;
+  //Json Địa Chỉ
+  late Future<List<Province>> futureProvinces;
+  List<Province> provinces = [];
+  Province? selectedProvince;
+  District? selectedDistrict;
+  Ward? selectedWard;
+  final TextEditingController _addressController = TextEditingController();
 
+  //Ẩn hiện thông báo
+  FocusNode _manvFocusNode = FocusNode();
+  FocusNode _hovaTenFocusNode = FocusNode();
+  FocusNode _emailFocusNode = FocusNode();
+  FocusNode _phoneFocusNode = FocusNode();
+  FocusNode _identifiNumFocusNode = FocusNode();
+  FocusNode _passwordFocusNode = FocusNode();
+  FocusNode _birthdayFocusNode = FocusNode();
+  FocusNode _noisinhFocusNode = FocusNode();
+  FocusNode _tamtruFocusNode = FocusNode();
+  FocusNode _thuongtruFocusNode = FocusNode();
+  FocusNode _ngayccdFocusNode = FocusNode();
+   FocusNode _nationFocusNode = FocusNode();
   @override
   void dispose() {
     _profileIDController.dispose();
@@ -92,9 +116,109 @@ class _AddProfilePageState extends State<AddProfilePage> {
     _loadPositions();
     _loadSalaries();
     _loadRoles();
-    // Provider.of<ProfilesViewModel>(context, listen: false).getProvincesData();
-    // selectedProvince1=Provider.of<ProfilesViewModel>(context, listen: false)
-    //       .listProvinces;
+    futureProvinces =
+        Provider.of<ProfilesViewModel>(context, listen: false).fetchProvinces();
+    loadProvinces();
+
+    // Focus
+    _identifiNumFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_identifiNumFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _phoneFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_phoneFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _emailFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_emailFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    
+    _passwordFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_passwordFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+     // Focus
+    _hovaTenFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_hovaTenFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+      _manvFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_manvFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+
+    _noisinhFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_noisinhFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tamtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tamtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _thuongtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_thuongtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngayccdFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngayccdFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+     _birthdayFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_birthdayFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+     _nationFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_nationFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+  }
+  
+
+  Future<void> loadProvinces() async {
+    final data = await futureProvinces;
+    setState(() {
+      provinces = data;
+    });
   }
 
   // Method to load departments
@@ -239,6 +363,24 @@ class _AddProfilePageState extends State<AddProfilePage> {
     }
   }
 
+  void _updateAddress() {
+    // Kết hợp giá trị từ địa chỉ chi tiết, phường, quận và tỉnh
+    String address = _addressController.text;
+    if (selectedWard != null) {
+      address += ", ${selectedWard?.name ?? ''}";
+    }
+    if (selectedDistrict != null) {
+      address += ", ${selectedDistrict?.name ?? ''}";
+    }
+    if (provinces.isNotEmpty && selectedDistrict != null) {
+      address +=
+          ", ${provinces.firstWhere((province) => province.districts.contains(selectedDistrict)).name}";
+    }
+
+    // Gán giá trị vào _currentAddressController
+    _currentAddressController.text = address;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -287,6 +429,8 @@ class _AddProfilePageState extends State<AddProfilePage> {
               children: [
                 CustomTextFormField(
                   textEditingController: _profileIDController,
+                  maxLength: 10,
+                  focusNode: _manvFocusNode,
                   labelText: 'Mã nhân viên',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -302,11 +446,22 @@ class _AddProfilePageState extends State<AddProfilePage> {
                   },
                 ).px8().w(150),
                 CustomTextFormField(
+                  focusNode: _hovaTenFocusNode,
                   textEditingController: _profileNameController,
                   labelText: 'Họ và tên',
+                  maxLength: 50,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
+                    }
+                    if (value.length > 50) {
+                      return 'Họ và Tên không được vượt quá 50 ký tự';
+                    }
+                    // Regex kiểm tra ký tự đặc biệt
+                    final nameRegex = RegExp(
+                        r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                    if (!nameRegex.hasMatch(value)) {
+                      return 'Họ và Tên không được chứa ký tự đặc biệt';
                     }
                     return null;
                   },
@@ -324,41 +479,37 @@ class _AddProfilePageState extends State<AddProfilePage> {
                         "${_birthday.toLocal()}".split(' ')[0];
                   });
                 }).px(8).w(150),
-                // CustomTextFormField(
-                //   textEditingController: _placeOfBirthController,
-                //   labelText: 'Nơi sinh',
-                //   validator: (value) {
-                //     if (value == null || value.isEmpty) {
-                //       return 'Không được để trống';
-                //     }
-                //     return null;
-                //   },
-                // ).w(254),
-                DropdownButtonFormField<String>(
-                  value: _selectedProvince,
-                  items: provinceNames.map((province) {
-                    return DropdownMenuItem(
-                      value: province,
-                      child: Text(province),
+                InkWell(
+                  onTap: () async {
+                    // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                    final selectedAddress = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddProvinces(),
+                      ),
                     );
-                  }).toList(),
-                  decoration: InputDecoration(
-                    labelText: 'Nơi sinh',
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedProvince = value; // Cập nhật giá trị được chọn
-                      _placeOfBirthController.text =
-                          value ?? ""; // Gán vào controller
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
+
+                    if (selectedAddress != null) {
+                      setState(() {
+                        // Cập nhật TextEditingController với địa chỉ được chọn
+                        _placeOfBirthController.text = selectedAddress;
+                      });
                     }
-                    return null;
                   },
+                  child: AbsorbPointer(
+                    // Ngăn không cho bàn phím mở ra khi nhấn
+                    child: CustomTextFormField(
+                      focusNode: _noisinhFocusNode,
+                      textEditingController: _placeOfBirthController,
+                      labelText: 'Nơi sinh',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
                 ).w(254),
               ],
             ),
@@ -424,20 +575,22 @@ class _AddProfilePageState extends State<AddProfilePage> {
             Row(
               children: [
                 CustomTextFormField(
+                  maxLength: 12,
                   textEditingController: _identifiNumController,
                   labelText: 'Số CCCD/CMND',
                   keyboardType: TextInputType.number,
+                  focusNode: _identifiNumFocusNode,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
                     }
                     if (value.length != 12) {
-                      return 'Số CCCD/CMND không hợp lệ'; // Thông báo nhập đúng 10 chữ số
+                      return 'Số CCCD/CMND không hợp lệ';
                     }
                     if (!value.startsWith('0')) {
                       return 'Số CCCD phải bắt đầu bằng số 0';
                     }
-                    return null;
+                    return null; // Nếu nhập đúng thì không có lỗi
                   },
                 ).w(200).px8(),
                 _buildDateLicenseDay(
@@ -454,6 +607,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             //Nation
             DropdownButtonFormField<String>(
               value: _selectedNation,
+              focusNode: _nationFocusNode,
               items: NationNames.map((nation) {
                 return DropdownMenuItem(
                   value: nation,
@@ -484,14 +638,18 @@ class _AddProfilePageState extends State<AddProfilePage> {
                   textEditingController: _emailController,
                   labelText: 'Email',
                   maxLines: 1,
+                  focusNode: _emailFocusNode,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
                     }
-                    final emailRegex =
-                        RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                    // Regex kiểm tra email, bắt buộc phải có đuôi @gmail.com
+                    final emailRegex = RegExp(r'^[\w-\.]+@gmail\.com$');
                     if (!emailRegex.hasMatch(value)) {
-                      return 'Email không hợp lệ';
+                      return 'Email định dạng sai';
+                    }
+                    if (value.length > 254) {
+                      return 'Email không được vượt quá 254 ký tự';
                     }
                     return null;
                   },
@@ -507,11 +665,15 @@ class _AddProfilePageState extends State<AddProfilePage> {
                           if (!value.startsWith('0')) {
                             return 'Số điện thoại phải bắt đầu bằng số 0';
                           }
+                           if (value.startsWith('00')) {
+                         return 'Số điện thoại không được bắt đầu bằng 00';
+                          }
                           return null;
                         },
                         textEditingController: _phoneController,
                         labelText: 'Điện thoại',
                         maxLines: 1,
+                        focusNode: _phoneFocusNode,
                         keyboardType: TextInputType.number)
                     .w(145),
               ],
@@ -519,6 +681,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             //Password
             CustomTextFormField(
               labelText: "Mật khẩu",
+              focusNode: _passwordFocusNode,
               textEditingController: _passwordController,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -537,70 +700,73 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 return null;
               },
             ).p8(),
-            //Address
-            CustomTextFormField(
-              textEditingController: _temporaryAddressController,
-              labelText: 'Tạm trú',
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Không được để trống';
-                }
-                return null;
-              },
-            ).p8(),
-            CustomTextFormField(
-              textEditingController: _currentAddressController,
-              labelText: 'Địa chỉ hường trú',
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Không được để trống';
-                }
-                return null;
-              },
-            ).p8(),
-            // Column(children: [
-            //   Consumer<ProfilesViewModel>(
-            //     builder: (context, viewModel, child) {
-            //       // Nếu đang tải dữ liệu, hiển thị CircularProgressIndicator
-            //         if (!viewModel.fetchingData && viewModel.listProvinces.isEmpty) {
-            //         Provider.of<ProfilesViewModel>(context, listen: false)
-            //             .getProvincesData();
-            //       }
-            //       if (viewModel.fetchingData) {
-            //         return Center(child: CircularProgressIndicator());
-            //       }
+            //Thường trú
+            InkWell(
+              onTap: () async {
+                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                final selectedAddress = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddProvinces(),
+                  ),
+                );
 
-            //       // Nếu không có tỉnh thành nào, hiển thị thông báo
-            //       if (viewModel.provinces.isEmpty) {
-            //         return Center(child: Text('Không có tỉnh/thành phố'));
-            //       }
-            //       return Form(
-            //         child: Column(
-            //           children: [
-            //             // Dropdown chọn tỉnh/thành phố
-            //             DropdownButton<String>(
-            //               value: selectedProvince,
-            //               hint: Text('Chọn tỉnh/thành phố'),
-            //               onChanged: (String? newValue) {
-            //                 setState(() {
-            //                   selectedProvince = newValue;
-            //                 });
-            //               },
-            //               items: viewModel.provinces
-            //                   .map<DropdownMenuItem<String>>((String value) {
-            //                 return DropdownMenuItem<String>(
-            //                   value: value,
-            //                   child: Text(value),
-            //                 );
-            //               }).toList(),
-            //             ),
-            //           ],
-            //         ),
-            //       );
-            //     },
-            //   )
-            // ])
-            //
+                if (selectedAddress != null) {
+                  setState(() {
+                    // Cập nhật TextEditingController với địa chỉ được chọn
+                    _currentAddressController.text = selectedAddress;
+                  });
+                }
+              },
+              child: AbsorbPointer(
+                // Ngăn không cho bàn phím mở ra khi nhấn
+                child: CustomTextFormField(
+                  focusNode: _thuongtruFocusNode,
+                  textEditingController: _currentAddressController,
+                  labelText: 'Địa chỉ thường trú',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ).p8(),
+
+            //Tạm trú
+            InkWell(
+              onTap: () async {
+                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                final selectedAddress = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddProvinces(),
+                  ),
+                );
+
+                if (selectedAddress != null) {
+                  setState(() {
+                    // Cập nhật TextEditingController với địa chỉ được chọn
+                    _temporaryAddressController.text = selectedAddress;
+                  });
+                }
+              },
+              child: AbsorbPointer(
+                // Ngăn không cho bàn phím mở ra khi nhấn
+                child: CustomTextFormField(
+                  focusNode: _tamtruFocusNode,
+                  textEditingController: _temporaryAddressController,
+                  labelText: 'Địa chỉ tạm trú',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ).p8(),
           ]),
         )));
   }
@@ -616,12 +782,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
       }),
       child: AbsorbPointer(
         child: TextFormField(
+          focusNode: _birthdayFocusNode,
           readOnly: true,
           style: TextStyle(color: Colors.black),
           controller: controller,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please select $label';
+              return 'Nhập ngày sinh';
             }
             return null;
           },
@@ -646,9 +813,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
+          focusNode: _ngayccdFocusNode,
           style: TextStyle(color: Colors.black),
           controller: controller,
           validator: (value) {
+             if (value == null || value.isEmpty) {
+              return 'Nhập ngày cấp';
+            }
             if (controller.text.isNotEmpty) {
               try {
                 DateTime selectedLicenseDay = DateTime.parse(controller.text);

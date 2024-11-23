@@ -44,7 +44,8 @@ dependencies:
   mobile_scanner: ^1.0.0
   image_picker: ^1.1.2
   pdf: ^3.8.4
-
+  sliding_up_panel: ^2.0.0+1
+  collection: ^1.17.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -65,3 +66,4 @@ flutter:
     - assets/images/
     - assets/images/logos/
     - assets/lang/
+    - assets/json/
