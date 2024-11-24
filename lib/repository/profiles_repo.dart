@@ -84,11 +84,8 @@ class ProfilesRepository {
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //
     if (response.statusCode == 200 || response.statusCode == 201) {
-       print("Load successful. Response body: ${response.body}");
       return true;
     } else {
-         print("Failed to load profile: ${response.statusCode}");
-        print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -98,8 +95,12 @@ class ProfilesRepository {
       final response = await service
           .updateProfile(profile); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
+        print("Delete successful. Response body: ${response.body}");
         return true; // Cập nhật thành công
+        
       } else {
+          print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update profile');
       }
     } catch (error) {
@@ -130,7 +131,7 @@ class ProfilesRepository {
       throw Exception(
           'Failed to login: ${response.statusCode} - ${response.body}');
     }
-  }
+  } 
 
   Future<Profiles> phoneLogin(String phone, String password) async {
     final response = await service.phoneLogin(phone, password);

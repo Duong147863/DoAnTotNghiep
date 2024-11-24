@@ -18,7 +18,7 @@ class _AddProvincesState extends State<AddProvinces> {
   Ward? selectedWard;
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
-   final _formKey = GlobalKey<FormState>(); // Thêm GlobalKey cho Form
+  final _formKey = GlobalKey<FormState>(); // Thêm GlobalKey cho Form
 
   @override
   void initState() {
@@ -138,7 +138,7 @@ class _AddProvincesState extends State<AddProvinces> {
                   // Nhập địa chỉ chi tiết
                   if (selectedWard != null)
                     Form(
-                       key: _formKey,
+                      key: _formKey,
                       child: TextFormField(
                         controller: _addressController,
                         decoration: const InputDecoration(
@@ -148,17 +148,17 @@ class _AddProvincesState extends State<AddProvinces> {
                         maxLength: 50, // Giới hạn tối đa 50 ký tự
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                           return null;
+                            return null;
                           }
                           final nameRegex = RegExp(
-                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                              r"^[a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s\/\-]+$");
                           if (!nameRegex.hasMatch(value)) {
-                          return 'Địa chỉ không được chứa ký tự đặc biệt';
+                            return 'Địa chỉ không được chứa ký tự đặc biệt';
                           }
                           if (value.length > 50) {
                             return 'Địa chỉ không được vượt quá 50 ký tự';
                           }
-                           return null;
+                          return null;
                         },
                       ),
                     ),
@@ -167,21 +167,23 @@ class _AddProvincesState extends State<AddProvinces> {
                   if (selectedWard != null)
                     ElevatedButton(
                       onPressed: () {
-                           if (_formKey.currentState?.validate() ?? false) {
-                        if (selectedWard != null &&
-                            selectedDistrict != null &&
-                            provinces.isNotEmpty) {
-                          final province = provinces.firstWhere((province) =>
-                              province.districts.contains(selectedDistrict));
+                        if (_formKey.currentState?.validate() ?? false) {
+                          if (selectedWard != null &&
+                              selectedDistrict != null &&
+                              provinces.isNotEmpty) {
+                            final province = provinces.firstWhere((province) =>
+                                province.districts.contains(selectedDistrict));
 
-                          final addressDetail = _addressController.text.trim();
-                          final fullAddress = addressDetail.isNotEmpty
-                              ? "$addressDetail, ${selectedWard!.name}, ${selectedDistrict!.name}, ${province.name}"
-                              : "${selectedWard!.name}, ${selectedDistrict!.name}, ${province.name}";
+                            final addressDetail =
+                                _addressController.text.trim();
+                            final fullAddress = addressDetail.isNotEmpty
+                                ? "$addressDetail, ${selectedWard!.name}, ${selectedDistrict!.name}, ${province.name}"
+                                : "${selectedWard!.name}, ${selectedDistrict!.name}, ${province.name}";
 
-                          Navigator.pop(context, fullAddress);
+                            Navigator.pop(context, fullAddress);
+                          }
                         }
-                       } },
+                      },
                       child: const Text("Lưu"),
                     ),
                 ],

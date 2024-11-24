@@ -33,6 +33,7 @@ class _PositonInfoScreenState extends State<PositonInfoScreen> {
   void _updatePosition() async {
     if (_formKey.currentState!.validate()) {
       final updatedPosition = Positions(
+        departmentId: "",
           positionId: _positionIDController.text,
           positionName: _positionNameController.text);
       try {

@@ -3,7 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 class Trainingprocesses {
   Trainingprocesses({
     required this.profileId,
-    required this.trainingprocessesId,
+     this.trainingprocessesId,
     required this.trainingprocessesName,
     required this.trainingprocessesContent,
     required this.trainingprocessesStatus,
@@ -12,7 +12,7 @@ class Trainingprocesses {
     this.isExpanded=false,
   });
   String profileId;
-  String trainingprocessesId;
+  String? trainingprocessesId;
   String trainingprocessesName;
   String trainingprocessesContent;
   int trainingprocessesStatus;

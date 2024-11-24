@@ -35,7 +35,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
   final _currentAddressRelativeController = TextEditingController();
   final _relativeJobController = TextEditingController();
   final idrelativeController = TextEditingController();
-  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   bool _isEditing = false;
   List<Relatives> relatives = [];
   void initState() {
@@ -142,6 +142,9 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
             if (value == null || value.isEmpty) {
               return 'please_enter_relative_name';
             }
+            if (!value.isLetter()) {
+              return 'Tên thân nhân chỉ gồm chữ';
+            }
             return null;
           },
           enabled: _isEditing,
@@ -167,6 +170,9 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                   }
                   if (value.length != 10) {
                     return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
+                  }
+                  if (!value.isNumber()) {
+                    return 'Số điện thoại chỉ gồm số';
                   }
                   return null;
                 },

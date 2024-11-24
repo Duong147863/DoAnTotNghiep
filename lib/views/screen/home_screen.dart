@@ -73,10 +73,41 @@ class _HomeScreenState extends State<HomeScreen> {
   List<bool> isExpandedList = [];
   List<Projects> project = [];
   Projects? selectedProject;
-
+  FocusNode _maPBFocusNode = FocusNode();
+  FocusNode _tenPBFocusNode = FocusNode();
+  FocusNode _maCVFocusNode = FocusNode();
+  FocusNode _tenCVFocusNode = FocusNode();
   @override
   void initState() {
     super.initState();
+    _maPBFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_maPBFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tenPBFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tenPBFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _maCVFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_maCVFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tenCVFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tenCVFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
   }
 
   @override
@@ -537,6 +568,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: TextFormField(
+                                      maxLength: 15,
+                                      focusNode: _maPBFocusNode,
                                       controller: _departmentIdController,
                                       decoration: const InputDecoration(
                                         labelText: 'Mã phòng ban',
@@ -547,7 +580,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Vui lòng nhập mã phòng';
+                                          return 'Vui lòng nhập mã phòng ban';
+                                        } else if (value.length > 15) {
+                                          return 'Mã phòng ban không được vượt quá 15 ký tự';
+                                        } else if (!value.startsWith('PB-')) {
+                                          return 'Mã phòng ban phải bắt đầu bằng "PB-"';
+                                        } else if (!RegExp(r'^PB-[A-Z]+$')
+                                            .hasMatch(value)) {
+                                          return 'Sau "PB-" phải chữ viết hoa ';
                                         }
                                         return null;
                                       },
@@ -557,6 +597,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: TextFormField(
+                                      focusNode: _tenPBFocusNode,
+                                      maxLength: 50,
                                       controller: _departmentNameController,
                                       decoration: const InputDecoration(
                                         labelText: 'Tên phòng ban',
@@ -568,6 +610,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Vui lòng nhập tên phòng';
+                                        }
+                                        final nameRegex = RegExp(
+                                            r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                                        if (!nameRegex.hasMatch(value)) {
+                                          return 'Tên phòng ban không được chứa chữ số và ký tự đặc biệt';
+                                        }
+                                        if (!value.isLetter()) {
+                                          return 'Tên phòng ban chỉ gồm chữ';
                                         }
                                         return null;
                                       },
@@ -583,14 +633,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                           departmentName:
                                               _departmentNameController.text,
                                         );
-                                        // context
-                                        //     .read<DeparmentsViewModel>()
-                                        //     .addNewDepartment(newDepartment);
                                         Provider.of<DeparmentsViewModel>(
                                                 context,
                                                 listen: false)
                                             .addNewDepartment(newDepartment);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text('Thêm phòng ban thành công')),
+                                        );
                                         Navigator.pop(context);
+                                            _departmentIdController.clear();
+      _departmentNameController.clear();
                                         initState();
                                       }
                                     },
@@ -619,6 +671,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: TextFormField(
+                                      maxLength: 15,
+                                      focusNode: _maCVFocusNode,
                                       controller: _positionIdController,
                                       decoration: const InputDecoration(
                                         labelText: 'Mã chức vụ',
@@ -628,8 +682,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                       validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Vui lòng nhập department ID';
+                                          if (value == null || value.isEmpty) {
+                                          return 'Vui lòng nhập mã chức vụ';
+                                        } else if (value.length > 15) {
+                                          return 'Mã chức vụ không được vượt quá 15 ký tự';
+                                        } else if (!value.startsWith('CV-')) {
+                                          return 'Mã chức vụ phải bắt đầu bằng "CV-"';
+                                        } else if (!RegExp(r'^CV-[A-Z]+$')
+                                            .hasMatch(value)) {
+                                          return 'Sau "CV-" phải chữ viết hoa ';
                                         }
                                         return null;
                                       },
@@ -639,7 +700,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: TextFormField(
+                                                                            focusNode: _tenCVFocusNode,
                                       controller: _positionNameController,
+                                       maxLength: 50,
                                       decoration: const InputDecoration(
                                         labelText: 'Tên chức vụ',
                                         border: OutlineInputBorder(
@@ -649,7 +712,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
-                                          return 'Vui lòng nhập department name';
+                                          return 'Vui lòng nhập tên phòng';
+                                        }
+                                        final nameRegex = RegExp(
+                                            r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                                        if (!nameRegex.hasMatch(value)) {
+                                          return 'Tên chức vụ không được chứa chữ số và ký tự đặc biệt';
+                                        }
+                                        if (!value.isLetter()) {
+                                          return 'Tên chức vụ chỉ gồm chữ';
                                         }
                                         return null;
                                       },
@@ -660,6 +731,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
                                         final newPositions = Positions(
+                                          departmentId: "",
                                           positionId:
                                               _positionIdController.text,
                                           positionName:
@@ -948,7 +1020,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }),
             const Divider().p12(),
-            _buildEmployeeStats(),
+            // _buildEmployeeStats(),
             const Divider().p12(),
             _buildGetMembersCountGenderAndMaritalStatus(),
             // ExpansionPanelList(
@@ -1203,72 +1275,72 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-    Widget _buildGetMembersCountGenderAndMaritalStatus() {
-      return Consumer<ProfilesViewModel>(
-        builder: (context, viewModel, child) {
-          if (!viewModel.fetchingGenderStats &&
-              viewModel.genderMan == 0 &&
-              viewModel.genderWoman == 0 &&
-              viewModel.married == 0 &&
-              viewModel.unmarried == 0) {
-            viewModel.getMembersCountGenderAndMaritalStatus();
-          }
-          return viewModel.fetchingGenderStats
-              ? Center(child: CircularProgressIndicator())
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: SfCartesianChart(
-                    primaryXAxis: CategoryAxis(
-                      title: AxisTitle(
-                        text: 'Loại',
-                        textStyle: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+  Widget _buildGetMembersCountGenderAndMaritalStatus() {
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        if (!viewModel.fetchingGenderStats &&
+            viewModel.genderMan == 0 &&
+            viewModel.genderWoman == 0 &&
+            viewModel.married == 0 &&
+            viewModel.unmarried == 0) {
+          viewModel.getMembersCountGenderAndMaritalStatus();
+        }
+        return viewModel.fetchingGenderStats
+            ? Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(
+                    title: AxisTitle(
+                      text: 'Loại',
+                      textStyle: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    title: ChartTitle(
-                        text: 'Thống kê giới tính và tình trạng hôn nhân'),
-                    legend: Legend(
-                      isVisible: true,
-                      position: LegendPosition.bottom,
-                    ),
-                    tooltipBehavior: TooltipBehavior(enable: true),
-                    series: <CartesianSeries<dynamic, dynamic>>[
-                      ColumnSeries<dynamic, dynamic>(
-                        dataSource: [
-                          EmployeeStat('Nam', viewModel.genderMan!),
-                          EmployeeStat('Nữ', viewModel.genderWoman!),
-                          EmployeeStat('Đã kết hôn', viewModel.married!),
-                          EmployeeStat('Chưa kết hôn', viewModel.unmarried!),
-                        ],
-                        xValueMapper: (dynamic stats, _) => stats.status,
-                        yValueMapper: (dynamic stats, _) => stats.count,
-                        dataLabelSettings: DataLabelSettings(
-                          isVisible: true,
-                          labelPosition: ChartDataLabelPosition.outside,
-                          textStyle: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        pointColorMapper: (dynamic stats, _) {
-                          switch (stats.status) {
-                            case 'Nam':
-                              return Colors.blue;
-                            case 'Nữ':
-                              return Colors.pink;
-                            case 'Đã kết hôn':
-                              return Colors.green;
-                            case 'Chưa kết hôn':
-                              return Colors.orange;
-                            default:
-                              return Colors.grey;
-                          }
-                        },
-                      ),
-                    ],
                   ),
-                );
-        },
-      );
-    }
+                  title: ChartTitle(
+                      text: 'Thống kê giới tính và tình trạng hôn nhân'),
+                  legend: Legend(
+                    isVisible: true,
+                    position: LegendPosition.bottom,
+                  ),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <CartesianSeries<dynamic, dynamic>>[
+                    ColumnSeries<dynamic, dynamic>(
+                      dataSource: [
+                        EmployeeStat('Nam', viewModel.genderMan!),
+                        EmployeeStat('Nữ', viewModel.genderWoman!),
+                        EmployeeStat('Đã kết hôn', viewModel.married!),
+                        EmployeeStat('Chưa kết hôn', viewModel.unmarried!),
+                      ],
+                      xValueMapper: (dynamic stats, _) => stats.status,
+                      yValueMapper: (dynamic stats, _) => stats.count,
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        labelPosition: ChartDataLabelPosition.outside,
+                        textStyle: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      pointColorMapper: (dynamic stats, _) {
+                        switch (stats.status) {
+                          case 'Nam':
+                            return Colors.blue;
+                          case 'Nữ':
+                            return Colors.pink;
+                          case 'Đã kết hôn':
+                            return Colors.green;
+                          case 'Chưa kết hôn':
+                            return Colors.orange;
+                          default:
+                            return Colors.grey;
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              );
+      },
+    );
+  }
 }
