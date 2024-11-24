@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/department_position_model.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/repository/departments_repo.dart';
 
@@ -8,7 +10,9 @@ class DeparmentsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Departments> _list = [];
   List<Departments> get listDepartments => _list;
-
+  List<DepartmentPosition> listdepartmentPosition = [];
+  List<DepartmentPosition> get getlistdepartmentPosition => listdepartmentPosition;
+  
   // Lấy tất cả phòng ban
   Future<void> fetchAllDepartments() async {
     fetchingData = true;
@@ -19,6 +23,18 @@ class DeparmentsViewModel extends ChangeNotifier {
     } catch (e) {
         debugPrint('Error fetching departments: $e');
       throw Exception('Failed to load data: $e');
+    }
+    fetchingData = false;
+  }
+  Future<void> getDepartmentsByPosition() async {
+    fetchingData = true;
+    notifyListeners();
+    try {
+      listdepartmentPosition = await repository.getDepartmentsByPosition();
+      notifyListeners();
+    } catch (e) {
+        debugPrint('Error fetching departments: $e');
+      throw Exception('Failed to load departmen and position 2 $e');
     }
     fetchingData = false;
   }

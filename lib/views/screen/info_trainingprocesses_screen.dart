@@ -39,7 +39,7 @@ class _InfoTrainingprocessesScreenState
         widget.trainingprocesses!.trainingprocessesStatus;
     _profileIDController.text = widget.trainingprocesses!.profileId;
     _trainingprocessesIdController.text =
-        widget.trainingprocesses!.trainingprocessesId;
+        widget.trainingprocesses!.trainingprocessesId!;
     _trainingprocessesNameController.text =
         widget.trainingprocesses!.trainingprocessesName;
     _trainingprocessesContentController.text =
@@ -87,7 +87,7 @@ class _InfoTrainingprocessesScreenState
     try {
       await Provider.of<TrainingprocessesViewModel>(context, listen: false)
           .deleteTrainingProcesses(
-              widget.trainingprocesses!.trainingprocessesId);
+              widget.trainingprocesses!.trainingprocessesId!);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('TrainingProcesses deleted successfully')),
       );

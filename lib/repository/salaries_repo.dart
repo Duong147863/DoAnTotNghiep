@@ -8,7 +8,7 @@ import 'package:nloffice_hrm/models/salaries_model.dart';
 class SalariesRepository {
   final SalaryService service = SalaryService();
 
-   Future<List<Getsalaryslip>> getSalaryDetails(String salaryId) async {
+  Future<List<Getsalaryslip>> getSalaryDetails(String salaryId) async {
   try {
     final response = await service.getAllSalariesByProfileID(salaryId);
 

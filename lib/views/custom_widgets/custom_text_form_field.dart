@@ -35,6 +35,7 @@ class CustomTextFormField extends StatefulWidget {
     this.decoration,
     this.style,
     this.readOnly,
+    this.maxLength
   }) : super(key: key);
 
   //
@@ -64,7 +65,7 @@ class CustomTextFormField extends StatefulWidget {
   final TextStyle? style;
   final Widget? prefixIcon;
   final Widget? suffixIcon;
-
+  final int? maxLength;
   final bool underline;
   final List<TextInputFormatter>? inputFormatters;
 
@@ -118,6 +119,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       controller: widget.textEditingController,
       validator: widget.validator,
       focusNode: widget.focusNode,
+      
       onFieldSubmitted: (data) {
         if (widget.onFieldSubmitted != null) {
           widget.onFieldSubmitted!(data);
@@ -129,6 +131,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       textInputAction: widget.textInputAction,
       keyboardType: widget.keyboardType,
       minLines: widget.minLines,
+      maxLength: widget.maxLength,
       maxLines: widget.obscureText ? 1 : widget.maxLines,
       enabled: widget.enabled,
     );

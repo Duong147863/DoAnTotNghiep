@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/department_service.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/department_position_model.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,11 +19,21 @@ class DepartmentsRepository {
       throw Exception('Failed to load data');
     }
   }
+    Future<List<DepartmentPosition>> getDepartmentsByPosition() async {
+    final response = await service.getDepartmentsByPosition();
+
+    if (response.statusCode == 200) {;
+      return List<DepartmentPosition>.from(
+          json.decode(response.body).map((x) => DepartmentPosition.fromJson(x)));
+    } else {
+      throw Exception('Failed to load departmen and position 1');
+    }
+  }
 
   Future<bool> addNewDepartment(Departments department) async {
     try {
       final response = await service.createNewDepartment(department);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
         return true;
       } else {
         throw Exception('Failed to add department');

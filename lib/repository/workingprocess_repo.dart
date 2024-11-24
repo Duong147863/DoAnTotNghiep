@@ -22,9 +22,12 @@ class WorkingprocessRepository {
   Future<bool> createNewWorkingprocess(WorkingProcesses workingprocess) async {
     final response = await service.createNewWorkingprocess(workingprocess);
     if (response.statusCode == 200 || response.statusCode == 201) {
+         print("Delete successful. Response body: ${response.body}");
       return true;
     } else {
-      throw Exception('Failed to add WorkingProcesses: ${response.statusCode}');
+              print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      throw Exception('Failed to add WorkingProcesses: ${response.body}');
     }
   }
 

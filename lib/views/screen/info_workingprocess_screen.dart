@@ -33,10 +33,10 @@ class _InfoWorkingprocessHRScreenState
   int _statusWorkingprocesses = 0;
   void initState() {
     super.initState();
-    _statusWorkingprocesses = widget.workingProcesses!.workingprocessStatus;
+    // _statusWorkingprocesses = widget.workingProcesses!.workingprocessStatus;
     _profileIDController.text = widget.workingProcesses!.profileId;
     _workingprocessIdController.text =
-        widget.workingProcesses!.workingprocessId;
+        widget.workingProcesses!.workingprocessId!;
     _workplaceNameController.text = widget.workingProcesses!.workplaceName;
     _workingprocessContentController.text =
         widget.workingProcesses!.workingprocessContent!;
@@ -64,7 +64,8 @@ class _InfoWorkingprocessHRScreenState
           workingprocessContent: _workingprocessContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          workingprocessStatus: _statusWorkingprocesses);
+          // workingprocessStatus: _statusWorkingprocesses
+          );
       try {
         await Provider.of<WorkingprocessesViewModel>(context, listen: false)
             .updateWorkingprocess(updatedWorkingprocess);
@@ -83,7 +84,7 @@ class _InfoWorkingprocessHRScreenState
   void _deleteWorkingprocess() async {
     try {
       await Provider.of<WorkingprocessesViewModel>(context, listen: false)
-          .deleteWorkingprocess(widget.workingProcesses!.workingprocessId);
+          .deleteWorkingprocess(widget.workingProcesses!.workingprocessId!);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Workingprocess deleted successfully')),
       );

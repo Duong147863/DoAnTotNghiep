@@ -92,8 +92,11 @@ class _QrScanState extends State<QrScan> {
                         .parse(barcode.rawValue!.split(' ').first),
                     status: 0))
                 .then((_) {
-              // controller.stop();
-              // Navigator.pop(context);
+              controller.stop();
+              Navigator.pop(context);
+               ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Check in thành công!')),
+              );
             });
           },
         ),

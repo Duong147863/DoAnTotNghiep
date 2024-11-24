@@ -11,6 +11,13 @@ class DepartmentService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
+    Future<http.Response> getDepartmentsByPosition() async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}departments/position'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
+
 
   Future<http.Response> createNewDepartment(
     Departments department,
