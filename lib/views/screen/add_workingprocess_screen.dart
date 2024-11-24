@@ -20,7 +20,6 @@ class AddWorkingprocesScreen extends StatefulWidget {
 class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  final _workingprocessIdController = TextEditingController();
   final _workplaceNameController = TextEditingController();
   final _workingprocessContentController = TextEditingController();
   final _startTimeController = TextEditingController();
@@ -49,17 +48,17 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-        status = 1;
-      }
+      // if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+      //   status = 1;
+      // }
       final newWorkingprocess = WorkingProcesses(
           profileId: _profileIDController.text,
-          workingprocessId: _workingprocessIdController.text,
           workplaceName: _workplaceNameController.text,
           workingprocessContent: _workingprocessContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          workingprocessStatus: status);
+          // workingprocessStatus: status
+          );
       Provider.of<WorkingprocessesViewModel>(context, listen: false)
           .createNewWorkingprocess(newWorkingprocess)
           .then((_) {
@@ -68,7 +67,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
         );
       }).catchError((error) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add Workingprocesses: $error')),
+          SnackBar(content: Text('Failed to add Workingprocesses')),
         );
       });
     }
@@ -90,7 +89,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
           controller: controller,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please select $label';
+              return 'Vui lòng nhập ngày bắt đầu';
             }
             return null;
           },
@@ -106,26 +105,32 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
   Widget _buildDateEndTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, onDateSelected),
+      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+        onDateSelected(selectedDate);
+        setState(() {
+          _endTime = selectedDate;
+        });
+      }),
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
           style: TextStyle(color: Colors.black),
           controller: controller,
-          validator: (value) {
-            if (controller.text.isNotEmpty) {
-              try {
-                DateTime selectedEndTime = DateTime.parse(controller.text);
-                if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
-              }
-            }
+            validator: (value) {
+          if (controller.text.isEmpty) {
             return null;
-          },
+          }
+          try {
+            DateTime selectedEndTime = DateTime.parse(controller.text);
+            if (selectedEndTime.isBefore(_startTime) ||
+                selectedEndTime.difference(_startTime).inDays < 30) {
+              return 'End Time phải trên 1 tháng kể từ Start Time';
+            }
+          } catch (e) {
+            return 'Định dạng ngày không hợp lệ';
+          }
+          return null;
+        },
           decoration: InputDecoration(
             labelText: label,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -155,19 +160,8 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16),
                   CustomTextFormField(
-                    textEditingController: _workingprocessIdController,
-                    labelText: 'workingprocess ID',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_workingprocess_id';
-                      }
-                      return null;
-                    },
-                  ).px8(),
-                  SizedBox(height: 16),
-                  CustomTextFormField(
+                    enabled: false,
                     textEditingController: _profileIDController,
                     labelText: 'profile ID',
                     validator: (value) {
@@ -185,6 +179,11 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_workplace_name';
                       }
+                      final nameRegex = RegExp(
+                          r"^[a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéệëẺỆĩíịỉòỏọụủūýỳỵỷỹ\s]+$");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Không được chứa ký tự đặc biệt';
+                      }
                       return null;
                     },
                   ).px8(),
@@ -195,6 +194,11 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_workingprocess_content';
+                      }
+                      final nameRegex = RegExp(
+                          r"^[a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéệëẺỆĩíịỉòỏọụủūýỳỵỷỹ\s]+$");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Không được chứa ký tự đặc biệt';
                       }
                       return null;
                     },

@@ -172,14 +172,21 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                   CustomTextFormField(
                     textEditingController: _laborContractIDController,
                     labelText: 'Mã hợp đồng',
+                    maxLength: 10,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_labor_contract_id';
-                      }
-                      return null;
+                     if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    } else if (value.length > 10) {
+                      return 'Mã hợp đồng không được vượt quá 10 ký tự';
+                    } else if (!value.startsWith('HD')) {
+                      return 'Mã nhân viên phải bắt đầu bằng "HD"';
+                    } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
+                      return 'Sau "HD" phải là số';
+                    }
+                    return null;
                     },
                   ).px8(),
-                  SizedBox(height: 16),
+                  SizedBox(height: 10),
                   // Row(
                   //   children: [
                   //     Text('Enterprises').px8(),
