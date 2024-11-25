@@ -4,20 +4,20 @@ class Enterprises // Doanh nghiệp
     this.enterpriseId = 0,
     required this.name,
     required this.licenseNum,
-    this.email,
-    this.phone,
+    required this.email,
+    required this.phone,
     required this.assignDate,
-    this.website,
-    this.address,
+    required this.website,
+    required this.address,
   });
   int enterpriseId;
   String name;
   String licenseNum;
-  String? email;
-  String? phone;
+  String email;
+  String phone;
   DateTime assignDate;
-  String? website;
-  String? address;
+  String website;
+  String address;
   factory Enterprises.fromJson(Map<String, dynamic> json) {
     return Enterprises(
       enterpriseId: json["enterprise_id"],
@@ -35,11 +35,11 @@ class Enterprises // Doanh nghiệp
     map["enterprise_id"] = enterpriseId;
     map["name"] = name;
     map["license_num"] = licenseNum;
-    map["email"] = email!;
-    map["phone"] = phone!;
+    map["email"] = email;
+    map["phone"] = phone;
     map["assign_date"] = assignDate;
-    map["website"] = website!;
-    map["address"] = address!;
+    map["website"] = website;
+    map["address"] = address;
     return map;
   }
 }

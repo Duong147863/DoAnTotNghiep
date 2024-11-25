@@ -298,7 +298,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                   CustomTextFormField(
                     enabled: false,
                     textEditingController: _diplomaIDController,
-                    labelText: 'ID Diploma',
+                    labelText: 'Số hiệu',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_id_diploma';
@@ -350,7 +350,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                   CustomTextFormField(
                     enabled: _isEditing,
                     textEditingController: _rankingController,
-                    labelText: 'Ranking',
+                    labelText: 'Xếp loại',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_ranking';
@@ -376,7 +376,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                   CustomTextFormField(
                     enabled: _isEditing,
                     textEditingController: _diplomaTypeController,
-                    labelText: 'Diploma Type',
+                    labelText: 'Loại',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_diploma_type';
@@ -398,8 +398,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                 ],
               ).py16(),
               _buildDateField(
-                  'License Date', _liscenseDateController, _liscenseDate,
-                  (date) {
+                  'Ngày cấp', _liscenseDateController, _liscenseDate, (date) {
                 setState(() {
                   _liscenseDate = date;
                   _liscenseDateController.text =

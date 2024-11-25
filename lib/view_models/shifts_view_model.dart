@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/models/shifts_model.dart';
@@ -6,7 +7,6 @@ import 'package:nloffice_hrm/repository/shifts_repo.dart';
 class ShiftsViewModel extends ChangeNotifier {
   final ShiftsRepository repository = ShiftsRepository();
   List<Shifts> _list = [];
-  bool fetchingData = false;
   List<Shifts> get listShifts => _list;
 
   Future<void> addShifts(Shifts shifts) async {
@@ -16,23 +16,21 @@ class ShiftsViewModel extends ChangeNotifier {
       throw Exception('Failed to add datas: $e');
     }
   }
+
   Future<void> getAllShifts() async {
-    fetchingData = true;
-    notifyListeners();
     try {
       _list = await repository.getAllShifts();
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to load data: $e');
     }
-    fetchingData = false;
   }
+
   Future<void> updateShifts(Shifts shifts) async {
     try {
       await repository.updatedShifts(shifts);
 
-      int index =
-          _list.indexWhere((shi) => shi.shiftId == shifts.shiftId);
+      int index = _list.indexWhere((shi) => shi.shiftId == shifts.shiftId);
       if (index != -1) {
         _list[index] = shifts;
         notifyListeners();

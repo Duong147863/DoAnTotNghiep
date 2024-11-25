@@ -7,7 +7,6 @@ import 'package:nloffice_hrm/models/timekeepings_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
 import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 class QrScan extends StatefulWidget {
   Profiles user;
@@ -27,10 +26,12 @@ class _QrScanState extends State<QrScan> {
   );
 
   bool isStarted = true;
+  Shifts? currentShift;
 
   @override
   void initState() {
     super.initState();
+    getShiftAuto();
     controller.start();
   }
 
@@ -53,53 +54,86 @@ class _QrScanState extends State<QrScan> {
         .last); // kết quả sau khi lấy tgian vào trừ tgian bắt đầu ca
   }
 
-  // Shifts getShiftAuto() {
-  //   Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
-  //   List<Shifts> allShifts =
-  //       Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
-  // }
+  void getShiftAuto() async {
+    await Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
+    List<Shifts> allShifts =
+        Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
+    DateTime now = DateTime.now();
+    // Duyệt qua tất cả các ca làm việc
+    for (var shift in allShifts) {
+      // Nếu không có ca nào khớp, chọn ca tiếp theo
+      if (now.isAfter(shift.startTime) && now.isBefore(shift.endTime)) {
+        setState(() {
+          currentShift = shift;
+        });
+        break; // Nếu đã tìm thấy ca làm việc hiện tại, dừng lại
+      }
+    }
+
+    // Nếu không có ca nào khớp, chọn ca tiếp theo
+    if (currentShift == null) {
+      for (var shift in allShifts) {
+        if (now.isBefore(shift.startTime)) {
+          setState(() {
+            currentShift = shift;
+          });
+          break;
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        height: 350,
-        width: 350,
-        child: MobileScanner(
-          allowDuplicates: false,
-          controller: controller,
-          onDetect: (Barcode barcode, MobileScannerArguments? args) {
-            Provider.of<TimeKeepingViewModel>(context, listen: false)
-                .checkin(Timekeepings(
-                    checkin: DateFormat("H:m:s")
-                        .parse(barcode.rawValue!.split(' ').last),
-                    late: differentBetween(
-                        DateFormat("H:m:s").parse(DateTime.now()
-                            .add(const Duration(
-                                minutes:
-                                    30)) //Tgian bắt đầu ca làm theo quy định
-                            .toString()
-                            .split(' ')
-                            .last),
-                        DateFormat("H:m:s").parse(barcode.rawValue!
-                            .split(' ')
-                            .last)), // Tgian thực tế check in vào
-                    checkout: null,
-                    leavingSoon: null,
-                    shiftId: 'CH',
-                    profileId: widget.user.profileId,
-                    date: DateFormat("dd/MM/yyyy")
-                        .parse(barcode.rawValue!.split(' ').first),
-                    status: 0))
-                .then((_) {
-              controller.stop();
-              Navigator.pop(context);
-               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Check in thành công!')),
-              );
-            });
-          },
-        ),
+      child: Column(
+        children: [
+          Text(
+            "Ca ${currentShift?.shiftName}",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 18),
+          ),
+          Container(
+            height: 350,
+            width: 350,
+            child: MobileScanner(
+              allowDuplicates: false,
+              controller: controller,
+              onDetect: (Barcode barcode, MobileScannerArguments? args) {
+                Provider.of<TimeKeepingViewModel>(context, listen: false)
+                    .checkin(Timekeepings(
+                  checkin: DateFormat("H:m:s")
+                      .parse(barcode.rawValue!.split(' ').last),
+                  late: differentBetween(
+                      //Tgian bắt đầu ca làm theo quy định
+                      currentShift!.startTime,
+                      DateFormat("H:m:s").parse(barcode.rawValue!
+                          .split(' ')
+                          .last)), // Tgian thực tế check in vào
+                  checkout: DateFormat("H:m:s")
+                      .parse(barcode.rawValue!.split(' ').last),
+                  leavingSoon: differentBetween(
+                      //Tgian out ca theo quy định
+                      currentShift!.endTime,
+                      //Tgian out thực tế
+                      DateFormat("H:m:s")
+                          .parse(barcode.rawValue!.split(' ').last)),
+                  shiftId: currentShift!.shiftId,
+                  profileId: widget.user.profileId,
+                  date: DateFormat("dd/MM/yyyy")
+                      .parse(barcode.rawValue!.split(' ').first),
+                ))
+                    .then((_) {
+                  controller.stop();
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Check in thành công!')),
+                  );
+                });
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

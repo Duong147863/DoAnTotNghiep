@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/hirings_model.dart';
@@ -19,6 +20,7 @@ class ListHiringsScreen extends StatefulWidget {
 }
 
 class _ListHiringsScreenState extends State<ListHiringsScreen> {
+  late TabController _tabController;
   @override
   void initState() {
     super.initState();
@@ -78,91 +80,104 @@ class _ListHiringsScreenState extends State<ListHiringsScreen> {
         ),
       ),
       bodyChildren: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: CustomSearchBar(
-            hintText: '',
-            suggestions: hirings.map((hir) => hir.profileName).toList(),
-            onTextChanged: _handleSearch,
-          ),
+        // Padding(
+        //   padding: const EdgeInsets.all(16.0),
+        //   child: CustomSearchBar(
+        //     hintText: '',
+        //     suggestions: hirings.map((hir) => hir.profileName).toList(),
+        //     onTextChanged: _handleSearch,
+        //   ),
+        // ),
+        TabBar(
+          controller: _tabController,
+          indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
+          labelColor: Colors.black, // Màu cho tab đang chọn
+          tabs: [
+            Tab(text: 'Ứng viên mới ứng tuyển'),
+            Tab(text: 'Đã phỏng vấn'),
+          ],
         ),
         Expanded(
-          child: Consumer<HiringsViewModel>(
-            builder: (context, viewModel, child) {
-              if (!viewModel.fetchingData && viewModel.listHirigns.isEmpty) {
-                Provider.of<HiringsViewModel>(context, listen: false)
-                    .getAllHirings();
-              }
-              if (viewModel.fetchingData) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                // If data is fetched, display it
-                List<Hirings> hiring = viewModel.listHirigns;
-                return CustomListView(
-                  dataSet: hiring,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        title: Text(
-                            "Tên ứng cử viên: ${hiring[index].profileName} - Ngày sinh: ${DateFormat('dd/MM/yyyy').format(hiring[index].birthday).toString()}"),
-                        subtitle: Text(
-                          hiring[index].hiringStatus == -1
-                              ? "Lưu Trữ"
-                              : hiring[index].hiringStatus == 0
-                                  ? "Đợi Lọc"
-                                  : hiring[index].hiringStatus == 1
-                                      ? "Đã Liên Hệ"
-                                      : hiring[index].hiringStatus == 2
-                                          ? "Đã Phỏng Vấn"
-                                          : "Trạng Thái Không Hợp Lệ",
-                          style: TextStyle(
-                            color: hiring[index].hiringStatus == -1
-                                ? Colors.red
+          child: TabBarView(children: [
+            Consumer<HiringsViewModel>(
+              builder: (context, viewModel, child) {
+                if (!viewModel.fetchingData && viewModel.listHirigns.isEmpty) {
+                  Provider.of<HiringsViewModel>(context, listen: false)
+                      .getAllHirings();
+                }
+                if (viewModel.fetchingData) {
+                  return Center(child: CircularProgressIndicator());
+                } else {
+                  // If data is fetched, display it
+                  List<Hirings> hiring = viewModel.listHirigns;
+                  return CustomListView(
+                    dataSet: hiring,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        child: ListTile(
+                          title: Text(
+                              "Tên ứng cử viên: ${hiring[index].profileName} - Ngày sinh: ${DateFormat('dd/MM/yyyy').format(hiring[index].birthday).toString()}"),
+                          subtitle: Text(
+                            hiring[index].hiringStatus == -1
+                                ? "Lưu Trữ"
                                 : hiring[index].hiringStatus == 0
-                                    ? Colors.yellow
+                                    ? "Đợi Lọc"
                                     : hiring[index].hiringStatus == 1
-                                        ? Colors.green
+                                        ? "Đã Liên Hệ"
                                         : hiring[index].hiringStatus == 2
-                                            ? const Color.fromARGB(
-                                                255, 20, 34, 158)
-                                            : Colors.black,
-                          ),
-                        ),
-                      ).onInkTap(
-                        () async {
-                        
-                          final updatedHirings = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InfoHiringsScreen(
-                                hirings: hiring[index],
-                              ),
+                                            ? "Đã Phỏng Vấn"
+                                            : "Trạng Thái Không Hợp Lệ",
+                            style: TextStyle(
+                              color: hiring[index].hiringStatus == -1
+                                  ? Colors.red
+                                  : hiring[index].hiringStatus == 0
+                                      ? Colors.yellow
+                                      : hiring[index].hiringStatus == 1
+                                          ? Colors.green
+                                          : hiring[index].hiringStatus == 2
+                                              ? const Color.fromARGB(
+                                                  255, 20, 34, 158)
+                                              : Colors.black,
                             ),
-                          );
-                          // Kiểm tra xem có dữ liệu cập nhật không
-                          if (updatedHirings != null) {
-                            _handleUpdate(updatedHirings);
-                          }
-                        },
-                      ),
-                    ).py1().px4();
-                  },
-                );
-              }
-            },
-          ),
-        ),
-      ],
-      fab: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddHiringsScreen(),
+                          ),
+                        ).onInkTap(
+                          () async {
+                            final updatedHirings = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => InfoHiringsScreen(
+                                  hirings: hiring[index],
+                                ),
+                              ),
+                            );
+                            // Kiểm tra xem có dữ liệu cập nhật không
+                            if (updatedHirings != null) {
+                              _handleUpdate(updatedHirings);
+                            }
+                          },
+                        ),
+                      ).py1().px4();
+                    },
+                  );
+                }
+              },
             ),
-          );
-        },
-        child: Icon(Icons.add),
+          ]),
+        )
+      ],
+      fab: SpeedDial(
+        children: [
+          SpeedDialChild(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddHiringsScreen(),
+                ),
+              );
+            },
+          )
+        ],
       ),
     );
   }

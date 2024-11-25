@@ -96,42 +96,34 @@ class _ListShiftsScreenState extends State<ListShiftsScreen> {
         Expanded(
           child:
               Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
-            if (!viewModel.fetchingData && viewModel.listShifts.isEmpty) {
-              Provider.of<ShiftsViewModel>(context, listen: false)
-                  .getAllShifts();
-            }
-            if (viewModel.fetchingData) {
-              // While data is being fetched
-              return Center(child: CircularProgressIndicator());
-            } else {
-              // If data is successfully fetched
-              List<Shifts> shifts = viewModel.listShifts;
-              return CustomListView(
-                dataSet: shifts,
-                itemBuilder: (context, index) {
-                  return CustomCard(
-                          title: Text(
-                              "${shifts[index].shiftId} - ${shifts[index].shiftName}"),
-                          subttile: Text(
-                              "${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].startTime))} - ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].endTime))}"))
-                      .onInkTap(
-                    () async {
-                      final updatedShift = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ShiftInfoScreen(shifts: shifts[index]),
-                        ),
-                      );
-                      // Kiểm tra xem có dữ liệu cập nhật không
-                      if (updatedShift != null) {
-                        _handleUpdate(updatedShift);
-                      }
-                    },
-                  ).px8();
-                },
-              ).py12();
-            }
+            Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
+            // If data is successfully fetched
+            List<Shifts> shifts = viewModel.listShifts;
+            return CustomListView(
+              dataSet: shifts,
+              itemBuilder: (context, index) {
+                return CustomCard(
+                        title: Text(
+                            "${shifts[index].shiftId} - ${shifts[index].shiftName}"),
+                        subttile: Text(
+                            "${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].startTime))} - ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(shifts[index].endTime))}"))
+                    .onInkTap(
+                  () async {
+                    final updatedShift = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ShiftInfoScreen(shifts: shifts[index]),
+                      ),
+                    );
+                    // Kiểm tra xem có dữ liệu cập nhật không
+                    if (updatedShift != null) {
+                      _handleUpdate(updatedShift);
+                    }
+                  },
+                ).px8();
+              },
+            ).py12();
           }),
         ),
       ],
