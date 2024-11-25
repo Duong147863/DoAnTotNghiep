@@ -22,7 +22,6 @@ class _AddTrainingprocessesScreenState
     extends State<AddTrainingprocessesScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  final _trainingprocessesIdController = TextEditingController();
   final _trainingprocessesNameController = TextEditingController();
   final _trainingprocessesContentController = TextEditingController();
   final _startTimeController = TextEditingController();
@@ -42,7 +41,6 @@ class _AddTrainingprocessesScreenState
       }
       final newTrainingprocesses = Trainingprocesses(
           profileId: _profileIDController.text,
-          trainingprocessesId: _trainingprocessesIdController.text,
           trainingprocessesName: _trainingprocessesNameController.text,
           trainingprocessesContent: _trainingprocessesContentController.text,
           startTime: _startTime,
@@ -156,18 +154,6 @@ class _AddTrainingprocessesScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 16),
-                  CustomTextFormField(
-                    textEditingController: _trainingprocessesIdController,
-                    labelText: 'trainingprocesses ID',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_trainingprocesses_id';
-                      }
-                      return null;
-                    },
-                  ).px8(),
-                  SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _profileIDController,
                     labelText: 'profile ID',

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/api_services/relative_service.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
@@ -22,29 +23,46 @@ class RelativesRepository {
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }
-
-  Future<bool> addRelative(Relatives relatives) async {
+  Future<void> addRelative(Relatives relatives, Function(String) callback) async {
+  try {
     final response = await service.createNewRelative(relatives);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Failed to add profile: ${response.statusCode}');
-    }
-  }
 
-  Future<bool> updatedRelatives(Relatives relatives) async {
-    try {
-      final response = await service.updateRelative(relatives);
-      if (response.statusCode == 200) {
-        return true;
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      callback('Thân nhân đã được thêm thành công!');  // Success message
+
+    } else {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      if (responseData['message'] != null) {
+        callback(responseData['message']);  // Pass the message to the callback
       } else {
-        throw Exception('Failed to update department');
+        callback('Đã xảy ra lỗi không xác định');
       }
-    } catch (error) {
-      print("An error occurred: $error");
-      throw Exception('Failed to update profile');
     }
+  } catch (e) {
+    callback('Lỗi: $e');  // Pass error message to callback
   }
+}
+
+  Future<void> updateRelative(Relatives relatives, Function(String) callback) async {
+  try {
+    // Gửi yêu cầu cập nhật thân nhân
+    final response = await service.updateRelative(relatives);
+
+    if (response.statusCode == 200) {
+      callback('Thân nhân đã được cập nhật thành công!'); // Thông báo thành công
+    } else {
+      // Giải mã nội dung phản hồi
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      if (responseData['message'] != null) {
+        callback(responseData['message']); // Hiển thị thông báo lỗi từ API
+      } else {
+        callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
+      }
+    }
+  } catch (e) {
+    callback('Lỗi: $e'); // Thông báo lỗi ngoại lệ
+  }
+}
 
   Future<bool> deleteRelative(int relativesId) async {
     try {
@@ -52,8 +70,7 @@ class RelativesRepository {
       if (response.statusCode == 200) {
         return true;
       } else {
-        print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
+      
         return false; 
       }
     } catch (error) {

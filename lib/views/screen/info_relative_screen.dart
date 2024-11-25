@@ -6,16 +6,20 @@ import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'list_relationships.dart';
 
 class InfoRelativeScreen extends StatefulWidget {
   final Relatives profile;
+   final Function(int) onDelete;
   const InfoRelativeScreen({
     required this.profile,
+    required this.onDelete,  
   });
 
   @override
@@ -35,9 +39,18 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
   final _currentAddressRelativeController = TextEditingController();
   final _relativeJobController = TextEditingController();
   final idrelativeController = TextEditingController();
-  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
   bool _isEditing = false;
   List<Relatives> relatives = [];
+  //
+  String? _selectecRelationship;
+  FocusNode _tamtruFocusNode = FocusNode();
+  FocusNode _thuongtruFocusNode = FocusNode();
+  FocusNode _tenTNFocusNode = FocusNode();
+  FocusNode _quanheFocusNode = FocusNode();
+  FocusNode _sdtFocusNode = FocusNode();
+  FocusNode _quequanFocusNode = FocusNode();
+  FocusNode _ngaysinhFocusNode = FocusNode();
+  FocusNode _ngheNghiepFocusNode = FocusNode();
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile.profileId;
@@ -54,7 +67,65 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
         widget.profile.relativesCurrentAddress;
     _relativeJobController.text = widget.profile.relativeJob;
     _relationshipController.text = widget.profile.relationship;
+    _selectecRelationship = widget.profile.relationship;
     idrelativeController.text = widget.profile.relativeId.toString();
+    //focus
+    _tamtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tamtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _thuongtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_thuongtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tenTNFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tenTNFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _quanheFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_quanheFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _sdtFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_sdtFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _quequanFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_quequanFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngaysinhFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngaysinhFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngheNghiepFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngheNghiepFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
   }
 
   void _updateRelatives() async {
@@ -73,11 +144,11 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
       );
       try {
         await Provider.of<RelativesViewModel>(context, listen: false)
-            .updateRelatives(updatedRelative);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Relative Updated successfully!')),
-        );
-        Navigator.pop(context, updatedRelative);
+            .updateRelatives(updatedRelative, (message) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        });
+         Navigator.pop(context, updatedRelative);  // Trở về màn hình trước
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update Relative: $e')),
@@ -86,22 +157,25 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     }
   }
 
-  void _deleteRelatives() async {
+  void _deleteRelative() async {
     try {
-      final relativeId = widget.profile.relativeId;
+      final relativeId =widget.profile.relativeId;
 
       if (relativeId != null) {
+        // Gọi phương thức delete từ ViewModel hoặc API để xóa
         await Provider.of<RelativesViewModel>(context, listen: false)
             .deleteRelative(relativeId);
 
+        // Gọi callback từ màn hình cha để xóa thân nhân trong danh sách
+        widget.onDelete(relativeId);
+           Navigator.pop(context);  // Trở về màn hình trước
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Relative deleted successfully')),
+          SnackBar(content: Text('Xóa thân nhân thành công')),
         );
-        Navigator.pop(context);
+     
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Relative ID is null. Cannot delete relative.')),
+          SnackBar(content: Text('Relative ID is null. Cannot delete relative.')),
         );
       }
     } catch (e) {
@@ -116,8 +190,8 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1960),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
       onDateSelected(picked);
@@ -135,108 +209,259 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
       appBarColor: AppColor.primaryLightColor,
       defaultBody: true,
       bodyChildren: [
-        CustomTextFormField(
-          textEditingController: _relativeNameController,
-          labelText: 'Tên thân nhân',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'please_enter_relative_name';
-            }
-            if (!value.isLetter()) {
-              return 'Tên thân nhân chỉ gồm chữ';
-            }
-            return null;
-          },
-          enabled: _isEditing,
-        ).p8(),
-        SizedBox(height: 16),
-        CustomTextFormField(
-          enabled: _isEditing,
-          textEditingController: _relationshipController,
-          labelText: 'Quan hệ thân nhân',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'please_enter_relationship';
-            }
-            return null;
-          },
-        ).px8(),
-        SizedBox(height: 16),
-        CustomTextFormField(
-                enabled: _isEditing,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'please_enter_phone_number';
-                  }
-                  if (value.length != 10) {
-                    return 'please_enter_valid_phone_number'; // Thông báo nhập đúng 10 chữ số
-                  }
-                  if (!value.isNumber()) {
-                    return 'Số điện thoại chỉ gồm số';
-                  }
-                  return null;
-                },
-                textEditingController: _phoneRelativeController,
-                labelText: 'Điện thoại liên lạc',
-                maxLines: 1,
-                keyboardType: TextInputType.number)
-            .px8(),
-        SizedBox(height: 16),
-        //Nation
-        CustomTextFormField(
-          enabled: _isEditing,
-          validator: (value) =>
-              value.isEmptyOrNull ? 'Please enter nation' : null,
-          textEditingController: _nationRelativeController,
-          labelText: 'Quê quán',
-        ).px(8),
-        SizedBox(height: 16),
-        _buildDateField(
-            'Ngày sinh', _birthdayRelativeController, _birthdayRelative,
-            (date) {
-          setState(() {
-            _birthdayRelative = date;
-            _birthdayRelativeController.text =
-                DateFormat('dd/MM/yyyy').format(_birthdayRelative);
-          });
-        }).px(8),
-        SizedBox(height: 16),
-        CustomTextFormField(
-          enabled: _isEditing,
-          textEditingController: _relativeJobController,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'please_enter_relativeJob';
-            }
-            return null;
-          },
-          labelText: 'Nghề nghiệp',
-        ).px(8),
-        SizedBox(height: 16),
-        //Address
-        CustomTextFormField(
-          enabled: _isEditing,
-          textEditingController: _temporaryAddressRelativeController,
-          labelText: 'Địa chỉ tạm trú',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'please_enter_temp_address';
-            }
-            return null;
-          },
-        ).px8(),
-        SizedBox(height: 16),
-        CustomTextFormField(
-          enabled: _isEditing,
-          textEditingController: _currentAddressRelativeController,
-          labelText: 'Nơi ở hiện nay',
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'please_enter_current_address';
-            }
-            return null;
-          },
-        ).px8(),
+        Form(
+          key: _formKey,
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            CustomTextFormField(
+              textEditingController: _relativeNameController,
+              labelText: 'Họ tên thân nhân',
+              maxLength: 50,
+              focusNode: _tenTNFocusNode,
+              enabled: _isEditing,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Không được để trống';
+                }
+                // Kiểm tra không có khoảng trắng ở cuối tên
+                if (value.trim() != value) {
+                  return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                }
+                if (value.length < 4) {
+                  return 'Họ và Tên phải có ít nhất 4 ký tự';
+                }
+                final nameRegex = RegExp(
+                    r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                if (!nameRegex.hasMatch(value)) {
+                  return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
+                }
+                // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                List<String> words = value.split(" ");
+                for (int i = 0; i < words.length; i++) {
+                  // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                  words[i] = words[i].substring(0, 1).toUpperCase() +
+                      words[i].substring(1).toLowerCase();
+                }
+                String capitalizedName = words.join(" ");
+
+                // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                if (value != capitalizedName) {
+                  return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                }
+
+                if (!value.isLetter()) {
+                  return 'Tên chỉ gồm chữ';
+                }
+                return null;
+              },
+            ).p8(),
+            SizedBox(height: 16),
+
+            DropdownButtonFormField<String>(
+              value: _selectecRelationship,
+              focusNode: _quanheFocusNode,
+              items: relationships.map((relat) {
+                return DropdownMenuItem(
+                  value: relat,
+                  child: Text(relat),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: 'Quan hệ',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: _isEditing
+                  ? (value) {
+                      setState(() {
+                        _selectecRelationship =
+                            value; // Cập nhật giá trị được chọn
+                        _relationshipController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    }
+                  : null,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Không được để trống';
+                }
+                return null;
+              },
+            ).px8(),
+            SizedBox(height: 16),
+
+            CustomTextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      if (value.length != 10) {
+                        return 'Số điện thoại không hợp lệ';
+                      }
+                      if (!value.startsWith('0')) {
+                        return 'Số điện thoại phải \n bắt đầu bằng số 0';
+                      }
+                      if (!value.isNumber()) {
+                        return 'Số điện thoại chỉ gồm số';
+                      }
+                      if (value.startsWith('00')) {
+                        return 'Số điện thoại không được bắt đầu bằng 00';
+                      }
+                      return null;
+                    },
+                    textEditingController: _phoneRelativeController,
+                    labelText: 'Điện thoại',
+                    maxLines: 1,
+                    maxLength: 10,
+                    enabled: _isEditing,
+                    focusNode: _sdtFocusNode,
+                    keyboardType: TextInputType.number)
+                .px8(),
+            SizedBox(height: 16),
+
+            InkWell(
+              onTap: _isEditing
+                  ? () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
+
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _nationRelativeController.text = selectedAddress;
+                        });
+                      }
+                    }
+                  : null,
+              child: AbsorbPointer(
+                // Ngăn không cho bàn phím mở ra khi nhấn
+                child: CustomTextFormField(
+                  focusNode: _quequanFocusNode,
+                  textEditingController: _nationRelativeController,
+                  labelText: 'Quê quán',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ).p(8),
+            SizedBox(height: 16),
+            _buildDateField(
+                'Ngày sinh', _birthdayRelativeController, _birthdayRelative,
+                (date) {
+              setState(() {
+                _birthdayRelative = date;
+                _birthdayRelativeController.text =
+                    DateFormat('dd/MM/yyyy').format(_birthdayRelative);
+              });
+            }).px(8),
+            SizedBox(height: 16),
+            CustomTextFormField(
+              textEditingController: _relativeJobController,
+              focusNode: _ngheNghiepFocusNode,
+              maxLength: 50,
+              enabled: _isEditing,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Không được để trống';
+                }
+                // Kiểm tra không có khoảng trắng ở cuối tên
+                if (value.trim() != value) {
+                  return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                }
+                if (value.length < 3) {
+                  return 'Nghề nghiệp phải có ít nhất 3 ký tự';
+                }
+                // Regex kiểm tra ký tự đặc biệt
+                final nameRegex = RegExp(
+                    r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệíìỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựýỳỷỹỵ\s]+$");
+
+                if (!nameRegex.hasMatch(value)) {
+                  return 'Nghề nghiệp không hợp lệ. Vui lòng nhập đúng định dạng.';
+                }
+                if (!value.isLetter()) {
+                  return 'Tên chỉ gồm chữ';
+                }
+                return null;
+              },
+              labelText: 'Nghề nghiệp',
+            ).px(8),
+            SizedBox(height: 16),
+            InkWell(
+              onTap:_isEditing? () async {
+                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                final selectedAddress = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddProvinces(),
+                  ),
+                );
+
+                if (selectedAddress != null) {
+                  setState(() {
+                    // Cập nhật TextEditingController với địa chỉ được chọn
+                    _currentAddressRelativeController.text = selectedAddress;
+                  });
+                }
+              }:null,
+              child: AbsorbPointer(
+                // Ngăn không cho bàn phím mở ra khi nhấn
+                child: CustomTextFormField(
+                  focusNode: _thuongtruFocusNode,
+                  textEditingController: _currentAddressRelativeController,
+                  labelText: 'Địa chỉ thường trú',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ).p8(),
+
+            //Tạm trú
+            InkWell(
+              onTap:_isEditing? () async {
+                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                final selectedAddress = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddProvinces(),
+                  ),
+                );
+
+                if (selectedAddress != null) {
+                  setState(() {
+                    // Cập nhật TextEditingController với địa chỉ được chọn
+                    _temporaryAddressRelativeController.text = selectedAddress;
+                  });
+                }
+              }:null,
+              child: AbsorbPointer(
+                // Ngăn không cho bàn phím mở ra khi nhấn
+                child: CustomTextFormField(
+                  focusNode: _tamtruFocusNode,
+                  textEditingController: _temporaryAddressRelativeController,
+                  labelText: 'Địa chỉ tạm trú',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            ).p8(),
+          ]),
+        ),
         SizedBox(height: 16),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -274,7 +499,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop(); // Đóng dialog
-                            _deleteRelatives(); // Thực hiện xóa
+                            _deleteRelative(); // Thực hiện xóa
                           },
                           child: Text('Delete'),
                         ),
@@ -289,35 +514,49 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
       ],
     );
   }
+ Widget _buildDateField(String label, TextEditingController controller,
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: GestureDetector(
+      onTap:_isEditing? () => _selectDate(context, initialDate, onDateSelected):null,
+      child: AbsorbPointer(
+        child: TextFormField(
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Không được để trống';
+            }
 
-  Widget _buildDateField(String label, TextEditingController controller,
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: GestureDetector(
-        onTap: _isEditing
-            ? () => _selectDate(context, initialDate, onDateSelected)
-            : null,
-        child: AbsorbPointer(
-          child: TextFormField(
-            readOnly: true,
-            style: TextStyle(color: Colors.black),
-            controller: controller,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'please_enter_relative_birthday';
+            // Sử dụng DateFormat để phân tích chuỗi ngày theo định dạng dd/MM/yyyy
+            try {
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+              DateTime selectedDate = dateFormat.parse(value);  // Phân tích ngày
+              DateTime oneYearBeforeNow = DateTime.now().subtract(Duration(days: 365));
+
+              if (selectedDate.isAfter(DateTime.now())) {
+                return 'Ngày sinh phải là quá khứ';
               }
-              return null;
-            },
-            decoration: InputDecoration(
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: label,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+
+              if (selectedDate.isAfter(oneYearBeforeNow)) {
+                return 'Ngày sinh phải ít nhất trước 1 năm so với hiện tại';
+              }
+            } catch (e) {
+              return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
+            }
+
+            return null;
+          },
+          decoration: InputDecoration(
+            labelStyle: TextStyle(color: Colors.black),
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

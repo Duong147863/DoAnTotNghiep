@@ -21,18 +21,18 @@ class RelativesViewModel extends ChangeNotifier {
     fetchingData = false;
   }
 
-  Future<void> addRelative(Relatives relatives) async {
+    // Modify addRelative method to accept a callback for success messages
+  Future<void> addRelative(Relatives relatives, Function(String) callback) async {
     try {
-      await repository.addRelative(relatives);
+      await repository.addRelative(relatives,callback); // Call the repository method
     } catch (e) {
-      throw Exception('Failed to add datas: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
 
-  Future<void> updateRelatives(Relatives relatives) async {
+  Future<void> updateRelatives(Relatives relatives, Function(String) callback) async {
     try {
-      await repository.updatedRelatives(relatives);
-
+      await repository.updateRelative(relatives,callback);
       int index =
           _list.indexWhere((relav) => relav.relativeId == relatives.relativeId);
       if (index != -1) {
@@ -40,7 +40,7 @@ class RelativesViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      throw Exception('Failed to update relatives: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
     Future<void> deleteRelative(int relativesId) async {

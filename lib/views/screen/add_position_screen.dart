@@ -14,13 +14,11 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
   final _formKey = GlobalKey<FormState>();
   final _positionIdController = TextEditingController();
   final _positionNameController = TextEditingController();
-  final _enterpriseIdController = TextEditingController();
-
+  final _departmenIdController = TextEditingController();
   @override
   void dispose() {
     _positionIdController.dispose();
     _positionNameController.dispose();
-    _enterpriseIdController.dispose();
     super.dispose();
   }
 
@@ -29,6 +27,8 @@ class _AddPositionScreenState extends State<AddPositionScreen> {
       final newPosition = Positions(
         positionId: _positionIdController.text,
         positionName: _positionNameController.text,
+        departmentId: _departmenIdController.text
+
       );
       Provider.of<PositionsViewModel>(context, listen: false)
           .addNewPosition(newPosition)

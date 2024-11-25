@@ -7,33 +7,6 @@ import 'package:rx_shared_preferences/rx_shared_preferences.dart';
 
 class ProfilesRepository {
   final ProfileService service = ProfileService();
-
-  Future<List<String>> getProvincesData() async {
-    try {
-      final response = await service.getProvincesData();
-      if (response.statusCode == 200) {
-         print("Load successful. Response body: ${response.body}");
-        // Giả sử API trả về danh sách các tỉnh thành dạng JSON
-        List<dynamic> provincesList = json.decode(response.body);
-
-        // Sử dụng map và ép kiểu đúng
-        List<String> provincesData = provincesList.map<String>((province) {
-          return province['name']
-              as String; // Lấy tên tỉnh thành và ép kiểu về String
-        }).toList();
-        print("Load successful. Response body: ${response.body}");
-        return provincesData; // Trả về danh sách các tỉnh thành
-      } else {
-        print("Failed to load profile: ${response.statusCode}");
-        print("Response body: ${response.body}");
-        throw Exception('Failed to load provinces data');
-      }
-    } catch (e) { 
-      print("An error occurred: $e");
-      throw Exception('Error fetching provinces data: $e');
-    }
-  }
-
   Future<int> getAllQuitMembers() async {
     final response = await service.getAllQuitMembers();
     if (response.statusCode == 200) {
@@ -111,27 +84,23 @@ class ProfilesRepository {
   Future<bool> addProfile(Profiles profile) async {
     final response = await service.addNewProfile(profile); //
     if (response.statusCode == 200 || response.statusCode == 201) {
-       print("Load successful. Response body: ${response.body}");
       return true;
     } else {
-         print("Failed to load profile: ${response.statusCode}");
-        print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
 
   Future<bool> updateProfile(Profiles profile) async {
-    try {
       final response = await service
           .updateProfile(profile); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
-        return true; // Cập nhật thành công
+        print("Update successful. Response body: ${response.body}");
+        return true; // Cập nhật thành công 
       } else {
+          print("Failed to Update profile: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update profile');
-      }
-    } catch (error) {
-      throw Exception('Failed to update profile');
-    }
+      } 
   }
 
   Future<bool> deleteProfile(String profileId) async {
@@ -157,7 +126,7 @@ class ProfilesRepository {
       throw Exception(
           'Failed to login: ${response.statusCode} - ${response.body}');
     }
-  }
+  } 
 
   Future<Profiles> phoneLogin(String phone, String password) async {
     final response = await service.phoneLogin(phone, password);

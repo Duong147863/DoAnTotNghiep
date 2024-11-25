@@ -4,13 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/department_position_model.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
 import 'package:nloffice_hrm/models/labor_contracts_model.dart';
 import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/provinces.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/models/roles_model.dart';
 import 'package:nloffice_hrm/models/salaries_model.dart';
@@ -33,6 +36,7 @@ import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
@@ -44,6 +48,8 @@ import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'list_nation.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Profiles? profile;
@@ -83,14 +89,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DateTime _idLicenseDay = DateTime.now();
   bool _gender = false;
   bool _marriage = false;
+  int? statusProfile;
   bool _isEditing = false;
   String? _profileImageBase64;
   bool _isButtonEnabled = true;
   //
-  List<Departments> departments = [];
-  Departments? selectedDepartment;
-  List<Positions> positions = [];
-  Positions? selectedPositions;
+  List<DepartmentPosition> departmentsPosition = [];
+  DepartmentPosition? selectedDepartmentsPosition;
   List<Salaries> salarys = [];
   Salaries? selectedSalarys;
   List<WorkingProcesses> workingProcesses = [];
@@ -108,21 +113,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<Roles> roles = [];
   Roles? selectedRoles;
   //
+  String? _selectedNation;
+  //
+  late Future<List<Province>> futureProvinces;
+  List<Province> provinces = [];
+  //Ẩn hiện thông báo
+  FocusNode _manvFocusNode = FocusNode();
+  FocusNode _hovaTenFocusNode = FocusNode();
+  FocusNode _emailFocusNode = FocusNode();
+  FocusNode _phoneFocusNode = FocusNode();
+  FocusNode _identifiNumFocusNode = FocusNode();
+  FocusNode _passwordFocusNode = FocusNode();
+  FocusNode _birthdayFocusNode = FocusNode();
+  FocusNode _noisinhFocusNode = FocusNode();
+  FocusNode _tamtruFocusNode = FocusNode();
+  FocusNode _thuongtruFocusNode = FocusNode();
+  FocusNode _ngayccdFocusNode = FocusNode();
+  FocusNode _nationFocusNode = FocusNode();
+  final _startTimeController = TextEditingController();
+  final _endTimeController = TextEditingController();
+  DateTime _startTime = DateTime.now();
+  DateTime _endTime = DateTime.now();
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
     _profileNameController.text = widget.profile!.profileName;
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
+    _birthday = widget.profile!.birthday;
+    print(_birthdayController.text);
+    print(_birthday);
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
     _idLicenseDayController.text = DateFormat('dd/MM/yyyy')
         .format(widget.profile!.idLicenseDay)
         .toString();
+    _idLicenseDay = widget.profile!.idLicenseDay;
+    // _startTimeController.text =
+    //     DateFormat('dd/MM/yyyy').format(widget.profile!.startTime!).toString();
+    // _startTime = widget.profile!.startTime!;
+    // _endTimeController.text =
+    //     DateFormat('dd/MM/yyyy').format(widget.profile!.endTime!).toString();
+    // _endTime = widget.profile!.endTime!;
+    statusProfile = widget.profile!.profileStatus;
     _nationController.text = widget.profile!.nation;
+    _selectedNation = widget.profile!.nation;
     _emailController.text = widget.profile!.email ?? '';
     _phoneController.text = widget.profile!.phone;
+
     // _passwordController.text = widget.profile!.password;
     _temporaryAddressController.text = widget.profile!.temporaryAddress;
     _currentAddressController.text = widget.profile!.currentAddress;
@@ -130,15 +169,115 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _marriage = widget.profile!.marriage;
     _gender = widget.profile!.gender;
     _loadDepartments();
-    _loadPositions();
     _loadSalaries();
     _loadworkingProcesses();
     _loadtrainingProcess();
     _loadRelative();
     _loadDiplomas();
-    _loadInsurance();
-    _loadLaborContact();
+    // _loadLaborContact();
     _loadRoles();
+    futureProvinces =
+        Provider.of<ProfilesViewModel>(context, listen: false).fetchProvinces();
+    loadProvinces();
+
+    // Focus
+    _identifiNumFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_identifiNumFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _phoneFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_phoneFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _emailFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_emailFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+
+    _passwordFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_passwordFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _hovaTenFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_hovaTenFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _manvFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_manvFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+
+    _noisinhFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_noisinhFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tamtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tamtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _thuongtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_thuongtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngayccdFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngayccdFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _birthdayFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_birthdayFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _nationFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_nationFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+  }
+
+  Future<void> loadProvinces() async {
+    final data = await futureProvinces;
+    setState(() {
+      provinces = data;
+    });
   }
 
   void _handleUpdateRelative(Relatives updatedRelative) {
@@ -148,6 +287,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (index != -1) {
         relatives[index] = updatedRelative;
       }
+    });
+  }
+
+  void _handleDeleteRelative(int relativeId) {
+    setState(() {
+      relatives.removeWhere((rela) => rela.relativeId == relativeId);
     });
   }
 
@@ -181,41 +326,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  // Method to load departments
   void _loadDepartments() async {
     try {
       await Provider.of<DeparmentsViewModel>(context, listen: false)
-          .fetchAllDepartments();
-      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-          .listDepartments;
-      if (departments.isNotEmpty) {
-        selectedDepartment = departments.firstWhere(
-          (department) =>
-              department.departmentID == widget.profile!.departmentId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load departments')),
-      );
-    }
-  }
+          .getDepartmentsByPosition();
 
-  // Method to load departments
-  void _loadPositions() async {
-    try {
-      await Provider.of<PositionsViewModel>(context, listen: false)
-          .fetchPositions();
-      positions =
-          Provider.of<PositionsViewModel>(context, listen: false).listPositions;
-      if (positions.isNotEmpty) {
-        selectedPositions = positions.firstWhere(
-          (position) => position.positionId == widget.profile!.positionId,
-        );
+      departmentsPosition =
+          Provider.of<DeparmentsViewModel>(context, listen: false)
+              .getlistdepartmentPosition;
+      if (departmentsPosition.isNotEmpty) {
+        selectedDepartmentsPosition = departmentsPosition.firstWhere(
+            (depandpos) =>
+                depandpos.positionId == widget.profile!.positionId &&
+                depandpos.departmentID == widget.profile!.departmentId);
       }
+      setState(() {
+        if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        } else if (AppStrings.ROLE_PERMISSIONS
+            .contains('Manage Staffs info only')) {
+          departmentsPosition = departmentsPosition
+              .where((department) =>
+                  department.departmentID != 'PB-GĐ' &&
+                  department.departmentID != 'PB-HR')
+              .toList();
+        }
+      });
     } catch (error) {
+      // Hiển thị thông báo lỗi nếu có sự cố
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Positions')),
+        SnackBar(
+            content: Text('Failed to load departments and position $error')),
       );
     }
   }
@@ -282,7 +422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Relative')),
+        SnackBar(content: Text('Failed to load Relative $error')),
       );
     }
   }
@@ -306,6 +446,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _loadtrainingProcess() async {
+    try {
+      await Provider.of<TrainingprocessesViewModel>(context, listen: false)
+          .getTrainingProcessesOf(widget.profile!.profileId);
+      trainingProcess =
+          Provider.of<TrainingprocessesViewModel>(context, listen: false)
+              .listTrainingprocesses;
+      if (trainingProcess.isNotEmpty) {
+        selectedtrainingProcess = trainingProcess.firstWhere(
+          (tra) => tra.profileId == widget.profile!.profileId,
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load TrainingProcess $error')),
+      );
+    }
+  }
+
   void _loadDiplomas() async {
     try {
       await Provider.of<DiplomasViewModel>(context, listen: false)
@@ -319,7 +478,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Workingprocesses')),
+        SnackBar(content: Text('Failed to load Diplomas')),
       );
     }
   }
@@ -338,44 +497,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Workingprocesses $error')),
-      );
-    }
-  }
-
-  void _loadtrainingProcess() async {
-    try {
-      await Provider.of<TrainingprocessesViewModel>(context, listen: false)
-          .getTrainingProcessesOf(widget.profile!.profileId);
-      trainingProcess =
-          Provider.of<TrainingprocessesViewModel>(context, listen: false)
-              .listTrainingprocesses;
-      if (trainingProcess.isNotEmpty) {
-        selectedtrainingProcess = trainingProcess.firstWhere(
-          (tra) => tra.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load TrainingProcess')),
-      );
-    }
-  }
-
-  void _loadInsurance() async {
-    try {
-      await Provider.of<InsuranceViewModel>(context, listen: false)
-          .getInsurancesOf(widget.profile!.profileId);
-      insurance =
-          Provider.of<InsuranceViewModel>(context, listen: false).listInsurance;
-      if (insurance.isNotEmpty) {
-        selectedinsurance = insurance.firstWhere(
-          (ins) => ins.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load TrainingProcess')),
+        SnackBar(content: Text('Failed to load LaborContact $error')),
       );
     }
   }
@@ -390,26 +512,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
           gender: _gender,
           identifiNum: _identifiNumController.text,
           idLicenseDay: _idLicenseDay,
+          // startTime: _startTime,
+          // endTime: _endTime,
           nation: _nationController.text,
           email: _emailController.text,
           phone: _phoneController.text,
           roleID: selectedRoles!.roleID,
+          profileStatus: statusProfile,
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
-          departmentId: selectedDepartment!.departmentID,
-          positionId: selectedPositions!.positionId,
+          departmentId: selectedDepartmentsPosition!.departmentID,
+          positionId: selectedDepartmentsPosition!.positionId,
           salaryId: selectedSalarys!.salaryId,
           profileImage: _profileImageBase64 ?? '');
 
       Provider.of<ProfilesViewModel>(context, listen: false)
           .updateProfile(updatedProfile)
           .then((_) {
+        print(_birthdayController.text);
+        print(_birthday);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Profile Update successfully!')),
         );
         Navigator.pop(context, updatedProfile);
       }).catchError((error) {
+        print(_birthdayController.text);
+        print(_birthday);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update profile: $error')),
         );
@@ -437,8 +566,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1960),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
       onDateSelected(picked);
@@ -467,6 +596,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  String getStatusText(statusProfile) {
+    switch (statusProfile) {
+      case 0:
+        return "Đang thử việc";
+      case 1:
+        return "Ký hợp đồng lần 1";
+      case 2:
+        return "Ký hợp đồng lần 2";
+      case 3:
+        return "Ký hợp đồng lần 3";
+      default:
+        return "Trạng thái không xác định";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BasePage(
@@ -474,9 +618,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       showLeadingAction: true,
       appBar: AppBar(
         elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColor.aliceBlue,
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,
@@ -489,6 +631,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: AppStrings.ROLE_PERMISSIONS.containsAny(
                 ['Manage BoD & HR accounts', 'Manage Staffs info only'])
             ? <Widget>[
+                Text(
+                  getStatusText(statusProfile),
+                  style:
+                      TextStyle(color: Colors.black), // Tùy chỉnh style nếu cần
+                ),
                 IconButton(
                   enableFeedback: true,
                   onPressed: _isButtonEnabled
@@ -628,26 +775,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 children: [
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _profileIDController,
-                    labelText: 'Mã',
+                    maxLength: 10,
+                    focusNode: _manvFocusNode,
+                    labelText: 'Mã nhân viên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
+                      } else if (value.length > 10) {
+                        return 'Mã nhân viên không được vượt quá 10 ký tự';
+                      } else if (!value.startsWith('NV')) {
+                        return 'Mã nhân viên phải bắt đầu bằng "NV"';
+                      } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
+                        return 'Sau "NV" phải là số';
                       }
                       return null;
                     },
-                    enabled: false,
                   ).px8().w(150),
                   CustomTextFormField(
+                    focusNode: _hovaTenFocusNode,
                     textEditingController: _profileNameController,
                     labelText: 'Họ và tên',
+                    maxLength: 50,
+                    enabled: _isEditing,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
                       }
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      if (value.length < 4) {
+                        return 'Họ và Tên phải có ít nhất 4 ký tự';
+                      }
+                      // Regex kiểm tra ký tự đặc biệt
+                      final nameRegex = RegExp(
+                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                      if (!nameRegex.hasMatch(value.trim())) {
+                        return 'Họ và Tên không được chứa ký tự đặc biệt';
+                      }
+
+                      // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                      List<String> words = value.split(" ");
+                      for (int i = 0; i < words.length; i++) {
+                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                        words[i] = words[i].substring(0, 1).toUpperCase() +
+                            words[i].substring(1).toLowerCase();
+                      }
+                      String capitalizedName = words.join(" ");
+
+                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                      if (value != capitalizedName) {
+                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                      }
+                      if (!value.isLetter()) {
+                        return 'Tên chỉ gồm chữ';
+                      }
                       return null;
                     },
-                    enabled: _isEditing,
                   ).w(254),
                 ],
               ).py16(),
@@ -659,34 +846,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     setState(() {
                       _birthday = date;
                       _birthdayController.text =
-                          "${_birthday.toLocal()}".split(' ')[0];
+                          DateFormat('dd/MM/yyyy').format(_birthday);
                     });
                   }).px(8).w(150),
-                  CustomTextFormField(
-                    textEditingController: _placeOfBirthController,
-                    labelText: 'Nơi sinh',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      return null;
-                    },
-                    enabled: _isEditing,
+                  InkWell(
+                    onTap: _isEditing
+                        ? () async {
+                            // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                            final selectedAddress = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AddProvinces(),
+                              ),
+                            );
+
+                            if (selectedAddress != null) {
+                              setState(() {
+                                // Cập nhật TextEditingController với địa chỉ được chọn
+                                _placeOfBirthController.text = selectedAddress;
+                              });
+                            }
+                          }
+                        : null,
+                    child: AbsorbPointer(
+                      // Ngăn không cho bàn phím mở ra khi nhấn
+                      child: CustomTextFormField(
+                        focusNode: _noisinhFocusNode,
+                        textEditingController: _placeOfBirthController,
+                        labelText: 'Nơi sinh',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
                   ).w(254),
                 ],
               ),
-              Row(
-                children: [
-                  Text('Phòng:').px(8),
-                  _buildDepartmentDropdown('Choose Department').p(8).w(300),
-                ],
-              ),
-              Row(
-                children: [
-                  Text('Chức vụ:').px(8),
-                  _buildPositionsDropdown('Choose Postion').p(8).w(300),
-                ],
-              ),
+              AppStrings.ROLE_PERMISSIONS.containsAny(
+                      ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+                  ? Row(
+                      children: [
+                        Text('Chọn').px(6),
+                        _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
+                            .p(8)
+                            .w(360),
+                      ],
+                    )
+                  : SizedBox.shrink(),
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
@@ -709,13 +918,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
                   }).p(8).w(130),
                   //Nation
-                  CustomTextFormField(
-                    validator: (value) =>
-                        value.isEmptyOrNull ? 'Vui lòng quốc tịch' : null,
-                    textEditingController: _nationController,
-                    labelText: 'Quốc tịch',
-                    enabled: _isEditing,
-                  ).p(8).w(160),
+                  DropdownButtonFormField<String>(
+                    value: _selectedNation,
+                    focusNode: _nationFocusNode,
+                    items: NationNames.map((nation) {
+                      return DropdownMenuItem(
+                        value: nation,
+                        child: Text(nation,style: TextStyle(fontSize: 13),),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Quốc tịch',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: _isEditing
+                        ? (value) {
+                            setState(() {
+                              _selectedNation =
+                                  value; // Cập nhật giá trị được chọn
+                              _nationController.text =
+                                  value ?? ""; // Gán vào controller
+                            });
+                          }
+                        : null,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ).p(8).w(140),
                 ],
               ),
               Row(
@@ -753,7 +985,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CustomTextFormField(
                     textEditingController: _identifiNumController,
                     labelText: 'Số CCCD/CMND',
+                    maxLength: 12,
                     keyboardType: TextInputType.number,
+                    focusNode: _identifiNumFocusNode,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
@@ -770,13 +1004,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       return null;
                     },
                   ).w(200).px8(),
-                  _buildDateField(
+                  _buildDateLicenseDay(
                       'id ngày cấp', _idLicenseDayController, _idLicenseDay,
                       (date) {
                     setState(() {
                       _idLicenseDay = date;
                       _idLicenseDayController.text =
-                          _idLicenseDay.toString().split(' ').first;
+                          DateFormat('dd/MM/yyyy').format(_idLicenseDay);
                     });
                   }).w(184),
                 ],
@@ -788,19 +1022,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CustomTextFormField(
                     textEditingController: _emailController,
                     labelText: 'Email',
+                    enabled: _isEditing,
+                    maxLength: 254,
                     maxLines: 1,
+                    focusNode: _emailFocusNode,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_email';
+                        return 'Không được để trống';
                       }
-                      final emailRegex =
-                          RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                      // Regex kiểm tra email, bắt buộc phải có đuôi @gmail.com
+                      final emailRegex = RegExp(r'^[\w-\.]+@gmail\.com$');
                       if (!emailRegex.hasMatch(value)) {
-                        return 'please_enter_valid_email';
+                        return 'Email định dạng sai';
+                      }
+                      if (value.length > 254) {
+                        return 'Email không được vượt quá 254 ký tự';
                       }
                       return null;
                     },
-                    enabled: _isEditing,
                   ).px4().w(258),
                   CustomTextFormField(
                           validator: (value) {
@@ -816,50 +1055,102 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             if (!value.isNumber()) {
                               return 'Số điện thoại chỉ gồm số';
                             }
+                            if (value.startsWith('00')) {
+                              return 'Số điện thoại không được bắt đầu bằng 00';
+                            }
                             return null;
                           },
                           textEditingController: _phoneController,
-                          labelText: 'Số điện thoại',
+                          labelText: 'Điện thoại',
                           maxLines: 1,
+                          maxLength: 10,
+                          focusNode: _phoneFocusNode,
                           enabled: _isEditing,
                           keyboardType: TextInputType.number)
                       .w(145),
                 ],
               ).py(8),
-              //Address
-              CustomTextFormField(
-                textEditingController: _temporaryAddressController,
-                labelText: 'Địa chỉ tạm trú',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'please_enter_temp_address';
-                  }
-                  return null;
-                },
-                enabled: _isEditing,
+              //Thường trú
+              InkWell(
+                onTap: _isEditing
+                    ? () async {
+                        // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                        final selectedAddress = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddProvinces(),
+                          ),
+                        );
+
+                        if (selectedAddress != null) {
+                          setState(() {
+                            // Cập nhật TextEditingController với địa chỉ được chọn
+                            _currentAddressController.text = selectedAddress;
+                          });
+                        }
+                      }
+                    : null,
+                child: AbsorbPointer(
+                  // Ngăn không cho bàn phím mở ra khi nhấn
+                  child: CustomTextFormField(
+                    enabled: _isEditing,
+                    focusNode: _thuongtruFocusNode,
+                    textEditingController: _currentAddressController,
+                    labelText: 'Địa chỉ thường trú',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ).p8(),
-              CustomTextFormField(
-                textEditingController: _currentAddressController,
-                labelText: 'Nơi ở hiện tại',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'please_enter_current_address';
-                  }
-                  return null;
-                },
-                enabled: _isEditing,
+
+              //Tạm trú
+              InkWell(
+                onTap: _isEditing
+                    ? () async {
+                        // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                        final selectedAddress = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddProvinces(),
+                          ),
+                        );
+
+                        if (selectedAddress != null) {
+                          setState(() {
+                            // Cập nhật TextEditingController với địa chỉ được chọn
+                            _temporaryAddressController.text = selectedAddress;
+                          });
+                        }
+                      }
+                    : null,
+                child: AbsorbPointer(
+                  // Ngăn không cho bàn phím mở ra khi nhấn
+                  child: CustomTextFormField(
+                    enabled: _isEditing,
+                    focusNode: _tamtruFocusNode,
+                    textEditingController: _temporaryAddressController,
+                    labelText: 'Địa chỉ tạm trú',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ).p8(),
               // Thân nhân
               _buildRelativeList().p8(),
               //WorkingProcess
-              _buildWorkingProcessList(),
+              // _buildWorkingProcessList(),
               // TrainingProcess
               _buildTrainingProcessesList().p8(),
               SizedBox(height: 16),
               _buildDiplomasList(),
-              //
-              SizedBox(height: 16),
-              _buildInsuranceList(),
               //Hợp đồng
               SizedBox(height: 16),
               _buildLaborContractList()
@@ -904,18 +1195,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ));
                       }),
-                  SpeedDialChild(
-                      label: "Phê Duyệt Quá Trình Làm Việc",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  ListWorkingprocessScreen(
-                                profiles: widget.profile,
-                              ),
-                            ));
-                      }),
+                  // SpeedDialChild(
+                  //     label: "Phê Duyệt Quá Trình Làm Việc",
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute<void>(
+                  //             builder: (BuildContext context) =>
+                  //                 ListWorkingprocessScreen(
+                  //               profiles: widget.profile,
+                  //             ),
+                  //           ));
+                  //     }),
                   SpeedDialChild(
                       label: "Thêm bằng cấp",
                       onTap: () {
@@ -934,24 +1225,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                         });
                       }),
-                  SpeedDialChild(
-                    label: "Bảo hiểm",
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AddInsuranceScreen(
-                                  profiles: widget.profile,
-                                )),
-                      ).then((newInsurance) {
-                        if (newInsurance != null) {
-                          setState(() {
-                            insurance.add(newInsurance);
-                          });
-                        }
-                      });
-                    },
-                  )
                 ])
           : SpeedDial(
               elevation: 0,
@@ -988,29 +1261,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildDateField(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: GestureDetector(
-        onTap: _isEditing
-            ? () => _selectDate(context, initialDate, onDateSelected)
-            : null,
-        child: AbsorbPointer(
-          child: TextFormField(
-            readOnly: true,
-            style: TextStyle(color: Colors.black),
-            controller: controller,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'please_id ngày cấp';
+    return GestureDetector(
+      onTap: _isEditing
+          ? () => _selectDate(context, initialDate, onDateSelected)
+          : null,
+      child: AbsorbPointer(
+        child: TextFormField(
+          focusNode: _birthdayFocusNode,
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Nhập ngày sinh';
+            }
+            try {
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+              // Kiểm tra ngày sinh trong quá khứ
+              DateTime birthday = dateFormat.parse(value);
+              if (birthday.isAfter(DateTime.now())) {
+                return 'Ngày sinh phải là ngày trong quá khứ';
               }
-              return null;
-            },
-            decoration: InputDecoration(
-              labelStyle: TextStyle(color: Colors.black),
-              labelText: label,
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            ),
+              int age = DateTime.now().year - birthday.year;
+              if (DateTime.now().month < birthday.month ||
+                  (DateTime.now().month == birthday.month &&
+                      DateTime.now().day < birthday.day)) {
+                age--;
+                // Kiểm tra độ tuổi đủ làm việc (ví dụ từ 18 tuổi trở lên)
+
+                if (age < 18) {
+                  return 'Người lao động phải từ 18 tuổi trở lên';
+                }
+
+                // Kiểm tra tuổi nghỉ hưu nếu cần
+                if (_isRetirementAgeExceeded(birthday, _gender)) {
+                  return 'Người lao động đã quá tuổi nghỉ hưu!';
+                }
+              }
+            } catch (e) {
+              return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
+            }
+
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        ),
+      ),
+    );
+  }
+
+// Hàm kiểm tra tuổi nghỉ hưu
+  bool _isRetirementAgeExceeded(DateTime birthday, bool gender) {
+    DateTime currentDate = DateTime.now();
+
+    // Tính số năm và tháng từ ngày sinh
+    int ageInYears = currentDate.year - birthday.year;
+    int ageInMonths = currentDate.month - birthday.month;
+    if (ageInMonths < 0) {
+      ageInYears--;
+      ageInMonths += 12;
+    }
+
+    // Kiểm tra độ tuổi nghỉ hưu
+    if (gender) {
+      // Nữ (55 tuổi 4 tháng)
+      if (ageInYears > 55 || (ageInYears == 55 && ageInMonths >= 4)) {
+        return true;
+      }
+    } else {
+      // Nam (60 tuổi 3 tháng)
+      if (ageInYears > 60 || (ageInYears == 60 && ageInMonths >= 3)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  Widget _buildDateLicenseDay(String label, TextEditingController controller,
+      DateTime initialDate, Function(DateTime) onDateSelected) {
+    return GestureDetector(
+      onTap: _isEditing
+          ? () => _selectDate(context, initialDate, onDateSelected)
+          : null,
+      child: AbsorbPointer(
+        child: TextFormField(
+          readOnly: true,
+          focusNode: _ngayccdFocusNode,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Nhập ngày cấp';
+            }
+            try {
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+
+              // Parse ngày sinh từ _birthdayController
+              DateTime birthday = dateFormat.parse(_birthdayController.text);
+
+              // Kiểm tra tuổi đủ 14 tại thời điểm cấp
+              DateTime licenseDay = dateFormat.parse(value);
+              int ageAtLicense = licenseDay.year - birthday.year;
+
+              if (licenseDay.month < birthday.month ||
+                  (licenseDay.month == birthday.month &&
+                      licenseDay.day < birthday.day)) {
+                ageAtLicense--;
+              }
+
+              if (ageAtLicense < 14) {
+                return 'Ngày cấp không hợp lệ (CCCD chỉ cấp khi đủ 14 tuổi)';
+              }
+            } catch (e) {
+              return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
+            }
+
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           ),
         ),
       ),
@@ -1039,51 +1412,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDepartmentDropdown(String hint) {
-    return DropdownButtonFormField<Departments>(
-      value: selectedDepartment,
+  Widget _buildDepartmentPositionDropdown(String hint) {
+    return DropdownButtonFormField<DepartmentPosition>(
+      value: selectedDepartmentsPosition,
       hint: Text(hint),
       onChanged: _isEditing
-          ? (Departments? newValue) {
+          ? (DepartmentPosition? newValue) {
               setState(() {
-                selectedDepartment = newValue;
+                selectedDepartmentsPosition = newValue;
               });
             }
-          : null, // Khi không cho phép chọn, onChanged = null
-      items: departments.map((Departments department) {
-        return DropdownMenuItem<Departments>(
-          value: department,
-          child: Text(department.departmentName),
+          : null,
+      items: departmentsPosition.map((DepartmentPosition dep) {
+        return DropdownMenuItem<DepartmentPosition>(
+          value: dep,
+          child: Text(
+              "${dep.positionName!}  -  ${dep.departmentName!}"), // assuming department has a `name` field
         );
       }).toList(),
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabled: _isEditing, // Vô hiệu hóa cả dropdown nếu _isEditing là false
       ),
-    );
-  }
-
-  Widget _buildPositionsDropdown(String hint) {
-    return DropdownButtonFormField<Positions>(
-      value: selectedPositions,
-      hint: Text(hint),
-      onChanged: _isEditing
-          ? (Positions? newValue) {
-              setState(() {
-                selectedPositions = newValue;
-              });
-            }
-          : null,
-      items: positions.map((Positions position) {
-        return DropdownMenuItem<Positions>(
-          value: position,
-          child: Text(
-              position.positionName), // assuming department has a `name` field
-        );
-      }).toList(),
-      decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          enabled: _isEditing),
     );
   }
 
@@ -1153,10 +1502,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               leading: Icon(Icons.personal_injury,
                   color: const Color.fromARGB(255, 68, 218, 255)),
-              title: Text(
-                "Thân nhân",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              title: Text("Thân nhân",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             );
           },
           body: Column(
@@ -1165,10 +1512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Tiêu đề
               Text(
                 process.relativesName,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text("Quan hệ: ${process.relationship}",
@@ -1189,10 +1533,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final updatedRelative = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            InfoRelativeScreen(profile: process),
+                        builder: (context) => InfoRelativeScreen(
+                          profile: process,
+                          onDelete: _handleDeleteRelative,
+                        ),
                       ),
                     );
+
                     if (updatedRelative != null) {
                       _handleUpdateRelative(updatedRelative);
                     }
@@ -1313,70 +1660,70 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   //
-  Widget _buildWorkingProcessList() {
-    List<WorkingProcesses> filteredProcesses = workingProcesses
-        .where((process) => process.workingprocessStatus == 1)
-        .toList();
+  // Widget _buildWorkingProcessList() {
+  //   List<WorkingProcesses> filteredProcesses = workingProcesses
+  //       .where((process) => process.workingprocessStatus == 1)
+  //       .toList();
 
-    return ExpansionPanelList(
-      elevation: 2,
-      animationDuration: Duration(milliseconds: 300),
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          filteredProcesses[index].isExpanded = isExpanded;
-        });
-      },
-      children: filteredProcesses.map((process) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              leading: Icon(Icons.work, color: Colors.blueAccent),
-              title: Text(
-                "Tóm tắt quá trình công tác",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            );
-          },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.blue.shade50,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Nơi làm việc:",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent),
-                    ),
-                    SizedBox(height: 8),
-                    Text("Nội dung: ${process.workingprocessContent}"),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Text(
-                            "Từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
-                        Text(
-                            " - Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          isExpanded: process.isExpanded,
-        );
-      }).toList(),
-    );
-  }
+  //   return ExpansionPanelList(
+  //     elevation: 2,
+  //     animationDuration: Duration(milliseconds: 300),
+  //     expansionCallback: (int index, bool isExpanded) {
+  //       setState(() {
+  //         filteredProcesses[index].isExpanded = isExpanded;
+  //       });
+  //     },
+  //     children: filteredProcesses.map((process) {
+  //       return ExpansionPanel(
+  //         headerBuilder: (BuildContext context, bool isExpanded) {
+  //           return ListTile(
+  //             leading: Icon(Icons.work, color: Colors.blueAccent),
+  //             title: Text(
+  //               "Tóm tắt quá trình công tác",
+  //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //             ),
+  //           );
+  //         },
+  //         body: Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Card(
+  //             color: Colors.blue.shade50,
+  //             elevation: 2,
+  //             shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(8)),
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(16.0),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Text(
+  //                     "Nơi làm việc:",
+  //                     style: TextStyle(
+  //                         fontSize: 16,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.blueAccent),
+  //                   ),
+  //                   SizedBox(height: 8),
+  //                   Text("Nội dung: ${process.workingprocessContent}"),
+  //                   SizedBox(height: 8),
+  //                   Row(
+  //                     children: [
+  //                       Text(
+  //                           "Từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
+  //                       Text(
+  //                           " - Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         isExpanded: process.isExpanded,
+  //       );
+  //     }).toList(),
+  //   );
+  // }
 
   //
   Widget _buildTrainingProcessesList() {

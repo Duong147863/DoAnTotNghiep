@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
+import 'package:nloffice_hrm/models/provinces.dart';
 import 'package:nloffice_hrm/repository/profiles_repo.dart';
 
 class ProfilesViewModel extends ChangeNotifier {
@@ -31,25 +35,12 @@ class ProfilesViewModel extends ChangeNotifier {
   List<String> provinces = []; // Added for province data
   List<String> get listProvinces => provinces;
 
-    // Phương thức tải danh sách tỉnh/thành phố
-  Future<void> getProvincesData() async {
-    fetchingData = true;
-    notifyListeners();
-    try {
-      // Giả sử repository.getProvincesData() sẽ trả về danh sách tỉnh/thành phố
-      provinces = await repository.getProvincesData();
-      notifyListeners();
-    } catch (e) {
-      throw Exception('Failed to load provinces data: $e');
-    }
-    fetchingData = false;
-    notifyListeners(); // Đảm bảo UI được cập nhật khi xong
-  } 
-  
+  Future<List<Province>> fetchProvinces() async {
+  final String response = await rootBundle.loadString('assets/json/list_provinces_arr.json');
+  final List<dynamic> data = json.decode(response);
 
-
-
-  
+  return data.map((json) => Province.fromJson(json)).toList();
+}
   Future<void> fetchAllProfiles() async {
     fetchingData = true;
     try {
@@ -142,11 +133,11 @@ class ProfilesViewModel extends ChangeNotifier {
       await repository.updateProfile(profile);
       await membersOfDepartment(profile.profileId);
       await getMembersCountGenderAndMaritalStatus();
-      await fetchQuitAndActiveMembersCount();
+      // await fetchQuitAndActiveMembersCount();
       notifyListeners();
       }
     catch (e) {
-      throw Exception('Failed to add datas: $e');
+      throw Exception('Failed to add datas1: $e');
     }
   }
   Future<void> deleteProfile(String profileID) async {
