@@ -77,9 +77,13 @@ class _HomeScreenState extends State<HomeScreen> {
   FocusNode _tenPBFocusNode = FocusNode();
   FocusNode _maCVFocusNode = FocusNode();
   FocusNode _tenCVFocusNode = FocusNode();
+  List<Departments> departments = [];
+  Departments? selectedDepartment;
+
   @override
   void initState() {
     super.initState();
+    _loadDepartments();
     _maPBFocusNode.addListener(() {
       // Kiểm tra khi focus bị mất và validate lại
       if (!_maPBFocusNode.hasFocus) {
@@ -113,6 +117,19 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void _loadDepartments() async {
+    try {
+      await Provider.of<DeparmentsViewModel>(context, listen: false)
+          .fetchAllDepartments();
+      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+          .listDepartments;
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load departments')),
+      );
+    }
   }
 
   @override
@@ -240,19 +257,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          ListTile(
-                            title: const Text("Thân nhân nhân viên"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      RelativeListScreen(
-                                          profiles: widget.profile),
-                                ),
-                              );
-                            },
-                          ),
+                          // ListTile(
+                          //   title: const Text("Thân nhân nhân viên"),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute<void>(
+                          //         builder: (BuildContext context) =>
+                          //             RelativeListScreen(
+                          //                 profiles: widget.profile),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                           ListTile(
                             title: const Text("Ca làm việc"),
                             onTap: () {
@@ -330,19 +347,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                               ),
-                              ListTile(
-                                title: const Text("Thân nhân nhân viên"),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                          RelativeListScreen(
-                                              profiles: widget.profile),
-                                    ),
-                                  );
-                                },
-                              ),
+                              // ListTile(
+                              //   title: const Text("Thân nhân nhân viên"),
+                              //   onTap: () {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute<void>(
+                              //         builder: (BuildContext context) =>
+                              //             RelativeListScreen(
+                              //                 profiles: widget.profile),
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
                               ListTile(
                                 title: const Text("Ca làm việc"),
                                 onTap: () {
@@ -581,6 +598,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Vui lòng nhập mã phòng ban';
+                                        } else if (value.trim() != value) {
+                                          return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
                                         } else if (value.length > 15) {
                                           return 'Mã phòng ban không được vượt quá 15 ký tự';
                                         } else if (!value.startsWith('PB-')) {
@@ -611,8 +630,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         if (value == null || value.isEmpty) {
                                           return 'Vui lòng nhập tên phòng';
                                         }
+                                        if (value.length < 4) {
+                                          return 'Tên phòng ban phải có ít nhất 4 ký tự';
+                                        }
                                         final nameRegex = RegExp(
-                                            r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                                            r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+
                                         if (!nameRegex.hasMatch(value)) {
                                           return 'Tên phòng ban không được chứa chữ số và ký tự đặc biệt';
                                         }
@@ -637,12 +660,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 context,
                                                 listen: false)
                                             .addNewDepartment(newDepartment);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text('Thêm phòng ban thành công')),
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'Thêm phòng ban thành công')),
                                         );
                                         Navigator.pop(context);
-                                            _departmentIdController.clear();
-      _departmentNameController.clear();
+                                        _departmentIdController.clear();
+                                        _departmentNameController.clear();
                                         initState();
                                       }
                                     },
@@ -660,7 +686,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     context: context,
                     builder: (context) => Dialog(
                       child: Container(
-                        height: 300,
+                        width: double.infinity,
+                        height: 400,
                         child: Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Form(
@@ -682,8 +709,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                       validator: (value) {
-                                          if (value == null || value.isEmpty) {
+                                        if (value == null || value.isEmpty) {
                                           return 'Vui lòng nhập mã chức vụ';
+                                        } else if (value.trim() != value) {
+                                          return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
                                         } else if (value.length > 15) {
                                           return 'Mã chức vụ không được vượt quá 15 ký tự';
                                         } else if (!value.startsWith('CV-')) {
@@ -700,9 +729,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 8.0),
                                     child: TextFormField(
-                                                                            focusNode: _tenCVFocusNode,
+                                      focusNode: _tenCVFocusNode,
                                       controller: _positionNameController,
-                                       maxLength: 50,
+                                      maxLength: 50,
                                       decoration: const InputDecoration(
                                         labelText: 'Tên chức vụ',
                                         border: OutlineInputBorder(
@@ -714,8 +743,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         if (value == null || value.isEmpty) {
                                           return 'Vui lòng nhập tên phòng';
                                         }
+                                        if (value.length < 4) {
+                                          return 'Tên chức vụ phải có ít nhất 4 ký tự';
+                                        }
                                         final nameRegex = RegExp(
-                                            r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                                            r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
                                         if (!nameRegex.hasMatch(value)) {
                                           return 'Tên chức vụ không được chứa chữ số và ký tự đặc biệt';
                                         }
@@ -726,20 +758,38 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     ),
                                   ),
+                                  const SizedBox(height: 10.0),
+                                  Row(
+                                    children: [
+                                      _buildDepartmentDropdown('Chọn phòng ban')
+                                          .p(8)
+                                          .w(299),
+                                    ],
+                                  ),
                                   const SizedBox(height: 16.0),
                                   ElevatedButton(
                                     onPressed: () {
                                       if (_formKey.currentState!.validate()) {
                                         final newPositions = Positions(
-                                          departmentId: "",
+                                          departmentId:
+                                              selectedDepartment!.departmentID,
                                           positionId:
                                               _positionIdController.text,
                                           positionName:
-                                              _positionIdController.text,
+                                              _positionNameController.text,
                                         );
-                                        Provider.of<PositionsViewModel>(context)
+                                        Provider.of<PositionsViewModel>(context,
+                                                listen: false)
                                             .addNewPosition(newPositions);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'Thêm chức vụ thành công')),
+                                        );
                                         Navigator.pop(context);
+                                        _positionIdController.clear();
+                                        _positionNameController.clear();
                                         initState();
                                       }
                                     },
@@ -807,17 +857,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ));
                 }),
-            SpeedDialChild(
-                label: "Thân Nhân",
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => RelativeListScreen(
-                          profiles: widget.profile,
-                        ),
-                      ));
-                }),
+            // SpeedDialChild(
+            //     label: "Thân Nhân",
+            //     onTap: () {
+            //       Navigator.push(
+            //           context,
+            //           MaterialPageRoute<void>(
+            //             builder: (BuildContext context) => RelativeListScreen(
+            //               profiles: widget.profile,
+            //             ),
+            //           ));
+            //     }),
           ]);
     } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
       return SpeedDial(
@@ -1341,6 +1391,28 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
       },
+    );
+  }
+
+  Widget _buildDepartmentDropdown(String hint) {
+    return DropdownButtonFormField<Departments>(
+      value: selectedDepartment,
+      hint: Text(hint),
+      onChanged: (Departments? newValue) {
+        setState(() {
+          selectedDepartment = newValue;
+        });
+      },
+      items: departments.map((Departments department) {
+        return DropdownMenuItem<Departments>(
+          value: department,
+          child: Text(department
+              .departmentName), // assuming department has a `name` field
+        );
+      }).toList(),
+      decoration: InputDecoration(
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+      ),
     );
   }
 }

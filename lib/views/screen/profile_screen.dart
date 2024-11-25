@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
+import 'package:nloffice_hrm/models/department_position_model.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
@@ -48,6 +49,7 @@ import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
+import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Profiles? profile;
@@ -92,10 +94,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String? _profileImageBase64;
   bool _isButtonEnabled = true;
   //
-  List<Departments> departments = [];
-  Departments? selectedDepartment;
-  List<Positions> positions = [];
-  Positions? selectedPositions;
+  List<DepartmentPosition> departmentsPosition = [];
+  DepartmentPosition? selectedDepartmentsPosition;
   List<Salaries> salarys = [];
   Salaries? selectedSalarys;
   List<WorkingProcesses> workingProcesses = [];
@@ -141,6 +141,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _birthday = widget.profile!.birthday;
+    print(_birthdayController.text);
+    print(_birthday);
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
@@ -148,14 +150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .format(widget.profile!.idLicenseDay)
         .toString();
     _idLicenseDay = widget.profile!.idLicenseDay;
-     _startTimeController.text = DateFormat('dd/MM/yyyy')
-        .format(widget.profile!.startTime)
-        .toString();
-        _startTime = widget.profile!.startTime;
-         _endTimeController.text = DateFormat('dd/MM/yyyy')
-        .format(widget.profile!.endTime)
-        .toString();
-        _endTime = widget.profile!.endTime;
+    // _startTimeController.text =
+    //     DateFormat('dd/MM/yyyy').format(widget.profile!.startTime!).toString();
+    // _startTime = widget.profile!.startTime!;
+    // _endTimeController.text =
+    //     DateFormat('dd/MM/yyyy').format(widget.profile!.endTime!).toString();
+    // _endTime = widget.profile!.endTime!;
     statusProfile = widget.profile!.profileStatus;
     _nationController.text = widget.profile!.nation;
     _selectedNation = widget.profile!.nation;
@@ -169,13 +169,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _marriage = widget.profile!.marriage;
     _gender = widget.profile!.gender;
     _loadDepartments();
-    _loadPositions();
     _loadSalaries();
     _loadworkingProcesses();
     _loadtrainingProcess();
     _loadRelative();
     _loadDiplomas();
-    _loadLaborContact();
+    // _loadLaborContact();
     _loadRoles();
     futureProvinces =
         Provider.of<ProfilesViewModel>(context, listen: false).fetchProvinces();
@@ -291,6 +290,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  void _handleDeleteRelative(int relativeId) {
+    setState(() {
+      relatives.removeWhere((rela) => rela.relativeId == relativeId);
+    });
+  }
+
   void _handleUpdateDiplomas(Diplomas updatedDiplomas) {
     setState(() {
       int index = diplomas
@@ -321,41 +326,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  // Method to load departments
   void _loadDepartments() async {
     try {
       await Provider.of<DeparmentsViewModel>(context, listen: false)
-          .fetchAllDepartments();
-      departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-          .listDepartments;
-      if (departments.isNotEmpty) {
-        selectedDepartment = departments.firstWhere(
-          (department) =>
-              department.departmentID == widget.profile!.departmentId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load departments')),
-      );
-    }
-  }
+          .getDepartmentsByPosition();
 
-  // Method to load departments
-  void _loadPositions() async {
-    try {
-      await Provider.of<PositionsViewModel>(context, listen: false)
-          .fetchPositions();
-      positions =
-          Provider.of<PositionsViewModel>(context, listen: false).listPositions;
-      if (positions.isNotEmpty) {
-        selectedPositions = positions.firstWhere(
-          (position) => position.positionId == widget.profile!.positionId,
-        );
+      departmentsPosition =
+          Provider.of<DeparmentsViewModel>(context, listen: false)
+              .getlistdepartmentPosition;
+      if (departmentsPosition.isNotEmpty) {
+        selectedDepartmentsPosition = departmentsPosition.firstWhere(
+            (depandpos) =>
+                depandpos.positionId == widget.profile!.positionId &&
+                depandpos.departmentID == widget.profile!.departmentId);
       }
+      setState(() {
+        if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        } else if (AppStrings.ROLE_PERMISSIONS
+            .contains('Manage Staffs info only')) {
+          departmentsPosition = departmentsPosition
+              .where((department) =>
+                  department.departmentID != 'PB-GĐ' &&
+                  department.departmentID != 'PB-HR')
+              .toList();
+        }
+      });
     } catch (error) {
+      // Hiển thị thông báo lỗi nếu có sự cố
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Positions')),
+        SnackBar(
+            content: Text('Failed to load departments and position $error')),
       );
     }
   }
@@ -422,7 +422,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Relative')),
+        SnackBar(content: Text('Failed to load Relative $error')),
       );
     }
   }
@@ -512,8 +512,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           gender: _gender,
           identifiNum: _identifiNumController.text,
           idLicenseDay: _idLicenseDay,
-          startTime: _startTime,
-          endTime: _endTime,
+          // startTime: _startTime,
+          // endTime: _endTime,
           nation: _nationController.text,
           email: _emailController.text,
           phone: _phoneController.text,
@@ -522,19 +522,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
           temporaryAddress: _temporaryAddressController.text,
           currentAddress: _currentAddressController.text,
           marriage: _marriage,
-          departmentId: selectedDepartment!.departmentID,
-          positionId: selectedPositions!.positionId,
+          departmentId: selectedDepartmentsPosition!.departmentID,
+          positionId: selectedDepartmentsPosition!.positionId,
           salaryId: selectedSalarys!.salaryId,
           profileImage: _profileImageBase64 ?? '');
 
       Provider.of<ProfilesViewModel>(context, listen: false)
           .updateProfile(updatedProfile)
           .then((_) {
+        print(_birthdayController.text);
+        print(_birthday);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Profile Update successfully!')),
         );
         Navigator.pop(context, updatedProfile);
       }).catchError((error) {
+        print(_birthdayController.text);
+        print(_birthday);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update profile: $error')),
         );
@@ -799,14 +803,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
                       }
-                      if (value.length > 50) {
-                        return 'Họ và Tên không được vượt quá 50 ký tự';
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      if (value.length < 4) {
+                        return 'Họ và Tên phải có ít nhất 4 ký tự';
                       }
                       // Regex kiểm tra ký tự đặc biệt
                       final nameRegex = RegExp(
-                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
-                      if (!nameRegex.hasMatch(value)) {
+                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                      if (!nameRegex.hasMatch(value.trim())) {
                         return 'Họ và Tên không được chứa ký tự đặc biệt';
+                      }
+
+                      // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                      List<String> words = value.split(" ");
+                      for (int i = 0; i < words.length; i++) {
+                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                        words[i] = words[i].substring(0, 1).toUpperCase() +
+                            words[i].substring(1).toLowerCase();
+                      }
+                      String capitalizedName = words.join(" ");
+
+                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                      if (value != capitalizedName) {
+                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
                       }
                       if (!value.isLetter()) {
                         return 'Tên chỉ gồm chữ';
@@ -824,7 +846,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     setState(() {
                       _birthday = date;
                       _birthdayController.text =
-                          "${_birthday.toLocal()}".split(' ')[0];
+                          DateFormat('dd/MM/yyyy').format(_birthday);
                     });
                   }).px(8).w(150),
                   InkWell(
@@ -863,18 +885,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ).w(254),
                 ],
               ),
-              Row(
-                children: [
-                  Text('Phòng:').px(8),
-                  _buildDepartmentDropdown('Choose Department').p(8).w(300),
-                ],
-              ),
-              Row(
-                children: [
-                  Text('Chức vụ:').px(8),
-                  _buildPositionsDropdown('Choose Postion').p(8).w(300),
-                ],
-              ),
+              AppStrings.ROLE_PERMISSIONS.containsAny(
+                      ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+                  ? Row(
+                      children: [
+                        Text('Chọn').px(6),
+                        _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
+                            .p(8)
+                            .w(360),
+                      ],
+                    )
+                  : SizedBox.shrink(),
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
@@ -903,7 +924,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     items: NationNames.map((nation) {
                       return DropdownMenuItem(
                         value: nation,
-                        child: Text(nation),
+                        child: Text(nation,style: TextStyle(fontSize: 13),),
                       );
                     }).toList(),
                     decoration: InputDecoration(
@@ -964,6 +985,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CustomTextFormField(
                     textEditingController: _identifiNumController,
                     labelText: 'Số CCCD/CMND',
+                    maxLength: 12,
                     keyboardType: TextInputType.number,
                     focusNode: _identifiNumFocusNode,
                     validator: (value) {
@@ -988,7 +1010,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     setState(() {
                       _idLicenseDay = date;
                       _idLicenseDayController.text =
-                          _idLicenseDay.toString().split(' ').first;
+                          DateFormat('dd/MM/yyyy').format(_idLicenseDay);
                     });
                   }).w(184),
                 ],
@@ -1001,6 +1023,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     textEditingController: _emailController,
                     labelText: 'Email',
                     enabled: _isEditing,
+                    maxLength: 254,
                     maxLines: 1,
                     focusNode: _emailFocusNode,
                     validator: (value) {
@@ -1040,6 +1063,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           textEditingController: _phoneController,
                           labelText: 'Điện thoại',
                           maxLines: 1,
+                          maxLength: 10,
                           focusNode: _phoneFocusNode,
                           enabled: _isEditing,
                           keyboardType: TextInputType.number)
@@ -1239,14 +1263,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
       onTap: _isEditing
-          ? () => _selectDate(context, initialDate, (selectedDate) {
-                onDateSelected(selectedDate);
-                setState(() {
-                  _birthday = selectedDate;
-                  _birthdayController.text =
-                      "${_birthday.toLocal()}".split(' ')[0];
-                });
-              })
+          ? () => _selectDate(context, initialDate, onDateSelected)
           : null,
       child: AbsorbPointer(
         child: TextFormField(
@@ -1258,11 +1275,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (value == null || value.isEmpty) {
               return 'Nhập ngày sinh';
             }
+            try {
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+              // Kiểm tra ngày sinh trong quá khứ
+              DateTime birthday = dateFormat.parse(value);
+              if (birthday.isAfter(DateTime.now())) {
+                return 'Ngày sinh phải là ngày trong quá khứ';
+              }
+              int age = DateTime.now().year - birthday.year;
+              if (DateTime.now().month < birthday.month ||
+                  (DateTime.now().month == birthday.month &&
+                      DateTime.now().day < birthday.day)) {
+                age--;
+                // Kiểm tra độ tuổi đủ làm việc (ví dụ từ 18 tuổi trở lên)
 
-            // Kiểm tra tuổi khi người dùng nhập ngày sinh
-            DateTime birthday = DateTime.parse(value);
-            if (_isRetirementAgeExceeded(birthday, _gender)) {
-              return 'Người lao động đã quá tuổi nghỉ hưu!';
+                if (age < 18) {
+                  return 'Người lao động phải từ 18 tuổi trở lên';
+                }
+
+                // Kiểm tra tuổi nghỉ hưu nếu cần
+                if (_isRetirementAgeExceeded(birthday, _gender)) {
+                  return 'Người lao động đã quá tuổi nghỉ hưu!';
+                }
+              }
+            } catch (e) {
+              return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
             }
 
             return null;
@@ -1307,14 +1344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
       onTap: _isEditing
-          ? () => _selectDate(context, initialDate, (selectedDate) {
-                onDateSelected(selectedDate);
-                setState(() {
-                  _idLicenseDay = selectedDate;
-                  _idLicenseDayController.text =
-                      "${_idLicenseDay.toLocal()}".split(' ')[0];
-                });
-              })
+          ? () => _selectDate(context, initialDate, onDateSelected)
           : null,
       child: AbsorbPointer(
         child: TextFormField(
@@ -1326,18 +1356,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (value == null || value.isEmpty) {
               return 'Nhập ngày cấp';
             }
-            if (controller.text.isNotEmpty) {
-              try {
-                DateTime selectedLicenseDay = DateTime.parse(controller.text);
-                // Kiểm tra nếu ngày cấp CCCD phải lớn hơn 14 tuổi tính từ ngày sinh (_birthday)
-                if (selectedLicenseDay
-                    .isBefore(_birthday.add(Duration(days: 365 * 14)))) {
-                  return 'CCCD phải trên 14 tuổi';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
+            try {
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+
+              // Parse ngày sinh từ _birthdayController
+              DateTime birthday = dateFormat.parse(_birthdayController.text);
+
+              // Kiểm tra tuổi đủ 14 tại thời điểm cấp
+              DateTime licenseDay = dateFormat.parse(value);
+              int ageAtLicense = licenseDay.year - birthday.year;
+
+              if (licenseDay.month < birthday.month ||
+                  (licenseDay.month == birthday.month &&
+                      licenseDay.day < birthday.day)) {
+                ageAtLicense--;
               }
+
+              if (ageAtLicense < 14) {
+                return 'Ngày cấp không hợp lệ (CCCD chỉ cấp khi đủ 14 tuổi)';
+              }
+            } catch (e) {
+              return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
             }
+
             return null;
           },
           decoration: InputDecoration(
@@ -1371,51 +1412,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDepartmentDropdown(String hint) {
-    return DropdownButtonFormField<Departments>(
-      value: selectedDepartment,
+  Widget _buildDepartmentPositionDropdown(String hint) {
+    return DropdownButtonFormField<DepartmentPosition>(
+      value: selectedDepartmentsPosition,
       hint: Text(hint),
       onChanged: _isEditing
-          ? (Departments? newValue) {
+          ? (DepartmentPosition? newValue) {
               setState(() {
-                selectedDepartment = newValue;
+                selectedDepartmentsPosition = newValue;
               });
             }
-          : null, // Khi không cho phép chọn, onChanged = null
-      items: departments.map((Departments department) {
-        return DropdownMenuItem<Departments>(
-          value: department,
-          child: Text(department.departmentName),
+          : null,
+      items: departmentsPosition.map((DepartmentPosition dep) {
+        return DropdownMenuItem<DepartmentPosition>(
+          value: dep,
+          child: Text(
+              "${dep.positionName!}  -  ${dep.departmentName!}"), // assuming department has a `name` field
         );
       }).toList(),
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        enabled: _isEditing, // Vô hiệu hóa cả dropdown nếu _isEditing là false
       ),
-    );
-  }
-
-  Widget _buildPositionsDropdown(String hint) {
-    return DropdownButtonFormField<Positions>(
-      value: selectedPositions,
-      hint: Text(hint),
-      onChanged: _isEditing
-          ? (Positions? newValue) {
-              setState(() {
-                selectedPositions = newValue;
-              });
-            }
-          : null,
-      items: positions.map((Positions position) {
-        return DropdownMenuItem<Positions>(
-          value: position,
-          child: Text(
-              position.positionName), // assuming department has a `name` field
-        );
-      }).toList(),
-      decoration: InputDecoration(
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          enabled: _isEditing),
     );
   }
 
@@ -1485,10 +1502,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               leading: Icon(Icons.personal_injury,
                   color: const Color.fromARGB(255, 68, 218, 255)),
-              title: Text(
-                "Thân nhân",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
+              title: Text("Thân nhân",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             );
           },
           body: Column(
@@ -1497,10 +1512,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Tiêu đề
               Text(
                 process.relativesName,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text("Quan hệ: ${process.relationship}",
@@ -1521,10 +1533,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     final updatedRelative = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            InfoRelativeScreen(profile: process),
+                        builder: (context) => InfoRelativeScreen(
+                          profile: process,
+                          onDelete: _handleDeleteRelative,
+                        ),
                       ),
                     );
+
                     if (updatedRelative != null) {
                       _handleUpdateRelative(updatedRelative);
                     }

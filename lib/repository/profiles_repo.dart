@@ -91,21 +91,16 @@ class ProfilesRepository {
   }
 
   Future<bool> updateProfile(Profiles profile) async {
-    try {
       final response = await service
           .updateProfile(profile); // Gọi phương thức từ ProfileService
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
-        return true; // Cập nhật thành công
-        
+        print("Update successful. Response body: ${response.body}");
+        return true; // Cập nhật thành công 
       } else {
-          print("Failed to delete Relative: ${response.statusCode}");
+          print("Failed to Update profile: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception('Failed to update profile');
-      }
-    } catch (error) {
-      throw Exception('Failed to update profile');
-    }
+      } 
   }
 
   Future<bool> deleteProfile(String profileId) async {
