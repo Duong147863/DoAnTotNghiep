@@ -1,8 +1,6 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
@@ -10,42 +8,29 @@ import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/employeeStatus.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/projects_model.dart';
-import 'package:nloffice_hrm/models/salaries_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
-import 'package:nloffice_hrm/view_models/salaries_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
-import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_assignment_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_hirings_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_task_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
-import 'package:nloffice_hrm/views/screen/edit_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_salari_sceen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_hirings_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
-import 'package:nloffice_hrm/views/screen/notification_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:provider/provider.dart';
@@ -219,17 +204,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           InfoEnterpriseScreen()));
-                            },
-                          ),
-                          ListTile(
-                            title: const Text("Quyết định"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                    builder: (BuildContext context) =>
-                                        DecisionsListScreen()),
-                              );
                             },
                           ),
                           ListTile(
