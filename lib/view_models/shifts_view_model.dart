@@ -8,6 +8,7 @@ class ShiftsViewModel extends ChangeNotifier {
   final ShiftsRepository repository = ShiftsRepository();
   List<Shifts> _list = [];
   List<Shifts> get listShifts => _list;
+  
 
   Future<void> addShifts(Shifts shifts) async {
     try {
@@ -18,6 +19,7 @@ class ShiftsViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllShifts() async {
+
     try {
       _list = await repository.getAllShifts();
       notifyListeners();

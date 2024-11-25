@@ -10,12 +10,8 @@ import 'package:provider/provider.dart';
 
 class QrScan extends StatefulWidget {
   Profiles user;
-  // Shifts? shifts;
-  QrScan({
-    super.key,
-    required this.user,
-    // required this.shifts
-  });
+  Shifts currentShift;
+  QrScan({super.key, required this.user, required this.currentShift});
   @override
   _QrScanState createState() => _QrScanState();
 }
@@ -26,12 +22,10 @@ class _QrScanState extends State<QrScan> {
   );
 
   bool isStarted = true;
-  Shifts? currentShift;
 
   @override
   void initState() {
     super.initState();
-    getShiftAuto();
     controller.start();
   }
 
@@ -41,55 +35,13 @@ class _QrScanState extends State<QrScan> {
     super.dispose();
   }
 
-  DateTime differentBetween(DateTime time1, DateTime time2) {
-    Duration duration = Duration(
-        hours: time2.hour,
-        minutes: time2.minute,
-        seconds: time2.second); // lấy thời gian bắt đầu ca làm
-
-    return DateFormat("H:m:s").parse(time1
-        .subtract(duration)
-        .toString()
-        .split(' ')
-        .last); // kết quả sau khi lấy tgian vào trừ tgian bắt đầu ca
-  }
-
-  void getShiftAuto() async {
-    await Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
-    List<Shifts> allShifts =
-        Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
-    DateTime now = DateTime.now();
-    // Duyệt qua tất cả các ca làm việc
-    for (var shift in allShifts) {
-      // Nếu không có ca nào khớp, chọn ca tiếp theo
-      if (now.isAfter(shift.startTime) && now.isBefore(shift.endTime)) {
-        setState(() {
-          currentShift = shift;
-        });
-        break; // Nếu đã tìm thấy ca làm việc hiện tại, dừng lại
-      }
-    }
-
-    // Nếu không có ca nào khớp, chọn ca tiếp theo
-    if (currentShift == null) {
-      for (var shift in allShifts) {
-        if (now.isBefore(shift.startTime)) {
-          setState(() {
-            currentShift = shift;
-          });
-          break;
-        }
-      }
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
         children: [
           Text(
-            "Ca ${currentShift?.shiftName}",
+            "Ca ${widget.currentShift.shiftName}",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18),
           ),
@@ -104,21 +56,9 @@ class _QrScanState extends State<QrScan> {
                     .checkin(Timekeepings(
                   checkin: DateFormat("H:m:s")
                       .parse(barcode.rawValue!.split(' ').last),
-                  late: differentBetween(
-                      //Tgian bắt đầu ca làm theo quy định
-                      currentShift!.startTime,
-                      DateFormat("H:m:s").parse(barcode.rawValue!
-                          .split(' ')
-                          .last)), // Tgian thực tế check in vào
                   checkout: DateFormat("H:m:s")
                       .parse(barcode.rawValue!.split(' ').last),
-                  leavingSoon: differentBetween(
-                      //Tgian out ca theo quy định
-                      currentShift!.endTime,
-                      //Tgian out thực tế
-                      DateFormat("H:m:s")
-                          .parse(barcode.rawValue!.split(' ').last)),
-                  shiftId: currentShift!.shiftId,
+                  shiftId: widget.currentShift.shiftId,
                   profileId: widget.user.profileId,
                   date: DateFormat("dd/MM/yyyy")
                       .parse(barcode.rawValue!.split(' ').first),
