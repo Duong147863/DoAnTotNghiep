@@ -9,8 +9,10 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'list_relationships.dart';
 
 class AddRelativeScreen extends StatefulWidget {
   final Profiles? profile;
@@ -33,11 +35,78 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
   final _temporaryAddressRelativeController = TextEditingController();
   final _currentAddressRelativeController = TextEditingController();
   final _relativeJobController = TextEditingController();
-  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+  //
+  String? _selectecRelationship;
+  FocusNode _tamtruFocusNode = FocusNode();
+  FocusNode _thuongtruFocusNode = FocusNode();
+  FocusNode _tenTNFocusNode = FocusNode();
+  FocusNode _quanheFocusNode = FocusNode();
+  FocusNode _sdtFocusNode = FocusNode();
+  FocusNode _quequanFocusNode = FocusNode();
+  FocusNode _ngaysinhFocusNode = FocusNode();
+  FocusNode _ngheNghiepFocusNode = FocusNode();
   @override
   void initState() {
     super.initState();
+    DateTime tuoinhanvien = widget.profile!.birthday;
     _profileIDController.text = widget.profile!.profileId;
+    // Focus
+    _tamtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tamtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _thuongtruFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_thuongtruFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tenTNFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tenTNFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _quanheFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_quanheFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _sdtFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_sdtFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _quequanFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_quequanFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngaysinhFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngaysinhFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngheNghiepFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngheNghiepFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
   }
 
   @override
@@ -53,7 +122,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     super.dispose();
   }
 
-  void _submit()async {
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
       final addNewRelative = Relatives(
         profileId: _profileIDController.text,
@@ -66,23 +135,19 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         relativesCurrentAddress: _currentAddressRelativeController.text,
         relativeJob: _relativeJobController.text,
       );
-    try
-    {
-      Provider.of<RelativesViewModel>(context, listen: false)
-          .addRelative(addNewRelative)
-          .then((_) {
-         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Relative new create successfully!')),
-        );
-        Navigator.pop(context,addNewRelative);
-      }); 
-    }catch (e)
-    {
-       ScaffoldMessenger.of(context).showSnackBar(
+      try {
+        // Thêm thông tin vào Provider
+        Provider.of<RelativesViewModel>(context, listen: false)
+            .addRelative(addNewRelative, (message) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        });
+        Navigator.pop(context, addNewRelative);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to create Relative: $e')),
         );
-    }
-      
+      }
     }
   }
 
@@ -91,8 +156,8 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1960),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
       onDateSelected(picked);
@@ -146,9 +211,41 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                   CustomTextFormField(
                     textEditingController: _relativeNameController,
                     labelText: 'Họ tên thân nhân',
+                    maxLength: 50,
+                    focusNode: _tenTNFocusNode,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
+                      }
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      if (value.length < 4) {
+                        return 'Họ và Tên phải có ít nhất 4 ký tự';
+                      }
+                      // Regex kiểm tra ký tự đặc biệt
+                      final nameRegex = RegExp(
+                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
+                      }
+                      // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                      List<String> words = value.split(" ");
+                      for (int i = 0; i < words.length; i++) {
+                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                        words[i] = words[i].substring(0, 1).toUpperCase() +
+                            words[i].substring(1).toLowerCase();
+                      }
+                      String capitalizedName = words.join(" ");
+
+                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                      if (value != capitalizedName) {
+                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                      }
+
+                      if (!value.isLetter()) {
+                        return 'Tên chỉ gồm chữ';
                       }
                       return null;
                     },
@@ -158,9 +255,27 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               //relationship + relativephone
               Row(
                 children: [
-                  CustomTextFormField(
-                    textEditingController: _relationshipController,
-                    labelText: 'Quan hệ',
+                  DropdownButtonFormField<String>(
+                    value: _selectecRelationship,
+                    focusNode: _quanheFocusNode,
+                    items: relationships.map((relat) {
+                      return DropdownMenuItem(
+                        value: relat,
+                        child: Text(relat),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Quan hệ',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectecRelationship =
+                            value; // Cập nhật giá trị được chọn
+                        _relationshipController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
@@ -174,23 +289,60 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                               return 'Không được để trống';
                             }
                             if (value.length != 10) {
-                              return 'Số điện thoại sai định dạng'; // Thông báo nhập đúng 10 chữ số
+                              return 'Số điện thoại không hợp lệ';
+                            }
+                            if (!value.startsWith('0')) {
+                              return 'Số điện thoại phải \n bắt đầu bằng số 0';
+                            }
+                            if (!value.isNumber()) {
+                              return 'Số điện thoại chỉ gồm số';
+                            }
+                            if (value.startsWith('00')) {
+                              return 'Số điện thoại không được bắt đầu bằng 00';
                             }
                             return null;
                           },
                           textEditingController: _phoneRelativeController,
                           labelText: 'Điện thoại',
                           maxLines: 1,
+                          maxLength: 10,
+                          focusNode: _sdtFocusNode,
                           keyboardType: TextInputType.number)
                       .w(254),
                 ],
               ),
-              //Nation
-              CustomTextFormField(
-                validator: (value) =>
-                    value.isEmptyOrNull ? 'Please enter nation' : null,
-                textEditingController: _nationRelativeController,
-                labelText: 'Quê quán',
+
+              InkWell(
+                onTap: () async {
+                  // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                  final selectedAddress = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddProvinces(),
+                    ),
+                  );
+
+                  if (selectedAddress != null) {
+                    setState(() {
+                      // Cập nhật TextEditingController với địa chỉ được chọn
+                      _nationRelativeController.text = selectedAddress;
+                    });
+                  }
+                },
+                child: AbsorbPointer(
+                  // Ngăn không cho bàn phím mở ra khi nhấn
+                  child: CustomTextFormField(
+                    focusNode: _quequanFocusNode,
+                    textEditingController: _nationRelativeController,
+                    labelText: 'Quê quán',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ).p(8),
               //Phone
               Row(
@@ -205,9 +357,27 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                   }).px(8).w(150),
                   CustomTextFormField(
                     textEditingController: _relativeJobController,
+                    focusNode: _ngheNghiepFocusNode,
+                    maxLength: 50,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
+                      }
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      if (value.length < 3) {
+                        return 'Nghề nghiệp phải có ít nhất 3 ký tự';
+                      }
+                      // Regex kiểm tra ký tự đặc biệt
+                      final nameRegex = RegExp(
+                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Nghề nghiệp không hợp lệ. Vui lòng nhập đúng định dạng.';
+                      }
+                      if (!value.isLetter()) {
+                        return 'Tên chỉ gồm chữ';
                       }
                       return null;
                     },
@@ -216,27 +386,73 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 ],
               ).py(8),
               //Address
-              CustomTextFormField(
-                textEditingController: _temporaryAddressRelativeController,
-                labelText: 'Địa chỉ tạm trú',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Không được để trống';
+              InkWell(
+                onTap: () async {
+                  // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                  final selectedAddress = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddProvinces(),
+                    ),
+                  );
+
+                  if (selectedAddress != null) {
+                    setState(() {
+                      // Cập nhật TextEditingController với địa chỉ được chọn
+                      _currentAddressRelativeController.text = selectedAddress;
+                    });
                   }
-                  return null;
                 },
+                child: AbsorbPointer(
+                  // Ngăn không cho bàn phím mở ra khi nhấn
+                  child: CustomTextFormField(
+                    focusNode: _thuongtruFocusNode,
+                    textEditingController: _currentAddressRelativeController,
+                    labelText: 'Địa chỉ thường trú',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ).p8(),
-              CustomTextFormField(
-                textEditingController: _currentAddressRelativeController,
-                labelText: 'Địa chỉ thường trú',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Không được để trống';
+
+              //Tạm trú
+              InkWell(
+                onTap: () async {
+                  // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                  final selectedAddress = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddProvinces(),
+                    ),
+                  );
+
+                  if (selectedAddress != null) {
+                    setState(() {
+                      // Cập nhật TextEditingController với địa chỉ được chọn
+                      _temporaryAddressRelativeController.text =
+                          selectedAddress;
+                    });
                   }
-                  return null;
                 },
+                child: AbsorbPointer(
+                  // Ngăn không cho bàn phím mở ra khi nhấn
+                  child: CustomTextFormField(
+                    focusNode: _tamtruFocusNode,
+                    textEditingController: _temporaryAddressRelativeController,
+                    labelText: 'Địa chỉ tạm trú',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
               ).p8(),
-              //
             ]),
           ),
         ));
@@ -256,6 +472,17 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return 'Không được để trống';
+              }
+              DateTime selectedDate = DateTime.parse(value);
+              DateTime oneYearBeforeNow =
+                  DateTime.now().subtract(Duration(days: 365));
+
+              if (selectedDate.isAfter(DateTime.now())) {
+                return 'Ngày sinh phải là quá khứ';
+              }
+
+              if (selectedDate.isAfter(oneYearBeforeNow)) {
+                return 'Ngày sinh phải ít nhất trước 1 năm so với hiện tại';
               }
               return null;
             },

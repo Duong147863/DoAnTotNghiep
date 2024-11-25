@@ -133,11 +133,11 @@ class ProfilesViewModel extends ChangeNotifier {
       await repository.updateProfile(profile);
       await membersOfDepartment(profile.profileId);
       await getMembersCountGenderAndMaritalStatus();
-      await fetchQuitAndActiveMembersCount();
+      // await fetchQuitAndActiveMembersCount();
       notifyListeners();
       }
     catch (e) {
-      throw Exception('Failed to add datas: $e');
+      throw Exception('Failed to add datas1: $e');
     }
   }
   Future<void> deleteProfile(String profileID) async {
