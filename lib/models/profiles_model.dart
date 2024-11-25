@@ -23,8 +23,8 @@ class Profiles {
       required this.temporaryAddress,
       required this.currentAddress,
       required this.roleID,
-      required this.startTime,
-      required this.endTime,
+       this.startTime,
+       this.endTime,
       this.profileImage});
 
   String profileId;
@@ -48,8 +48,8 @@ class Profiles {
   String currentAddress;
   int roleID;
   String? profileImage;
-  DateTime startTime;
-  DateTime endTime;
+  DateTime? startTime;
+  DateTime? endTime;
 
   factory Profiles.fromJson(Map<String, dynamic> json) {
     return Profiles(
@@ -94,8 +94,8 @@ class Profiles {
     map["profile_id"] = profileId;
     map["salary_id"] = salaryId;
     map["birthday"] = DateFormat("dd-MM-yyyy").format(birthday);
-    map["start_time"] = DateFormat("dd-MM-yyyy").format(startTime);
-    map["end_time"] = DateFormat("dd-MM-yyyy").format(endTime);
+    map["start_time"] = DateFormat("dd-MM-yyyy").format(startTime!);
+    map["end_time"] = DateFormat("dd-MM-yyyy").format(endTime!);
     map["position_id"] = positionId;
     map["place_of_birth"] = placeOfBirth;
     map["nation"] = nation;

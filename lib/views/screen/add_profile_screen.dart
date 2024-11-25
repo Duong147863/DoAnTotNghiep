@@ -238,29 +238,31 @@ class _AddProfilePageState extends State<AddProfilePage> {
     });
   }
 
- void _loadDepartments() async {
-  try {
-    await Provider.of<DeparmentsViewModel>(context, listen: false)
-        .getDepartmentsByPosition();
-    
-    departmentsPosition = Provider.of<DeparmentsViewModel>(context, listen: false)
-        .getlistdepartmentPosition;
-    setState(() {
-      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-      } else if (AppStrings.ROLE_PERMISSIONS.contains('Manage Staffs info only')) {
-        departmentsPosition = departmentsPosition
-            .where((department) => department.departmentID != 'BoD' && department.departmentID != 'HR')
-            .toList();
-      }
-    });
-  } catch (error) {
-    // Hiển thị thông báo lỗi nếu có sự cố
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Failed to load departments and position')),
-    );
+  void _loadDepartments() async {
+    try {
+      await Provider.of<DeparmentsViewModel>(context, listen: false)
+          .getDepartmentsByPosition();
+      departmentsPosition =
+          Provider.of<DeparmentsViewModel>(context, listen: false)
+              .getlistdepartmentPosition;
+      setState(() {
+        if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        } else if (AppStrings.ROLE_PERMISSIONS
+            .contains('Manage Staffs info only')) {
+          departmentsPosition = departmentsPosition
+              .where((department) =>
+                  department.departmentID != 'PB-GĐ' &&
+                  department.departmentID != 'PB-HR')
+              .toList();
+        }
+      });
+    } catch (error) {
+      // Hiển thị thông báo lỗi nếu có sự cố
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load departments and position')),
+      );
+    }
   }
-}
-
 
   // Method to load departments
   void _loadPositions() async {
@@ -459,15 +461,36 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
                     }
-                    if (value.length > 50) {
-                      return 'Họ và Tên không được vượt quá 50 ký tự';
-                    }
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      if (value.length < 4) {
+                      return 'Họ và Tên phải có ít nhất 4 ký tự';
+                      }
                     // Regex kiểm tra ký tự đặc biệt
                     final nameRegex = RegExp(
-                        r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s]+$");
+                        r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệíìỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựýỳỷỹỵ\s]+$");
+
                     if (!nameRegex.hasMatch(value)) {
-                      return 'Họ và Tên không được chứa ký tự đặc biệt';
+                      return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
                     }
+                       // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                      List<String> words = value.split(" ");
+                      for (int i = 0; i < words.length; i++) {
+                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                        words[i] = words[i].substring(0, 1).toUpperCase() +
+                            words[i].substring(1).toLowerCase();
+                      }
+                      String capitalizedName = words.join(" ");
+
+                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                      if (value != capitalizedName) {
+                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                      }
+                      if (!value.isLetter()) {
+                        return 'Tên chỉ gồm chữ';
+                      }
                     if (!value.isLetter()) {
                       return 'Tên chỉ gồm chữ';
                     }

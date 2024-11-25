@@ -112,12 +112,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //       ));
 
     //
-    case AppRoutes.relativeListRoute:
-      return MaterialPageRoute(
-          builder: (context) => RelativeListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.relativeListRoute,
-          ));
 
     ///
     case AppRoutes.positionListRoute:
