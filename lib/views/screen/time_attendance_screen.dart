@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/views/screen/qr_scan.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/profiles_model.dart';
+import '../../models/shifts_model.dart';
 
 class TimeAttendance extends StatefulWidget {
   Profiles loginUser;
@@ -18,9 +21,11 @@ class TimeAttendance extends StatefulWidget {
 class _TimeAttendanceState extends State<TimeAttendance>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  Shifts? currentShift;
   @override
   void initState() {
     super.initState();
+    getShiftAuto();
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -28,6 +33,35 @@ class _TimeAttendanceState extends State<TimeAttendance>
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+
+  void getShiftAuto() async {
+    await Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
+    List<Shifts> allShifts =
+        Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
+    DateTime now = DateTime.now();
+    // Duyệt qua tất cả các ca làm việc
+    for (var shift in allShifts) {
+      // Nếu không có ca nào khớp, chọn ca tiếp theo
+      if (now.isAfter(shift.startTime) && now.isBefore(shift.endTime)) {
+        setState(() {
+          currentShift = shift;
+        });
+        break; // Nếu đã tìm thấy ca làm việc hiện tại, dừng lại
+      }
+    }
+
+    // Nếu không có ca nào khớp, chọn ca tiếp theo
+    if (currentShift == null) {
+      for (var shift in allShifts) {
+        if (now.isBefore(shift.startTime)) {
+          setState(() {
+            currentShift = shift;
+          });
+          break;
+        }
+      }
+    }
   }
 
   @override
@@ -43,7 +77,7 @@ class _TimeAttendanceState extends State<TimeAttendance>
         elevation: 0,
         automaticallyImplyLeading: true,
         centerTitle: true,
-        title: Text(
+        title: const Text(
           'Chấm công',
           style: TextStyle(color: Colors.white),
         ),
@@ -64,15 +98,26 @@ class _TimeAttendanceState extends State<TimeAttendance>
         ),
       ),
       body: Expanded(
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            QrScan(
-              user: widget.loginUser,
-            ),
-            HistoryTab(),
-          ],
-        ),
+        child: Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
+          Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
+          List<Shifts> allShifts =
+              Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
+          if (currentShift == null) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                QrScan(
+                  user: widget.loginUser,
+                  currentShift: currentShift ?? currentShift!,
+                ),
+                HistoryTab(),
+              ],
+            );
+        }),
       ),
     );
   }

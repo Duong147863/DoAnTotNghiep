@@ -1,8 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/view_models/absent_view_model.dart';
 import 'package:nloffice_hrm/view_models/assignment_view_model.dart';
-import 'package:nloffice_hrm/view_models/decisions_view_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
@@ -29,6 +27,7 @@ void main() {
   // await NotificationService.clearIrrelevantNotificationChannels();
   // await NotificationService.initializeAwesomeNotification();
   // await NotificationService.listenToActions();
+
   // Run app!
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<ProjectsViewModel>(
@@ -87,9 +86,6 @@ void main() {
     ),
     ChangeNotifierProvider<RolesViewModels>(
       create: (context) => RolesViewModels(),
-    ),
-    ChangeNotifierProvider<DecisionsViewModel>(
-      create: (context) => DecisionsViewModel(),
     ),
     ChangeNotifierProvider<HiringsViewModel>(
       create: (context) => HiringsViewModel(),

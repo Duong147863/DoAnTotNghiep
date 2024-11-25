@@ -16,7 +16,6 @@ import 'package:nloffice_hrm/views/screen/leave_request_list_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_employee_screen.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_decision_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_position_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
@@ -130,13 +129,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.decisionListRoute:
-      return MaterialPageRoute(
-          builder: (context) => DecisionsListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.decisionListRoute,
-          ));
-
     case AppRoutes.addprofileRoute:
       return MaterialPageRoute(
           builder: (context) => AddProfilePage(),

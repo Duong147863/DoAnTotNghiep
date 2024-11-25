@@ -12,26 +12,20 @@ class InfoEnterpriseScreen extends StatefulWidget {
 }
 
 class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
-  Enterprises? enterprise;
   @override
   void initState() {
     super.initState();
-    Provider.of<EnterprisesViewModel>(context, listen: false)
-        .fetchAllEnterprises();
-  
-    enterprise =
-        Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
   }
 
   @override
   Widget build(BuildContext context) {
-               print("licenseNum: ${enterprise!.licenseNum ?? 'Không có dữ liệu'}");
-print("name: ${enterprise!.name ?? 'Không có dữ liệu'}");
-print("address: ${enterprise!.address ?? 'Không có dữ liệu'}");
-print("email: ${enterprise!.email ?? 'Không có dữ liệu'}");
-print("assignDate: ${enterprise!.assignDate ?? 'Không có dữ liệu'}");
-print("phone: ${enterprise!.phone ?? 'Không có dữ liệu'}");
-print("website: ${enterprise!.website ?? 'Không có dữ liệu'}");
+    //  print("licenseNum: ${enterprise!.licenseNum ?? 'Không có dữ liệu'}");
+// print("name: ${enterprise!.name ?? 'Không có dữ liệu'}");
+// print("address: ${enterprise!.address ?? 'Không có dữ liệu'}");
+// print("email: ${enterprise!.email ?? 'Không có dữ liệu'}");
+// print("assignDate: ${enterprise!.assignDate ?? 'Không có dữ liệu'}");
+// print("phone: ${enterprise!.phone ?? 'Không có dữ liệu'}");
+// print("website: ${enterprise!.website ?? 'Không có dữ liệu'}");
     return BasePage(
       showAppBar: true,
       showLeadingAction: true,
@@ -44,71 +38,66 @@ print("website: ${enterprise!.website ?? 'Không có dữ liệu'}");
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-   
-            Column(
-              
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 16),
-                Center(
-                  child: Text(
-                    enterprise!.name,
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ),
-                SizedBox(height: 16),
-                Divider(),
-                InfoTile(
-                  icon: Icons.business,
-                  label: 'Mã số giấy phép',
-                  value: enterprise!.licenseNum,
-                ),
-                InfoTile(
-                  icon: Icons.email,
-                  label: 'Địa chỉ',
-                  value: enterprise!.address!,
-                ),
-                InfoTile(
-                  icon: Icons.email,
-                  label: 'Email',
-                  value: enterprise!.email!,
-                ),
-                InfoTile(
-                  icon: Icons.phone,
-                  label: 'Điện thoại',
-                  value: enterprise!.phone!,
-                ),
-                InfoTile(
-                  icon: Icons.calendar_today,
-                  label: 'Ngày thành lập',
-                  value: enterprise?.assignDate != null
-                      ? _formatDate(enterprise!.assignDate)
-                      : 'Không có',
-                ),
-                InfoTile(
-                  icon: Icons.phone,
-                  label: 'Website',
-                  value: enterprise!.website!,
-                ),
-              ],
-            ),
-            SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () {
-                    // Handle the edit action
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EditEnterpriseScreen(),
-                        ));
-                  },
-                ),
-              ],
-            ),
+            Consumer<EnterprisesViewModel>(
+                builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData && viewModel.enterprises == null) {
+                Provider.of<EnterprisesViewModel>(context, listen: false)
+                    .fetchAllEnterprises();
+              }
+              if (viewModel.fetchingData) {
+                // While data is being fetched
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                Enterprises enterprise = viewModel.enterprises!;
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 16),
+                    Center(
+                      child: Text(
+                        enterprise!.name,
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    Divider(),
+                    InfoTile(
+                      icon: Icons.business,
+                      label: 'Mã số giấy phép',
+                      value: enterprise!.licenseNum,
+                    ),
+                    InfoTile(
+                      icon: Icons.email,
+                      label: 'Địa chỉ',
+                      value: enterprise!.address,
+                    ),
+                    InfoTile(
+                      icon: Icons.email,
+                      label: 'Email',
+                      value: enterprise!.email,
+                    ),
+                    InfoTile(
+                      icon: Icons.phone,
+                      label: 'Điện thoại',
+                      value: enterprise!.phone,
+                    ),
+                    InfoTile(
+                      icon: Icons.calendar_today,
+                      label: 'Ngày thành lập',
+                      value: enterprise?.assignDate != null
+                          ? _formatDate(enterprise!.assignDate)
+                          : 'Không có',
+                    ),
+                    InfoTile(
+                      icon: Icons.phone,
+                      label: 'Website',
+                      value: enterprise!.website,
+                    ),
+                  ],
+                );
+              }
+            }),
           ],
         ),
       ),
@@ -117,34 +106,6 @@ print("website: ${enterprise!.website ?? 'Không có dữ liệu'}");
 
   String _formatDate(DateTime date) {
     return '${date.day.toString().padLeft(2, '0')}/${date.month.toString().padLeft(2, '0')}/${date.year.toString().padLeft(4, '0')}';
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Confirm Delete'),
-          content: Text('Are you sure you want to delete this enterprise?'),
-          actions: [
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-              },
-            ),
-            TextButton(
-              child: Text('Delete'),
-              onPressed: () {
-                // onDelete();
-                Navigator.of(context).pop(); // Dismiss the dialog
-                Navigator.pop(context); // Go back to the previous screen
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 }
 

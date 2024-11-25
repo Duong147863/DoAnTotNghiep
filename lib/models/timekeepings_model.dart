@@ -9,9 +9,7 @@ class Timekeepings {
     this.checkout,
     required this.shiftId,
     required this.profileId,
-    this.late,
     required this.date,
-    this.leavingSoon,
     this.status = 0,
   });
   int? timekeepingId;
@@ -19,9 +17,8 @@ class Timekeepings {
   DateTime? checkout;
   String shiftId;
   String profileId;
-  DateTime? late;
   DateTime date;
-  DateTime? leavingSoon;
+
   int status;
   factory Timekeepings.fromJson(Map<String, dynamic> json) {
     return Timekeepings(
@@ -30,9 +27,7 @@ class Timekeepings {
       checkout: json["checkout"],
       shiftId: json["shift_id"],
       profileId: json["profile_id"],
-      late: json["late"],
       date: json["date"],
-      leavingSoon: json["leaving_soon"],
       status: json["status"],
     );
   }
@@ -43,9 +38,7 @@ class Timekeepings {
     map["checkout"] = _formatTime(checkout);
     map["shift_id"] = shiftId;
     map["profile_id"] = profileId;
-    map["late"] = _formatTime(late);
     map["date"] = DateFormat("yyyy-MM-dd").format(date);
-    map["leaving_soon"] = _formatTime(leavingSoon);
     map["status"] = status;
     return map;
   }
