@@ -102,7 +102,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
       Provider.of<LaborContactsViewModel>(context, listen: false)
           .addNewLaborContact(newLaborContact)
           .then((_) {
-        Navigator.pop(context,newLaborContact);
+        Navigator.pop(context, newLaborContact);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Tạo thành công!')),
         );
@@ -174,16 +174,16 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                     labelText: 'Mã hợp đồng',
                     maxLength: 10,
                     validator: (value) {
-                     if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    } else if (value.length > 10) {
-                      return 'Mã hợp đồng không được vượt quá 10 ký tự';
-                    } else if (!value.startsWith('HD')) {
-                      return 'Mã nhân viên phải bắt đầu bằng "HD"';
-                    } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
-                      return 'Sau "HD" phải là số';
-                    }
-                    return null;
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      } else if (value.length > 10) {
+                        return 'Mã hợp đồng không được vượt quá 10 ký tự';
+                      } else if (!value.startsWith('HD')) {
+                        return 'Mã nhân viên phải bắt đầu bằng "HD"';
+                      } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
+                        return 'Sau "HD" phải là số';
+                      }
+                      return null;
                     },
                   ).px8(),
                   SizedBox(height: 10),
@@ -192,7 +192,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                   //     Text('Enterprises').px8(),
                   //     Expanded(
                   //         child: _buildEnterprisesTextFormField(
-                  //             'Choose Enterprises')),
+                  //             'Chọn Enterprises')),
                   //   ],
                   // ),
                   SizedBox(height: 16),
@@ -200,7 +200,7 @@ class _AddLaborContractScreenState extends State<AddLaborContractScreen> {
                     children: [
                       Text('Phòng').px8(),
                       Expanded(
-                          child: _buildDepartmentDropdown('Choose Department')),
+                          child: _buildDepartmentDropdown('Chọn Department')),
                     ],
                   ),
                   SizedBox(height: 16),
