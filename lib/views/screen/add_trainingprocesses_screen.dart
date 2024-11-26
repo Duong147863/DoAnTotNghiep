@@ -28,7 +28,6 @@ class _AddTrainingprocessesScreenState
   final _endTimeController = TextEditingController();
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
-  int status = 0; // Mặc định là 0
   void initState() {
     super.initState();
     _profileIDController.text = widget.profiles!.profileId;
@@ -36,16 +35,13 @@ class _AddTrainingprocessesScreenState
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-        status = 1;
-      }
       final newTrainingprocesses = Trainingprocesses(
           profileId: _profileIDController.text,
           trainingprocessesName: _trainingprocessesNameController.text,
           trainingprocessesContent: _trainingprocessesContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          trainingprocessesStatus: status);
+         );
       Provider.of<TrainingprocessesViewModel>(context, listen: false)
           .createTrainingProcesses(newTrainingprocesses)
           .then((_) {
@@ -138,7 +134,7 @@ class _AddTrainingprocessesScreenState
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Add TrainingProcesses Screen',
+      titletext: 'Thêm Quá Trình Đạo Tạo',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: SingleChildScrollView(
@@ -155,8 +151,9 @@ class _AddTrainingprocessesScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomTextFormField(
+                    enabled: false,
                     textEditingController: _profileIDController,
-                    labelText: 'profile ID',
+                    labelText: 'Mã nhân viên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_profile_ID';
@@ -167,10 +164,10 @@ class _AddTrainingprocessesScreenState
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _trainingprocessesNameController,
-                    labelText: 'trainingprocesses name',
+                    labelText: 'Tên quá trình đạo tạo',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_trainingprocesses_name';
+                        return 'Vui lòng không để trống';
                       }
                       return null;
                     },
@@ -178,7 +175,7 @@ class _AddTrainingprocessesScreenState
                   SizedBox(height: 16),
                   CustomTextFormField(
                     textEditingController: _trainingprocessesContentController,
-                    labelText: 'trainingprocesses content',
+                    labelText: 'Nội dung quá trình đào tạo',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_trainingprocesses_content';
@@ -191,7 +188,7 @@ class _AddTrainingprocessesScreenState
                     children: [
                       Expanded(
                         child: _buildDateStartTime(
-                          'Start Time',
+                          'Bắt đầu',
                           _startTimeController,
                           _startTime,
                           (date) {
@@ -206,7 +203,7 @@ class _AddTrainingprocessesScreenState
                       SizedBox(width: 16),
                       Expanded(
                         child: _buildDateEndTime(
-                          'End Time',
+                          'Kết thúc',
                           _endTimeController,
                           _endTime,
                           (date) {
@@ -224,7 +221,7 @@ class _AddTrainingprocessesScreenState
                   Center(
                     child: ElevatedButton(
                       onPressed: _submit,
-                      child: Text('Save'),
+                      child: Text('Lưu'),
                     ),
                   ),
                 ],

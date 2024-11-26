@@ -44,8 +44,6 @@ import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
@@ -1149,7 +1147,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               //WorkingProcess
               // _buildWorkingProcessList(),
               // TrainingProcess
-              _buildTrainingProcessesList().p8(),
+              // _buildTrainingProcessesList().p8(),
               SizedBox(height: 16),
               _buildDiplomasList(),
               //Hợp đồng
@@ -1184,30 +1182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                         });
                       }),
-                  SpeedDialChild(
-                      label: "Phê Duyệt Quá Trình Đạo Tạo",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  ListTrainingprocessesScreen(
-                                profiles: widget.profile,
-                              ),
-                            ));
-                      }),
-                  // SpeedDialChild(
-                  //     label: "Phê Duyệt Quá Trình Làm Việc",
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute<void>(
-                  //             builder: (BuildContext context) =>
-                  //                 ListWorkingprocessScreen(
-                  //               profiles: widget.profile,
-                  //             ),
-                  //           ));
-                  //     }),
+          
                   SpeedDialChild(
                       label: "Thêm bằng cấp",
                       onTap: () {
@@ -1735,63 +1710,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
   // }
 
   //
-  Widget _buildTrainingProcessesList() {
-    List<Trainingprocesses> filteredProcesses = trainingProcess
-        .where((process) => process.trainingprocessesStatus == 1)
-        .toList();
+  // Widget _buildTrainingProcessesList() {
+  //   List<Trainingprocesses> filteredProcesses = trainingProcess
+  //       .where((process) => process.trainingprocessesStatus == 1)
+  //       .toList();
 
-    return ExpansionPanelList(
-      elevation: 2,
-      animationDuration: Duration(milliseconds: 300),
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          filteredProcesses[index].isExpanded = isExpanded;
-        });
-      },
-      children: filteredProcesses.map((process) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              leading: Icon(Icons.school, color: Colors.green),
-              title: Text(
-                "Tóm tắt quá trình đào tạo",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            );
-          },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.green.shade50,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Nội dung đào tạo: ${process.trainingprocessesContent}")
-                        .p8(),
-                    Row(
-                      children: [
-                        Text(
-                            "Bắt đầu từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
-                        Text(process.endTime == null
-                            ? "Hiện tại"
-                            : "Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          isExpanded: process.isExpanded,
-        );
-      }).toList(),
-    );
-  }
+  //   return ExpansionPanelList(
+  //     elevation: 2,
+  //     animationDuration: Duration(milliseconds: 300),
+  //     expansionCallback: (int index, bool isExpanded) {
+  //       setState(() {
+  //         filteredProcesses[index].isExpanded = isExpanded;
+  //       });
+  //     },
+  //     children: filteredProcesses.map((process) {
+  //       return ExpansionPanel(
+  //         headerBuilder: (BuildContext context, bool isExpanded) {
+  //           return ListTile(
+  //             leading: Icon(Icons.school, color: Colors.green),
+  //             title: Text(
+  //               "Tóm tắt quá trình đào tạo",
+  //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //             ),
+  //           );
+  //         },
+  //         body: Padding(
+  //           padding: const EdgeInsets.all(16.0),
+  //           child: Card(
+  //             color: Colors.green.shade50,
+  //             elevation: 2,
+  //             shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(8)),
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(16.0),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   Text("Nội dung đào tạo: ${process.trainingprocessesContent}")
+  //                       .p8(),
+  //                   Row(
+  //                     children: [
+  //                       Text(
+  //                           "Bắt đầu từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
+  //                       Text(process.endTime == null
+  //                           ? "Hiện tại"
+  //                           : "Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
+  //                     ],
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //         isExpanded: process.isExpanded,
+  //       );
+  //     }).toList(),
+  //   );
+  // }
 
   Widget _buildInsuranceList() {
     return ExpansionPanelList(

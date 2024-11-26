@@ -35,8 +35,6 @@ class _InfoTrainingprocessesScreenState
   @override
   void initState() {
     super.initState();
-    _statusTrainingProcesses =
-        widget.trainingprocesses!.trainingprocessesStatus;
     _profileIDController.text = widget.trainingprocesses!.profileId;
     _trainingprocessesIdController.text =
         widget.trainingprocesses!.trainingprocessesId!;
@@ -67,7 +65,7 @@ class _InfoTrainingprocessesScreenState
           trainingprocessesContent: _trainingprocessesContentController.text,
           startTime: _startTime,
           endTime: _endTimeController.text.isNotEmpty ? _endTime : null,
-          trainingprocessesStatus: _statusTrainingProcesses);
+      );
       try {
         await Provider.of<TrainingprocessesViewModel>(context, listen: false)
             .updateTrainingProcesses(updateTrainingProcesses);
@@ -195,7 +193,7 @@ class _InfoTrainingprocessesScreenState
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      titletext: 'Info TrainingProcesses HR Screen',
+      titletext: 'Thông tin quá trình đào tạo',
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       body: SingleChildScrollView(
