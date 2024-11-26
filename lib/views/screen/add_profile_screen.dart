@@ -292,7 +292,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
       } else if (AppStrings.ROLE_PERMISSIONS
           .contains('Manage Staffs info only')) {
         roles =
-            allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
+            allRoles.where((role) => [1, 2, 3, 4].contains(role.roleID)).toList();
       } else {
         roles = [];
       }
@@ -942,7 +942,11 @@ class _AddProfilePageState extends State<AddProfilePage> {
             if (value == null || value.isEmpty) {
               return 'Nhập ngày cấp';
             }
-
+               // Kiểm tra ngày sinh trong quá khứ
+            DateTime CCCD = DateTime.parse(value);
+            if (CCCD.isAfter(DateTime.now())) {
+              return 'CCCD phải là ngày trong quá khứ';
+            }
             // Kiểm tra ngày sinh đã nhập (dùng controller)
             if (_birthdayController.text.isEmpty) {
               return 'Cần nhập ngày sinh trước!';
@@ -950,7 +954,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
             // Parse ngày sinh từ _birthdayController
             DateTime birthday = DateTime.parse(_birthdayController.text);
-
+            
             // Kiểm tra tuổi đủ 14 tại thời điểm cấp
             DateTime licenseDay = DateTime.parse(value);
             int ageAtLicense = licenseDay.year - birthday.year;
