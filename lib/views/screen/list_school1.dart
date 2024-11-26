@@ -1,4 +1,4 @@
-List<String> universityNames = [
+List<String> universityNames1 = [
   "Trường Đại học Khoa học Xã hội & Nhân văn (ĐHQG HN)",
   "Trường Đại học Kỹ thuật Công nghiệp (ĐH Thái Nguyên)",
   "Trường Đại học Cần Thơ",
