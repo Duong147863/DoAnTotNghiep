@@ -7,11 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/department_position_model.dart';
-import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
 import 'package:nloffice_hrm/models/labor_contracts_model.dart';
-import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/provinces.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
@@ -21,9 +19,7 @@ import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
-import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
 import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
-import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/view_models/roles_view_models.dart';
@@ -34,8 +30,6 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
@@ -45,7 +39,6 @@ import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
@@ -295,11 +288,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
       relatives.removeWhere((rela) => rela.relativeId == relativeId);
     });
   }
-    void _handleDeleteDiploman(String diplomanId) {
+
+  void _handleDeleteDiploman(String diplomanId) {
     setState(() {
       diplomas.removeWhere((dip) => dip.diplomaId == diplomanId);
     });
   }
+
   void _handleUpdateDiplomas(Diplomas updatedDiplomas) {
     setState(() {
       int index = diplomas
@@ -349,9 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         } else if (AppStrings.ROLE_PERMISSIONS
             .contains('Manage Staffs info only')) {
           departmentsPosition = departmentsPosition
-              .where((department) =>
-                  department.departmentID != 'PB-GĐ'
-                  )
+              .where((department) => department.departmentID != 'PB-GĐ')
               .toList();
         }
       });
@@ -393,8 +386,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .toList();
       } else if (AppStrings.ROLE_PERMISSIONS
           .contains('Manage Staffs info only')) {
-        roles =
-            allRoles.where((role) => [1, 2, 3, 4].contains(role.roleID)).toList();
+        roles = allRoles
+            .where((role) => [1, 2, 3, 4].contains(role.roleID))
+            .toList();
       } else {
         roles = [];
       }
@@ -449,6 +443,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
   void _loadDiplomas() async {
     try {
       await Provider.of<DiplomasViewModel>(context, listen: false)
@@ -466,6 +461,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
+
   void _loadtrainingProcess() async {
     try {
       await Provider.of<TrainingprocessesViewModel>(context, listen: false)
@@ -484,8 +480,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
-  
 
   void _loadLaborContact() async {
     try {
@@ -532,17 +526,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           profileImage: _profileImageBase64 ?? '');
 
       Provider.of<ProfilesViewModel>(context, listen: false)
-          .updateProfile(updatedProfile, (message){
-    ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(message)));
+          .updateProfile(updatedProfile, (message) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(message)));
           })
-          .then((_) {
-      }).catchError((error) {
-     
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to Update profile: $error')),
-        );
-      });
+          .then((_) {})
+          .catchError((error) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to Update profile: $error')),
+            );
+          });
     }
   }
 
@@ -601,11 +594,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 0:
         return "Đang thử việc";
       case 1:
-        return "Ký hợp đồng lần 1";
+        return "Hợp đồng ký lần 1";
       case 2:
-        return "Ký hợp đồng lần 2";
+        return "Hợp đồng ký lần 2";
       case 3:
-        return "Ký hợp đồng lần 3";
+        return "Hợp đồng vô thời hạn";
       default:
         return "Trạng thái không xác định";
     }
@@ -615,83 +608,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
-      showLeadingAction: true,
       appBar: AppBar(
-        elevation: 0,
-        backgroundColor: AppColor.aliceBlue,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: Colors.red,
-          ),
-          onPressed: () {
-            Navigator.of(context).pop(); // Quay lại trang trước đó
-          },
-        ),
-        actions: AppStrings.ROLE_PERMISSIONS.containsAny(
-                ['Manage BoD & HR accounts', 'Manage Staffs info only'])
-            ? <Widget>[
-                Text(
-                  getStatusText(statusProfile),
-                  style:
-                      TextStyle(color: Colors.black), // Tùy chỉnh style nếu cần
-                ),
-                IconButton(
-                  enableFeedback: true,
-                  onPressed: _isButtonEnabled
-                      ? () {
-                          // Tắt nút sau khi nhấn
-                          setState(() {
-                            _isEditing = false;
-                          });
-                          // Thực hiện hành động
-                          _updateProfile();
-                        }
-                      : null, // Nếu nút không được bật, sẽ không thực hiện hành động
-                  icon: Icon(Icons.save, color: Colors.red),
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
-                      _isButtonEnabled = true;
-                    });
-                  },
-                  icon: Icon(Icons.edit_outlined, color: Colors.red),
-                ),
-                IconButton(
-                  icon: Icon(Icons.lock, color: Colors.red),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text('Confirm Clock'),
-                          content: Text(
-                              'Are you sure you want to clock this Profile?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Cancel'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                                _deleteProfile();
-                              },
-                              child: Text('Clock'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              ]
-            : [],
-      ),
+          elevation: 0,
+          backgroundColor: AppColor.primaryLightColor,
+          automaticallyImplyLeading: true,
+          foregroundColor: Colors.white,
+          actions: <Widget>[
+            _isEditing
+                ? IconButton(
+                    enableFeedback: true,
+                    onPressed: _isButtonEnabled
+                        ? () {
+                            // Tắt nút sau khi nhấn
+                            setState(() {
+                              _isEditing = false;
+                            });
+                            // Thực hiện hành động
+                            _updateProfile();
+                          }
+                        : null, // Nếu nút không được bật, sẽ không thực hiện hành động
+                    icon: Icon(Icons.save, color: Colors.white),
+                  )
+                : SpeedDial(
+                    elevation: 0,
+                    child: Icon(Icons.menu),
+                    backgroundColor: AppColor.primaryLightColor,
+                    foregroundColor: Colors.white,
+                    direction: SpeedDialDirection.down,
+                    children: [
+                      SpeedDialChild(
+                          child: Icon(Icons.edit_outlined,
+                              color: AppColor.primaryLightColor),
+                          onTap: () {
+                            setState(() {
+                              _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+                              _isButtonEnabled = true;
+                            });
+                          }),
+                      SpeedDialChild(
+                        child:
+                            Icon(Icons.lock, color: AppColor.primaryLightColor),
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Xác nhận khoá ?'),
+                                content:
+                                    Text('Khoá quyền sử dụng của hồ sơ này?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('Huỷ'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      _deleteProfile();
+                                    },
+                                    child: Text('Khoá'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ],
+                  )
+
+            // Text(
+            //   getStatusText(statusProfile),
+            //   style:
+            //       TextStyle(color: Colors.black), // Tùy chỉnh style nếu cần
+            // ),
+          ]),
       extendBodyBehindAppBar: false,
       body: ListView(children: [
         Stack(
@@ -889,7 +882,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? Row(
                       children: [
-                        Text('Chọn').px(6),
+                        Text('CV-PB:').px(6),
                         _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
                             .p(8)
                             .w(360),
@@ -899,15 +892,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
-                  _buildSalaryDropdown('Choose Salary').p(8).w(300),
+                  _buildSalaryDropdown('Mức lương').p(8).w(300),
                 ],
               ),
-              Row(
-                children: [
-                  Text('Roles').px(8),
-                  _buildRolesDropdown('Choose Roles').p(8).w(300),
-                ],
-              ),
+              AppStrings.ROLE_PERMISSIONS.containsAny(
+                      ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+                  ? Row(
+                      children: [
+                        Text('Quyền:').px(8),
+                        _buildRolesDropdown('Quyền').p(8).w(300),
+                      ],
+                    )
+                  : SizedBox.shrink(),
               // Gender + Marriage
               Row(
                 children: [
@@ -919,13 +915,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }).p(8).w(130),
                   //Nation
                   DropdownButtonFormField<String>(
-                     isExpanded: true,
+                    isExpanded: true,
                     value: _selectedNation,
                     focusNode: _nationFocusNode,
                     items: NationNames.map((nation) {
                       return DropdownMenuItem(
                         value: nation,
-                        child: Text(nation,style: TextStyle(fontSize: 13),),
+                        child: Text(
+                          nation,
+                          style: TextStyle(fontSize: 13),
+                        ),
                       );
                     }).toList(),
                     decoration: InputDecoration(
@@ -1184,18 +1183,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                         });
                       }),
-                  SpeedDialChild(
-                      label: "Phê Duyệt Quá Trình Đạo Tạo",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute<void>(
-                              builder: (BuildContext context) =>
-                                  ListTrainingprocessesScreen(
-                                profiles: widget.profile,
-                              ),
-                            ));
-                      }),
+                  // SpeedDialChild(
+                  //     label: "Phê Duyệt Quá Trình Đạo Tạo",
+                  //     onTap: () {
+                  //       Navigator.push(
+                  //           context,
+                  //           MaterialPageRoute<void>(
+                  //             builder: (BuildContext context) =>
+                  //                 ListTrainingprocessesScreen(
+                  //               profiles: widget.profile,
+                  //             ),
+                  //           ));
+                  //     }),
                   // SpeedDialChild(
                   //     label: "Phê Duyệt Quá Trình Làm Việc",
                   //     onTap: () {
@@ -1296,7 +1295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 // Kiểm tra tuổi nghỉ hưu nếu cần
                 if (_isRetirementAgeExceeded(birthday, _gender)) {
-                  return 'Người lao động đã quá tuổi nghỉ hưu!';
+                  return 'Người lao động đã quá tuổi!';
                 }
               }
             } catch (e) {
@@ -1358,16 +1357,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               return 'Nhập ngày cấp';
             }
             // Kiểm tra ngày sinh trong quá khứ
-          
-             // Kiểm tra ngày sinh đã nhập (dùng controller)
+
+            // Kiểm tra ngày sinh đã nhập (dùng controller)
             if (_birthdayController.text.isEmpty) {
               return 'Cần nhập ngày sinh trước!';
             }
             try {
-                DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-                  DateTime CCCD = dateFormat.parse(value);
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+              DateTime CCCD = dateFormat.parse(value);
               if (CCCD.isAfter(DateTime.now())) {
-                return 'CCCD phải là ngày trong quá khứ';
+                return 'Ngày cấp CCCD phải là ngày trong quá khứ';
               }
               // Parse ngày sinh từ _birthdayController
               DateTime birthday = dateFormat.parse(_birthdayController.text);
@@ -1615,8 +1614,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       final updatediplomas = await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              InfoDiplomaScreen(diplomas: process,onDelete: _handleDeleteDiploman,),
+                          builder: (context) => InfoDiplomaScreen(
+                            diplomas: process,
+                            onDelete: _handleDeleteDiploman,
+                          ),
                         ),
                       );
                       if (updatediplomas != null) {

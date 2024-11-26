@@ -42,26 +42,30 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   void initState() {
     super.initState();
     _laborContractIDController.text = widget.laborContracts!.laborContractId;
-    _startTimeController.text = DateFormat('dd/MM/yyyy').format(widget.laborContracts!.startTime).toString();
-    _startTime=widget.laborContracts!.startTime;
+    _startTimeController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.laborContracts!.startTime)
+        .toString();
+    _startTime = widget.laborContracts!.startTime;
     _endTimeController.text = widget.laborContracts!.endTime == null
         ? "Hiện tại"
-        : DateFormat('dd/MM/yyyy').format(widget.laborContracts!.endTime!).toString();
+        : DateFormat('dd/MM/yyyy')
+            .format(widget.laborContracts!.endTime!)
+            .toString();
     // _endTime=widget.laborContracts!.endTime!;
     _laborContractImageBase64 = widget.laborContracts!.image;
-   Provider.of<DeparmentsViewModel>(context, listen: false)
-          .fetchAllDepartments();
-     departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-            .listDepartments;
-        if (departments.isNotEmpty) {
-          selectedDepartment = departments.firstWhere(
-            (dep) => dep.departmentID == widget.laborContracts!.departmentId,
-          );
-        }
-      Provider.of<EnterprisesViewModel>(context, listen: false)
-          .fetchAllEnterprises();
-      enterprises =
-          Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
+    Provider.of<DeparmentsViewModel>(context, listen: false)
+        .fetchAllDepartments();
+    departments = Provider.of<DeparmentsViewModel>(context, listen: false)
+        .listDepartments;
+    if (departments.isNotEmpty) {
+      selectedDepartment = departments.firstWhere(
+        (dep) => dep.departmentID == widget.laborContracts!.departmentId,
+      );
+    }
+    Provider.of<EnterprisesViewModel>(context, listen: false)
+        .fetchAllEnterprises();
+    enterprises =
+        Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
   }
 
   void _updateLaborContract() async {
@@ -76,7 +80,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
       final updatedLaborContract = LaborContracts(
           laborContractId: _laborContractIDController.text,
           startTime: _startTime,
-          endTime: endTimeToUpdate, 
+          endTime: endTimeToUpdate,
           enterpriseId: 0,
           image: _laborContractImageBase64 ?? "",
           departmentId: selectedDepartment!.departmentID);
@@ -202,7 +206,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                   //     Text('Enterprises').px8(),
                   //     Expanded(
                   //         child: _buildEnterprisesTextFormField(
-                  //             'Choose Enterprises')),
+                  //             'Chọn Enterprises')),
                   //   ],
                   // ),
                   SizedBox(height: 16),
@@ -210,7 +214,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                     children: [
                       Text('Phòng').px8(),
                       Expanded(
-                          child: _buildDepartmentDropdown('Choose Department')),
+                          child: _buildDepartmentDropdown('Chọn Department')),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -338,48 +342,47 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     );
   }
 
- Widget _buildDateEndTime(String label, TextEditingController controller,
-    DateTime initialDate, Function(DateTime) onDateSelected) {
-  return GestureDetector(
-    onTap: _isEditing
-        ? () => _selectDate(context, initialDate, onDateSelected)
-        : null,
-    child: AbsorbPointer(
-      child: TextFormField(
-        readOnly: true,
-        style: TextStyle(color: Colors.black),
-        controller: controller,
-        validator: (value) {
-          // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
-          if (controller.text == "Hiện tại") {
-            return null; // Không cần kiểm tra
-          }
-
-          // Nếu có giá trị nhập vào
-          if (controller.text.isNotEmpty) {
-            try {
-              DateTime selectedEndTime = DateTime.parse(controller.text);
-
-              // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
-              if (selectedEndTime.isBefore(_startTime) ||
-                  selectedEndTime.difference(_startTime).inDays < 30) {
-                return 'End Time phải trong trên 1 tháng kể từ Start Time';
-              }
-            } catch (e) {
-              return 'Định dạng ngày không hợp lệ';
+  Widget _buildDateEndTime(String label, TextEditingController controller,
+      DateTime initialDate, Function(DateTime) onDateSelected) {
+    return GestureDetector(
+      onTap: _isEditing
+          ? () => _selectDate(context, initialDate, onDateSelected)
+          : null,
+      child: AbsorbPointer(
+        child: TextFormField(
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
+            if (controller.text == "Hiện tại") {
+              return null; // Không cần kiểm tra
             }
-          }
-          return null;
-        },
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+
+            // Nếu có giá trị nhập vào
+            if (controller.text.isNotEmpty) {
+              try {
+                DateTime selectedEndTime = DateTime.parse(controller.text);
+
+                // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
+                if (selectedEndTime.isBefore(_startTime) ||
+                    selectedEndTime.difference(_startTime).inDays < 30) {
+                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
+                }
+              } catch (e) {
+                return 'Định dạng ngày không hợp lệ';
+              }
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildDepartmentDropdown(String hint) {
     return DropdownButtonFormField<Departments>(

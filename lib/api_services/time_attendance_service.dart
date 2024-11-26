@@ -14,4 +14,15 @@ class TimeAttendanceService {
         },
         body: json.encode(checkinTime.toJson()));
   }
+
+  Future<http.Response> getPersonalCheckinHistory(String profileID) async {
+    return await http.get(
+      Uri.parse("${AppStrings.baseUrlApi}all/$profileID"),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+    );
+  }
 }

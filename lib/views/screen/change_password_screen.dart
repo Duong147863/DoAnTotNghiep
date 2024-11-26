@@ -43,8 +43,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                     Center(
                       child: Image.asset(
                         "assets/images/password.png",
-                        width: 250,
-                        height: 250,
+                        width: 300,
+                        height: 300,
                       ),
                     ),
                     CustomTextFormField(

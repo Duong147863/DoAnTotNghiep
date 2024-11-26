@@ -369,7 +369,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                 children: [
                   Text('Status Hirings').px(8),
                   _buildDropdownStatusField(
-                    'Choose Status Hirings',
+                    'Chọn Status Hirings',
                     status,
                     (value) {
                       setState(() {
