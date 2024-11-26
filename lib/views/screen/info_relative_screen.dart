@@ -367,6 +367,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
               textEditingController: _relativeJobController,
               focusNode: _ngheNghiepFocusNode,
               maxLength: 50,
+              
               enabled: _isEditing,
               validator: (value) {
                 if (value == null || value.isEmpty) {

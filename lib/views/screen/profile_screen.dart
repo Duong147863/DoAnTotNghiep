@@ -150,12 +150,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
         .format(widget.profile!.idLicenseDay)
         .toString();
     _idLicenseDay = widget.profile!.idLicenseDay;
-    // _startTimeController.text =
-    //     DateFormat('dd/MM/yyyy').format(widget.profile!.startTime!).toString();
-    // _startTime = widget.profile!.startTime!;
-    // _endTimeController.text =
-    //     DateFormat('dd/MM/yyyy').format(widget.profile!.endTime!).toString();
-    // _endTime = widget.profile!.endTime!;
+    _startTimeController.text =
+        DateFormat('dd/MM/yyyy').format(widget.profile!.startTime!).toString();
+    _startTime = widget.profile!.startTime!;
+    _endTimeController.text =
+        DateFormat('dd/MM/yyyy').format(widget.profile!.endTime!).toString();
+    _endTime = widget.profile!.endTime!;
     statusProfile = widget.profile!.profileStatus;
     _nationController.text = widget.profile!.nation;
     _selectedNation = widget.profile!.nation;
@@ -295,7 +295,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       relatives.removeWhere((rela) => rela.relativeId == relativeId);
     });
   }
-
+    void _handleDeleteDiploman(String diplomanId) {
+    setState(() {
+      diplomas.removeWhere((dip) => dip.diplomaId == diplomanId);
+    });
+  }
   void _handleUpdateDiplomas(Diplomas updatedDiplomas) {
     setState(() {
       int index = diplomas
@@ -445,7 +449,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
+  void _loadDiplomas() async {
+    try {
+      await Provider.of<DiplomasViewModel>(context, listen: false)
+          .getDiplomasOf(widget.profile!.profileId);
+      diplomas =
+          Provider.of<DiplomasViewModel>(context, listen: false).listDiplomas;
+      if (diplomas.isNotEmpty) {
+        selectedDiplomas = diplomas.firstWhere(
+          (dip) => dip.profileId == widget.profile!.profileId,
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load Diplomas')),
+      );
+    }
+  }
   void _loadtrainingProcess() async {
     try {
       await Provider.of<TrainingprocessesViewModel>(context, listen: false)
@@ -465,23 +485,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  void _loadDiplomas() async {
-    try {
-      await Provider.of<DiplomasViewModel>(context, listen: false)
-          .getDiplomasOf(widget.profile!.profileId);
-      diplomas =
-          Provider.of<DiplomasViewModel>(context, listen: false).listDiplomas;
-      if (diplomas.isNotEmpty) {
-        selectedDiplomas = diplomas.firstWhere(
-          (dip) => dip.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Diplomas')),
-      );
-    }
-  }
+  
 
   void _loadLaborContact() async {
     try {
@@ -512,8 +516,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           gender: _gender,
           identifiNum: _identifiNumController.text,
           idLicenseDay: _idLicenseDay,
-          // startTime: _startTime,
-          // endTime: _endTime,
+          startTime: _startTime,
+          endTime: _endTime,
           nation: _nationController.text,
           email: _emailController.text,
           phone: _phoneController.text,
@@ -528,17 +532,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           profileImage: _profileImageBase64 ?? '');
 
       Provider.of<ProfilesViewModel>(context, listen: false)
-          .updateProfile(updatedProfile)
+          .updateProfile(updatedProfile, (message){
+    ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+          })
           .then((_) {
-        print(_birthdayController.text);
-        print(_birthday);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile Update successfully!')),
-        );
-        Navigator.pop(context, updatedProfile);
       }).catchError((error) {
-        print(_birthdayController.text);
-        print(_birthday);
+     
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to Update profile: $error')),
         );
@@ -551,7 +551,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await Provider.of<ProfilesViewModel>(context, listen: false)
           .deleteProfile(widget.profile!.profileId);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Profile deleted successfully')),
+        SnackBar(content: Text('Khóa tài khoản thành công')),
       );
       Navigator.pop(context);
     } catch (e) {
@@ -660,15 +660,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   icon: Icon(Icons.edit_outlined, color: Colors.red),
                 ),
                 IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
+                  icon: Icon(Icons.lock, color: Colors.red),
                   onPressed: () {
                     showDialog(
                       context: context,
                       builder: (BuildContext context) {
                         return AlertDialog(
-                          title: Text('Confirm Delete'),
+                          title: Text('Confirm Clock'),
                           content: Text(
-                              'Are you sure you want to delete this Profile?'),
+                              'Are you sure you want to clock this Profile?'),
                           actions: [
                             TextButton(
                               onPressed: () {
@@ -681,7 +681,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Navigator.of(context).pop();
                                 _deleteProfile();
                               },
-                              child: Text('Delete'),
+                              child: Text('Clock'),
                             ),
                           ],
                         );
@@ -919,6 +919,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   }).p(8).w(130),
                   //Nation
                   DropdownButtonFormField<String>(
+                     isExpanded: true,
                     value: _selectedNation,
                     focusNode: _nationFocusNode,
                     items: NationNames.map((nation) {
@@ -947,7 +948,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       return null;
                     },
-                  ).p(8).w(140),
+                  ).p(8).w(160),
                 ],
               ),
               Row(
@@ -1356,12 +1357,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (value == null || value.isEmpty) {
               return 'Nhập ngày cấp';
             }
+             // Kiểm tra ngày sinh đã nhập (dùng controller)
+            if (_birthdayController.text.isEmpty) {
+              return 'Cần nhập ngày sinh trước!';
+            }
             try {
               DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
               // Parse ngày sinh từ _birthdayController
               DateTime birthday = dateFormat.parse(_birthdayController.text);
-
               // Kiểm tra tuổi đủ 14 tại thời điểm cấp
               DateTime licenseDay = dateFormat.parse(value);
               int ageAtLicense = licenseDay.year - birthday.year;
@@ -1607,7 +1611,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              InfoDiplomaScreen(diplomas: process),
+                              InfoDiplomaScreen(diplomas: process,onDelete: _handleDeleteDiploman,),
                         ),
                       );
                       if (updatediplomas != null) {
