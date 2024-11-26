@@ -128,14 +128,16 @@ class _AddAssignmentScreenState extends State<AddAssignmentScreen> {
             children: [
               // Profile Dropdown
               _buildDropdownRow(
-                  'Profile', _buildProfileDropdown('Choose Profile')),
+                  'Profile', _buildProfileDropdown('Chọn Profile')),
 
               // Project Dropdown
               _buildDropdownRow(
-                  'Project', _buildProjectDropdown('Choose Project')),
+                  'Project', _buildProjectDropdown('Chọn Project')),
 
               // Task Dropdown
-              Expanded(child: _buildDropdownRow('Task', _buildTaskDropdown('Choose Task'))),
+              Expanded(
+                  child: _buildDropdownRow(
+                      'Task', _buildTaskDropdown('Chọn Task'))),
             ],
           ),
         ),
