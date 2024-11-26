@@ -28,7 +28,7 @@ class RelativesRepository {
     final response = await service.createNewRelative(relatives);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      callback('Thân nhân đã được thêm thành công!');  // Success message
+      callback('Thân nhân đã được thêm thành công.');  // Success message
 
     } else {
       final Map<String, dynamic> responseData = jsonDecode(response.body);

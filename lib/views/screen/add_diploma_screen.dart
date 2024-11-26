@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,8 +12,13 @@ import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/list_diploman_type.dart';
+import 'package:nloffice_hrm/views/screen/list_major.dart';
+import 'package:nloffice_hrm/views/screen/list_rank.dart';
+import 'package:nloffice_hrm/views/screen/list_school1.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'list_type_training.dart';
 
 class AddDiplomaScreen extends StatefulWidget {
   final Profiles? profile;
@@ -34,12 +40,82 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
   final _profileIDController = TextEditingController();
   DateTime _liscenseDate = DateTime.now();
   String? _diplomaImageBase64;
+  String? _selectecRanking;
+  String? _selectecDiplomanType;
+  String? _selectecTypeTraining;
+  String? _selectecSchool;
+  String? _selectecMajor;
   //
+  FocusNode _mabangcapFocusNode = FocusNode();
+  FocusNode _tenbangcapFocusNode = FocusNode();
+  FocusNode _loaitrainingFocusNode = FocusNode();
+  FocusNode _xeploaiFocusNode = FocusNode();
+  FocusNode _capboiFocusNode = FocusNode();
+  FocusNode _ngaycapFocusNode = FocusNode();
+  FocusNode _loaibangcapFocusNode = FocusNode();
+  FocusNode _nghanhFocusNode = FocusNode();
+  List<String> filteredItems = universityNames1;
 
   @override
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
+    _mabangcapFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_mabangcapFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _tenbangcapFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_tenbangcapFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _loaitrainingFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_loaitrainingFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _xeploaiFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_xeploaiFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _capboiFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_capboiFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _ngaycapFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_ngaycapFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _loaibangcapFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_loaibangcapFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _nghanhFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_nghanhFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
   }
 
   void dispose() {
@@ -76,8 +152,8 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1960),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
       onDateSelected(picked);
@@ -113,8 +189,16 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
     );
   }
 
-  void _submit() async{
+  void _submit() async {
     if (_formKey.currentState!.validate()) {
+      if (_diplomaImageBase64 == null) {
+        // Hiển thị thông báo lỗi nếu chưa chọn ảnh
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Vui lòng chọn ảnh trước khi gửi!')),
+        );
+        return;
+      }
+
       final createNewDiploma = Diplomas(
         diplomaId: _diplomaIDController.text,
         diplomaName: _diplomaDegreeNameController.text,
@@ -127,27 +211,21 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
         diplomaType: _diplomaTypeController.text,
         profileId: _profileIDController.text,
       );
-     try 
-     {
-       Provider.of<DiplomasViewModel>(context, listen: false)
-          .AddDiploma(createNewDiploma)
-          .then((_) {
+      try {
+        Provider.of<DiplomasViewModel>(context, listen: false)
+            .AddDiploma(createNewDiploma, (message){
+                 ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+            });
+         
+      } catch (e) {
+        {
           ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Diplomant new create successfully!')),
-        );
-        Navigator.pop(context,createNewDiploma);
-      });
-     }
-     catch(e)
-     {
-      {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create Diplomant: $e')),
-        );
-     }
-     
+            SnackBar(content: Text('Failed to create Diplomant: $e')),
+          );
+        }
+      }
     }
-  }
   }
 
   @override
@@ -193,44 +271,157 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _diplomaIDController,
-                    labelText: 'Mã bằng/ chứng chỉ',
+                    maxLength: 10,
+                    focusNode: _mabangcapFocusNode,
+                    labelText: 'Mã bằng - chứng chỉ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_id_diploma';
+                        return 'Không được để trống';
+                      } else if (value.length > 10) {
+                        return 'Mã bằng cấp không được vượt quá 10 ký tự';
+                      } else if (!value.startsWith('BC-')) {
+                        return 'Mã bằng cấp phải bắt đầu bằng "BC-"';
+                      } else if (!RegExp(r'^BC-\d+$').hasMatch(value)) {
+                        return 'Sau "BC-" phải là các số, ví dụ: BC-001';
                       }
                       return null;
                     },
                   ).px8().w(150),
                   CustomTextFormField(
                     textEditingController: _diplomaDegreeNameController,
-                    labelText: 'Diploma Degree Name',
+                    maxLength: 150,
+                    focusNode: _tenbangcapFocusNode,
+                    labelText: 'Tên bằng cấp - chứng chỉ',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_Diploma_Degree_Name';
+                        return 'Không được để trống';
+                      }
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      if (value.length < 4) {
+                        return 'Tên bằng cấp phải có ít nhất 4 ký tự';
+                      }
+                      String upperCaseName = value.toUpperCase();
+                      if (value != upperCaseName) {
+                        return 'Văn bản phải viết hoa hoàn toàn. Ví dụ: BẰNG CỬ NHÂN';
+                      }
+                      // Regex kiểm tra ký tự tiếng Việt in hoa và khoảng trắng
+                      final nameRegex = RegExp(
+                          r"^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+)*$");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Tên bằng cấp không hợp lệ. Vui lòng nhập đúng định dạng.';
+                      }
+
+                      if (!value.isLetter()) {
+                        return 'Tên chỉ gồm chữ';
                       }
                       return null;
                     },
                   ).w(229),
                 ],
               ).py16(),
+              DropdownButtonFormField<String>(
+                value: _selectecSchool,
+                focusNode: _capboiFocusNode,  
+                isExpanded: true,
+                items: filteredItems.map((relat) {
+                  return DropdownMenuItem(
+                    value: relat,
+                    child: Text(relat,style: TextStyle(fontSize: 13),),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Được cấp bởi',
+                  border: OutlineInputBorder(),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      showSearch(
+                        context: context,
+                        delegate: CustomSearchDelegate(
+                          universityNames1,
+                          (selectedItem) {
+                            setState(() {
+                              _selectecSchool = selectedItem;
+                              _grantedByController.text =
+                                  selectedItem; // Cập nhật controller
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _selectecSchool = value;
+                    _grantedByController.text = value ?? "";
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).px8(),
               Row(
                 children: [
-                  CustomTextFormField(
-                    textEditingController: _grantedByController,
-                    labelText: 'Granted By',
+                  DropdownButtonFormField<String>(
+                     isExpanded: true,
+                    value: _selectecTypeTraining,
+                    focusNode: _loaitrainingFocusNode,
+                    items: typeTraining.map((relat) {
+                      return DropdownMenuItem(
+                        value: relat,
+                        child: Text(relat,style: TextStyle(fontSize: 13),),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Giáo dục chính quy',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectecTypeTraining =
+                            value; // Cập nhật giá trị được chọn
+                        _modeOfStudyController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_granted_by';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
                   ).px8().w(150),
-                  CustomTextFormField(
-                    textEditingController: _modeOfStudyController,
-                    labelText: 'Mode Of Study',
+                  DropdownButtonFormField<String>(
+                     isExpanded: true,
+                    value: _selectecMajor,
+                    focusNode: _nghanhFocusNode,
+                    items: majors.map((relat) {
+                      return DropdownMenuItem(
+                        value: relat,
+                        child: Text(relat),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Ngành học',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectecMajor = value; // Cập nhật giá trị được chọn
+                        _majorController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_mode_of_study';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
@@ -239,36 +430,30 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
               ).py16(),
               Row(
                 children: [
-                  CustomTextFormField(
-                    textEditingController: _rankingController,
-                    labelText: 'Ranking',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_ranking';
-                      }
-                      return null;
+                  DropdownButtonFormField<String>(
+                    value: _selectecDiplomanType,
+                    focusNode: _loaibangcapFocusNode,
+                    items: diplomantype.map((relat) {
+                      return DropdownMenuItem(
+                        value: relat,
+                        child: Text(relat),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Loại bằng cấp',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectecDiplomanType =
+                            value; // Cập nhật giá trị được chọn
+                        _diplomaTypeController.text =
+                            value ?? ""; // Gán vào controller
+                      });
                     },
-                  ).px8().w(150),
-                  CustomTextFormField(
-                    textEditingController: _majorController,
-                    labelText: 'Major',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_major';
-                      }
-                      return null;
-                    },
-                  ).w(229),
-                ],
-              ).py16(),
-              Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _diplomaTypeController,
-                    labelText: 'Diploma Type',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_diploma_type';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
@@ -287,14 +472,39 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                 ],
               ).py16(),
               _buildDateField(
-                  'License Date', _liscenseDateController, _liscenseDate,
-                  (date) {
+                  'Ngày Cấp', _liscenseDateController, _liscenseDate, (date) {
                 setState(() {
                   _liscenseDate = date;
                   _liscenseDateController.text =
                       "${_liscenseDate.toLocal()}".split(' ')[0];
                 });
               }).px(8).w(150),
+              DropdownButtonFormField<String>(
+                value: _selectecRanking,
+                focusNode: _xeploaiFocusNode,
+                items: ranking.map((relat) {
+                  return DropdownMenuItem(
+                    value: relat,
+                    child: Text(relat),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Xếp loại',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _selectecRanking = value; // Cập nhật giá trị được chọn
+                    _rankingController.text = value ?? ""; // Gán vào controller
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).px8().w(150),
               SizedBox(height: 24),
               Center(
                 child: ElevatedButton(
@@ -314,6 +524,73 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class CustomSearchDelegate extends SearchDelegate<String> {
+  final List<String> items;
+  final Function(String) onSelectItem; // Thêm callback để cập nhật giá trị
+
+  CustomSearchDelegate(this.items, this.onSelectItem);
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = '';
+        },
+      ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = items
+        .where((element) => element.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return ListView(
+      children: results.map((item) {
+        return ListTile(
+          title: Text(item),
+          onTap: () {
+            onSelectItem(item); // Cập nhật giá trị vào controller
+            close(context, item); // Đóng màn hình tìm kiếm và trả kết quả
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final results = items
+        .where((element) => element.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+
+    return ListView(
+      children: results.map((item) {
+        return ListTile(
+          title: Text(item),
+          onTap: () {
+            onSelectItem(item); // Cập nhật giá trị vào controller
+            close(context, item); // Đóng màn hình tìm kiếm và trả kết quả
+          },
+        );
+      }).toList(),
     );
   }
 }
