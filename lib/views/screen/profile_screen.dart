@@ -7,11 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/department_position_model.dart';
-import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
 import 'package:nloffice_hrm/models/insurance_model.dart';
 import 'package:nloffice_hrm/models/labor_contracts_model.dart';
-import 'package:nloffice_hrm/models/positions_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/provinces.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
@@ -21,9 +19,7 @@ import 'package:nloffice_hrm/models/trainingprocesses_model.dart';
 import 'package:nloffice_hrm/models/working.processes_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/diplomas_view_model.dart';
-import 'package:nloffice_hrm/view_models/insurance_view_model.dart';
 import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
-import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
 import 'package:nloffice_hrm/view_models/roles_view_models.dart';
@@ -34,8 +30,6 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_insurance_screen.dart';
-import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
@@ -45,7 +39,6 @@ import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
@@ -889,7 +882,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? Row(
                       children: [
-                        Text('Chọn').px(6),
+                        Text('CV-PB:').px(6),
                         _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
                             .p(8)
                             .w(360),
@@ -899,15 +892,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
-                  _buildSalaryDropdown('Choose Salary').p(8).w(300),
+                  _buildSalaryDropdown('Mức lương').p(8).w(300),
                 ],
               ),
-              Row(
-                children: [
-                  Text('Roles').px(8),
-                  _buildRolesDropdown('Choose Roles').p(8).w(300),
-                ],
-              ),
+              AppStrings.ROLE_PERMISSIONS.containsAny(
+                      ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+                  ? Row(
+                      children: [
+                        Text('Quyền:').px(8),
+                        _buildRolesDropdown('Quyền').p(8).w(300),
+                      ],
+                    )
+                  : SizedBox.shrink(),
               // Gender + Marriage
               Row(
                 children: [
@@ -924,7 +920,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     items: NationNames.map((nation) {
                       return DropdownMenuItem(
                         value: nation,
-                        child: Text(nation,style: TextStyle(fontSize: 13),),
+                        child: Text(
+                          nation,
+                          style: TextStyle(fontSize: 13),
+                        ),
                       );
                     }).toList(),
                     decoration: InputDecoration(

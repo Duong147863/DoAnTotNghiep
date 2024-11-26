@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/models/timekeepings_model.dart';
 import 'package:nloffice_hrm/view_models/shifts_view_model.dart';
+import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/views/screen/qr_scan.dart';
@@ -11,9 +13,7 @@ import '../../models/shifts_model.dart';
 
 class TimeAttendance extends StatefulWidget {
   Profiles loginUser;
-
   TimeAttendance({super.key, required this.loginUser});
-
   @override
   _TimeAttendanceState createState() => _TimeAttendanceState();
 }
@@ -22,6 +22,7 @@ class _TimeAttendanceState extends State<TimeAttendance>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   Shifts? currentShift;
+  List<Timekeepings> list = [];
   @override
   void initState() {
     super.initState();
@@ -30,7 +31,7 @@ class _TimeAttendanceState extends State<TimeAttendance>
   }
 
   @override
-  void dispose() {
+  Future<void> dispose() async {
     _tabController.dispose();
     super.dispose();
   }
@@ -42,18 +43,14 @@ class _TimeAttendanceState extends State<TimeAttendance>
     DateTime now = DateTime.now();
     // Duyệt qua tất cả các ca làm việc
     for (var shift in allShifts) {
-      // Nếu không có ca nào khớp, chọn ca tiếp theo
       if (now.isAfter(shift.startTime) && now.isBefore(shift.endTime)) {
         setState(() {
           currentShift = shift;
         });
         break; // Nếu đã tìm thấy ca làm việc hiện tại, dừng lại
       }
-    }
-
-    // Nếu không có ca nào khớp, chọn ca tiếp theo
-    if (currentShift == null) {
-      for (var shift in allShifts) {
+      // Nếu không có ca nào khớp, chọn ca tiếp theo
+      if (currentShift == null) {
         if (now.isBefore(shift.startTime)) {
           setState(() {
             currentShift = shift;
@@ -89,7 +86,7 @@ class _TimeAttendanceState extends State<TimeAttendance>
               controller: _tabController,
               indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
               labelColor: Colors.black, // Màu cho tab đang chọn
-              tabs: [
+              tabs: const [
                 Tab(text: 'Quét QR'),
                 Tab(text: 'Lịch sử chấm công'),
               ],
@@ -98,26 +95,61 @@ class _TimeAttendanceState extends State<TimeAttendance>
         ),
       ),
       body: Expanded(
-        child: Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
-          Provider.of<ShiftsViewModel>(context, listen: false).getAllShifts();
-          List<Shifts> allShifts =
-              Provider.of<ShiftsViewModel>(context, listen: false).listShifts;
-          if (currentShift == null) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else
-            return TabBarView(
-              controller: _tabController,
-              children: [
-                QrScan(
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
+              getShiftAuto();
+              if (currentShift == null) {
+                getShiftAuto();
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else
+                return QrScan(
                   user: widget.loginUser,
                   currentShift: currentShift ?? currentShift!,
-                ),
-                HistoryTab(),
-              ],
-            );
-        }),
+                );
+            }),
+            HistoryTab(),
+            // Consumer<TimeKeepingViewModel>(
+            //     builder: (context, viewModel, child) {
+            //   if (viewModel.list1.isEmpty && !viewModel.fetchingData) {
+            //     Provider.of<TimeKeepingViewModel>(context, listen: false)
+            //         .getProfileCheckInHistory(widget.loginUser.profileId);
+            //   }
+            //   if (viewModel.fetchingData) {
+            //     return const Center(child: CircularProgressIndicator());
+            //   } else
+            //     return ExpansionPanelList(
+            //       elevation: 1,
+            //       expandedHeaderPadding: EdgeInsets.all(0),
+            //       expansionCallback: (int index, bool isExpanded) {
+            //         setState(() {
+            //           list[index].isExpanded = isExpanded;
+            //         });
+            //       },
+            //       children: list.map((time) {
+            //         return ExpansionPanel(
+            //             headerBuilder: (BuildContext context, bool isExpanded) {
+            //               return ListTile(
+            //                 contentPadding: EdgeInsets.symmetric(
+            //                     vertical: 10, horizontal: 16),
+            //                 leading: Icon(Icons.school,
+            //                     color: const Color.fromARGB(255, 183, 255, 68)),
+            //                 title: Text(
+            //                   time.profileId,
+            //                   style: TextStyle(
+            //                       fontSize: 16, fontWeight: FontWeight.bold),
+            //                 ),
+            //               );
+            //             },
+            //             body: Center());
+            //       }).toList(),
+            //     );
+            // })
+          ],
+        ),
       ),
     );
   }
@@ -150,8 +182,7 @@ class _HistoryTabState extends State<HistoryTab> {
   }
 
   String get _monthYearText {
-    return DateFormat('MMMM yyyy')
-        .format(_selectedMonth); // Định dạng hiển thị tháng và năm
+    return "Tháng ${DateFormat('MM/yyyy').format(_selectedMonth)}"; // Định dạng hiển thị tháng và năm
   }
 
   List<TableRow> _buildCalendar() {
@@ -194,12 +225,12 @@ class _HistoryTabState extends State<HistoryTab> {
             child: Text(
               '$day',
               style: TextStyle(
-                color: DateTime(_selectedMonth.year, _selectedMonth.month, day)
-                            .weekday ==
-                        7
-                    ? Colors.red
-                    : Colors.black,
-              ),
+                  fontWeight:
+                      DateTime(_selectedMonth.year, _selectedMonth.month, day)
+                                  .weekday ==
+                              7
+                          ? FontWeight.bold
+                          : FontWeight.normal),
             ),
           ),
         ),

@@ -35,6 +35,18 @@ class _QrScanState extends State<QrScan> {
     super.dispose();
   }
 
+  DateTime differentBetween(DateTime time1, DateTime time2) {
+    Duration duration = Duration(
+        hours: time2.hour,
+        minutes: time2.minute,
+        seconds: time2.second); // lấy thời gian bắt đầu ca làm
+    return DateFormat("H:m:s").parse(time1
+        .subtract(duration)
+        .toString()
+        .split(' ')
+        .last); // kết quả sau khi lấy time1 trừ time2
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -54,8 +66,14 @@ class _QrScanState extends State<QrScan> {
               onDetect: (Barcode barcode, MobileScannerArguments? args) {
                 Provider.of<TimeKeepingViewModel>(context, listen: false)
                     .checkin(Timekeepings(
-                  checkin: DateFormat("H:m:s")
+                  checkin: DateFormat("H:m:s") // Tgian thực tế check in vào
                       .parse(barcode.rawValue!.split(' ').last),
+                  late: differentBetween(
+                    DateFormat("H:m:s").parse(barcode.rawValue!
+                        .split(' ')
+                        .last), //Tgian bắt đầu ca làm theo quy định
+                    widget.currentShift.startTime,
+                  ),
                   checkout: DateFormat("H:m:s")
                       .parse(barcode.rawValue!.split(' ').last),
                   shiftId: widget.currentShift.shiftId,
@@ -67,7 +85,7 @@ class _QrScanState extends State<QrScan> {
                   controller.stop();
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Check in thành công!')),
+                    SnackBar(content: Text('Xin cảm ơn!')),
                   );
                 });
               },

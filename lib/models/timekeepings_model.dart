@@ -1,25 +1,27 @@
-import 'dart:async';
-
 import 'package:intl/intl.dart';
 
 class Timekeepings {
-  Timekeepings({
-    this.timekeepingId,
-    required this.checkin,
-    this.checkout,
-    required this.shiftId,
-    required this.profileId,
-    required this.date,
-    this.status = 0,
-  });
+  Timekeepings(
+      {this.timekeepingId,
+      required this.checkin,
+      this.checkout,
+      required this.shiftId,
+      required this.profileId,
+      this.late,
+      required this.date,
+      this.leavingSoon,
+      this.status = 0,
+      this.isExpanded = false});
   int? timekeepingId;
   DateTime checkin;
   DateTime? checkout;
   String shiftId;
   String profileId;
+  DateTime? late;
   DateTime date;
-
+  DateTime? leavingSoon;
   int status;
+  bool isExpanded;
   factory Timekeepings.fromJson(Map<String, dynamic> json) {
     return Timekeepings(
       timekeepingId: json["timekeeping_id"],
@@ -27,7 +29,9 @@ class Timekeepings {
       checkout: json["checkout"],
       shiftId: json["shift_id"],
       profileId: json["profile_id"],
+      late: json["late"],
       date: json["date"],
+      leavingSoon: json["leaving_soon"],
       status: json["status"],
     );
   }
@@ -38,7 +42,9 @@ class Timekeepings {
     map["checkout"] = _formatTime(checkout);
     map["shift_id"] = shiftId;
     map["profile_id"] = profileId;
+    map["late"] = _formatTime(late);
     map["date"] = DateFormat("yyyy-MM-dd").format(date);
+    map["leaving_soon"] = _formatTime(leavingSoon);
     map["status"] = status;
     return map;
   }
