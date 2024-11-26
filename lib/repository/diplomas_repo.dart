@@ -8,35 +8,54 @@ class DiplomasRepository {
 
   Future<List<Diplomas>> getDiplomasOf(String profileID) async {
     final response = await service.getDiplomaOf(profileID);
-
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = json.decode(response.body);
-
       return jsonData.map((x) => Diplomas.fromJson(x)).toList();
     } else {
       throw Exception('Failed to load data');
     }
   }
 
-  Future<bool> AddDiplomas(Diplomas diploma) async {
-    final response = await service.createNewDiploma(diploma);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Failed to add diploma: ${response.statusCode}');
+  Future<void> AddDiplomas(Diplomas diploma, Function(String) callback) async {
+    try {
+      final response = await service.createNewDiploma(diploma);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        callback('Bằng cấp đã được thêm thành công!'); // Success message
+      } else {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Pass the message to the callback
+        } else {
+          callback('Đã xảy ra lỗi không xác định');
+        }
+      }
+    } catch (e) {
+      callback('Lỗi: $e'); // Pass error message to callback
     }
   }
 
-  Future<bool> updateDiplomas(Diplomas diploma) async {
+  Future<void> updateDiplomas(
+      Diplomas diploma, Function(String) callback) async {
     try {
+      // Gửi yêu cầu cập nhật thân nhân
       final response = await service.updateDiplomas(diploma);
+
       if (response.statusCode == 200) {
-        return true;
+        callback(
+            'Bằng cấp đã được cập nhật thành công!'); // Thông báo thành công
       } else {
-        throw Exception('Failed to update Trainingprocesses');
+        // Giải mã nội dung phản hồi
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Hiển thị thông báo lỗi từ API
+        } else {
+          callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
+        }
       }
-    } catch (error) {
-      throw Exception('Failed to update Trainingprocesses');
+    } catch (e) {
+      callback('Lỗi: $e'); // Thông báo lỗi ngoại lệ
     }
   }
 

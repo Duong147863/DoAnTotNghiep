@@ -345,17 +345,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
           salaryId: selectedSalarys!.salaryId,
           profileImage: _profileImageBase64 ?? null);
       Provider.of<ProfilesViewModel>(context, listen: false)
-          .addProfile(newProfile)
-          .then((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Thêm nhân viên thành công')),
-        );
-        Navigator.pop(context);
-      }).catchError((error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Thêm nhân viên thất bại $error')),
-        );
-      });
+          .addProfile(newProfile, (message) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(message)));
+          })
+          .then((_) {})
+          .catchError((error) {});
     }
   }
 
@@ -461,13 +456,13 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
                     }
-                      // Kiểm tra không có khoảng trắng ở cuối tên
-                      if (value.trim() != value) {
-                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
-                      }
-                      if (value.length < 4) {
+                    // Kiểm tra không có khoảng trắng ở cuối tên
+                    if (value.trim() != value) {
+                      return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                    }
+                    if (value.length < 4) {
                       return 'Họ và Tên phải có ít nhất 4 ký tự';
-                      }
+                    }
                     // Regex kiểm tra ký tự đặc biệt
                     final nameRegex = RegExp(
                         r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệíìỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựýỳỷỹỵ\s]+$");
@@ -475,22 +470,22 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     if (!nameRegex.hasMatch(value)) {
                       return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
                     }
-                       // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                      List<String> words = value.split(" ");
-                      for (int i = 0; i < words.length; i++) {
-                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                        words[i] = words[i].substring(0, 1).toUpperCase() +
-                            words[i].substring(1).toLowerCase();
-                      }
-                      String capitalizedName = words.join(" ");
+                    // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                    List<String> words = value.split(" ");
+                    for (int i = 0; i < words.length; i++) {
+                      // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                      words[i] = words[i].substring(0, 1).toUpperCase() +
+                          words[i].substring(1).toLowerCase();
+                    }
+                    String capitalizedName = words.join(" ");
 
-                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
-                      if (value != capitalizedName) {
-                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
-                      }
-                      if (!value.isLetter()) {
-                        return 'Tên chỉ gồm chữ';
-                      }
+                    // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                    if (value != capitalizedName) {
+                      return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                    }
+                    if (!value.isLetter()) {
+                      return 'Tên chỉ gồm chữ';
+                    }
                     if (!value.isLetter()) {
                       return 'Tên chỉ gồm chữ';
                     }
@@ -674,6 +669,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     if (value == null || value.isEmpty) {
                       return 'Không được để trống';
                     }
+                    if (value.trim() != value) {
+                      return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                    }
                     // Regex kiểm tra email, bắt buộc phải có đuôi @gmail.com
                     final emailRegex = RegExp(r'^[\w-\.]+@gmail\.com$');
                     if (!emailRegex.hasMatch(value)) {
@@ -725,6 +723,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 if (value == null || value.isEmpty) {
                   return 'Không được để trống';
                 }
+                  if (value.trim() != value) {
+                      return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                    }
                 // Kiểm tra độ dài mật khẩu (từ 8 đến 15 ký tự)
                 if (value.length < 8 || value.length > 15) {
                   return 'Mật khẩu phải từ 8 đến 15 ký tự';

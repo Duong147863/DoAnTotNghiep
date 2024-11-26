@@ -9,37 +9,38 @@ class DiplomasViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Diplomas> get listDiplomas => _list;
 
- Future<void> getDiplomasOf(String profileID) async {
+  Future<void> getDiplomasOf(String profileID) async {
     try {
-      List<Diplomas> diplomasList =
-          await repository.getDiplomasOf(profileID);
-      _list = diplomasList
-          .where((dip) => dip.profileId == profileID)
-          .toList();
+      List<Diplomas> diplomasList = await repository.getDiplomasOf(profileID);
+      _list = diplomasList.where((dip) => dip.profileId == profileID).toList();
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to load working processes: $e');
     }
   }
-  Future<void> AddDiploma(Diplomas diploma) async {
+
+  Future<void> AddDiploma(Diplomas diploma, Function(String) callback) async {
     try {
-      await repository.AddDiplomas(diploma);
-        notifyListeners();
+      await repository.AddDiplomas(
+          diploma, callback); // Call the repository method
     } catch (e) {
-      throw Exception('Failed to add datas: $e');
+      callback(
+          'Failed to add relative: $e'); // Call the callback with error message
     }
   }
-  Future<void> updateDiplomas(Diplomas diploma) async {
+
+  Future<void> updateDiplomas(
+      Diplomas diploma, Function(String) callback) async {
     try {
-      await repository.updateDiplomas(diploma);
-      int index =
-          _list.indexWhere((dip) => dip.diplomaId == diploma.diplomaId);
+      await repository.updateDiplomas(diploma, callback);
+      int index = _list.indexWhere((dip) => dip.diplomaId == diploma.diplomaId);
       if (index != -1) {
         _list[index] = diploma;
         notifyListeners();
       }
     } catch (e) {
-      throw Exception('Failed to update Training Processes: $e');
+      callback(
+          'Failed to add relative: $e'); // Call the callback with error message
     }
   }
 

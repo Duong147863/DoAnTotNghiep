@@ -81,26 +81,63 @@ class ProfilesRepository {
     }
   }
 
-  Future<bool> addProfile(Profiles profile) async {
-    final response = await service.addNewProfile(profile); //
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      throw Exception('Failed to add profile: ${response.statusCode}');
+  Future<void> addProfile(Profiles profile, Function(String) callback) async {
+    try {
+      final response = await service.addNewProfile(profile);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        callback('Nhân viên đã được thêm thành công.'); // Success message
+      } else {
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Pass the message to the callback
+        } else {
+          callback('Đã xảy ra lỗi không xác định');
+        }
+      }
+    } catch (e) {
+      callback('Lỗi: $e'); // Pass error message to callback
     }
   }
 
-  Future<bool> updateProfile(Profiles profile) async {
-      final response = await service
-          .updateProfile(profile); // Gọi phương thức từ ProfileService
+  // Future<bool> updateProfile(Profiles profile) async {
+  //   final response = await service
+  //       .updateProfile(profile); // Gọi phương thức từ ProfileService
+  //   if (response.statusCode == 200) {
+  //     print("Update successful. Response body: ${response.body}");
+  //     return true; // Cập nhật thành công
+  //   } else {
+  //     print("Failed to Update profile: ${response.statusCode}");
+  //     print("Response body: ${response.body}");
+  //     throw Exception('Failed to update profile');
+  //   }
+  // }
+  Future<void> updateProfile(
+      Profiles profile, Function(String) callback) async {
+    try {
+      // Gửi yêu cầu cập nhật thân nhân
+      final response = await service.updateProfile(profile);
+
       if (response.statusCode == 200) {
         print("Update successful. Response body: ${response.body}");
-        return true; // Cập nhật thành công 
+        callback(
+            'Nhân viên đã được cập nhật thành công'); // Thông báo thành công
       } else {
+        // Giải mã nội dung phản hồi
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
           print("Failed to Update profile: ${response.statusCode}");
-        print("Response body: ${response.body}");
-        throw Exception('Failed to update profile');
-      } 
+          print("Response body: ${response.body}");
+          callback(responseData['message']); // Hiển thị thông báo lỗi từ API
+        } else {
+          print("Failed to Update profile: ${response.statusCode}");
+          print("Response body: ${response.body}");
+          callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
+        }
+      }
+    } catch (e) {
+      callback('Lỗi: $e'); // Thông báo lỗi ngoại lệ
+    }
   }
 
   Future<bool> deleteProfile(String profileId) async {
@@ -126,7 +163,7 @@ class ProfilesRepository {
       throw Exception(
           'Failed to login: ${response.statusCode} - ${response.body}');
     }
-  } 
+  }
 
   Future<Profiles> phoneLogin(String phone, String password) async {
     final response = await service.phoneLogin(phone, password);

@@ -256,6 +256,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               Row(
                 children: [
                   DropdownButtonFormField<String>(
+                       isExpanded: true,
                     value: _selectecRelationship,
                     focusNode: _quanheFocusNode,
                     items: relationships.map((relat) {
