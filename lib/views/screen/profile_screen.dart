@@ -350,8 +350,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             .contains('Manage Staffs info only')) {
           departmentsPosition = departmentsPosition
               .where((department) =>
-                  department.departmentID != 'PB-GĐ' &&
-                  department.departmentID != 'PB-HR')
+                  department.departmentID != 'PB-GĐ'
+                  )
               .toList();
         }
       });
@@ -394,7 +394,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       } else if (AppStrings.ROLE_PERMISSIONS
           .contains('Manage Staffs info only')) {
         roles =
-            allRoles.where((role) => [1, 2, 3].contains(role.roleID)).toList();
+            allRoles.where((role) => [1, 2, 3, 4].contains(role.roleID)).toList();
       } else {
         roles = [];
       }
@@ -1357,13 +1357,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (value == null || value.isEmpty) {
               return 'Nhập ngày cấp';
             }
+            // Kiểm tra ngày sinh trong quá khứ
+          
              // Kiểm tra ngày sinh đã nhập (dùng controller)
             if (_birthdayController.text.isEmpty) {
               return 'Cần nhập ngày sinh trước!';
             }
             try {
-              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-
+                DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+                  DateTime CCCD = dateFormat.parse(value);
+              if (CCCD.isAfter(DateTime.now())) {
+                return 'CCCD phải là ngày trong quá khứ';
+              }
               // Parse ngày sinh từ _birthdayController
               DateTime birthday = dateFormat.parse(_birthdayController.text);
               // Kiểm tra tuổi đủ 14 tại thời điểm cấp

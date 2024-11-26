@@ -1009,38 +1009,52 @@ class _HomeScreenState extends State<HomeScreen> {
                     .fetchAllDepartments();
               }
               if (viewModel.fetchingData) {
-                // While data is being fetched
+                // Hiển thị khi dữ liệu đang được tải
                 return const Center(child: CircularProgressIndicator());
               } else {
-                // If data is successfully fetched
+                // Dữ liệu đã tải thành công
                 List<Departments> departments = viewModel.listDepartments;
+
+                // Lọc danh sách dựa trên quyền
+                if (AppStrings.ROLE_PERMISSIONS
+                    .contains('Manage BoD & HR accounts')) {
+                  // Hiển thị toàn bộ phòng ban
+                } else if (AppStrings.ROLE_PERMISSIONS
+                    .contains('Manage Staffs info only')) {
+                  // Loại bỏ phòng ban với ID là 'PB-GĐ'
+                  departments = departments
+                      .where((department) => department.departmentID != 'PB-GĐ')
+                      .toList();
+                }
+
                 return CustomGridView(
-                    childAspectRatio: 2,
-                    dataSet: departments,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        color: const Color.fromARGB(255, 243, 243, 242),
-                        elevation: 1,
-                        // margin: EdgeInsets.all(13),
-                        child: Wrap(
-                          clipBehavior: Clip.antiAlias,
-                          direction: Axis.vertical,
-                          children: [
-                            Text(
-                              departments[index].departmentName,
-                              maxLines: 2,
-                              overflow: TextOverflow.clip,
-                            ),
-                          ],
-                        ).p(13),
-                      ).onTap(() => Navigator.push(
+                  childAspectRatio: 2,
+                  dataSet: departments,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      color: const Color.fromARGB(255, 243, 243, 242),
+                      elevation: 1,
+                      child: Wrap(
+                        clipBehavior: Clip.antiAlias,
+                        direction: Axis.vertical,
+                        children: [
+                          Text(
+                            departments[index].departmentName,
+                            maxLines: 2,
+                            overflow: TextOverflow.clip,
+                          ),
+                        ],
+                      ).p(13),
+                    ).onTap(() => Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => DepartmentInfoScreen(
                               departments: departments[index],
                             ),
-                          )));
-                    });
+                          ),
+                        ));
+                  },
+                );
               }
             }),
             const Divider().p12(),
