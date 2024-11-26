@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -217,11 +215,10 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
       );
       try {
         Provider.of<DiplomasViewModel>(context, listen: false)
-            .AddDiploma(createNewDiploma, (message){
-                 ScaffoldMessenger.of(context)
+            .AddDiploma(createNewDiploma, (message) {
+          ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
-            });
-         
+        });
       } catch (e) {
         {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -277,7 +274,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                     textEditingController: _diplomaIDController,
                     maxLength: 10,
                     focusNode: _mabangcapFocusNode,
-                    labelText: 'Mã bằng - chứng chỉ',
+                    labelText: 'Số hiệu',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
@@ -328,12 +325,15 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
               ).py16(),
               DropdownButtonFormField<String>(
                 value: _selectecSchool,
-                focusNode: _capboiFocusNode,  
+                focusNode: _capboiFocusNode,
                 isExpanded: true,
                 items: filteredItems.map((relat) {
                   return DropdownMenuItem(
                     value: relat,
-                    child: Text(relat,style: TextStyle(fontSize: 13),),
+                    child: Text(
+                      relat,
+                      style: TextStyle(fontSize: 13),
+                    ),
                   );
                 }).toList(),
                 decoration: InputDecoration(
@@ -371,67 +371,33 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                   return null;
                 },
               ).px8(),
-              Row(
-                children: [
-                  DropdownButtonFormField<String>(
-                     isExpanded: true,
-                    value: _selectecTypeTraining,
-                    focusNode: _loaitrainingFocusNode,
-                    items: typeTraining.map((relat) {
-                      return DropdownMenuItem(
-                        value: relat,
-                        child: Text(relat,style: TextStyle(fontSize: 13),),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      labelText: 'Giáo dục chính quy',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectecTypeTraining =
-                            value; // Cập nhật giá trị được chọn
-                        _modeOfStudyController.text =
-                            value ?? ""; // Gán vào controller
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      return null;
-                    },
-                  ).px8().w(150),
-                  DropdownButtonFormField<String>(
-                     isExpanded: true,
-                    value: _selectecMajor,
-                    focusNode: _nghanhFocusNode,
-                    items: majors.map((relat) {
-                      return DropdownMenuItem(
-                        value: relat,
-                        child: Text(relat),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      labelText: 'Ngành học',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectecMajor = value; // Cập nhật giá trị được chọn
-                        _majorController.text =
-                            value ?? ""; // Gán vào controller
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      return null;
-                    },
-                  ).w(229),
-                ],
-              ).py16(),
+              DropdownButtonFormField<String>(
+                isExpanded: true,
+                value: _selectecMajor,
+                focusNode: _nghanhFocusNode,
+                items: majors.map((relat) {
+                  return DropdownMenuItem(
+                    value: relat,
+                    child: Text(relat),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Ngành học',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _selectecMajor = value; // Cập nhật giá trị được chọn
+                    _majorController.text = value ?? ""; // Gán vào controller
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).p8(),
               Row(
                 children: [
                   DropdownButtonFormField<String>(
@@ -444,7 +410,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                       );
                     }).toList(),
                     decoration: InputDecoration(
-                      labelText: 'Loại bằng cấp',
+                      labelText: 'Loại',
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (value) {
@@ -461,18 +427,50 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                       }
                       return null;
                     },
-                  ).px8().w(150),
-                  CustomTextFormField(
-                    enabled: false,
-                    textEditingController: _profileIDController,
-                    labelText: 'Profile ID',
+                  ).px8().w(180),
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: _selectecTypeTraining,
+                    focusNode: _loaitrainingFocusNode,
+                    items: typeTraining.map((relat) {
+                      return DropdownMenuItem(
+                        value: relat,
+                        child: Text(
+                          relat,
+                          style: TextStyle(fontSize: 13),
+                        ),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Hệ đào tạo',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectecTypeTraining =
+                            value; // Cập nhật giá trị được chọn
+                        _modeOfStudyController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id';
+                        return 'Không được để trống';
                       }
                       return null;
                     },
-                  ).w(229),
+                  ).px8().w(202),
+                  // CustomTextFormField(
+                  //   enabled: false,
+                  //   textEditingController: _profileIDController,
+                  //   labelText: 'Profile ID',
+                  //   validator: (value) {
+                  //     if (value == null || value.isEmpty) {
+                  //       return 'please_enter_profile_id';
+                  //     }
+                  //     return null;
+                  //   },
+                  // ).w(229),
                 ],
               ).py16(),
               _buildDateField(
@@ -509,19 +507,21 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                   return null;
                 },
               ).px8().w(150),
-              SizedBox(height: 24),
+              SizedBox(height: 20),
               Center(
                 child: ElevatedButton(
                   onPressed: _submit,
                   style: ElevatedButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    backgroundColor: AppColor.primaryDarkColor,
-                    textStyle: TextStyle(fontSize: 18),
+                    backgroundColor: AppColor.primaryLightColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: Text('Add Diploma'),
+                  child: Text(
+                    'Lưu',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
                 ),
               ),
             ],

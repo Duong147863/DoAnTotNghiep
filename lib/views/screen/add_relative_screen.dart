@@ -176,7 +176,6 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
           TextButton.icon(
             onPressed: () {
               _submit();
-              Navigator.pop(context);
             },
             icon: Icon(
               Icons.save_outlined,
@@ -195,68 +194,53 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
           child: Form(
             key: _formKey,
             child: Column(children: [
-              Row(
-                children: [
-                  CustomTextFormField(
-                    enabled: false,
-                    textEditingController: _profileIDController,
-                    labelText: 'profile_id',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_profile_id';
-                      }
-                      return null;
-                    },
-                  ).px8().w(150),
-                  CustomTextFormField(
-                    textEditingController: _relativeNameController,
-                    labelText: 'Họ tên thân nhân',
-                    maxLength: 50,
-                    focusNode: _tenTNFocusNode,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      // Kiểm tra không có khoảng trắng ở cuối tên
-                      if (value.trim() != value) {
-                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
-                      }
-                      if (value.length < 4) {
-                        return 'Họ và Tên phải có ít nhất 4 ký tự';
-                      }
-                      // Regex kiểm tra ký tự đặc biệt
-                      final nameRegex = RegExp(
-                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
-                      if (!nameRegex.hasMatch(value)) {
-                        return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
-                      }
-                      // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                      List<String> words = value.split(" ");
-                      for (int i = 0; i < words.length; i++) {
-                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                        words[i] = words[i].substring(0, 1).toUpperCase() +
-                            words[i].substring(1).toLowerCase();
-                      }
-                      String capitalizedName = words.join(" ");
+              CustomTextFormField(
+                textEditingController: _relativeNameController,
+                labelText: 'Họ tên thân nhân',
+                maxLength: 50,
+                focusNode: _tenTNFocusNode,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  // Kiểm tra không có khoảng trắng ở cuối tên
+                  if (value.trim() != value) {
+                    return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                  }
+                  if (value.length < 4) {
+                    return 'Họ và Tên phải có ít nhất 4 ký tự';
+                  }
+                  // Regex kiểm tra ký tự đặc biệt
+                  final nameRegex = RegExp(
+                      r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                  if (!nameRegex.hasMatch(value)) {
+                    return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
+                  }
+                  // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                  List<String> words = value.split(" ");
+                  for (int i = 0; i < words.length; i++) {
+                    // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                    words[i] = words[i].substring(0, 1).toUpperCase() +
+                        words[i].substring(1).toLowerCase();
+                  }
+                  String capitalizedName = words.join(" ");
 
-                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
-                      if (value != capitalizedName) {
-                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
-                      }
+                  // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                  if (value != capitalizedName) {
+                    return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                  }
 
-                      if (!value.isLetter()) {
-                        return 'Tên chỉ gồm chữ';
-                      }
-                      return null;
-                    },
-                  ).w(254),
-                ],
-              ).py16(),
+                  if (!value.isLetter()) {
+                    return 'Tên chỉ gồm chữ';
+                  }
+                  return null;
+                },
+              ).p8(),
               //relationship + relativephone
               Row(
                 children: [
                   DropdownButtonFormField<String>(
-                       isExpanded: true,
+                    isExpanded: true,
                     value: _selectecRelationship,
                     focusNode: _quanheFocusNode,
                     items: relationships.map((relat) {
@@ -283,36 +267,43 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                       }
                       return null;
                     },
-                  ).px8().w(150),
-                  CustomTextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Không được để trống';
-                            }
-                            if (value.length != 10) {
-                              return 'Số điện thoại không hợp lệ';
-                            }
-                            if (!value.startsWith('0')) {
-                              return 'Số điện thoại phải \n bắt đầu bằng số 0';
-                            }
-                            if (!value.isNumber()) {
-                              return 'Số điện thoại chỉ gồm số';
-                            }
-                            if (value.startsWith('00')) {
-                              return 'Số điện thoại không được bắt đầu bằng 00';
-                            }
-                            return null;
-                          },
-                          textEditingController: _phoneRelativeController,
-                          labelText: 'Điện thoại',
-                          maxLines: 1,
-                          maxLength: 10,
-                          focusNode: _sdtFocusNode,
-                          keyboardType: TextInputType.number)
-                      .w(254),
+                  ).px8().w(160),
+                  _buildDateField('Ngày sinh', _birthdayRelativeController,
+                      _birthdayRelative, (date) {
+                    setState(() {
+                      _birthdayRelative = date;
+                      _birthdayRelativeController.text =
+                          "${_birthdayRelative.toLocal()}".split(' ')[0];
+                    });
+                  }).px(8).w(250),
                 ],
               ),
-
+              CustomTextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        if (value.length != 10) {
+                          return 'Số điện thoại không hợp lệ';
+                        }
+                        if (!value.startsWith('0')) {
+                          return 'Số điện thoại phải \n bắt đầu bằng số 0';
+                        }
+                        if (!value.isNumber()) {
+                          return 'Số điện thoại chỉ gồm số';
+                        }
+                        if (value.startsWith('00')) {
+                          return 'Số điện thoại không được bắt đầu bằng 00';
+                        }
+                        return null;
+                      },
+                      textEditingController: _phoneRelativeController,
+                      labelText: 'Điện thoại liên lạc',
+                      maxLines: 1,
+                      maxLength: 10,
+                      focusNode: _sdtFocusNode,
+                      keyboardType: TextInputType.number)
+                  .px8(),
               InkWell(
                 onTap: () async {
                   // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
@@ -346,46 +337,34 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 ),
               ).p(8),
               //Phone
-              Row(
-                children: [
-                  _buildDateField('Ngày sinh', _birthdayRelativeController,
-                      _birthdayRelative, (date) {
-                    setState(() {
-                      _birthdayRelative = date;
-                      _birthdayRelativeController.text =
-                          "${_birthdayRelative.toLocal()}".split(' ')[0];
-                    });
-                  }).px(8).w(150),
-                  CustomTextFormField(
-                    textEditingController: _relativeJobController,
-                    focusNode: _ngheNghiepFocusNode,
-                    maxLength: 50,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      // Kiểm tra không có khoảng trắng ở cuối tên
-                      if (value.trim() != value) {
-                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
-                      }
-                      if (value.length < 3) {
-                        return 'Nghề nghiệp phải có ít nhất 3 ký tự';
-                      }
-                      // Regex kiểm tra ký tự đặc biệt
-                      final nameRegex = RegExp(
-                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
-                      if (!nameRegex.hasMatch(value)) {
-                        return 'Nghề nghiệp không hợp lệ. Vui lòng nhập đúng định dạng.';
-                      }
-                      if (!value.isLetter()) {
-                        return 'Tên chỉ gồm chữ';
-                      }
-                      return null;
-                    },
-                    labelText: 'Nghề nghiệp',
-                  ).w(254),
-                ],
-              ).py(8),
+              CustomTextFormField(
+                textEditingController: _relativeJobController,
+                focusNode: _ngheNghiepFocusNode,
+                maxLength: 50,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  // Kiểm tra không có khoảng trắng ở cuối tên
+                  if (value.trim() != value) {
+                    return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                  }
+                  if (value.length < 3) {
+                    return 'Nghề nghiệp phải có ít nhất 3 ký tự';
+                  }
+                  // Regex kiểm tra ký tự đặc biệt
+                  final nameRegex = RegExp(
+                      r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                  if (!nameRegex.hasMatch(value)) {
+                    return 'Nghề nghiệp không hợp lệ. Vui lòng nhập đúng định dạng.';
+                  }
+                  if (!value.isLetter()) {
+                    return 'Tên chỉ gồm chữ';
+                  }
+                  return null;
+                },
+                labelText: 'Nghề nghiệp',
+              ).p8(),
               //Address
               InkWell(
                 onTap: () async {
