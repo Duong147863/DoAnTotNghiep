@@ -247,6 +247,11 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
               if (value == null || value.isEmpty) {
                 return 'Không được để trống';
               }
+              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+              DateTime ngaycap = dateFormat.parse(value);
+              if (ngaycap.isAfter(DateTime.now())) {
+                return 'Ngày cấp phải là ngày trong quá khứ';
+              }
               return null;
             },
             decoration: InputDecoration(

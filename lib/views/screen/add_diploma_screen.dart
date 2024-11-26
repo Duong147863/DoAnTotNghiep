@@ -175,6 +175,10 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
               if (value == null || value.isEmpty) {
                 return 'Ngày cấp không được để trống';
               }
+              DateTime ngaycap = DateTime.parse(value);
+              if (ngaycap.isAfter(DateTime.now())) {
+                return 'Ngày cấp phải là ngày trong quá khứ';
+              }
               return null;
             },
             decoration: InputDecoration(
