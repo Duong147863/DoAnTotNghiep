@@ -21,7 +21,7 @@ class DiplomasRepository {
       final response = await service.createNewDiploma(diploma);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        callback('Bằng cấp đã được thêm thành công!'); // Success message
+        callback('Bằng cấp đã được thêm thành công.'); // Success message
       } else {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
 
@@ -44,7 +44,7 @@ class DiplomasRepository {
 
       if (response.statusCode == 200) {
         callback(
-            'Bằng cấp đã được cập nhật thành công!'); // Thông báo thành công
+            'Bằng cấp đã được cập nhật thành công.'); // Thông báo thành công
       } else {
         // Giải mã nội dung phản hồi
         final Map<String, dynamic> responseData = jsonDecode(response.body);

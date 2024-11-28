@@ -11,7 +11,7 @@ class TrainingprocessesService {
           'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
-  Future<http.Response> createTrainingProcesses(Trainingprocesses trainingprocesses) async {
+  Future<http.Response> createTrainingProcesses(Trainingprocesses trainingprocesses,Function(String) callback) async {
     return await http.post(
         Uri.parse('${AppStrings.baseUrlApi}profile/trainingProcesses/add'),
         headers: {
@@ -32,7 +32,7 @@ class TrainingprocessesService {
       body: json.encode(trainingprocesses.toJson()),
     );
   }
-  Future<http.Response> deleteTrainingProcesses(String trainingprocessesId) async {
+  Future<http.Response> deleteTrainingProcesses(int trainingprocessesId) async {
     return await http.delete(
       Uri.parse('${AppStrings.baseUrlApi}profile/trainingProcesses/delete/$trainingprocessesId'),
       headers: {

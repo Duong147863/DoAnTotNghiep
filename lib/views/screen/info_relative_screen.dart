@@ -16,10 +16,10 @@ import 'list_relationships.dart';
 
 class InfoRelativeScreen extends StatefulWidget {
   final Relatives profile;
-   final Function(int) onDelete;
+  final Function(int) onDelete;
   const InfoRelativeScreen({
     required this.profile,
-    required this.onDelete,  
+    required this.onDelete,
   });
 
   @override
@@ -142,25 +142,23 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
         relativeJob: _relativeJobController.text,
         relativeId: int.tryParse(idrelativeController.text),
       );
-      try {
         await Provider.of<RelativesViewModel>(context, listen: false)
-            .updateRelatives(updatedRelative, (message) {
+          .updateRelatives(updatedRelative, (message) {
+        if (message == 'Thân nhân đã được cập nhật thành công.') {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
-        });
-         Navigator.pop(context, updatedRelative);  // Trở về màn hình trước
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to Update Relative: $e')),
-        );
-      }
+          Navigator.pop(context, updatedRelative);
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        }
+      });
     }
   }
 
   void _deleteRelative() async {
     try {
-      final relativeId =widget.profile.relativeId;
-
+      final relativeId = widget.profile.relativeId;
       if (relativeId != null) {
         // Gọi phương thức delete từ ViewModel hoặc API để xóa
         await Provider.of<RelativesViewModel>(context, listen: false)
@@ -168,14 +166,14 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
 
         // Gọi callback từ màn hình cha để xóa thân nhân trong danh sách
         widget.onDelete(relativeId);
-           Navigator.pop(context);  // Trở về màn hình trước
+        Navigator.pop(context); // Trở về màn hình trước
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Xóa thân nhân thành công')),
         );
-     
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Relative ID is null. Cannot delete relative.')),
+          SnackBar(
+              content: Text('Relative ID is null. Cannot delete relative.')),
         );
       }
     } catch (e) {
@@ -367,7 +365,6 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
               textEditingController: _relativeJobController,
               focusNode: _ngheNghiepFocusNode,
               maxLength: 50,
-              
               enabled: _isEditing,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -382,7 +379,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
                 }
                 // Regex kiểm tra ký tự đặc biệt
                 final nameRegex = RegExp(
-                    r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệíìỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựýỳỷỹỵ\s]+$");
+                    r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
 
                 if (!nameRegex.hasMatch(value)) {
                   return 'Nghề nghiệp không hợp lệ. Vui lòng nhập đúng định dạng.';
@@ -396,22 +393,25 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
             ).px(8),
             SizedBox(height: 16),
             InkWell(
-              onTap:_isEditing? () async {
-                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                final selectedAddress = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProvinces(),
-                  ),
-                );
+              onTap: _isEditing
+                  ? () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
 
-                if (selectedAddress != null) {
-                  setState(() {
-                    // Cập nhật TextEditingController với địa chỉ được chọn
-                    _currentAddressRelativeController.text = selectedAddress;
-                  });
-                }
-              }:null,
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _currentAddressRelativeController.text =
+                              selectedAddress;
+                        });
+                      }
+                    }
+                  : null,
               child: AbsorbPointer(
                 // Ngăn không cho bàn phím mở ra khi nhấn
                 child: CustomTextFormField(
@@ -430,22 +430,25 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
 
             //Tạm trú
             InkWell(
-              onTap:_isEditing? () async {
-                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                final selectedAddress = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProvinces(),
-                  ),
-                );
+              onTap: _isEditing
+                  ? () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
 
-                if (selectedAddress != null) {
-                  setState(() {
-                    // Cập nhật TextEditingController với địa chỉ được chọn
-                    _temporaryAddressRelativeController.text = selectedAddress;
-                  });
-                }
-              }:null,
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _temporaryAddressRelativeController.text =
+                              selectedAddress;
+                        });
+                      }
+                    }
+                  : null,
               child: AbsorbPointer(
                 // Ngăn không cho bàn phím mở ra khi nhấn
                 child: CustomTextFormField(
@@ -515,49 +518,55 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
       ],
     );
   }
- Widget _buildDateField(String label, TextEditingController controller,
-    DateTime initialDate, Function(DateTime) onDateSelected) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: GestureDetector(
-      onTap:_isEditing? () => _selectDate(context, initialDate, onDateSelected):null,
-      child: AbsorbPointer(
-        child: TextFormField(
-          readOnly: true,
-          style: TextStyle(color: Colors.black),
-          controller: controller,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Không được để trống';
-            }
 
-            // Sử dụng DateFormat để phân tích chuỗi ngày theo định dạng dd/MM/yyyy
-            try {
-              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-              DateTime selectedDate = dateFormat.parse(value);  // Phân tích ngày
-              DateTime oneYearBeforeNow = DateTime.now().subtract(Duration(days: 365));
-
-              if (selectedDate.isAfter(DateTime.now())) {
-                return 'Ngày sinh phải là quá khứ';
+  Widget _buildDateField(String label, TextEditingController controller,
+      DateTime initialDate, Function(DateTime) onDateSelected) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: GestureDetector(
+        onTap: _isEditing
+            ? () => _selectDate(context, initialDate, onDateSelected)
+            : null,
+        child: AbsorbPointer(
+          child: TextFormField(
+            readOnly: true,
+            style: TextStyle(color: Colors.black),
+            controller: controller,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Không được để trống';
               }
 
-              if (selectedDate.isAfter(oneYearBeforeNow)) {
-                return 'Ngày sinh phải ít nhất trước 1 năm so với hiện tại';
-              }
-            } catch (e) {
-              return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
-            }
+              // Sử dụng DateFormat để phân tích chuỗi ngày theo định dạng dd/MM/yyyy
+              try {
+                DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+                DateTime selectedDate =
+                    dateFormat.parse(value); // Phân tích ngày
+                DateTime oneYearBeforeNow =
+                    DateTime.now().subtract(Duration(days: 365));
 
-            return null;
-          },
-          decoration: InputDecoration(
-            labelStyle: TextStyle(color: Colors.black),
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                if (selectedDate.isAfter(DateTime.now())) {
+                  return 'Ngày sinh phải là quá khứ';
+                }
+
+                if (selectedDate.isAfter(oneYearBeforeNow)) {
+                  return 'Ngày sinh phải ít nhất trước 1 năm so với hiện tại';
+                }
+              } catch (e) {
+                return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
+              }
+
+              return null;
+            },
+            decoration: InputDecoration(
+              labelStyle: TextStyle(color: Colors.black),
+              labelText: label,
+              border:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

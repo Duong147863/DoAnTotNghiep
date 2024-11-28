@@ -23,23 +23,26 @@ class RelativesRepository {
       throw Exception('Failed to load absents: ${response.statusCode}');
     }
   }
-  Future<void> addRelative(Relatives relatives, Function(String) callback) async {
+  Future<bool> addRelative(Relatives relatives, Function(String) callback) async {
   try {
     final response = await service.createNewRelative(relatives);
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       callback('Thân nhân đã được thêm thành công.');  // Success message
-
+      return true;
     } else {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (responseData['message'] != null) {
         callback(responseData['message']);  // Pass the message to the callback
+        return false;
       } else {
         callback('Đã xảy ra lỗi không xác định');
+        return false;
       }
     }
   } catch (e) {
     callback('Lỗi: $e');  // Pass error message to callback
+    return false;
   }
 }
 
@@ -49,7 +52,7 @@ class RelativesRepository {
     final response = await service.updateRelative(relatives);
 
     if (response.statusCode == 200) {
-      callback('Thân nhân đã được cập nhật thành công!'); // Thông báo thành công
+      callback('Thân nhân đã được cập nhật thành công.'); // Thông báo thành công
     } else {
       // Giải mã nội dung phản hồi
       final Map<String, dynamic> responseData = jsonDecode(response.body);

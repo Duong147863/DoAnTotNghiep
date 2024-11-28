@@ -33,7 +33,7 @@ class WorkingprocessService{
       body: json.encode(workingprocess.toJson()),
     );
   }
-  Future<http.Response> deleteWorkingprocess(String workingprocessId) async {
+  Future<http.Response> deleteWorkingprocess(int workingprocessId) async {
     return await http.delete(
       Uri.parse('${AppStrings.baseUrlApi}profile/workingprocesses/delete/$workingprocessId'),
       headers: {

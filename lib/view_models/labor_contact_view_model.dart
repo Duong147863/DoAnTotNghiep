@@ -10,32 +10,38 @@ class LaborContactsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<LaborContracts> get listLaborContact => _list;
 
-  Future<void> addNewLaborContact(LaborContracts laborContact) async {
+  // Future<void> addNewLaborContact(LaborContracts laborContact) async {
+  //   try {
+  //     await repository.addLaborContact(laborContact);
+  //     // await getLaborContactOf(laborContact.laborContractId);
+  //     await profilesViewModel.fetchQuitAndActiveMembersCount();
+  //     notifyListeners();
+  //   } catch (e) {
+  //     throw Exception('Failed to create data: $e');
+  //   }
+  // }
+      // Modify addRelative method to accept a callback for success messages
+  Future<void> addNewLaborContact(LaborContracts laborContact, Function(String) callback) async {
     try {
-      await repository.addLaborContact(laborContact);
-      // await getLaborContactOf(laborContact.laborContractId);
-      await profilesViewModel.fetchQuitAndActiveMembersCount();
-      notifyListeners();
+      await repository.addLaborContact(laborContact,callback); // Call the repository method
     } catch (e) {
-      throw Exception('Failed to create data: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
-
-  Future<void> getLaborContactOf(String laborContactId) async {
+    Future<void> getLaborContactOf(String profileId) async {
+    fetchingData = true;
+    notifyListeners();
     try {
-      List<LaborContracts> laborContactList =
-          await repository.getLaborContactOf(laborContactId);
-      _list = laborContactList
-          .where((lab) => lab.laborContractId == laborContactId)
-          .toList();
+      _list = await repository.getLaborContactOf(profileId);
       notifyListeners();
     } catch (e) {
-      throw Exception('Failed to load LaborContracts: $e');
+      throw Exception('Failed to load data: $e');
     }
+    fetchingData = false;
   }
-   Future<void> updateLaborContact(LaborContracts laborContact) async {
+  Future<void> updateLaborContact(LaborContracts laborContact, Function(String) callback) async {
     try {
-      await repository.updateLaborContact(laborContact);
+      await repository.updateLaborContact(laborContact,callback);
       int index =
           _list.indexWhere((lab) => lab.laborContractId == laborContact.laborContractId);
       if (index != -1) {
@@ -43,21 +49,7 @@ class LaborContactsViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      throw Exception('Failed to update Training Processes: $e');
-    }
-  }
-
-  Future<void> deleteLaborContact(String laborContractId) async {
-    try {
-      bool success = await repository.deleteLaborContact(laborContractId);
-      if (success) {
-        _list.removeWhere((lab) => lab.laborContractId == laborContractId);
-        notifyListeners();
-      } else {
-        throw Exception('Failed to delete Trainingprocesses');
-      }
-    } catch (e) {
-      throw Exception('Failed to delete Trainingprocesses: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
 }

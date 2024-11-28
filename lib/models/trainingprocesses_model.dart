@@ -11,7 +11,7 @@ class Trainingprocesses {
     this.isExpanded = false,
   });
   String profileId;
-  String? trainingprocessesId;
+  int? trainingprocessesId;
   String trainingprocessesName;
   String trainingprocessesContent;
   DateTime startTime;

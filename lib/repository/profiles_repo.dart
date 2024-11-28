@@ -100,18 +100,6 @@ class ProfilesRepository {
     }
   }
 
-  // Future<bool> updateProfile(Profiles profile) async {
-  //   final response = await service
-  //       .updateProfile(profile); // Gọi phương thức từ ProfileService
-  //   if (response.statusCode == 200) {
-  //     print("Update successful. Response body: ${response.body}");
-  //     return true; // Cập nhật thành công
-  //   } else {
-  //     print("Failed to Update profile: ${response.statusCode}");
-  //     print("Response body: ${response.body}");
-  //     throw Exception('Failed to update profile');
-  //   }
-  // }
   Future<void> updateProfile(
       Profiles profile, Function(String) callback) async {
     try {
@@ -119,19 +107,14 @@ class ProfilesRepository {
       final response = await service.updateProfile(profile);
 
       if (response.statusCode == 200) {
-        print("Update successful. Response body: ${response.body}");
         callback(
-            'Nhân viên đã được cập nhật thành công'); // Thông báo thành công
+            'Nhân viên đã được cập nhật thành công.'); // Thông báo thành công
       } else {
         // Giải mã nội dung phản hồi
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData['message'] != null) {
-          print("Failed to Update profile: ${response.statusCode}");
-          print("Response body: ${response.body}");
           callback(responseData['message']); // Hiển thị thông báo lỗi từ API
         } else {
-          print("Failed to Update profile: ${response.statusCode}");
-          print("Response body: ${response.body}");
           callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
         }
       }

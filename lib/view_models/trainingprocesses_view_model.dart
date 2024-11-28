@@ -21,30 +21,31 @@ class TrainingprocessesViewModel extends ChangeNotifier {
       throw Exception('Failed to load training processes: $e');
     }
   }
-
-  Future<void> createTrainingProcesses(Trainingprocesses trainingprocesses) async {
+    Future<bool> createTrainingProcesses(Trainingprocesses trainingprocesses, Function(String) callback) async {
     try {
-      await repository.createTrainingProcesses(trainingprocesses);
+      await repository.createTrainingProcesses(trainingprocesses,callback); // Call the repository method
+      return true;
     } catch (e) {
-      throw Exception('Failed to add datas: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
+      return false;
     }
   }
 
-  Future<void> updateTrainingProcesses(Trainingprocesses trainingprocesses) async {
+   Future<void> updateTrainingProcesses(Trainingprocesses trainingprocesses, Function(String) callback) async {
     try {
-      await repository.updateTrainingProcesses(trainingprocesses);
+      await repository.updateTrainingProcesses(trainingprocesses,callback);
       int index =
-          _list.indexWhere((tra) => tra.trainingprocessesId == trainingprocesses.trainingprocessesId);
+          _list.indexWhere((training) => training.trainingprocessesId == trainingprocesses.trainingprocessesId);
       if (index != -1) {
         _list[index] = trainingprocesses;
         notifyListeners();
       }
     } catch (e) {
-      throw Exception('Failed to update Training Processes: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
 
-  Future<void> deleteTrainingProcesses(String trainingprocessesId) async {
+  Future<void> deleteTrainingProcesses(int trainingprocessesId) async {
     try {
       bool success = await repository.deleteTrainingProcesses(trainingprocessesId);
       if (success) {
