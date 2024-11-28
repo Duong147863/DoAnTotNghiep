@@ -551,72 +551,76 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //   }
   // }
   void _loadLaborContact() async {
-  // Lấy danh sách hợp đồng từ ViewModel
-  await Provider.of<LaborContactsViewModel>(context, listen: false)
-      .getLaborContactOf(widget.profile!.profileId);
+    // Lấy danh sách hợp đồng từ ViewModel
+    await Provider.of<LaborContactsViewModel>(context, listen: false)
+        .getLaborContactOf(widget.profile!.profileId);
 
-  laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
-      .listLaborContact;
+    laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
+        .listLaborContact;
 
-  if (laborContracts.isNotEmpty) {
-    // Sắp xếp hợp đồng theo start_time để xác định hợp đồng lần 1 và lần 2
-    laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
+    if (laborContracts.isNotEmpty) {
+      // Sắp xếp danh sách hợp đồng theo start_time để đảm bảo thứ tự đúng
+      laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-    // Phân loại hợp đồng theo thứ tự
-    var firstContract = laborContracts[0]; // Hợp đồng lần 1
-    var secondContract =
-        laborContracts.length > 1 ? laborContracts[1] : null; // Hợp đồng lần 2 (nếu có)
+      if (statusProfile == 1) {
+        // Trạng thái profile = 1: Lấy hợp đồng lần 1
+        var firstContract = laborContracts[0]; // Hợp đồng lần 1
+        if (firstContract != null) {
+          DateTime startTimeFirstContract = firstContract.startTime;
+          DateTime? endTimeFirstContract = firstContract.endTime;
 
-    // Xử lý hợp đồng lần 1
-    if (firstContract != null) {
-      DateTime startTimeFirstContract = firstContract.startTime;
-      DateTime? endTimeFirstContract = firstContract.endTime;
+          if (endTimeFirstContract != null) {
+            int daysBetween =
+                endTimeFirstContract.difference(startTimeFirstContract).inDays;
 
-      if (endTimeFirstContract != null) {
-        int daysBetween =
-            endTimeFirstContract.difference(startTimeFirstContract).inDays;
+            print('Days between (HD-01): $daysBetween'); // Kiểm tra số ngày
 
-        print('Days between (HD-01): $daysBetween'); // Kiểm tra số ngày
-
-        if (daysBetween > 1080) {
-          daysSignedFirstContract =
-              "Hợp đồng lần 1 kết thúc (quá 36 tháng): $daysBetween ngày";
-          showLaborContractButton1 = false; // Ẩn nút
-        } else {
-          daysSignedFirstContract = "Hợp đồng lần 1: $daysBetween ngày";
-          showLaborContractButton1 = true; // Hiển thị nút
+            if (daysBetween > 1080) {
+              daysSignedFirstContract =
+                  "Hợp đồng lần 1 kết thúc (quá 36 tháng): $daysBetween ngày";
+              showLaborContractButton1 = false; // Ẩn nút
+            } else {
+              daysSignedFirstContract = "Hợp đồng lần 1: $daysBetween ngày";
+              showLaborContractButton1 = false; // Hiển thị nút
+            }
+          }
         }
-      }
-    }
+      } else if (statusProfile == 2) {
+        // Trạng thái profile = 2: Lấy hợp đồng lần 2
+        var secondContract = laborContracts[1]; // Hợp đồng lần 2
+        if (secondContract != null) {
+          DateTime startTimeSecondContract = secondContract.startTime;
+          DateTime? endTimeSecondContract = secondContract.endTime;
 
-    // Xử lý hợp đồng lần 2
-    if (secondContract != null) {
-      DateTime startTimeSecondContract = secondContract.startTime;
-      DateTime? endTimeSecondContract = secondContract.endTime;
+          if (endTimeSecondContract != null) {
+            int daysBetween = endTimeSecondContract
+                .difference(startTimeSecondContract)
+                .inDays;
 
-      if (endTimeSecondContract != null) {
-        int daysBetween =
-            endTimeSecondContract.difference(startTimeSecondContract).inDays;
+            // print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
 
-        print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
-
-        if (daysBetween > 720) { // Ví dụ: kiểm tra nếu quá 24 tháng (720 ngày)
-          daysSignedSecondContract =
-              "Hợp đồng lần 2 kết thúc (quá 24 tháng): $daysBetween ngày";
-        } else {
-          daysSignedSecondContract = "Hợp đồng lần 2: $daysBetween ngày";
+            if (daysBetween > 1080) {
+              // Ví dụ: kiểm tra nếu quá 24 tháng (720 ngày)
+              daysSignedSecondContract =
+                  "Hợp đồng lần 2 kết thúc (quá 36 tháng): $daysBetween ngày";
+            } else {
+              daysSignedSecondContract = "Hợp đồng lần 2: $daysBetween ngày";
+            }
+          }
         }
+      } else {
+        // print("Trạng thái không hợp lệ: $statusProfile");
       }
-    }
 
-    // Cập nhật giao diện
-    setState(() {
-      print(
-          'showLaborContractButton2: $daysSignedSecondContract'); // Kiểm tra trạng thái nút 2
-    });
+      // Cập nhật giao diện
+      setState(() {
+        // print(
+        //     'showLaborContractButton1: $showLaborContractButton1'); // Kiểm tra trạng thái nút
+      });
+    } else {
+      print("Danh sách hợp đồng rỗng!");
+    }
   }
-}
-
 
   String getStatusText(
       DateTime startTime, DateTime endTime, int statusProfile) {
@@ -631,7 +635,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return "Đã hết hạn ngày thử việc: $workingDays ngày";
       }
     }
-   switch (statusProfile) {
+    switch (statusProfile) {
       case 1:
         return "Hợp đồng ký lần 1";
       case 2:
@@ -744,9 +748,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: TextStyle(color: Colors.white, fontSize: 13),
                 )
               : Text(
-                  daysSignedFirstContract != null
-                      ? daysSignedFirstContract!
-                      : "Chưa có thông tin hợp đồng lần 1",
+                  statusProfile == 1
+                      ? (daysSignedFirstContract != null
+                          ? daysSignedFirstContract!
+                          : "Chưa có thông tin hợp đồng lần 1")
+                      : (daysSignedSecondContract != null
+                          ? daysSignedSecondContract!
+                          : "Chưa có thông tin hợp đồng lần 2"),
                   style: TextStyle(fontSize: 10),
                 ),
           backgroundColor: AppColor.primaryLightColor,
@@ -1309,12 +1317,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       fab: AppStrings.ROLE_PERMISSIONS.containsAny(
               ['Manage BoD & HR accounts', 'Manage Staffs info only'])
           ? Align(
-            alignment: Alignment.bottomCenter,
-            child: SpeedDial(
-                elevation: 0,
-                icon: Icons.menu,
-                buttonSize: Size(50, 50),
-                children: [
+              alignment: Alignment.bottomCenter,
+              child: SpeedDial(
+                  elevation: 0,
+                  icon: Icons.menu,
+                  buttonSize: Size(50, 50),
+                  children: [
                     SpeedDialChild(
                         label: "Thêm thân Nhân",
                         onTap: () {
@@ -1361,8 +1369,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     AddLaborContractScreen(
-                                        profiles: widget.profile
-                                        ),
+                                        profiles: widget.profile),
                               ),
                             ).then((createNewLaborContract) {
                               if (createNewLaborContract != null) {
@@ -1382,9 +1389,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               MaterialPageRoute(
                                 builder: (BuildContext context) =>
                                     AddLaborContractScreen(
-                                        profiles: widget.profile
-                                    
-                                        ),
+                                        profiles: widget.profile),
                               ),
                             ).then((createNewLaborContract) {
                               if (createNewLaborContract != null) {
@@ -1397,7 +1402,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                     ]
                   ]),
-          )
+            )
           : SpeedDial(
               elevation: 0,
               icon: Icons.menu,
@@ -1884,6 +1889,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       workingProcesses: process,
                       profiles: widget.profile,
                       onDelete: _handleDeleteWorkingProcess,
+
                     ),
                   ),
                 );
@@ -2035,6 +2041,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Text("${process.laborContractId} Hợp đồng kí lần ${laborContracts.indexOf(process) + 1}"),
                     Row(
                       children: [
                         Text(

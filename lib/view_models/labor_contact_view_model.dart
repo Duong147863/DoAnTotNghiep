@@ -10,16 +10,32 @@ class LaborContactsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<LaborContracts> get listLaborContact => _list;
 
-  // Future<void> addNewLaborContact(LaborContracts laborContact) async {
-  //   try {
-  //     await repository.addLaborContact(laborContact);
-  //     // await getLaborContactOf(laborContact.laborContractId);
-  //     await profilesViewModel.fetchQuitAndActiveMembersCount();
-  //     notifyListeners();
-  //   } catch (e) {
-  //     throw Exception('Failed to create data: $e');
-  //   }
-  // }
+    Future<void> getSecondContractEndTime(String profileId) async {
+    try {
+      fetchingData = true;  // Đang tải dữ liệu
+      notifyListeners();
+
+      // Gọi repository để lấy dữ liệu
+      LaborContracts? contract = await repository.getSecondContractEndTime(profileId);
+
+      // Kiểm tra nếu có hợp đồng lần 2
+      if (contract != null) {
+        _list = [contract];  // Cập nhật danh sách hợp đồng
+      } else {
+        _list = [];  // Không có hợp đồng lần 2
+      }
+
+      fetchingData = false;  // Dừng trạng thái tải dữ liệu
+      notifyListeners();  // Cập nhật UI
+    } catch (error) {
+      fetchingData = false;  // Dừng trạng thái tải dữ liệu
+      notifyListeners();  // Cập nhật UI
+
+      // Xử lý lỗi (in ra console hoặc thông báo lỗi tùy ý)
+      print("Error fetching second contract end time: $error");
+      // Bạn có thể thêm logic xử lý lỗi tùy thích ở đây.
+    }
+  }
       // Modify addRelative method to accept a callback for success messages
   Future<void> addNewLaborContact(LaborContracts laborContact, Function(String) callback) async {
     try {
