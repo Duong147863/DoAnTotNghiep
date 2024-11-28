@@ -25,12 +25,13 @@ class Timekeepings {
   factory Timekeepings.fromJson(Map<String, dynamic> json) {
     return Timekeepings(
       timekeepingId: json["timekeeping_id"],
-      checkin: json["checkin"],
-      checkout: json["checkout"],
+      checkin: DateTime.parse(json["checkin"]),
+      checkout:
+          json['checkout'] != null ? DateTime.parse(json['checkout']) : null,
       shiftId: json["shift_id"],
       profileId: json["profile_id"],
-      late: json["late"],
-      date: json["date"],
+      late: json['late'] != null ? DateTime.parse(json['late']) : null,
+      date: DateTime.parse(json["date"]),
       leavingSoon: json["leaving_soon"],
       status: json["status"],
     );
