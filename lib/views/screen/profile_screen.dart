@@ -144,8 +144,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _birthday = widget.profile!.birthday;
-    print(_birthdayController.text);
-    print(_birthday);
     _placeOfBirthController.text = widget.profile!.placeOfBirth;
     _gender = widget.profile!.gender;
     _identifiNumController.text = widget.profile!.identifiNum;
