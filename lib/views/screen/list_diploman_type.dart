@@ -1,4 +1,7 @@
 List<String> diplomantype =[
-  "Bằng cấp",
-  "Chứng chỉ"
+  "Thạc sĩ",
+  "Tiến sĩ",
+  "Đại học",
+  "Cao đẳng",
+  "Trung cấp",
 ];

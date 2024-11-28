@@ -122,7 +122,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     super.dispose();
   }
 
-  void _submit() async {
+  void _submit()  {
     if (_formKey.currentState!.validate()) {
       final addNewRelative = Relatives(
         profileId: _profileIDController.text,
@@ -135,19 +135,18 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         relativesCurrentAddress: _currentAddressRelativeController.text,
         relativeJob: _relativeJobController.text,
       );
-      try {
-        // Thêm thông tin vào Provider
-        Provider.of<RelativesViewModel>(context, listen: false)
-            .addRelative(addNewRelative, (message) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(message)));
+          Provider.of<RelativesViewModel>(context, listen: false)
+          .addRelative(addNewRelative, (message) {
+          if (message == 'Thân nhân đã được thêm thành công.') {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(message)));
+            Navigator.pop(context,addNewRelative);  // Đóng màn hình
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(message)));
+          }
         });
-        Navigator.pop(context, addNewRelative);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to create Relative: $e')),
-        );
-      }
+    
     }
   }
 
@@ -354,7 +353,8 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                   }
                   // Regex kiểm tra ký tự đặc biệt
                   final nameRegex = RegExp(
-                      r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                      r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
+
                   if (!nameRegex.hasMatch(value)) {
                     return 'Nghề nghiệp không hợp lệ. Vui lòng nhập đúng định dạng.';
                   }

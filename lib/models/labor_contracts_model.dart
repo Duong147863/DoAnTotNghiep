@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 
+import 'package:googleapis/gmail/v1.dart';
 import 'package:intl/intl.dart';
 
 class LaborContracts {
@@ -9,33 +10,31 @@ class LaborContracts {
     required this.startTime,
     this.endTime,
     required this.laborContractId,
-    required this.enterpriseId,
-    required this.departmentId,
-    this.isExpanded=false
+    this.isExpanded=false,
+    required this.profiles
   });
 
   String image;
   DateTime startTime;
   DateTime? endTime;
   String laborContractId;
-  int enterpriseId;
-  String departmentId;
-   bool isExpanded;
+  String profiles;
+  bool isExpanded;
   factory LaborContracts.fromJson(Map<String, dynamic> json) {
     return LaborContracts(
       image: json["image"],
+      profiles: json["profile_id"],
       startTime: DateTime.parse(json['start_time']),
       endTime: json['end_time'] != null
           ? DateTime.parse(json['end_time'])
           : null,
       laborContractId: json["labor_contract_id"],
-      enterpriseId: json["enterprise_id"],
-      departmentId: json["department_id"],
     );
   }
   Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
+      final map = <String, dynamic>{};
     map["image"] = image;
+    map["profile_id"] = profiles;
     map["start_time"] = DateFormat("dd-MM-yyyy").format(startTime);
      // Kiểm tra nếu endTime không phải là null, mới format
     if (endTime != null) {
@@ -44,8 +43,6 @@ class LaborContracts {
       map["end_time"] = null;  // Nếu endTime là null, gửi giá trị null
     }
     map["labor_contract_id"] = laborContractId;
-    map["enterprise_id"] = enterpriseId;
-    map["department_id"] = departmentId;
     return map;
   }
 }

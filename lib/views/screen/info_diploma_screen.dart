@@ -23,8 +23,9 @@ import 'list_type_training.dart';
 
 class InfoDiplomaScreen extends StatefulWidget {
   final Diplomas? diplomas;
+  final Profiles? profiles;
   final Function(String) onDelete;
-  const InfoDiplomaScreen({super.key, this.diplomas, required this.onDelete});
+  const InfoDiplomaScreen({super.key, this.diplomas, required this.onDelete,this.profiles});
 
   @override
   _InfoDiplomaScreenState createState() => _InfoDiplomaScreenState();
@@ -61,9 +62,11 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
   FocusNode _ngaycapFocusNode = FocusNode();
   FocusNode _loaibangcapFocusNode = FocusNode();
   FocusNode _nghanhFocusNode = FocusNode();
+   DateTime? birthdayEmloyment;
   @override
   void initState() {
     super.initState();
+     birthdayEmloyment=widget.profiles!.birthday;
     _profileIDController.text = widget.diplomas!.profileId;
     _diplomaIDController.text = widget.diplomas!.diplomaId;
     _diplomaDegreeNameController.text = widget.diplomas!.diplomaName;
@@ -153,20 +156,17 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
           grantedBy: _grantedByController.text,
           diplomaType: _diplomaTypeController.text,
           profileId: _profileIDController.text);
-
-      try {
         await Provider.of<DiplomasViewModel>(context, listen: false)
-            .updateDiplomas(updatedDiplomas, (message) {
+          .updateDiplomas(updatedDiplomas, (message) {
+        if (message == 'Bằng cấp đã được cập nhật thành công.') {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
-        });
-      } catch (e) {
-        await Provider.of<DiplomasViewModel>(context, listen: false)
-            .updateDiplomas(updatedDiplomas, (message) {
+          Navigator.pop(context, updatedDiplomas);
+        } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
-        });
-      }
+        }
+      });
     }
   }
 
@@ -236,25 +236,52 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onTap: _isEditing
-            ? () => _selectDate(context, initialDate, onDateSelected)
-            : null,
+       onTap: _isEditing
+          ? () => _selectDate(context, initialDate, (selectedDate) {
+                onDateSelected(selectedDate);
+                setState(() {
+                  _liscenseDate = selectedDate;
+                  // Định dạng ngày theo DD/MM/YYYY và gán vào controller
+                  controller.text =
+                      DateFormat('dd/MM/yyyy').format(selectedDate);
+                });
+              })
+          : null,
         child: AbsorbPointer(
           child: TextFormField(
+            focusNode: _ngaycapFocusNode,
             readOnly: true,
             style: TextStyle(color: Colors.black),
             controller: controller,
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Không được để trống';
+             validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Nhập ngày bắt đầu';
+            }
+
+            // Parse ngày theo định dạng nhập
+            DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
+
+            // Kiểm tra ngày bắt đầu là quá khứ
+            if (selectedDate.isAfter(DateTime.now())) {
+              return 'Ngày cấp phải là ngày trong quá khứ';
+            }
+
+            // Kiểm tra ngày sinh và tính tuổi
+            if (birthdayEmloyment != null) {
+              int ageAtStartTime = selectedDate.year - birthdayEmloyment!.year;
+              if (selectedDate.month < birthdayEmloyment!.month ||
+                  (selectedDate.month == birthdayEmloyment!.month &&
+                      selectedDate.day < birthdayEmloyment!.day)) {
+                ageAtStartTime--;
               }
-              DateFormat dateFormat = DateFormat('dd/MM/yyyy');
-              DateTime ngaycap = dateFormat.parse(value);
-              if (ngaycap.isAfter(DateTime.now())) {
-                return 'Ngày cấp phải là ngày trong quá khứ';
-              }
-              return null;
-            },
+
+              if (ageAtStartTime < 18) {
+                return 'Nhân viên phải ít nhất 18 tuổi khi nhận bằng cấp.';
+              } 
+            }
+
+            return null;
+          },
             decoration: InputDecoration(
               labelStyle: TextStyle(color: Colors.black),
               labelText: label,
@@ -276,7 +303,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
       resizeToAvoidBottomInset: true,
-      titletext: "Info Diploma Screen",
+      titletext: "Cập Nhật Thông Tin Bằng Cấp",
       appBarColor: AppColor.primaryLightColor,
       actions: [
         TextButton.icon(

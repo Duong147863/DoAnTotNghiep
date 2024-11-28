@@ -19,37 +19,53 @@ class TrainingprocessesRepository {
     }
   }
 
-  Future<bool> createTrainingProcesses(
-      Trainingprocesses trainingprocesses) async {
-    final response = await service.createTrainingProcesses(trainingprocesses);
+    Future<bool> createTrainingProcesses(Trainingprocesses trainingprocesses, Function(String) callback) async {
+  try {
+    final response = await service.createTrainingProcesses(trainingprocesses,callback);
     if (response.statusCode == 200 || response.statusCode == 201) {
-              print("Delete successful. Response body: ${response.body}");
+      callback('Quá trình đào tạo đã được thêm thành công.');  // Success message
       return true;
     } else {
-           print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
-      throw Exception('Failed to add Trainingprocesses: ${response.statusCode}');
-    }
-  }
-
-  Future<bool> updateTrainingProcesses(
-      Trainingprocesses trainingprocesses) async {
-    try {
-      final response = await service.updateTrainingProcesses(trainingprocesses);
-      if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
-        return true;
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+      if (responseData['message'] != null) {
+        
+        callback(responseData['message']);  // Pass the message to the callback
+        return false;
       } else {
-          print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
-        throw Exception('Failed to update Trainingprocesses');
+        callback('Đã xảy ra lỗi không xác định');
+         return false;
       }
-    } catch (error) {
-      throw Exception('Failed to update Trainingprocesses');
+    }
+  } catch (e) {
+    callback('Lỗi: $e');  // Pass error message to callback
+     return false;
+  }
+}
+
+  Future<void> updateTrainingProcesses(
+     Trainingprocesses trainingprocesses, Function(String) callback) async {
+    try {
+      // Gửi yêu cầu cập nhật thân nhân
+      final response = await service.updateTrainingProcesses(trainingprocesses);
+
+      if (response.statusCode == 200) {
+        callback(
+            'Quá trình đào tạo đã được cập nhật thành công!'); // Thông báo thành công
+      } else {
+        // Giải mã nội dung phản hồi
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Hiển thị thông báo lỗi từ API
+        } else {
+          callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
+        }
+      }
+    } catch (e) {
+      callback('Lỗi: $e'); // Thông báo lỗi ngoại lệ
     }
   }
 
-  Future<bool> deleteTrainingProcesses(String trainingprocessesId) async {
+  Future<bool> deleteTrainingProcesses(int trainingprocessesId) async {
     try {
       final response =
           await service.deleteTrainingProcesses(trainingprocessesId);

@@ -30,6 +30,7 @@ import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_diploma_screen.dart';
+import 'package:nloffice_hrm/views/screen/add_labor_contract_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_provinces.dart';
 import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
@@ -38,7 +39,8 @@ import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_trainingprocesses_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_trainingprocesses_screen.dart';
+import 'package:nloffice_hrm/views/screen/info_workingprocess_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'list_nation.dart';
@@ -127,6 +129,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _endTimeController = TextEditingController();
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
+  String? daysSignedFirstContract;
+  String? daysSignedSecondContract;
+  int? roleid;
+  String trialStatusText = "";
+  bool showLaborContractButton = true; // Trạng thái hiển thị nút\
+  bool showLaborContractButton1 = true; // Trạng thái hiển thị nút\
+  bool isLaborContractClickable =
+      true; // Trạng thái không cho người click vào widget để xem thông tin nữa
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
@@ -149,25 +159,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _endTimeController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.endTime!).toString();
     _endTime = widget.profile!.endTime!;
+    //     // Tính số ngày làm việc
+    // int workingDays = _endTime.difference(_startTime).inDays;
+
+    // // Kiểm tra xem có hiển thị nút tạo hợp đồng không
+    // if (statusProfile == 0 && workingDays > 60) {
+    //   showLaborContractButton = true; // Hiển thị nút
+    // } else {
+    //   showLaborContractButton = false; // Ẩn nút
+    // }
+    // // Tính số ngày làm việc
+    // int workingDays = _endTime.difference(_startTime).inDays;
+
+    // // Kiểm tra trạng thái thử việc
+    // if (statusProfile == 0) {
+    //   if (workingDays <= 60) {
+    //     trialStatusText = "Đang thử việc ($workingDays ngày)";
+    //   } else {
+    //     trialStatusText = "Đã hết hạn ngày thử việc ($workingDays ngày)";
+    //   }
+    // }
+
     statusProfile = widget.profile!.profileStatus;
     _nationController.text = widget.profile!.nation;
     _selectedNation = widget.profile!.nation;
     _emailController.text = widget.profile!.email ?? '';
     _phoneController.text = widget.profile!.phone;
-
-    // _passwordController.text = widget.profile!.password;
     _temporaryAddressController.text = widget.profile!.temporaryAddress;
     _currentAddressController.text = widget.profile!.currentAddress;
     _profileImageBase64 = widget.profile!.profileImage;
     _marriage = widget.profile!.marriage;
     _gender = widget.profile!.gender;
+    roleid = widget.profile!.roleID;
     _loadDepartments();
     _loadSalaries();
     _loadworkingProcesses();
     _loadtrainingProcess();
     _loadRelative();
     _loadDiplomas();
-    // _loadLaborContact();
+    _loadLaborContact();
     _loadRoles();
     futureProvinces =
         Provider.of<ProfilesViewModel>(context, listen: false).fetchProvinces();
@@ -325,52 +355,72 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  void _loadDepartments() async {
-    try {
-      await Provider.of<DeparmentsViewModel>(context, listen: false)
-          .getDepartmentsByPosition();
+  void _handleDeleteWorkingProcess(int idworkingprocess) {
+    setState(() {
+      workingProcesses
+          .removeWhere((wor) => wor.workingprocessId == idworkingprocess);
+    });
+  }
 
-      departmentsPosition =
-          Provider.of<DeparmentsViewModel>(context, listen: false)
-              .getlistdepartmentPosition;
-      if (departmentsPosition.isNotEmpty) {
-        selectedDepartmentsPosition = departmentsPosition.firstWhere(
-            (depandpos) =>
-                depandpos.positionId == widget.profile!.positionId &&
-                depandpos.departmentID == widget.profile!.departmentId);
+  void _handleUpdateWorkingProcess(WorkingProcesses idworkingprocessId) {
+    setState(() {
+      int index = workingProcesses.indexWhere(
+          (wor) => wor.workingprocessId == idworkingprocessId.workingprocessId);
+      if (index != -1) {
+        workingProcesses[index] = idworkingprocessId;
       }
-      setState(() {
-        if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-        } else if (AppStrings.ROLE_PERMISSIONS
-            .contains('Manage Staffs info only')) {
-          departmentsPosition = departmentsPosition
-              .where((department) => department.departmentID != 'PB-GĐ')
-              .toList();
-        }
-      });
-    } catch (error) {
-      // Hiển thị thông báo lỗi nếu có sự cố
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to load departments and position $error')),
-      );
+    });
+  }
+
+  void _handleDeleteTrainingProcess(int idTrainingProcess) {
+    setState(() {
+      trainingProcess.removeWhere(
+          (train) => train.trainingprocessesId == idTrainingProcess);
+    });
+  }
+
+  void _handleUpdateTrainingprocess(Trainingprocesses idTrainingProcess) {
+    setState(() {
+      int index = trainingProcess.indexWhere((train) =>
+          train.trainingprocessesId == idTrainingProcess.trainingprocessesId);
+      if (index != -1) {
+        trainingProcess[index] = idTrainingProcess;
+      }
+    });
+  }
+
+  void _loadDepartments() async {
+    await Provider.of<DeparmentsViewModel>(context, listen: false)
+        .getDepartmentsByPosition();
+
+    departmentsPosition =
+        Provider.of<DeparmentsViewModel>(context, listen: false)
+            .getlistdepartmentPosition;
+    if (departmentsPosition.isNotEmpty) {
+      selectedDepartmentsPosition = departmentsPosition.firstWhere(
+          (depandpos) =>
+              depandpos.positionId == widget.profile!.positionId &&
+              depandpos.departmentID == widget.profile!.departmentId);
     }
+    setState(() {
+      if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+      } else if (AppStrings.ROLE_PERMISSIONS
+          .contains('Manage Staffs info only')) {
+        departmentsPosition = departmentsPosition
+            .where((department) => department.departmentID != 'PB-GĐ')
+            .toList();
+      }
+    });
   }
 
   void _loadSalaries() async {
-    try {
-      await Provider.of<SalariesViewModel>(context, listen: false)
-          .fetchAllSalaries();
-      salarys =
-          Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
-      if (salarys.isNotEmpty) {
-        selectedSalarys = salarys.firstWhere(
-          (salary) => salary.salaryId == widget.profile!.salaryId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load salaries')),
+    await Provider.of<SalariesViewModel>(context, listen: false)
+        .fetchAllSalaries();
+    salarys =
+        Provider.of<SalariesViewModel>(context, listen: false).listSalaries;
+    if (salarys.isNotEmpty) {
+      selectedSalarys = salarys.firstWhere(
+        (salary) => salary.salaryId == widget.profile!.salaryId,
       );
     }
   }
@@ -408,95 +458,188 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _loadRelative() async {
-    try {
-      await Provider.of<RelativesViewModel>(context, listen: false)
-          .fetchAllRelatives(widget.profile!.profileId);
-      relatives =
-          Provider.of<RelativesViewModel>(context, listen: false).listRelatives;
-      if (relatives.isNotEmpty) {
-        selectedRelatives = relatives.firstWhere(
-          (rel) => rel.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Relative $error')),
+    await Provider.of<RelativesViewModel>(context, listen: false)
+        .fetchAllRelatives(widget.profile!.profileId);
+    relatives =
+        Provider.of<RelativesViewModel>(context, listen: false).listRelatives;
+    if (relatives.isNotEmpty) {
+      selectedRelatives = relatives.firstWhere(
+        (rel) => rel.profileId == widget.profile!.profileId,
       );
     }
   }
 
   void _loadworkingProcesses() async {
-    try {
-      await Provider.of<WorkingprocessesViewModel>(context, listen: false)
-          .fetchWorkingProcess(widget.profile!.profileId);
-      workingProcesses =
-          Provider.of<WorkingprocessesViewModel>(context, listen: false)
-              .listWorkingProcess;
-      if (workingProcesses.isNotEmpty) {
-        selectedWorkingProcesses = workingProcesses.firstWhere(
-          (wor) => wor.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Workingprocesses')),
+    await Provider.of<WorkingprocessesViewModel>(context, listen: false)
+        .fetchWorkingProcess(widget.profile!.profileId);
+    workingProcesses =
+        Provider.of<WorkingprocessesViewModel>(context, listen: false)
+            .listWorkingProcess;
+    if (workingProcesses.isNotEmpty) {
+      selectedWorkingProcesses = workingProcesses.firstWhere(
+        (wor) => wor.profileId == widget.profile!.profileId,
       );
     }
   }
 
   void _loadDiplomas() async {
-    try {
-      await Provider.of<DiplomasViewModel>(context, listen: false)
-          .getDiplomasOf(widget.profile!.profileId);
-      diplomas =
-          Provider.of<DiplomasViewModel>(context, listen: false).listDiplomas;
-      if (diplomas.isNotEmpty) {
-        selectedDiplomas = diplomas.firstWhere(
-          (dip) => dip.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Diplomas')),
+    await Provider.of<DiplomasViewModel>(context, listen: false)
+        .getDiplomasOf(widget.profile!.profileId);
+    diplomas =
+        Provider.of<DiplomasViewModel>(context, listen: false).listDiplomas;
+    if (diplomas.isNotEmpty) {
+      selectedDiplomas = diplomas.firstWhere(
+        (dip) => dip.profileId == widget.profile!.profileId,
       );
     }
   }
 
   void _loadtrainingProcess() async {
-    try {
-      await Provider.of<TrainingprocessesViewModel>(context, listen: false)
-          .getTrainingProcessesOf(widget.profile!.profileId);
-      trainingProcess =
-          Provider.of<TrainingprocessesViewModel>(context, listen: false)
-              .listTrainingprocesses;
-      if (trainingProcess.isNotEmpty) {
-        selectedtrainingProcess = trainingProcess.firstWhere(
-          (tra) => tra.profileId == widget.profile!.profileId,
-        );
-      }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load TrainingProcess $error')),
+    await Provider.of<TrainingprocessesViewModel>(context, listen: false)
+        .getTrainingProcessesOf(widget.profile!.profileId);
+    trainingProcess =
+        Provider.of<TrainingprocessesViewModel>(context, listen: false)
+            .listTrainingprocesses;
+    if (trainingProcess.isNotEmpty) {
+      selectedtrainingProcess = trainingProcess.firstWhere(
+        (tra) => tra.profileId == widget.profile!.profileId,
       );
     }
   }
 
+  // void _loadLaborContact() async {
+  //   await Provider.of<LaborContactsViewModel>(context, listen: false)
+  //       .getLaborContactOf(widget.profile!.profileId);
+
+  //   laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
+  //       .listLaborContact;
+
+  //   if (laborContracts.isNotEmpty) {
+  //     // Sắp xếp hợp đồng theo start_time để xác định hợp đồng lần 1
+  //     laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+  //     // Lấy hợp đồng lần 1 (phần tử đầu tiên)
+  //     selectedlaborContracts = laborContracts.first;
+
+  //     // Lấy start_time và end_time của hợp đồng lần 1
+  //     DateTime startTimeFirstContract = selectedlaborContracts!.startTime;
+  //     DateTime? endTimeFirstContract = selectedlaborContracts!.endTime;
+
+  //     // Kiểm tra nếu endTimeFirstContract có null hoặc không hợp lệ
+  //     if (endTimeFirstContract != null) {
+  //       int daysBetween =
+  //           endTimeFirstContract.difference(startTimeFirstContract).inDays;
+
+  //       print('Days between: $daysBetween'); // Kiểm tra số ngày
+
+  //       // Kiểm tra nếu số ngày đã vượt quá 36 tháng (1080 ngày)
+  //       if (daysBetween > 1080) {
+  //         daysSignedFirstContract =
+  //             "Hợp đồng lần 1 kết thúc (quá 36 tháng): $daysBetween ngày";
+  //         showLaborContractButton1 = false; // Hiển thị nút
+  //       } else {
+  //         daysSignedFirstContract = "Hợp đồng lần 1: $daysBetween ngày";
+  //         showLaborContractButton1 = false; // Ẩn nút
+  //       }
+  //     }
+  //     // Cập nhật giao diện
+  //     setState(() {
+  //       print(
+  //           'showLaborContractButton: $showLaborContractButton1'); // Kiểm tra trạng thái nút
+  //       showLaborContractButton1;
+  //     });
+  //   }
+  // }
   void _loadLaborContact() async {
-    try {
-      await Provider.of<LaborContactsViewModel>(context, listen: false)
-          .getLaborContactOf(widget.profile!.laborContractId!);
-      laborContracts =
-          Provider.of<LaborContactsViewModel>(context, listen: false)
-              .listLaborContact;
-      if (laborContracts.isNotEmpty) {
-        selectedlaborContracts = laborContracts.firstWhere(
-          (lab) => lab.laborContractId == widget.profile!.laborContractId,
-        );
+  // Lấy danh sách hợp đồng từ ViewModel
+  await Provider.of<LaborContactsViewModel>(context, listen: false)
+      .getLaborContactOf(widget.profile!.profileId);
+
+  laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
+      .listLaborContact;
+
+  if (laborContracts.isNotEmpty) {
+    // Sắp xếp hợp đồng theo start_time để xác định hợp đồng lần 1 và lần 2
+    laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
+
+    // Phân loại hợp đồng theo thứ tự
+    var firstContract = laborContracts[0]; // Hợp đồng lần 1
+    var secondContract =
+        laborContracts.length > 1 ? laborContracts[1] : null; // Hợp đồng lần 2 (nếu có)
+
+    // Xử lý hợp đồng lần 1
+    if (firstContract != null) {
+      DateTime startTimeFirstContract = firstContract.startTime;
+      DateTime? endTimeFirstContract = firstContract.endTime;
+
+      if (endTimeFirstContract != null) {
+        int daysBetween =
+            endTimeFirstContract.difference(startTimeFirstContract).inDays;
+
+        print('Days between (HD-01): $daysBetween'); // Kiểm tra số ngày
+
+        if (daysBetween > 1080) {
+          daysSignedFirstContract =
+              "Hợp đồng lần 1 kết thúc (quá 36 tháng): $daysBetween ngày";
+          showLaborContractButton1 = false; // Ẩn nút
+        } else {
+          daysSignedFirstContract = "Hợp đồng lần 1: $daysBetween ngày";
+          showLaborContractButton1 = true; // Hiển thị nút
+        }
       }
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load LaborContact $error')),
-      );
+    }
+
+    // Xử lý hợp đồng lần 2
+    if (secondContract != null) {
+      DateTime startTimeSecondContract = secondContract.startTime;
+      DateTime? endTimeSecondContract = secondContract.endTime;
+
+      if (endTimeSecondContract != null) {
+        int daysBetween =
+            endTimeSecondContract.difference(startTimeSecondContract).inDays;
+
+        print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
+
+        if (daysBetween > 720) { // Ví dụ: kiểm tra nếu quá 24 tháng (720 ngày)
+          daysSignedSecondContract =
+              "Hợp đồng lần 2 kết thúc (quá 24 tháng): $daysBetween ngày";
+        } else {
+          daysSignedSecondContract = "Hợp đồng lần 2: $daysBetween ngày";
+        }
+      }
+    }
+
+    // Cập nhật giao diện
+    setState(() {
+      print(
+          'showLaborContractButton2: $daysSignedSecondContract'); // Kiểm tra trạng thái nút 2
+    });
+  }
+}
+
+
+  String getStatusText(
+      DateTime startTime, DateTime endTime, int statusProfile) {
+    int workingDays = endTime.difference(startTime).inDays;
+
+    if (statusProfile == 0) {
+      if (workingDays <= 60) {
+        showLaborContractButton = false; // Ẩn nút
+        return "Đang thử việc: $workingDays ngày";
+      } else {
+        showLaborContractButton = true; // Hiển thị nút
+        return "Đã hết hạn ngày thử việc: $workingDays ngày";
+      }
+    }
+   switch (statusProfile) {
+      case 1:
+        return "Hợp đồng ký lần 1";
+      case 2:
+        return "Hợp đồng ký lần 2";
+      case 3:
+        return "Hợp đồng vô thời hạn";
+      default:
+        return "Trạng thái không xác định";
     }
   }
 
@@ -527,15 +670,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       Provider.of<ProfilesViewModel>(context, listen: false)
           .updateProfile(updatedProfile, (message) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(message)));
-          })
-          .then((_) {})
-          .catchError((error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to Update profile: $error')),
-            );
-          });
+        if (message == 'Nhân viên đã được cập nhật thành công.') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+          Navigator.pop(context, updatedProfile); // Đóng màn hình
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        }
+      });
     }
   }
 
@@ -589,27 +732,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  String getStatusText(statusProfile) {
-    switch (statusProfile) {
-      case 0:
-        return "Đang thử việc";
-      case 1:
-        return "Hợp đồng ký lần 1";
-      case 2:
-        return "Hợp đồng ký lần 2";
-      case 3:
-        return "Hợp đồng vô thời hạn";
-      default:
-        return "Trạng thái không xác định";
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return BasePage(
       showAppBar: true,
       appBar: AppBar(
           elevation: 0,
+          title: statusProfile == 0
+              ? Text(
+                  getStatusText(_startTime, _endTime, statusProfile!),
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                )
+              : Text(
+                  daysSignedFirstContract != null
+                      ? daysSignedFirstContract!
+                      : "Chưa có thông tin hợp đồng lần 1",
+                  style: TextStyle(fontSize: 10),
+                ),
           backgroundColor: AppColor.primaryLightColor,
           automaticallyImplyLeading: true,
           foregroundColor: Colors.white,
@@ -663,13 +802,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     },
                                     child: Text('Huỷ'),
                                   ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      _deleteProfile();
-                                    },
-                                    child: Text('Khoá'),
-                                  ),
+                                  AppStrings.ROLE_PERMISSIONS.containsAny([
+                                    'Manage BoD & HR accounts',
+                                    'Manage Staffs info only'
+                                  ])
+                                      ? TextButton(
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                            _deleteProfile();
+                                          },
+                                          child: Text('Khoá'),
+                                        )
+                                      : SizedBox.shrink(),
                                 ],
                               );
                             },
@@ -677,13 +821,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         },
                       ),
                     ],
-                  )
-
-            // Text(
-            //   getStatusText(statusProfile),
-            //   style:
-            //       TextStyle(color: Colors.black), // Tùy chỉnh style nếu cần
-            // ),
+                  ),
           ]),
       extendBodyBehindAppBar: false,
       body: ListView(children: [
@@ -805,7 +943,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       // Regex kiểm tra ký tự đặc biệt
                       final nameRegex = RegExp(
-                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                          r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
+
                       if (!nameRegex.hasMatch(value.trim())) {
                         return 'Họ và Tên không được chứa ký tự đặc biệt';
                       }
@@ -878,17 +1017,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ).w(254),
                 ],
               ),
-              AppStrings.ROLE_PERMISSIONS.containsAny(
-                      ['Manage Staffs info only', 'Manage BoD & HR accounts'])
-                  ? Row(
-                      children: [
-                        Text('CV-PB:').px(6),
-                        _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
-                            .p(8)
-                            .w(360),
-                      ],
-                    )
-                  : SizedBox.shrink(),
+              // AppStrings.ROLE_PERMISSIONS.containsAny(
+              //         ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+              //     ? Row(
+              //         children: [
+              //           Text('CV-PB:').px(6),
+              //           _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban', roleid!)
+              //               .p(8)
+              //               .w(360),
+              //         ],
+              //       )
+              //     : SizedBox.shrink(),
+              Row(
+                children: [
+                  Text('CV-PB:').px(6),
+                  _buildDepartmentPositionDropdown(
+                          'Chức Vụ - Phòng Ban', roleid!)
+                      .p(8)
+                      .w(360),
+                ],
+              ),
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
@@ -1146,7 +1294,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // Thân nhân
               _buildRelativeList().p8(),
               //WorkingProcess
-              // _buildWorkingProcessList(),
+              _buildWorkingProcessList().p(8),
               // TrainingProcess
               _buildTrainingProcessesList().p8(),
               SizedBox(height: 16),
@@ -1160,72 +1308,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ]),
       fab: AppStrings.ROLE_PERMISSIONS.containsAny(
               ['Manage BoD & HR accounts', 'Manage Staffs info only'])
-          ? SpeedDial(
-              elevation: 0,
-              icon: Icons.menu,
-              buttonSize: Size(50, 50),
-              children: [
-                  SpeedDialChild(
-                      label: "Thêm thân Nhân",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AddRelativeScreen(
-                                profile: widget.profile,
+          ? Align(
+            alignment: Alignment.bottomCenter,
+            child: SpeedDial(
+                elevation: 0,
+                icon: Icons.menu,
+                buttonSize: Size(50, 50),
+                children: [
+                    SpeedDialChild(
+                        label: "Thêm thân Nhân",
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    AddRelativeScreen(
+                                  profile: widget.profile,
+                                ),
+                              )).then((addNewRelative) {
+                            if (addNewRelative != null) {
+                              setState(() {
+                                relatives.add(addNewRelative);
+                              });
+                            }
+                          });
+                        }),
+                    SpeedDialChild(
+                        label: "Thêm bằng cấp",
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    AddDiplomaScreen(
+                                  profile: widget.profile,
+                                ),
+                              )).then((createNewDiploma) {
+                            if (createNewDiploma != null) {
+                              setState(() {
+                                diplomas.add(createNewDiploma);
+                              });
+                            }
+                          });
+                        }),
+                    ...[
+                      if (showLaborContractButton && statusProfile == 0)
+                        SpeedDialChild(
+                          label: "Tạo hợp đồng",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    AddLaborContractScreen(
+                                        profiles: widget.profile
+                                        ),
                               ),
-                            )).then((addNewRelative) {
-                          if (addNewRelative != null) {
-                            setState(() {
-                              relatives.add(addNewRelative);
+                            ).then((createNewLaborContract) {
+                              if (createNewLaborContract != null) {
+                                setState(() {
+                                  laborContracts.add(createNewLaborContract);
+                                });
+                              }
                             });
-                          }
-                        });
-                      }),
-                  // SpeedDialChild(
-                  //     label: "Phê Duyệt Quá Trình Đạo Tạo",
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute<void>(
-                  //             builder: (BuildContext context) =>
-                  //                 ListTrainingprocessesScreen(
-                  //               profiles: widget.profile,
-                  //             ),
-                  //           ));
-                  //     }),
-                  // SpeedDialChild(
-                  //     label: "Phê Duyệt Quá Trình Làm Việc",
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //           context,
-                  //           MaterialPageRoute<void>(
-                  //             builder: (BuildContext context) =>
-                  //                 ListWorkingprocessScreen(
-                  //               profiles: widget.profile,
-                  //             ),
-                  //           ));
-                  //     }),
-                  SpeedDialChild(
-                      label: "Thêm bằng cấp",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AddDiplomaScreen(
-                                profile: widget.profile,
+                          },
+                        ),
+                      if (showLaborContractButton1 && statusProfile == 1)
+                        SpeedDialChild(
+                          label: "Tạo hợp đồng",
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (BuildContext context) =>
+                                    AddLaborContractScreen(
+                                        profiles: widget.profile
+                                    
+                                        ),
                               ),
-                            )).then((createNewDiploma) {
-                          if (createNewDiploma != null) {
-                            setState(() {
-                              diplomas.add(createNewDiploma);
+                            ).then((createNewLaborContract) {
+                              if (createNewLaborContract != null) {
+                                setState(() {
+                                  laborContracts.add(createNewLaborContract);
+                                });
+                              }
                             });
-                          }
-                        });
-                      }),
-                ])
+                          },
+                        ),
+                    ]
+                  ]),
+          )
           : SpeedDial(
               elevation: 0,
               icon: Icons.menu,
@@ -1236,24 +1408,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute<void>(
+                            MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   AddTrainingprocessesScreen(
                                 profiles: widget.profile,
                               ),
-                            ));
+                            )).then((createNewTraining) {
+                          setState(() {
+                            trainingProcess.add(createNewTraining);
+                          });
+                        });
                       }),
                   SpeedDialChild(
                       label: "Thêm quá trình công tác",
                       onTap: () {
                         Navigator.push(
                             context,
-                            MaterialPageRoute<void>(
+                            MaterialPageRoute(
                               builder: (BuildContext context) =>
                                   AddWorkingprocesScreen(
                                 profiles: widget.profile,
                               ),
-                            ));
+                            )).then((createNewWorkingprocess) {
+                          setState(() {
+                            workingProcesses.add(createNewWorkingprocess);
+                          });
+                        });
                       }),
                 ]),
     );
@@ -1420,17 +1600,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDepartmentPositionDropdown(String hint) {
+  Widget _buildDepartmentPositionDropdown(String hint, int userRoleID) {
     return DropdownButtonFormField<DepartmentPosition>(
       value: selectedDepartmentsPosition,
+      isExpanded: true,
       hint: Text(hint),
-      onChanged: _isEditing
-          ? (DepartmentPosition? newValue) {
-              setState(() {
-                selectedDepartmentsPosition = newValue;
-              });
-            }
-          : null,
+      onChanged: userRoleID == 1
+          ? null
+          : _isEditing
+              ? (DepartmentPosition? newValue) {
+                  setState(() {
+                    selectedDepartmentsPosition = newValue;
+                  });
+                }
+              : null,
       items: departmentsPosition.map((DepartmentPosition dep) {
         return DropdownMenuItem<DepartmentPosition>(
           value: dep,
@@ -1616,6 +1799,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         MaterialPageRoute(
                           builder: (context) => InfoDiplomaScreen(
                             diplomas: process,
+                            profiles: widget.profile,
                             onDelete: _handleDeleteDiploman,
                           ),
                         ),
@@ -1669,87 +1853,95 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  //
-  // Widget _buildWorkingProcessList() {
-  //   List<WorkingProcesses> filteredProcesses = workingProcesses
-  //       .where((process) => process.workingprocessStatus == 1)
-  //       .toList();
-
-  //   return ExpansionPanelList(
-  //     elevation: 2,
-  //     animationDuration: Duration(milliseconds: 300),
-  //     expansionCallback: (int index, bool isExpanded) {
-  //       setState(() {
-  //         filteredProcesses[index].isExpanded = isExpanded;
-  //       });
-  //     },
-  //     children: filteredProcesses.map((process) {
-  //       return ExpansionPanel(
-  //         headerBuilder: (BuildContext context, bool isExpanded) {
-  //           return ListTile(
-  //             leading: Icon(Icons.work, color: Colors.blueAccent),
-  //             title: Text(
-  //               "Tóm tắt quá trình công tác",
-  //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-  //             ),
-  //           );
-  //         },
-  //         body: Padding(
-  //           padding: const EdgeInsets.all(16.0),
-  //           child: Card(
-  //             color: Colors.blue.shade50,
-  //             elevation: 2,
-  //             shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(8)),
-  //             child: Padding(
-  //               padding: const EdgeInsets.all(16.0),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text(
-  //                     "Nơi làm việc:",
-  //                     style: TextStyle(
-  //                         fontSize: 16,
-  //                         fontWeight: FontWeight.bold,
-  //                         color: Colors.blueAccent),
-  //                   ),
-  //                   SizedBox(height: 8),
-  //                   Text("Nội dung: ${process.workingprocessContent}"),
-  //                   SizedBox(height: 8),
-  //                   Row(
-  //                     children: [
-  //                       Text(
-  //                           "Từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
-  //                       Text(
-  //                           " - Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //         isExpanded: process.isExpanded,
-  //       );
-  //     }).toList(),
-  //   );
-  // }
-
-  //
-  Widget _buildTrainingProcessesList() {
-    List<Trainingprocesses> filteredProcesses = trainingProcess
-        .where((process) => process.trainingprocessesStatus == 1)
-        .toList();
-
+  Widget _buildWorkingProcessList() {
     return ExpansionPanelList(
       elevation: 2,
       animationDuration: Duration(milliseconds: 300),
       expansionCallback: (int index, bool isExpanded) {
         setState(() {
-          filteredProcesses[index].isExpanded = isExpanded;
+          workingProcesses[index].isExpanded = isExpanded;
         });
       },
-      children: filteredProcesses.map((process) {
+      children: workingProcesses.map((process) {
+        return ExpansionPanel(
+          headerBuilder: (BuildContext context, bool isExpanded) {
+            return ListTile(
+              leading: Icon(Icons.work, color: Colors.blueAccent),
+              title: Text(
+                "Tóm tắt quá trình công tác",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            );
+          },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: InkWell(
+              onTap: () async {
+                final updatewokignprocess = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InfoWorkingprocessScreen(
+                      workingProcesses: process,
+                      profiles: widget.profile,
+                      onDelete: _handleDeleteWorkingProcess,
+                    ),
+                  ),
+                );
+                if (updatewokignprocess != null) {
+                  _handleUpdateWorkingProcess(updatewokignprocess);
+                }
+              },
+              child: Card(
+                color: Colors.blue.shade50,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Nơi làm việc:",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent),
+                      ),
+                      SizedBox(height: 8),
+                      Text("Nội dung: ${process.workingprocessContent}"),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Text(
+                              "Từ: ${DateFormat('dd/MM/yyyy').format(process.startTime).toString()}"),
+                          Text(process.endTime == null
+                              ? " Hiện tại"
+                              : " Đến: ${DateFormat('dd/MM/yyyy').format(process.endTime!).toString()}"),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          isExpanded: process.isExpanded,
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildTrainingProcessesList() {
+    return ExpansionPanelList(
+      elevation: 2,
+      animationDuration: Duration(milliseconds: 300),
+      expansionCallback: (int index, bool isExpanded) {
+        setState(() {
+          trainingProcess[index].isExpanded = isExpanded;
+        });
+      },
+      children: trainingProcess.map((process) {
         return ExpansionPanel(
           headerBuilder: (BuildContext context, bool isExpanded) {
             return ListTile(
@@ -1762,98 +1954,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.green.shade50,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Nội dung đào tạo: ${process.trainingprocessesContent}")
-                        .p8(),
-                    Row(
-                      children: [
-                        Text(
-                            "Bắt đầu từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
-                        Text(process.endTime == null
-                            ? "Hiện tại"
-                            : "Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
-                      ],
+            child: InkWell(
+              onTap: () async {
+                final updatetrainingprocess = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => InfoTrainingprocessesScreen(
+                      trainingprocesses: process,
+                      profiles: widget.profile,
+                      onDelete: _handleDeleteTrainingProcess,
                     ),
-                  ],
+                  ),
+                );
+                if (updatetrainingprocess != null) {
+                  _handleUpdateTrainingprocess(updatetrainingprocess);
+                }
+              },
+              child: Card(
+                color: Colors.green.shade50,
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Nội dung đào tạo: ${process.trainingprocessesContent}")
+                          .p8(),
+                      Row(
+                        children: [
+                          Text(
+                              "Bắt đầu từ: ${DateFormat('dd/MM/yyyy').format(process.startTime).toString()}"),
+                          Text(process.endTime == null
+                              ? " Hiện tại"
+                              : " Đến: ${DateFormat('dd/MM/yyyy').format(process.endTime!).toString()}"),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          isExpanded: process.isExpanded,
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildInsuranceList() {
-    return ExpansionPanelList(
-      elevation: 2,
-      animationDuration: Duration(milliseconds: 300),
-      expansionCallback: (int index, bool isExpanded) {
-        setState(() {
-          insurance[index].isExpanded = isExpanded;
-        });
-      },
-      children: insurance.map((process) {
-        return ExpansionPanel(
-          headerBuilder: (BuildContext context, bool isExpanded) {
-            return ListTile(
-              leading: Icon(Icons.health_and_safety, color: Colors.green),
-              title: Text(
-                "Bảo hiểm",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            );
-          },
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Card(
-              color: Colors.green.shade50,
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("${process.insuranceTypeName}"),
-                    Text("Tỉ lệ: ${process.insurancePercent} %").p8(),
-                    Row(
-                      children: [
-                        Text(
-                            "Thời hạn từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
-                        Text(
-                            " - Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime).toString()}"),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ).onInkTap(() async {
-              final updatedInsurance = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => InfoInsuranceScreen(
-                    insurance: process,
-                  ),
-                ),
-              );
-
-              // Kiểm tra xem có dữ liệu cập nhật không
-              if (updatedInsurance != null) {
-                _handleUpdateInsurance(updatedInsurance);
-              }
-            }),
           ),
           isExpanded: process.isExpanded,
         );
@@ -1893,56 +2035,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CircleAvatar(
-                      radius: 20, // Tăng kích thước cho ảnh lớn hơn
-                      backgroundColor:
-                          Colors.green.shade100, // Màu nền nhạt hơn
-                      child: ClipOval(
-                        child: SizedBox(
-                          width: 70, // Kích thước ảnh
-                          height: 70,
-                          child: process.image.isNotEmptyAndNotNull
-                              ? Image.memory(
-                                  base64Decode(process.image),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(
-                                      Icons.error,
-                                      size: 30,
-                                      color: Colors
-                                          .redAccent, // Icon lỗi nổi bật hơn
-                                    );
-                                  },
-                                )
-                              : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.person,
-                                      size: 30,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      "Không có ảnh",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.grey.shade600,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                        ),
-                      ),
-                    ),
                     Row(
                       children: [
                         Text(
-                            "Bắt đầu từ: ${DateFormat('yyyy-MM-dd').format(process.startTime).toString()}"),
+                            "Bắt đầu từ: ${DateFormat('dd/MM/yyyy').format(process.startTime).toString()}"),
                         Text(process.endTime == null
-                            ? "Hiện tại"
-                            : "Đến: ${DateFormat('yyyy-MM-dd').format(process.endTime!).toString()}"),
+                            ? " Hợp đồng vô hạn"
+                            : " Đến: ${DateFormat('dd/MM/yyyy').format(process.endTime!).toString()}"),
                       ],
                     ),
                   ],
@@ -1954,6 +2053,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 MaterialPageRoute(
                   builder: (context) => InfoLaborcontractScreen(
                     laborContracts: process,
+                    profiles: widget.profile,
                   ),
                 ),
               );

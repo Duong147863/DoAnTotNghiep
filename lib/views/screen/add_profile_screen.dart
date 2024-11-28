@@ -291,8 +291,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
             .toList();
       } else if (AppStrings.ROLE_PERMISSIONS
           .contains('Manage Staffs info only')) {
-        roles =
-            allRoles.where((role) => [1, 2, 3, 4].contains(role.roleID)).toList();
+        roles = allRoles
+            .where((role) => [1, 2, 3, 4].contains(role.roleID))
+            .toList();
       } else {
         roles = [];
       }
@@ -339,18 +340,22 @@ class _AddProfilePageState extends State<AddProfilePage> {
           startTime: _startTime,
           endTime: _endTime,
           //
-          roleID: selectedRoles!.roleID,
+          roleID: 1,
           departmentId: selectedDepartmentsPosition!.departmentID,
           positionId: selectedDepartmentsPosition!.positionId,
           salaryId: selectedSalarys!.salaryId,
           profileImage: _profileImageBase64 ?? null);
       Provider.of<ProfilesViewModel>(context, listen: false)
           .addProfile(newProfile, (message) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(message)));
-          })
-          .then((_) {})
-          .catchError((error) {});
+        if (message == 'Nhân viên đã được thêm thành công.') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+          Navigator.pop(context, newProfile); // Đóng màn hình
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        }
+      });
     }
   }
 
@@ -465,7 +470,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     }
                     // Regex kiểm tra ký tự đặc biệt
                     final nameRegex = RegExp(
-                        r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệíìỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựýỳỷỹỵ\s]+$");
+                        r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
 
                     if (!nameRegex.hasMatch(value)) {
                       return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
@@ -483,9 +488,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     if (value != capitalizedName) {
                       return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
                     }
-                    if (!value.isLetter()) {
-                      return 'Tên chỉ gồm chữ';
-                    }
+
                     if (!value.isLetter()) {
                       return 'Tên chỉ gồm chữ';
                     }
@@ -553,12 +556,12 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 _buildSalaryDropdown('Chọn mức lương').p(8).w(300),
               ],
             ),
-            Row(
-              children: [
-                Text('Loại tài khoản').px(8),
-                _buildRolesDropdown('Chọn loại tài khoản').p(8).w(300),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Text('Loại tài khoản').px(8),
+            //     _buildRolesDropdown('Chọn loại tài khoản').p(8).w(300),
+            //   ],
+            // ),
             Row(children: [
               Text('Giới tính').px(8),
               _buildDropdownField('Chọn giới tính', _gender, (value) {
@@ -723,9 +726,9 @@ class _AddProfilePageState extends State<AddProfilePage> {
                 if (value == null || value.isEmpty) {
                   return 'Không được để trống';
                 }
-                  if (value.trim() != value) {
-                      return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
-                    }
+                if (value.trim() != value) {
+                  return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                }
                 // Kiểm tra độ dài mật khẩu (từ 8 đến 15 ký tự)
                 if (value.length < 8 || value.length > 15) {
                   return 'Mật khẩu phải từ 8 đến 15 ký tự';
@@ -942,7 +945,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
             if (value == null || value.isEmpty) {
               return 'Nhập ngày cấp';
             }
-               // Kiểm tra ngày sinh trong quá khứ
+            // Kiểm tra ngày sinh trong quá khứ
             DateTime CCCD = DateTime.parse(value);
             if (CCCD.isAfter(DateTime.now())) {
               return 'CCCD phải là ngày trong quá khứ';
@@ -954,7 +957,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
 
             // Parse ngày sinh từ _birthdayController
             DateTime birthday = DateTime.parse(_birthdayController.text);
-            
+
             // Kiểm tra tuổi đủ 14 tại thời điểm cấp
             DateTime licenseDay = DateTime.parse(value);
             int ageAtLicense = licenseDay.year - birthday.year;
@@ -981,45 +984,56 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   Widget _buildDateStartTime(String label, TextEditingController controller,
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, (selectedDate) {
-        onDateSelected(selectedDate);
-        setState(() {
-          _startTime = selectedDate;
-        });
-      }),
-      child: AbsorbPointer(
-        child: TextFormField(
-          focusNode: _startTimeFocusNode,
-          readOnly: true,
-          style: TextStyle(color: Colors.black),
-          controller: controller,
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Nhập ngày bắt đầu';
-            }
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return GestureDetector(
+    onTap: () => _selectDate(context, initialDate, (selectedDate) {
+      onDateSelected(selectedDate);
+      setState(() {
+        _startTime = selectedDate;
+        controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+      });
+    }),
+    child: AbsorbPointer(
+      child: TextFormField(
+        focusNode: _startTimeFocusNode,
+        readOnly: true,
+        style: TextStyle(color: Colors.black),
+        controller: controller,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Nhập ngày bắt đầu';
+          }
+          try {
+            // Parse ngày được nhập
+            DateTime selectedStartTime =
+                DateFormat('dd/MM/yyyy').parse(value);
 
-            try {
-              DateTime selectedStartTime = DateTime.parse(value);
-              DateTime currentDate = DateTime.now();
-              if (selectedStartTime.isBefore(currentDate)) {
-                return 'Ngày bắt đầu không được trong quá khứ';
-              }
-            } catch (e) {
-              return 'Định dạng ngày không hợp lệ';
-            }
+            // Lấy ngày hiện tại không tính thời gian (00:00:00)
+            DateTime today = DateTime.now();
+            DateTime todayWithoutTime =
+                DateTime(today.year, today.month, today.day);
 
-            return null;
-          },
-          decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+            // Tính khoảng cách ngày
+            int differenceInDays =
+                todayWithoutTime.difference(selectedStartTime).inDays;
+
+            // Kiểm tra nếu ngày vượt quá 60 ngày trong quá khứ
+            if (differenceInDays > 60) {
+              return 'Ngày bắt đầu không được cách hiện tại quá 60 ngày';
+            }
+          } catch (e) {
+            return 'Định dạng ngày không hợp lệ';
+          }
+          return null; // Hợp lệ nếu không vi phạm điều kiện
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildDateEndTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
@@ -1028,6 +1042,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         onDateSelected(selectedDate);
         setState(() {
           _endTime = selectedDate;
+          controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
         });
       }),
       child: AbsorbPointer(
@@ -1037,14 +1052,16 @@ class _AddProfilePageState extends State<AddProfilePage> {
           style: TextStyle(color: Colors.black),
           controller: controller,
           validator: (value) {
-            if (controller.text.isEmpty) {
+            if (value == null || value.isEmpty) {
               return 'Nhập ngày kết thúc';
             }
             try {
-              DateTime selectedEndTime = DateTime.parse(controller.text);
-              if (selectedEndTime.isBefore(_startTime) ||
-                  selectedEndTime.difference(_startTime).inDays < 30) {
-                return 'Deadline phải trên 1 tháng kể từ bắt đầu';
+              DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
+              if (selectedEndTime.isBefore(_startTime)) {
+                return 'Ngày kết thúc không được trước ngày bắt đầu';
+              }
+              if (selectedEndTime.difference(_startTime).inDays > 60) {
+                return 'Thời gian thử việc không được quá 60 ngày';
               }
             } catch (e) {
               return 'Định dạng ngày không hợp lệ';

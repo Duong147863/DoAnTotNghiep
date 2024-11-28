@@ -22,17 +22,20 @@ class WorkingprocessesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> createNewWorkingprocess(WorkingProcesses workingprocess) async {
+  Future<void> createNewWorkingprocess(
+      WorkingProcesses workingprocess, Function(String) callback) async {
     try {
-      await repository.createNewWorkingprocess(workingprocess);
+      await repository.createNewWorkingprocess(
+          workingprocess, callback); // Call the repository method
     } catch (e) {
-      throw Exception('Failed to add datas: $e');
+      callback(
+          'Failed to add relative: $e'); // Call the callback with error message
     }
   }
 
-  Future<void> updateWorkingprocess(WorkingProcesses workingprocess) async {
+    Future<void> updateWorkingprocess(WorkingProcesses workingprocess, Function(String) callback) async {
     try {
-      await repository.updateWorkingprocess(workingprocess);
+      await repository.updateWorkingprocess(workingprocess,callback);
       int index =
           _list.indexWhere((wor) => wor.workingprocessId == workingprocess.workingprocessId);
       if (index != -1) {
@@ -40,11 +43,10 @@ class WorkingprocessesViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      throw Exception('Failed to update workingprocess: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
-
-  Future<void> deleteWorkingprocess(String workingprocessId) async {
+  Future<void> deleteWorkingprocess(int workingprocessId) async {
     try {
       bool success = await repository.deleteWorkingprocess(workingprocessId);
       if (success) {
