@@ -10,32 +10,54 @@ class LaborContactsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<LaborContracts> get listLaborContact => _list;
 
-  Future<void> addNewLaborContact(LaborContracts laborContact) async {
+    Future<void> getSecondContractEndTime(String profileId) async {
     try {
-      await repository.addLaborContact(laborContact);
-      // await getLaborContactOf(laborContact.laborContractId);
-      await profilesViewModel.fetchQuitAndActiveMembersCount();
+      fetchingData = true;  // Đang tải dữ liệu
       notifyListeners();
-    } catch (e) {
-      throw Exception('Failed to create data: $e');
-    }
-  }
 
-  Future<void> getLaborContactOf(String laborContactId) async {
-    try {
-      List<LaborContracts> laborContactList =
-          await repository.getLaborContactOf(laborContactId);
-      _list = laborContactList
-          .where((lab) => lab.laborContractId == laborContactId)
-          .toList();
-      notifyListeners();
-    } catch (e) {
-      throw Exception('Failed to load LaborContracts: $e');
+      // Gọi repository để lấy dữ liệu
+      LaborContracts? contract = await repository.getSecondContractEndTime(profileId);
+
+      // Kiểm tra nếu có hợp đồng lần 2
+      if (contract != null) {
+        _list = [contract];  // Cập nhật danh sách hợp đồng
+      } else {
+        _list = [];  // Không có hợp đồng lần 2
+      }
+
+      fetchingData = false;  // Dừng trạng thái tải dữ liệu
+      notifyListeners();  // Cập nhật UI
+    } catch (error) {
+      fetchingData = false;  // Dừng trạng thái tải dữ liệu
+      notifyListeners();  // Cập nhật UI
+
+      // Xử lý lỗi (in ra console hoặc thông báo lỗi tùy ý)
+      print("Error fetching second contract end time: $error");
+      // Bạn có thể thêm logic xử lý lỗi tùy thích ở đây.
     }
   }
-   Future<void> updateLaborContact(LaborContracts laborContact) async {
+      // Modify addRelative method to accept a callback for success messages
+  Future<void> addNewLaborContact(LaborContracts laborContact, Function(String) callback) async {
     try {
-      await repository.updateLaborContact(laborContact);
+      await repository.addLaborContact(laborContact,callback); // Call the repository method
+    } catch (e) {
+      callback('Failed to add relative: $e');  // Call the callback with error message
+    }
+  }
+    Future<void> getLaborContactOf(String profileId) async {
+    fetchingData = true;
+    notifyListeners();
+    try {
+      _list = await repository.getLaborContactOf(profileId);
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load data: $e');
+    }
+    fetchingData = false;
+  }
+  Future<void> updateLaborContact(LaborContracts laborContact, Function(String) callback) async {
+    try {
+      await repository.updateLaborContact(laborContact,callback);
       int index =
           _list.indexWhere((lab) => lab.laborContractId == laborContact.laborContractId);
       if (index != -1) {
@@ -43,21 +65,7 @@ class LaborContactsViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (e) {
-      throw Exception('Failed to update Training Processes: $e');
-    }
-  }
-
-  Future<void> deleteLaborContact(String laborContractId) async {
-    try {
-      bool success = await repository.deleteLaborContact(laborContractId);
-      if (success) {
-        _list.removeWhere((lab) => lab.laborContractId == laborContractId);
-        notifyListeners();
-      } else {
-        throw Exception('Failed to delete Trainingprocesses');
-      }
-    } catch (e) {
-      throw Exception('Failed to delete Trainingprocesses: $e');
+      callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
 }

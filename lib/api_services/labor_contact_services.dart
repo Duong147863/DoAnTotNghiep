@@ -15,9 +15,20 @@ class LaborContactServices {
       body: json.encode(laborContact.toJson()),
     );
   }
-  Future<http.Response> getLaborContactOf(String laborContactId) async {
+    Future<http.Response> getSecondContractEndTime(String idProfile) async {
+    return await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}contract/get-second-contract-end-time'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode({{'profile_id': idProfile}}),
+    );
+  }
+   Future<http.Response> getLaborContactOf(String profileId) async {
     return await http.get(
-        Uri.parse('${AppStrings.baseUrlApi}contract/ContactsOfProfile/$laborContactId'),
+        Uri.parse('${AppStrings.baseUrlApi}contract/ContactsOfProfile/$profileId'),
         headers: {
           'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
@@ -31,15 +42,6 @@ class LaborContactServices {
         'Accept': 'application/json',
       },
       body: json.encode(laborContact.toJson()),
-    );
-  }
-  Future<http.Response> deleteLaborContact(String laborContractId) async {
-    return await http.delete(
-      Uri.parse('${AppStrings.baseUrlApi}contract/delete/$laborContractId'),
-      headers: {
-        'Authorization': 'Bearer ${AppStrings.TOKEN}',
-        'Accept': 'application/json',
-      },
     );
   }
 }

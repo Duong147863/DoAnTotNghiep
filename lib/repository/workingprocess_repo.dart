@@ -19,32 +19,50 @@ class WorkingprocessRepository {
     }
   }
 
-  Future<bool> createNewWorkingprocess(WorkingProcesses workingprocess) async {
-    final response = await service.createNewWorkingprocess(workingprocess);
-    if (response.statusCode == 200 || response.statusCode == 201) {
-         print("Delete successful. Response body: ${response.body}");
-      return true;
-    } else {
-              print("Failed to delete Relative: ${response.statusCode}");
-        print("Response body: ${response.body}");
-      throw Exception('Failed to add WorkingProcesses: ${response.body}');
-    }
-  }
-
-  Future<bool> updateWorkingprocess(WorkingProcesses workingprocess) async {
+  Future<void> createNewWorkingprocess(
+      WorkingProcesses workingprocess, Function(String) callback) async {
     try {
-      final response = await service.updateWorkingprocess(workingprocess);
-      if (response.statusCode == 200) {
-        return true;
+      final response = await service.createNewWorkingprocess(workingprocess);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        callback(
+            'Quá trình công tác đã được thêm thành công.'); // Success message
       } else {
-        throw Exception('Failed to update WorkingProcesses');
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Pass the message to the callback
+        } else {
+          callback('Đã xảy ra lỗi không xác định');
+        }
       }
-    } catch (error) {
-      throw Exception('Failed to update WorkingProcesses');
+    } catch (e) {
+      callback('Lỗi: $e'); // Pass error message to callback
     }
   }
 
-  Future<bool> deleteWorkingprocess(String workingprocessId) async {
+  Future<void> updateWorkingprocess(
+      WorkingProcesses workingprocess, Function(String) callback) async {
+    try {
+      // Gửi yêu cầu cập nhật thân nhân
+      final response = await service.updateWorkingprocess(workingprocess);
+
+      if (response.statusCode == 200) {
+        callback(
+            'Quá trình công tác đã được cập nhật thành công!'); // Thông báo thành công
+      } else {
+        // Giải mã nội dung phản hồi
+        final Map<String, dynamic> responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Hiển thị thông báo lỗi từ API
+        } else {
+          callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
+        }
+      }
+    } catch (e) {
+      callback('Lỗi: $e'); // Thông báo lỗi ngoại lệ
+    }
+  }
+
+  Future<bool> deleteWorkingprocess(int workingprocessId) async {
     try {
       final response = await service.deleteWorkingprocess(workingprocessId);
       if (response.statusCode == 200) {

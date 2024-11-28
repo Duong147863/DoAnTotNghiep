@@ -1,24 +1,25 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/models/departments_model.dart';
-import 'package:nloffice_hrm/models/enterprises_model.dart';
 import 'package:nloffice_hrm/models/labor_contracts_model.dart';
-import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
-import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/labor_contact_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
+import 'package:nloffice_hrm/views/screen/add_labor_contract_one_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class InfoLaborcontractScreen extends StatefulWidget {
   final LaborContracts? laborContracts;
-  const InfoLaborcontractScreen({super.key, this.laborContracts});
+  final Profiles? profiles;
+  const InfoLaborcontractScreen(
+      {super.key, this.laborContracts, this.profiles});
 
   @override
   State<InfoLaborcontractScreen> createState() =>
@@ -28,90 +29,144 @@ class InfoLaborcontractScreen extends StatefulWidget {
 class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   final _formKey = GlobalKey<FormState>();
   final _laborContractIDController = TextEditingController();
-  final _startTimeController = TextEditingController();
-  final _endTimeController = TextEditingController();
-  final _enterpriseController = TextEditingController();
-  DateTime _startTime = DateTime.now();
-  DateTime _endTime = DateTime.now();
-  List<Departments> departments = [];
-  Departments? selectedDepartment;
-  Enterprises? enterprises;
-  Enterprises? selectedEnterprises;
+  final _startTimeHopDongController = TextEditingController();
+  final _endTimeHopDongController = TextEditingController();
+  final _profileNameController = TextEditingController();
+  DateTime _startTimeHopDong = DateTime.now();
+  DateTime _endTimeHopDong = DateTime.now();
+  DateTime endTimeThuViec = DateTime.now();
   String? _laborContractImageBase64;
+  String? profileId;
+  int? statusProfile;
   bool _isEditing = false;
+  FocusNode _mahdFocusNode = FocusNode();
+  FocusNode _starttimeFocusNode = FocusNode();
+  FocusNode _endtimeFocusNode = FocusNode();
+  List<LaborContracts> laborContracts = [];
+  
+  bool showSpeedDial =
+      false; // Biến để quyết định có hiển thị SpeedDial hay không
+    bool showSpeedDial1 =
+      false; // Biến để quyết định có hiển thị SpeedDial hay không
+  LaborContracts? selectedlaborContracts;
   void initState() {
     super.initState();
+    profileId = widget.laborContracts!.profiles;
+    _profileNameController.text = widget.profiles!.profileName;
+    endTimeThuViec = widget.profiles!.endTime!;
+    statusProfile=widget.profiles!.profileStatus;
+    //
+
     _laborContractIDController.text = widget.laborContracts!.laborContractId;
-    _startTimeController.text = DateFormat('dd/MM/yyyy')
+    _startTimeHopDongController.text = DateFormat('dd/MM/yyyy')
         .format(widget.laborContracts!.startTime)
         .toString();
-    _startTime = widget.laborContracts!.startTime;
-    _endTimeController.text = widget.laborContracts!.endTime == null
-        ? "Hiện tại"
-        : DateFormat('dd/MM/yyyy')
-            .format(widget.laborContracts!.endTime!)
-            .toString();
-    // _endTime=widget.laborContracts!.endTime!;
+    _startTimeHopDong = widget.laborContracts!.startTime;
+    _endTimeHopDongController.text = DateFormat('dd/MM/yyyy')
+        .format(widget.laborContracts!.endTime!)
+        .toString();
+    _endTimeHopDong = widget.laborContracts!.endTime!;
     _laborContractImageBase64 = widget.laborContracts!.image;
-    Provider.of<DeparmentsViewModel>(context, listen: false)
-        .fetchAllDepartments();
-    departments = Provider.of<DeparmentsViewModel>(context, listen: false)
-        .listDepartments;
-    if (departments.isNotEmpty) {
-      selectedDepartment = departments.firstWhere(
-        (dep) => dep.departmentID == widget.laborContracts!.departmentId,
-      );
-    }
-    Provider.of<EnterprisesViewModel>(context, listen: false)
-        .fetchAllEnterprises();
-    enterprises =
-        Provider.of<EnterprisesViewModel>(context, listen: false).enterprises;
+
+       checkContractDuration();
+   
+    
+  
+      
+    // Focus
+    _mahdFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_mahdFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _starttimeFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_starttimeFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+
+    _endtimeFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_endtimeFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
   }
+
+// // Hàm kiểm tra thời gian hợp đồng
+//   void checkContractDuration() {
+//     if (_endTimeHopDong != null) {
+//       int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+//       print('Days between: $daysBetween');
+//       setState(() {
+//         if (daysBetween > 1080) {
+//           showSpeedDial = true; // Mở SpeedDial nếu quá 1080 ngày
+//         } else {
+//           showSpeedDial =
+//               false; // Ẩn SpeedDial nếu còn ít hơn hoặc bằng 1080 ngày
+//         }
+//       });
+//     }
+//   }
+void checkContractDuration() {
+  // Kiểm tra nếu là hợp đồng lần 1
+  if (statusProfile == 1 && _endTimeHopDong != null) {
+    int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+    print('Days between (HD-01): $daysBetween');  
+    setState(() {
+      // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 1 đã vượt quá 1080 ngày
+      // và chưa có hợp đồng lần 2 (statusProfile != 2)
+      if (daysBetween > 1080 && widget.profiles!.profileStatus != 2) {
+        showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
+      } else {
+        showSpeedDial = false; // Ẩn nút nếu không thỏa mãn điều kiện
+      }
+    });
+  } 
+  // Kiểm tra nếu là hợp đồng lần 2
+  else if (statusProfile == 2 && _endTimeHopDong != null ) {
+    int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+    print('Days between (HD-02): $daysBetween');
+    setState(() {
+      // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 2 đã vượt quá 1080 ngày
+      if (daysBetween > 1080) {
+        showSpeedDial = true;  // Mở nút tạo hợp đồng lần 2
+      } else {
+        showSpeedDial = false; // Ẩn nút nếu hợp đồng lần 2 chưa hết hạn
+      }
+    });
+  }
+}
+
 
   void _updateLaborContract() async {
     if (_formKey.currentState!.validate()) {
-      DateTime? endTimeToUpdate;
-      if (_endTimeController.text == "Hiện tại") {
-        endTimeToUpdate = null;
-      } else {
-        endTimeToUpdate =
-            _endTime; // Nếu có ngày tháng thì dùng giá trị của _endTime
-      }
       final updatedLaborContract = LaborContracts(
-          laborContractId: _laborContractIDController.text,
-          startTime: _startTime,
-          endTime: endTimeToUpdate,
-          enterpriseId: 0,
-          image: _laborContractImageBase64 ?? "",
-          departmentId: selectedDepartment!.departmentID);
-
-      try {
-        await Provider.of<LaborContactsViewModel>(context, listen: false)
-            .updateLaborContact(updatedLaborContract);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('LaborContracts Updated successfully!')),
-        );
-        Navigator.pop(context, updatedLaborContract);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to Update LaborContracts: $e')),
-        );
-      }
-    }
-  }
-
-  void _deleteLaborContract() async {
-    try {
+        laborContractId: _laborContractIDController.text,
+        startTime: _startTimeHopDong,
+        endTime: _endTimeHopDong,
+        profiles: profileId!,
+        image: _laborContractImageBase64 ?? "",
+      );
       await Provider.of<LaborContactsViewModel>(context, listen: false)
-          .deleteLaborContact(widget.laborContracts!.laborContractId);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('LaborContracts deleted successfully')),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete LaborContracts: $e')),
-      );
+          .updateLaborContact(updatedLaborContract, (message) {
+        if (message == 'Hợp đồng đã được cập nhật thành công.') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+          Navigator.pop(context, updatedLaborContract);
+          Navigator.pop(context, updatedLaborContract);
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        }
+      });
     }
   }
 
@@ -136,8 +191,8 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1960),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
       onDateSelected(picked);
@@ -147,10 +202,15 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
+      titletext: 'Cập Nhật Hợp Đồng',
       showAppBar: true,
-      titletext: 'Sửa hợp đồng lao động',
       showLeadingAction: true,
-      appBarItemColor: AppColor.offWhite,
+      defaultBody: false,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.aliceBlue,
+      resizeToAvoidBottomInset: true,
+      appBarColor: AppColor.primaryLightColor,
+      
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -189,32 +249,70 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                     ),
                   ).px8(),
                   SizedBox(height: 16),
-                  CustomTextFormField(
-                    enabled: false,
-                    textEditingController: _laborContractIDController,
-                    labelText: 'Mã hợp đồng',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'please_enter_labor_contract_id';
-                      }
-                      return null;
-                    },
-                  ).px8(),
-                  SizedBox(height: 16),
-                  // Row(
-                  //   children: [
-                  //     Text('Enterprises').px8(),
-                  //     Expanded(
-                  //         child: _buildEnterprisesTextFormField(
-                  //             'Chọn Enterprises')),
-                  //   ],
-                  // ),
-                  SizedBox(height: 16),
                   Row(
                     children: [
-                      Text('Phòng').px8(),
-                      Expanded(
-                          child: _buildDepartmentDropdown('Chọn Department')),
+                      CustomTextFormField(
+                        focusNode: _mahdFocusNode,
+                        enabled: false,
+                        textEditingController: _laborContractIDController,
+                        labelText: 'Mã hợp đồng',
+                        maxLength: 10,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          } else if (value.length > 10) {
+                            return 'Mã hợp đồng không được vượt quá 10 ký tự';
+                          } else if (!value.startsWith('HD-')) {
+                            return 'Mã hợp đồng phải bắt đầu bằng "HD-"';
+                          } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
+                            return 'Sau "HD-" phải là số';
+                          }
+                          return null;
+                        },
+                      ).px8().w(150),
+                      CustomTextFormField(
+                        textEditingController: _profileNameController,
+                        labelText: 'Họ và tên',
+                        enabled: false,
+                        maxLength: 50,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          // Kiểm tra không có khoảng trắng ở cuối tên
+                          if (value.trim() != value) {
+                            return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                          }
+                          if (value.length < 4) {
+                            return 'Họ và Tên phải có ít nhất 4 ký tự';
+                          }
+                          // Regex kiểm tra ký tự đặc biệt
+                          final nameRegex = RegExp(
+                              r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
+
+                          if (!nameRegex.hasMatch(value.trim())) {
+                            return 'Họ và Tên không được chứa ký tự đặc biệt';
+                          }
+
+                          // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                          List<String> words = value.split(" ");
+                          for (int i = 0; i < words.length; i++) {
+                            // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                            words[i] = words[i].substring(0, 1).toUpperCase() +
+                                words[i].substring(1).toLowerCase();
+                          }
+                          String capitalizedName = words.join(" ");
+
+                          // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                          if (value != capitalizedName) {
+                            return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                          }
+                          if (!value.isLetter()) {
+                            return 'Tên chỉ gồm chữ';
+                          }
+                          return null;
+                        },
+                      ).w(200),
                     ],
                   ),
                   SizedBox(height: 16),
@@ -223,13 +321,14 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                       Expanded(
                         child: _buildDateStartTime(
                           'Thời hạn hợp đồng từ:',
-                          _startTimeController,
-                          _startTime,
+                          _startTimeHopDongController,
+                          _startTimeHopDong,
                           (date) {
                             setState(() {
-                              _startTime = date;
-                              _startTimeController.text =
-                                  "${_startTime.toLocal()}".split(' ')[0];
+                              _startTimeHopDong = date;
+                              _startTimeHopDongController.text =
+                                  "${_startTimeHopDong.toLocal()}"
+                                      .split(' ')[0];
                             });
                           },
                         ),
@@ -238,13 +337,13 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                       Expanded(
                         child: _buildDateEndTime(
                           'Đến',
-                          _endTimeController,
-                          _endTime,
+                          _endTimeHopDongController,
+                          _endTimeHopDong,
                           (date) {
                             setState(() {
-                              _endTime = date;
-                              _endTimeController.text =
-                                  "${_endTime.toLocal()}".split(' ')[0];
+                              _endTimeHopDong = date;
+                              _endTimeHopDongController.text =
+                                  "${_endTimeHopDong.toLocal()}".split(' ')[0];
                             });
                           },
                         ),
@@ -252,7 +351,8 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                     ],
                   ),
                   SizedBox(height: 24),
-                  Row(
+                  showSpeedDial ==false 
+                  ?Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       IconButton(
@@ -267,47 +367,49 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                             _isEditing = true;
                           });
                         },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Confirm Delete'),
-                                content: Text(
-                                    'Are you sure you want to delete this laborcontact?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Đóng dialog
-                                    },
-                                    child: Text('Cancel'),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context)
-                                          .pop(); // Đóng dialog
-                                      _deleteLaborContract();
-                                    },
-                                    child: Text('Delete'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
+                      )
                     ],
-                  ),
+                  ):SizedBox.shrink(),
                 ],
               ),
             ),
           ),
         ),
+        
       ),
+      
+      fab:
+      
+     showSpeedDial == true
+      ? SpeedDial(
+          elevation: 0,
+          icon: Icons.menu,
+          buttonSize: Size(50, 50),
+          children: [
+            SpeedDialChild(
+              label: "Thêm hợp đồng",
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => AddLaborContractScreenKHD2(
+                      laborContracts: widget.laborContracts,
+                      profiles: widget.profiles,
+                    ),
+                  ),
+                ).then((createNewLaborContract) {
+                  if (createNewLaborContract != null) {
+                    setState(() {
+                      laborContracts.add(createNewLaborContract);
+                    });
+                  }
+                });
+              },
+            ),
+          ],
+        )
+      : SizedBox.shrink(), // Không hiển thị gì nếu không thỏa mãn điều kiện
+
     );
   }
 
@@ -318,7 +420,9 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           ? () => _selectDate(context, initialDate, (selectedDate) {
                 onDateSelected(selectedDate);
                 setState(() {
-                  _startTime = selectedDate; // Cập nhật lại _startTime khi chọn
+                  _startTimeHopDong = selectedDate; // Cập nhật giá trị
+                  controller.text =
+                      DateFormat('dd/MM/yyyy').format(selectedDate);
                 });
               })
           : null,
@@ -327,11 +431,43 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           readOnly: true,
           style: TextStyle(color: Colors.black),
           controller: controller,
+          focusNode: _starttimeFocusNode,
+          //  validator: (value) {
+          //     if (value == null || value.isEmpty) {
+          //       return 'Vui lòng nhập ngày bắt đầu hợp đồng';
+          //     }
+          //     try {
+          //       DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
+
+          //       // Kiểm tra ngày bắt đầu hợp đầu 1 không được trước ngày kết thúc thử việc
+          //       if (selectedDate.isBefore(endTimeThuViec)) {
+          //         return 'Ngày bắt đầu hợp đồng phải sau ngày ${DateFormat('dd/MM/yyyy').format(endTimeThuViec)}';
+          //       }
+
+          //       // Kiểm tra ngày không được trong quá khứ
+          //       if (selectedDate.isBefore(DateTime.now())) {
+          //         return 'Ngày bắt đầu hợp đồng không được trong quá khứ';
+          //       }
+          //     } catch (e) {
+          //       return 'Định dạng ngày không hợp lệ';
+          //     }
+          //     return null;
+          //   },
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please select $label';
+              return 'Vui lòng nhập ngày bắt đầu hợp đồng';
             }
-            return null;
+            try {
+              DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
+
+              // Kiểm tra nếu statusProfile == 0 (thực tập), ngày bắt đầu phải sau ngày kết thúc thực tập
+              if (statusProfile == 1 && selectedDate.isBefore(endTimeThuViec)) {
+                return 'Ngày bắt đầu hợp đồng phải sau ngày kết thúc thử việc';
+              }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
+            }
+            return null; // Hợp lệ
           },
           decoration: InputDecoration(
             labelText: label,
@@ -346,34 +482,66 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
       onTap: _isEditing
-          ? () => _selectDate(context, initialDate, onDateSelected)
+          ? () => _selectDate(context, initialDate, (selectedDate) {
+                onDateSelected(selectedDate);
+                setState(() {
+                  _endTimeHopDong = selectedDate;
+                  controller.text =
+                      DateFormat('dd/MM/yyyy').format(selectedDate);
+                });
+              })
           : null,
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
+          focusNode: _endtimeFocusNode,
           style: TextStyle(color: Colors.black),
           controller: controller,
+          // validator: (value) {
+          //   // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
+          //   if (controller.text == "Hiện tại") {
+          //     return null; // Không cần kiểm tra
+          //   }
+
+          //   // Nếu có giá trị nhập vào
+          //   if (controller.text.isNotEmpty) {
+          //     try {
+          //       DateTime selectedEndTime = DateTime.parse(controller.text);
+
+          //       // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
+          //       if (selectedEndTime.isBefore(_startTimeHopDong) ||
+          //           selectedEndTime.difference(_startTimeHopDong).inDays < 30) {
+          //         return 'End Time phải trong trên 1 tháng kể từ Start Time';
+          //       }
+          //     } catch (e) {
+          //       return 'Định dạng ngày không hợp lệ';
+          //     }
+          //   }
+          //   return null;
+          // },
           validator: (value) {
-            // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
-            if (controller.text == "Hiện tại") {
-              return null; // Không cần kiểm tra
+            // Validator kiểm tra ràng buộc hợp đồng lần 1
+            if (value == null || value.isEmpty) {
+              return 'Vui lòng chọn ngày kết thúc hợp đồng';
             }
+            try {
+              DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
 
-            // Nếu có giá trị nhập vào
-            if (controller.text.isNotEmpty) {
-              try {
-                DateTime selectedEndTime = DateTime.parse(controller.text);
-
-                // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
-                if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
+              // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
+              if (selectedEndTime
+                  .isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
+                return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
               }
+
+              // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
+              if (selectedEndTime
+                  .isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
+                return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
+              }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
             }
-            return null;
+            return null; // Hợp lệ
           },
           decoration: InputDecoration(
             labelText: label,
@@ -381,55 +549,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildDepartmentDropdown(String hint) {
-    return DropdownButtonFormField<Departments>(
-      value: selectedDepartment,
-      hint: Text(hint),
-      onChanged: _isEditing
-          ? (Departments? newValue) {
-              setState(() {
-                selectedDepartment = newValue;
-              });
-            }
-          : null,
-      items: departments.map((Departments department) {
-        return DropdownMenuItem<Departments>(
-          value: department,
-          child: Text(department.departmentName),
-        );
-      }).toList(),
-      decoration: InputDecoration(
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      validator: (value) {
-        if (value == null) {
-          return 'Vui lòng chọn phòng ban';
-        }
-        return null;
-      },
-    );
-  }
-
-  Widget _buildEnterprisesTextFormField(String hint) {
-    return TextFormField(
-      controller: _enterpriseController,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-      onTap: _isEditing ? () async {} : null,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please select an enterprise';
-        }
-        return null;
-      },
     );
   }
 }

@@ -22,11 +22,13 @@ class RelativesViewModel extends ChangeNotifier {
   }
 
     // Modify addRelative method to accept a callback for success messages
-  Future<void> addRelative(Relatives relatives, Function(String) callback) async {
+  Future<bool> addRelative(Relatives relatives, Function(String) callback) async {
     try {
       await repository.addRelative(relatives,callback); // Call the repository method
+      return true;
     } catch (e) {
       callback('Failed to add relative: $e');  // Call the callback with error message
+      return false;
     }
   }
 
