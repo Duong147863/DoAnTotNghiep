@@ -116,17 +116,6 @@ class ProfilesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> addProfile(Profiles profile) async {
-  //   try {
-  //     await repository.addProfile(profile);
-  //     await membersOfDepartment(profile.profileId);
-  //     await getMembersCountGenderAndMaritalStatus();
-  //     await fetchQuitAndActiveMembersCount();
-  //     notifyListeners();
-  //   } catch (e) {
-  //     throw Exception('Failed to add datas: $e');
-  //   }
-  // }
    Future<void> addProfile(Profiles profile, Function(String) callback) async {
     try {
       await repository.addProfile(profile,callback); // Call the repository method
@@ -138,18 +127,6 @@ class ProfilesViewModel extends ChangeNotifier {
       callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
-  // Future<void> updateProfile(Profiles profile) async {
-  //   try {
-  //     await repository.updateProfile(profile);
-  //     await membersOfDepartment(profile.profileId);
-  //     await getMembersCountGenderAndMaritalStatus();
-  //     // await fetchQuitAndActiveMembersCount();
-  //     notifyListeners();
-  //     }
-  //   catch (e) {
-  //     throw Exception('Failed to add datas1: $e');
-  //   }
-  // }
   Future<void> updateProfile(Profiles profile, Function(String) callback) async {
     try {
       await repository.updateProfile(profile,callback);
@@ -161,7 +138,7 @@ class ProfilesViewModel extends ChangeNotifier {
   }
   Future<void> deleteProfile(String profileID) async {
   try {
-    // Gọi repository để cập nhật trạng thái của profile
+   
     await repository.deleteProfile(profileID);
     await membersOfDepartment(profileID);
     // await fetchQuitAndActiveMembersCount();

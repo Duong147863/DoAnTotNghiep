@@ -8,15 +8,13 @@ class WorkingProcesses {
       this.workingprocessContent,
       required this.startTime,
       this.endTime,
-      // required this.workingprocessStatus,
       this.isExpanded = false,});
-  String? workingprocessId;
+  int? workingprocessId;
   String profileId;
   String workplaceName;
   String? workingprocessContent;
   DateTime startTime;
   DateTime? endTime;
-  // int workingprocessStatus;
   bool isExpanded;
   factory WorkingProcesses.fromJson(Map<String, dynamic> json) {
     return WorkingProcesses(
@@ -28,7 +26,7 @@ class WorkingProcesses {
       endTime: json['end_time'] != null
           ? DateTime.parse(json['end_time'])
           : null,
-      // workingprocessStatus: json["workingprocess_status"],
+   
     );
   }
   Map<String, dynamic> toJson() {
@@ -43,7 +41,6 @@ class WorkingProcesses {
     } else {
       map["end_time"] = null; 
     }
-    // map["workingprocess_status"] = workingprocessStatus;
     return map;
   }
 }

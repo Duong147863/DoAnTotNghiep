@@ -18,7 +18,6 @@ class Profiles {
       this.salaryId,
       this.positionId,
       this.password,
-      this.laborContractId,
       this.marriage = false,
       required this.temporaryAddress,
       required this.currentAddress,
@@ -40,7 +39,6 @@ class Profiles {
   String? departmentId;
   String? salaryId;
   String? positionId;
-  String? laborContractId;
   String? password;
   int? profileStatus;
   bool marriage;
@@ -74,7 +72,6 @@ class Profiles {
       departmentId: json["department_id"],
       salaryId: json["salary_id"],
       positionId: json["position_id"],
-      laborContractId: json["labor_contract_id"],
       profileImage: json["profile_image"],
       startTime: DateTime.parse(json["start_time"]),
       endTime: DateTime.parse(json["end_time"]),
@@ -104,7 +101,6 @@ class Profiles {
     map["current_address"] = currentAddress;
     map["profile_image"] = profileImage;
     map["role_id"] = roleID;
-    map["labor_contract_id"] = laborContractId;
     return map;
   }
 }
