@@ -41,6 +41,7 @@
     FocusNode _mahdFocusNode = FocusNode();
     FocusNode _starttimeFocusNode = FocusNode();
     FocusNode _endtimeFocusNode = FocusNode();
+
     @override
     void initState() {
       super.initState();
@@ -48,6 +49,11 @@
       _profileNameController.text = widget.profiles!.profileName;
       statusProfile = widget.profiles!.profileStatus;
       endTimeHopDong1=widget.laborContracts!.endTime!;
+      if (statusProfile == 2) {
+      // Gán startTime hợp đồng lần 3 bằng endTime của hợp đồng lần 2
+      _startTimeHopDong = endTimeHopDong1;
+      _startTimeHopDongController.text = DateFormat('dd/MM/yyyy').format(endTimeHopDong1);
+      }
       // Focus
       _mahdFocusNode.addListener(() {
         // Kiểm tra khi focus bị mất và validate lại
@@ -92,28 +98,44 @@
     }
 
     void _submit() {
-      if (_formKey.currentState!.validate()) {
-        final newLaborContact = LaborContracts(
-          profiles: profileId!,
-          laborContractId: _laborContractIDController.text,
-          startTime: _startTimeHopDong,
-          endTime:
-              _endTimeHopDongController.text.isNotEmpty ? _endTimeHopDong : null,
-          image: _laborContractImageBase64 ?? "",
-        );
-        Provider.of<LaborContactsViewModel>(context, listen: false)
-            .addNewLaborContact(newLaborContact, (message) {
-          if (message == 'Hợp đồng đã được thêm thành công.') {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(message)));
-            Navigator.pop(context, newLaborContact); // Đóng màn hình
-          } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(message)));
-          }
-        });
-      }
+  if (_formKey.currentState!.validate()) {
+    // Kiểm tra ngày bắt đầu của hợp đồng mới
+    if (_startTimeHopDong.isBefore(endTimeHopDong1)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ngày bắt đầu hợp đồng không được trước ngày kết thúc hợp đồng trước đó.'))
+      );
+      return; // Dừng lại nếu không hợp lệ
     }
+
+    // Nếu có hợp đồng trước, kiểm tra thêm ngày kết thúc hợp đồng mới
+    if (_endTimeHopDong.isBefore(_startTimeHopDong)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ngày kết thúc hợp đồng không thể trước ngày bắt đầu hợp đồng.'))
+      );
+      return; // Dừng lại nếu không hợp lệ
+    }
+
+    final newLaborContact = LaborContracts(
+      profiles: profileId!,
+      laborContractId: _laborContractIDController.text,
+      startTime: _startTimeHopDong,
+      endTime: _endTimeHopDongController.text.isNotEmpty ? _endTimeHopDong : null,
+      image: _laborContractImageBase64 ?? "",
+    );
+
+    // Gọi phương thức để thêm hợp đồng mới
+    Provider.of<LaborContactsViewModel>(context, listen: false)
+        .addNewLaborContact(newLaborContact, (message) {
+      if (message == 'Hợp đồng đã được thêm thành công.') {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        Navigator.pop(context, newLaborContact); // Đóng màn hình
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      }
+    });
+  }
+}
+
 
     Future<void> _selectDate(BuildContext context, DateTime initialDate,
         Function(DateTime) onDateSelected) async {

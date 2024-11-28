@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 
 class LaborContracts {
   LaborContracts({
-    required this.image,
+    this.image,
     required this.startTime,
     this.endTime,
     required this.laborContractId,
@@ -14,7 +14,7 @@ class LaborContracts {
     required this.profiles
   });
 
-  String image;
+  String? image;
   DateTime startTime;
   DateTime? endTime;
   String laborContractId;
