@@ -28,7 +28,8 @@ class Absents {
     return Absents(
       ID: json["ID"],
       reason: json["reason"],
-      to: DateTime.parse(json['to']),
+      to:
+          json['to'] != null ? DateTime.parse(json['to']) : null,
       status: json["status"],
       profileID: json["profile_id"],
       daysOff: json["days_off"] != null
@@ -44,7 +45,11 @@ class Absents {
     final map = <String, dynamic>{};
     map["from"] = DateFormat("dd-MM-yyyy").format(from);
     map["reason"] = reason;
-    map["to"] = DateFormat("dd-MM-yyyy").format(to!);
+     if (to != null) {
+      map["to"] = DateFormat("dd-MM-yyyy").format(to!);
+    } else {
+      map["to"] = null;
+    }
     map["status"] = status;
     map["profile_id"] = profileID;
     map["days_off"] = daysOff;

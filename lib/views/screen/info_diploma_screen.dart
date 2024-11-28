@@ -622,7 +622,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                   CustomTextFormField(
                     enabled: false,
                     textEditingController: _profileIDController,
-                    labelText: 'Profile ID',
+                    labelText: 'Mã nhân viên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_profile_id';

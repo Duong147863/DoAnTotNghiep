@@ -88,13 +88,13 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.leaveRequestList:
-      return MaterialPageRoute(
-        builder: (context) => const EmployAttendListScreen(),
-        settings: const RouteSettings(
-          name: AppRoutes.leaveRequestList,
-        ),
-      );
+    // case AppRoutes.leaveRequestList:
+    //   return MaterialPageRoute(
+    //     builder: (context) => const EmployAttendListScreen(),
+    //     settings: const RouteSettings(
+    //       name: AppRoutes.leaveRequestList,
+    //     ),
+    //   );
 
     ///
     case AppRoutes.salariesAddRoute:

@@ -24,13 +24,41 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
   final _daysOffController = TextEditingController();
   final _fromDateController = TextEditingController();
   final _toDateController = TextEditingController();
+  final _profilenameController = TextEditingController();
   DateTime _fromDate = DateTime.now();
   DateTime _toDate = DateTime.now();
-  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
-  
+  FocusNode _endFocusNode = FocusNode();
+  FocusNode _startFocusNode = FocusNode();
+  FocusNode _reasonFocusNode = FocusNode();
+  int statusAbsent = 0;
   void initState() {
     super.initState();
     _profileIDController.text = widget.profiles!.profileId;
+    _profilenameController.text = widget.profiles!.profileName;
+    // Focus
+    _endFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_endFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _reasonFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_reasonFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    // Focus
+    _startFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_startFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
   }
 
   Future<void> _selectDate(BuildContext context, DateTime initialDate,
@@ -38,8 +66,8 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime(2101),
+      firstDate: DateTime(1960),
+      lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
       onDateSelected(picked);
@@ -52,14 +80,19 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
           profileID: _profileIDController.text,
           reason: _reasonController.text,
           from: _fromDate,
-          to: _toDate,
+          to: _toDateController.text.isNotEmpty ? _toDate : null,
           daysOff: _parseDouble(_daysOffController.text),
-          status: 0);
-        
+          status: statusAbsent);
       Provider.of<AbsentsViewModel>(context, listen: false)
-          .addNewAbsent(newAbsents)
-          .then((_) {
-        Navigator.pop(context);
+          .addNewAbsent(newAbsents, (message) {
+        if (message == 'Đơn nghỉ phép đã được tạo thành công.') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+          Navigator.pop(context, newAbsents); // Đóng màn hình
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        }
       });
     }
   }
@@ -95,14 +128,15 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: _buildDateField(
-                      'From day',
+                    child: _buildDateFrom(
+                      'Từ ngày',
                       _fromDateController,
                       _fromDate,
                       (date) {
                         setState(() {
                           _fromDate = date;
-                          _fromDateController.text = dateFormat.format(date);
+                          _fromDateController.text =
+                              DateFormat('dd/MM/yyyy').format(_fromDate);
                           _updateDayOff(); // Cập nhật lại dayoff khi chọn ngày "From"
                         });
                       },
@@ -110,14 +144,15 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   ),
                   SizedBox(width: 16),
                   Expanded(
-                    child: _buildDateField(
-                      'To day',
+                    child: _buildDateToWithClearButton(
+                      'Đến ngày',
                       _toDateController,
                       _toDate,
                       (date) {
                         setState(() {
-                          _toDate = date;
-                          _toDateController.text = dateFormat.format(date);
+                          _toDate = date!;
+                          _toDateController.text =
+                              DateFormat('dd/MM/yyyy').format(_toDate);
                           _updateDayOff(); // Cập nhật lại dayoff khi chọn ngày "To"
                         });
                       },
@@ -128,30 +163,57 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
               CustomTextFormField(
                 enabled: false,
                 textEditingController: _daysOffController,
-                labelText: 'Dayoffs'.tr(),
+                labelText: 'Ngày nghỉ'.tr(),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please_enter_dayoffs'.tr();
+                    return 'Không được để trống'.tr();
                   }
-                  // Kiểm tra nếu số ngày nhập vào khớp với sự tính toán từ ngày "From" và "To"
+
+                  // Kiểm tra số ngày nghỉ tối đa 12 ngày
                   double enteredDaysOff = _parseDouble(value);
-                  if (enteredDaysOff != _calculateDaysOff()) {
-                    return 'Holiday does not match the number of days between "To day" and "From day" '
+                  if (enteredDaysOff > 12) {
+                    return 'Số ngày nghỉ không được vượt quá 12 ngày';
+                  }
+
+                  // Kiểm tra nếu số ngày nhập vào khớp với sự tính toán từ ngày "From" và "To"
+                  double calculatedDaysOff = _calculateDaysOff();
+
+                  // So sánh số ngày nghỉ nhập vào với số ngày được tính toán
+                  if (enteredDaysOff != calculatedDaysOff) {
+                    return 'Ngày nghỉ không khớp với số ngày giữa "Từ ngày" và "Đến ngày" '
                         .tr();
                   }
                   return null;
                 },
               ).py8(),
               CustomTextFormField(
+                maxLength: 255,
+                focusNode: _reasonFocusNode,
                 textEditingController: _reasonController,
-                labelText: 'Reason'.tr(),
+                labelText: 'Lý do',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'please_enter_Reason'.tr();
+                    return 'Vui lòng không để trống';
+                  }
+                  // Kiểm tra không có khoảng trắng ở cuối tên
+                  if (value.trim() != value) {
+                    return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                  }
+                  if (value.length < 10) {
+                    return 'Lý do phải có ít nhất 10 ký tự';
+                  }
+                  // Regex kiểm tra ký tự đặc biệt
+                  final nameRegex = RegExp(
+                      r"^[a-zA-ZÂÃÈÉÊÙÚỦĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẨẫấậẫầãèéêìíòóôõùúăđĩũảơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽỈẹêềứỨếểễệẾỀỂỆỄìỉĩịỊÌIÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỔỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s0-9\-/:]+$");
+                  if (!nameRegex.hasMatch(value)) {
+                    return 'Lý do không hợp lệ. Vui lòng nhập đúng định dạng.';
+                  }
+                  if (!value.isLetter()) {
+                    return 'Lý do chỉ gồm chữ';
                   }
                   return null;
                 },
-              ).py8(),
+              ).px8(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -170,28 +232,36 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
     );
   }
 
-  Widget _buildDateField(String label, TextEditingController controller,
+  Widget _buildDateFrom(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, onDateSelected),
+      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+        onDateSelected(selectedDate);
+        setState(() {
+          _fromDate = selectedDate; // Cập nhật giá trị
+          controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+        });
+      }),
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
+          focusNode: _startFocusNode,
           style: TextStyle(color: Colors.black),
           controller: controller,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'please'.tr();
+              return 'Vui lòng nhập ngày bắt đầu hợp đồng';
             }
+            try {
+              DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
 
-            // Kiểm tra ngày "To" phải lớn hơn hoặc bằng ngày "From" cộng thêm một ngày
-            if (label == 'To day') {
-              final fromDate = _fromDate;
-              final toDate = DateTime.parse(value);
-
-              if (toDate.isBefore(fromDate.add(Duration(days: 1)))) {
-                return 'To day must be at least one day after From day'.tr();
+              // Kiểm tra ngày không được trong quá khứ
+              if (selectedDate
+                  .isBefore(DateTime.now().subtract(Duration(days: 1)))) {
+                return 'Ngày bắt đầu không được trong quá khứ';
               }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
             }
             return null;
           },
@@ -204,17 +274,88 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
     );
   }
 
-  // Hàm tính toán số ngày nghỉ
-  double _calculateDaysOff() {
-    final difference = _toDate.difference(_fromDate).inDays;
-    return difference >= 0 ? difference.toDouble() : 0.0;
+  Widget _buildDateToWithClearButton(
+      String label,
+      TextEditingController controller,
+      DateTime? initialDate,
+      Function(DateTime?) onDateSelected) {
+    return Row(
+      children: [
+        // Trường nhập ngày với GestureDetector
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _selectDate(
+              context,
+              initialDate ?? DateTime.now(),
+              (selectedDate) {
+                onDateSelected(selectedDate);
+                setState(() {
+                  _toDate = selectedDate;
+                  controller.text = selectedDate != null
+                      ? DateFormat('dd/MM/yyyy').format(selectedDate)
+                      : "Hiện tại";
+                });
+              },
+            ),
+            child: AbsorbPointer(
+              child: TextFormField(
+                focusNode: _endFocusNode,
+                readOnly: true,
+                style: TextStyle(color: Colors.black),
+                controller: controller,
+                validator: (value) {},
+                decoration: InputDecoration(
+                  labelText: label,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ),
+          ),
+        ),
+        SizedBox(width: 8), // Khoảng cách giữa TextField và nút
+        // Nút xóa
+        IconButton(
+          onPressed: () {
+            setState(() {
+              _toDateController.clear(); // Xóa nội dung TextFormField
+              _toDate =
+                  _fromDate; // Đặt lại ngày "toDate" bằng ngày "fromDate" hoặc giá trị mặc định
+              _updateDayOff(); // Cập nhật lại số ngày nghỉ
+            });
+          },
+          icon: Icon(Icons.clear, color: Colors.red),
+          tooltip: 'Xóa nội dung',
+        )
+      ],
+    );
   }
 
-  // Cập nhật lại giá trị "Dayoffs" sau khi chọn ngày "From" và "To"
+  double _calculateDaysOff() {
+    if (_toDateController.text.isEmpty) {
+      return 1.0; // Mặc định số ngày nghỉ là 1 nếu "To" trống
+    }
+    final difference = _toDate.difference(_fromDate).inDays;
+
+    // Loại trừ thứ 7 và Chủ nhật khỏi số ngày nghỉ
+    int daysOff = 0;
+    for (int i = 0; i <= difference; i++) {
+      final currentDate = _fromDate.add(Duration(days: i));
+      // Kiểm tra xem ngày hiện tại có phải là thứ 7 (6) hoặc Chủ nhật (7)
+      if (currentDate.weekday != DateTime.saturday &&
+          currentDate.weekday != DateTime.sunday) {
+        daysOff++;
+      }
+    }
+
+    return daysOff.toDouble();
+  }
+
   void _updateDayOff() {
     setState(() {
       double daysOff = _calculateDaysOff();
-      _daysOffController.text = daysOff.toString();
+      _daysOffController.text =
+          daysOff.toStringAsFixed(0); // Làm tròn thành số nguyên
     });
   }
 
@@ -227,5 +368,4 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       return 0.0; // Nếu lỗi chuyển đổi, trả về giá trị mặc định
     }
   }
- 
 }
