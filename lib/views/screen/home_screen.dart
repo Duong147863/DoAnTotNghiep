@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:googleapis/cloudsearch/v1.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_route.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
@@ -12,8 +14,10 @@ import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
 import 'package:nloffice_hrm/view_models/positions_view_model.dart';
 import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
+import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
 import 'package:nloffice_hrm/views/screen/add_absent_request_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_assignment_screen.dart';
@@ -24,11 +28,9 @@ import 'package:nloffice_hrm/views/screen/add_task_screen.dart';
 import 'package:nloffice_hrm/views/screen/change_password_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_department_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_enterprises_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_absent_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_hirings_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
-import 'package:nloffice_hrm/views/screen/list_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
@@ -38,6 +40,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../../models/positions_model.dart';
+import '../../models/timekeepings_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final Profiles? profile;
@@ -64,6 +67,22 @@ class _HomeScreenState extends State<HomeScreen> {
   FocusNode _tenCVFocusNode = FocusNode();
   List<Departments> departments = [];
   Departments? selectedDepartment;
+  DateTime now = DateTime.now();
+  // Lấy ngày đầu và cuối tuần này
+  DateTime startOfWeek = DateTime.now()
+      .subtract(Duration(days: DateTime.now().weekday - 1)); // Thứ 2
+  DateTime endOfWeek = DateTime.now()
+      .add(Duration(days: 7 - DateTime.now().weekday)); // Chủ nhật
+  // Lấy ngày đầu và cuối tháng này
+  DateTime startOfMonth =
+      DateTime(DateTime.now().year, DateTime.now().month, 1);
+  DateTime endOfMonth =
+      DateTime(DateTime.now().year, DateTime.now().month + 1, 1)
+          .subtract(Duration(days: 1));
+  // Format ngày nếu cần
+  String formatDatetoJson(DateTime date) =>
+      DateFormat('yyyy-MM-dd').format(date);
+  String formatDatetoUI(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
 
   @override
   void initState() {
@@ -97,6 +116,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _formKey.currentState?.validate();
       }
     });
+    Provider.of<TimeKeepingViewModel>(context, listen: false)
+        .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+            formatDatetoJson(endOfWeek), widget.profile!.profileId);
   }
 
   @override
@@ -115,6 +137,28 @@ class _HomeScreenState extends State<HomeScreen> {
         SnackBar(content: Text('Failed to load departments')),
       );
     }
+  }
+
+  // Hàm chuyển sang tuần trước
+  void _previousWeek() {
+    setState(() {
+      startOfWeek = startOfWeek.subtract(Duration(days: 7));
+      endOfWeek = endOfWeek.subtract(Duration(days: 7));
+      Provider.of<TimeKeepingViewModel>(context, listen: false)
+          .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+              formatDatetoJson(endOfWeek), widget.profile!.profileId);
+    });
+  }
+
+  // Hàm chuyển sang tuần tiếp theo
+  void _nextWeek() {
+    setState(() {
+      startOfWeek = startOfWeek.add(Duration(days: 7));
+      endOfWeek = endOfWeek.add(Duration(days: 7));
+      Provider.of<TimeKeepingViewModel>(context, listen: false)
+          .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+              formatDatetoJson(endOfWeek), widget.profile!.profileId);
+    });
   }
 
   @override
@@ -458,9 +502,9 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 20),
         AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
             // ||
-            //         (DateTime.now().hour.toInt() >= 22 ||
-            //             DateTime.now().hour.toInt() <=
-            //                 5) // Ẩn nút chấm công nếu ngoài giờ làm việc hoặc là ban giám đốc
+            //         (now.hour.toInt() >= 22 ||
+            //             now.hour.toInt() <
+            //                 7) // Ẩn nút chấm công nếu ngoài giờ làm việc hoặc là ban giám đốc
             ? UiSpacer.emptySpace()
             : InkWell(
                 onTap: () {
@@ -844,152 +888,6 @@ class _HomeScreenState extends State<HomeScreen> {
             //           ));
             //     }),
           ]);
-    } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
-      return SpeedDial(
-          elevation: 0,
-          icon: Icons.menu,
-          buttonSize: const Size(50, 50),
-          children: [
-            SpeedDialChild(
-                label: "Task mới",
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) => AddTaskScreen(),
-                      ));
-                }),
-            SpeedDialChild(
-                label: "Thêm nghỉ phép",
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            AddAbsentRequestScreen(profiles: widget.profile),
-                      ));
-                }),
-            SpeedDialChild(
-                label: "Phân công dự án",
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute<void>(
-                        builder: (BuildContext context) =>
-                            AddAssignmentScreen(),
-                      ));
-                }),
-          ]);
-    } else if (AppStrings.ROLE_PERMISSIONS
-        .contains('Create & Delete Project')) {
-      final formKey = GlobalKey<FormState>();
-      final projectIdController = TextEditingController();
-      final projectNameController = TextEditingController();
-      return SpeedDial(
-        elevation: 0,
-        icon: Icons.menu,
-        buttonSize: const Size(50, 50),
-        children: [
-          SpeedDialChild(
-            label: "Thêm dự án",
-            onTap: () => showDialog<Widget>(
-              context: context,
-              builder: (context) => Dialog(
-                child: Container(
-                  height: 300,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Form(
-                        key: formKey,
-                        child: ListView(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: TextFormField(
-                                controller: projectIdController,
-                                decoration: InputDecoration(
-                                  labelText: 'Mã dự án',
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter Mã dự án';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: TextFormField(
-                                controller: projectNameController,
-                                decoration: InputDecoration(
-                                  labelText: 'Tên dự án',
-                                  border: OutlineInputBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(10)),
-                                  ),
-                                ),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter project name';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            SizedBox(height: 16.0),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  final newProject = Projects(
-                                    projectId: projectIdController.text,
-                                    projectName: projectNameController.text,
-                                  );
-                                  Provider.of<ProjectsViewModel>(context,
-                                          listen: false)
-                                      .addNewProject(newProject);
-                                  Navigator.pop(context);
-                                  initState();
-                                }
-                              },
-                              child: Text('Tạo'),
-                            ),
-                          ],
-                        )),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SpeedDialChild(
-              label: "Phân công dự án",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) =>
-                          const AddAssignmentScreen(),
-                    ));
-              }),
-          SpeedDialChild(
-              label: "Thêm nghỉ phép",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => AddAbsentRequestScreen(
-                        profiles: widget.profile,
-                      ),
-                    ));
-              }),
-        ],
-      );
     } else {
       return UiSpacer.emptySpace();
     }
@@ -1003,6 +901,13 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Center(
+              child: Text(
+                "DANH SÁCH PHÒNG BAN",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+              ),
+            ),
+            Divider(),
             Consumer<DeparmentsViewModel>(builder: (context, viewModel, child) {
               if (!viewModel.fetchingData &&
                   viewModel.listDepartments.isEmpty) {
@@ -1015,7 +920,6 @@ class _HomeScreenState extends State<HomeScreen> {
               } else {
                 // Dữ liệu đã tải thành công
                 List<Departments> departments = viewModel.listDepartments;
-
                 // Lọc danh sách dựa trên quyền
                 if (AppStrings.ROLE_PERMISSIONS
                     .contains('Manage BoD & HR accounts')) {
@@ -1027,7 +931,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       .where((department) => department.departmentID != 'PB-GĐ')
                       .toList();
                 }
-
                 return CustomGridView(
                   childAspectRatio: 2,
                   dataSet: departments,
@@ -1058,9 +961,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
             }),
-            const Divider().p12(),
+            const Divider(),
             // _buildEmployeeStats(),
-            const Divider().p12(),
             _buildGetMembersCountGenderAndMaritalStatus(),
             // ExpansionPanelList(
             //   expansionCallback: (int panelIndex, bool isExpanded) {
@@ -1098,89 +1000,87 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       );
-    } else if (AppStrings.ROLE_PERMISSIONS.contains('Assign Project')) {
-      {
-        return Column(
+    } else {
+      //GIAO DIỆN NHÂN VIÊN
+      //Biểu đồ số giờ làm việc tuần này
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
           children: [
-            const Text("Lương của bạn",
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                )).p8(),
-            const Divider().px12(),
-            const Text("Công việc của bạn",
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                )).p8(),
-            Divider().px12(),
-            // ExpansionPanelList(
-            //   expansionCallback: (int panelIndex, bool isExpanded) {
-            //     setState(() {
-            //       isExpandedList[panelIndex] = isExpanded;
-            //     });
-            //   },
-            //   children: [
-            //     ExpansionPanel(
-            //       headerBuilder: (BuildContext context, bool isExpanded) {
-            //         return const Row(
-            //           children: [
-            //             // Text("Mã dự án - Tên dự án"),
-            //           ],
-            //         );
-            //       },
-            //       body: Card(),
-            //     ),
-            //   ],
-            // ).p8(),
-
-            Consumer<ProjectsViewModel>(builder: (context, viewModel, child) {
-              if (!viewModel.fetchingData && viewModel.listProjects.isEmpty) {
-                Provider.of<ProjectsViewModel>(context, listen: false)
-                    .getAllProject();
+            Consumer<TimeKeepingViewModel>(
+                builder: (context, viewModel, child) {
+              return SfCartesianChart(
+                title: ChartTitle(text: 'Thống kê số giờ làm việc'),
+                primaryXAxis: CategoryAxis(
+                  majorGridLines: MajorGridLines(width: 0),
+                ),
+                primaryYAxis: NumericAxis(
+                  maximum: 12,
+                  interval: 2,
+                ),
+                series: <CartesianSeries<dynamic, dynamic>>[
+                  ColumnSeries<dynamic, dynamic>(
+                    dataSource: [
+                      EmployeeStat('Thứ 2', 2),
+                      EmployeeStat('Thứ 3', 10),
+                      EmployeeStat('Thứ 4', 3),
+                      EmployeeStat('Thứ 5', 8),
+                      EmployeeStat('Thứ 6', 8),
+                      EmployeeStat('Thứ 7', 8),
+                      EmployeeStat('Chủ nhật', 0),
+                    ],
+                    xValueMapper: (dynamic stats, _) => stats.status,
+                    yValueMapper: (dynamic stats, _) => stats.count,
+                  ),
+                ],
+              );
+            }),
+            Divider().py8(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.arrow_back_rounded).onInkTap(_previousWeek),
+                Text("Tuần ${formatDatetoUI(startOfWeek)} - ${formatDatetoUI(endOfWeek)}")
+                    .px32(),
+                Icon(Icons.arrow_forward_rounded).onInkTap(_nextWeek),
+              ],
+            ).py4(),
+            Consumer<TimeKeepingViewModel>(
+                builder: (context, viewModel, child) {
+              //Lịch sử chấm công cá nhân nhân viên
+              if (!viewModel.fetchingData && viewModel.list1.isEmpty) {
+                Provider.of<TimeKeepingViewModel>(context, listen: false)
+                    .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+                        formatDatetoJson(endOfWeek), widget.profile!.profileId);
               }
               if (viewModel.fetchingData) {
-                // While data is being fetched
                 return const Center(child: CircularProgressIndicator());
               } else {
-                // If data is successfully fetched
-                List<Projects> projects = viewModel.listProjects;
-                return CustomGridView(
-                    childAspectRatio: 2,
-                    dataSet: projects,
+                List<Timekeepings> listAttendances = viewModel.list1;
+                return CustomListView(
+                    dataSet: listAttendances,
                     itemBuilder: (context, index) {
                       return Card(
-                        color: const Color.fromARGB(255, 243, 243, 242),
-                        elevation: 1,
-                        // margin: EdgeInsets.all(13),
-                        child: Wrap(
-                          clipBehavior: Clip.antiAlias,
-                          direction: Axis.vertical,
+                        color: listAttendances[index].checkout == null
+                            ? Colors.red
+                            : Colors.greenAccent,
+                        child: Column(
                           children: [
                             Text(
-                              projects[index].projectName,
-                              maxLines: 2,
-                              overflow: TextOverflow.clip,
-                            ),
+                                "Ca: ${listAttendances[index].shiftId} - ${formatDatetoUI(listAttendances[index].date)} "),
+                            Text(
+                                "Vào: ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(listAttendances[index].checkin))} - ${listAttendances[index].checkout?.hour ?? "00"}:${listAttendances[index].checkout?.minute ?? "00"} PM"),
+                            Text(
+                                "Trễ: ${listAttendances[index].late?.hour ?? "0"}h${listAttendances[index].late?.minute.toInt() ?? "0"}p"),
                           ],
-                        ).p(13),
-                      ).onTap(() => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => InfoProjectScreen(
-                              projects: projects[index],
-                            ),
-                          )));
-                    }).p8();
+                        ),
+                      );
+                    });
               }
-            }),
-            Divider().px12(),
-            //Luong
+            })
           ],
-        );
-      }
-    } else {
-      return _buildGetMembersCountGenderAndMaritalStatus();
+        ),
+      );
     }
   }
 
@@ -1330,17 +1230,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: SfCartesianChart(
                   primaryXAxis: CategoryAxis(
-                    title: AxisTitle(
-                      text: 'Loại',
-                      textStyle: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                    majorGridLines: MajorGridLines(width: 0),
                   ),
-                  title: ChartTitle(
+                  title: const ChartTitle(
                       text: 'Thống kê giới tính và tình trạng hôn nhân'),
-                  legend: Legend(
-                    isVisible: true,
-                    position: LegendPosition.bottom,
-                  ),
                   tooltipBehavior: TooltipBehavior(enable: true),
                   series: <CartesianSeries<dynamic, dynamic>>[
                     ColumnSeries<dynamic, dynamic>(

@@ -18,21 +18,17 @@ class TimeAttendance extends StatefulWidget {
   _TimeAttendanceState createState() => _TimeAttendanceState();
 }
 
-class _TimeAttendanceState extends State<TimeAttendance>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _TimeAttendanceState extends State<TimeAttendance> {
   Shifts? currentShift;
   List<Timekeepings> list = [];
   @override
   void initState() {
     super.initState();
     getShiftAuto();
-    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
   Future<void> dispose() async {
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -43,15 +39,16 @@ class _TimeAttendanceState extends State<TimeAttendance>
     DateTime now = DateTime.now();
     // Duyệt qua tất cả các ca làm việc
     for (var shift in allShifts) {
-      if (now.isAfter(shift.startTime) && now.isBefore(shift.endTime)) {
-        setState(() {
-          currentShift = shift;
-        });
+      // So sánh thời gian hiện tại với khoảng thời gian của ca làm việc
+      if (now.hour >=
+              shift.startTime.subtract(const Duration(minutes: 10)).hour &&
+          now.hour <= shift.endTime.add(const Duration(minutes: 40)).hour) {
+        currentShift = shift;
         break; // Nếu đã tìm thấy ca làm việc hiện tại, dừng lại
       }
       // Nếu không có ca nào khớp, chọn ca tiếp theo
       if (currentShift == null) {
-        if (now.isBefore(shift.startTime)) {
+        if (now.isBefore(shift.startTime) || now.isAfter(shift.endTime)) {
           setState(() {
             currentShift = shift;
           });
@@ -78,78 +75,21 @@ class _TimeAttendanceState extends State<TimeAttendance>
           'Chấm công',
           style: TextStyle(color: Colors.white),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Container(
-            color: Colors.white,
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: Color(0xFF0B258A), // Màu cho đường viền của tab
-              labelColor: Colors.black, // Màu cho tab đang chọn
-              tabs: const [
-                Tab(text: 'Quét QR'),
-                Tab(text: 'Lịch sử chấm công'),
-              ],
-            ),
-          ),
-        ),
       ),
       body: Expanded(
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
-              getShiftAuto();
-              if (currentShift == null) {
-                getShiftAuto();
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else
-                return QrScan(
-                  user: widget.loginUser,
-                  currentShift: currentShift ?? currentShift!,
-                );
-            }),
-            HistoryTab(),
-            // Consumer<TimeKeepingViewModel>(
-            //     builder: (context, viewModel, child) {
-            //   if (viewModel.list1.isEmpty && !viewModel.fetchingData) {
-            //     Provider.of<TimeKeepingViewModel>(context, listen: false)
-            //         .getProfileCheckInHistory(widget.loginUser.profileId);
-            //   }
-            //   if (viewModel.fetchingData) {
-            //     return const Center(child: CircularProgressIndicator());
-            //   } else
-            //     return ExpansionPanelList(
-            //       elevation: 1,
-            //       expandedHeaderPadding: EdgeInsets.all(0),
-            //       expansionCallback: (int index, bool isExpanded) {
-            //         setState(() {
-            //           list[index].isExpanded = isExpanded;
-            //         });
-            //       },
-            //       children: list.map((time) {
-            //         return ExpansionPanel(
-            //             headerBuilder: (BuildContext context, bool isExpanded) {
-            //               return ListTile(
-            //                 contentPadding: EdgeInsets.symmetric(
-            //                     vertical: 10, horizontal: 16),
-            //                 leading: Icon(Icons.school,
-            //                     color: const Color.fromARGB(255, 183, 255, 68)),
-            //                 title: Text(
-            //                   time.profileId,
-            //                   style: TextStyle(
-            //                       fontSize: 16, fontWeight: FontWeight.bold),
-            //                 ),
-            //               );
-            //             },
-            //             body: Center());
-            //       }).toList(),
-            //     );
-            // })
-          ],
-        ),
+        child: Consumer<ShiftsViewModel>(builder: (context, viewModel, child) {
+          getShiftAuto();
+          if (currentShift == null) {
+            getShiftAuto();
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else
+            return QrScan(
+              user: widget.loginUser,
+              currentShift: currentShift ?? currentShift!,
+            );
+        }),
       ),
     );
   }
