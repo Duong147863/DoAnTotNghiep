@@ -24,6 +24,34 @@ class LaborContactRepository {
       callback('Lỗi: $e'); // Pass error message to callback
     }
   }
+   // Phương thức để gọi API và xử lý kết quả
+  Future<LaborContracts?> getSecondContractEndTime(String profileId) async {
+    try {
+      final response = await service.getSecondContractEndTime(profileId);
+
+      // Kiểm tra mã trạng thái HTTP
+      if (response.statusCode == 200) {
+        // Nếu thành công, parse dữ liệu JSON từ response
+        final responseData = jsonDecode(response.body);
+
+        // Kiểm tra nếu API trả về dữ liệu đúng
+        if (responseData['status'] == true) {
+          // Chuyển đổi dữ liệu thành đối tượng LaborContracts
+          return LaborContracts.fromJson(responseData);
+        } else {
+          // Nếu API trả về lỗi, có thể throw exception hoặc trả về null
+          return null;
+        }
+      } else {
+        // Nếu có lỗi HTTP, throw exception
+        throw Exception('Failed to load second contract end time');
+      }
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      print('Error: $error');
+      return null;
+    }
+  }
     Future<List<LaborContracts>> getLaborContactOf(String profileId) async {
     final response = await service.getLaborContactOf(profileId);
 
