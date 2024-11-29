@@ -43,10 +43,10 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   FocusNode _starttimeFocusNode = FocusNode();
   FocusNode _endtimeFocusNode = FocusNode();
   List<LaborContracts> laborContracts = [];
-  
+
   bool showSpeedDial =
       false; // Biến để quyết định có hiển thị SpeedDial hay không
-    bool showSpeedDial1 =
+  bool showSpeedDial1 =
       false; // Biến để quyết định có hiển thị SpeedDial hay không
   LaborContracts? selectedlaborContracts;
   void initState() {
@@ -54,7 +54,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     profileId = widget.laborContracts!.profiles;
     _profileNameController.text = widget.profiles!.profileName;
     endTimeThuViec = widget.profiles!.endTime!;
-    statusProfile=widget.profiles!.profileStatus;
+    statusProfile = widget.profiles!.profileStatus;
     //
 
     _laborContractIDController.text = widget.laborContracts!.laborContractId;
@@ -68,11 +68,8 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     _endTimeHopDong = widget.laborContracts!.endTime!;
     _laborContractImageBase64 = widget.laborContracts!.image;
 
-       checkContractDuration();
-   
-    
-  
-      
+    checkContractDuration();
+
     // Focus
     _mahdFocusNode.addListener(() {
       // Kiểm tra khi focus bị mất và validate lại
@@ -115,36 +112,35 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
 //       });
 //     }
 //   }
-void checkContractDuration() {
-  // Kiểm tra nếu là hợp đồng lần 1
-  if (statusProfile == 1 && _endTimeHopDong != null) {
-    int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-    print('Days between (HD-01): $daysBetween');  
-    setState(() {
-      // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 1 đã vượt quá 1080 ngày
-      // và chưa có hợp đồng lần 2 (statusProfile != 2)
-      if (daysBetween > 1080 && widget.profiles!.profileStatus != 2) {
-        showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
-      } else {
-        showSpeedDial = false; // Ẩn nút nếu không thỏa mãn điều kiện
-      }
-    });
-  } 
-  // Kiểm tra nếu là hợp đồng lần 2
-  else if (statusProfile == 2 && _endTimeHopDong != null ) {
-    int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-    print('Days between (HD-02): $daysBetween');
-    setState(() {
-      // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 2 đã vượt quá 1080 ngày
-      if (daysBetween > 1080) {
-        showSpeedDial = true;  // Mở nút tạo hợp đồng lần 2
-      } else {
-        showSpeedDial = false; // Ẩn nút nếu hợp đồng lần 2 chưa hết hạn
-      }
-    });
+  void checkContractDuration() {
+    // Kiểm tra nếu là hợp đồng lần 1
+    if (statusProfile == 1 && _endTimeHopDong != null) {
+      int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+      print('Days between (HD-01): $daysBetween');
+      setState(() {
+        // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 1 đã vượt quá 1080 ngày
+        // và chưa có hợp đồng lần 2 (statusProfile != 2)
+        if (daysBetween > 1080 && widget.profiles!.profileStatus != 2) {
+          showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
+        } else {
+          showSpeedDial = false; // Ẩn nút nếu không thỏa mãn điều kiện
+        }
+      });
+    }
+    // Kiểm tra nếu là hợp đồng lần 2
+    else if (statusProfile == 2 && _endTimeHopDong != null) {
+      int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+      print('Days between (HD-02): $daysBetween');
+      setState(() {
+        // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 2 đã vượt quá 1080 ngày
+        if (daysBetween > 1080) {
+          showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
+        } else {
+          showSpeedDial = false; // Ẩn nút nếu hợp đồng lần 2 chưa hết hạn
+        }
+      });
+    }
   }
-}
-
 
   void _updateLaborContract() async {
     if (_formKey.currentState!.validate()) {
@@ -210,7 +206,7 @@ void checkContractDuration() {
       backgroundColor: AppColor.aliceBlue,
       resizeToAvoidBottomInset: true,
       appBarColor: AppColor.primaryLightColor,
-      
+
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -351,65 +347,74 @@ void checkContractDuration() {
                     ],
                   ),
                   SizedBox(height: 24),
-                  showSpeedDial ==false 
-                  ?Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.save,
-                            color: const Color.fromARGB(255, 33, 243, 61)),
-                        onPressed: _updateLaborContract,
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          setState(() {
-                            _isEditing = true;
-                          });
-                        },
-                      )
-                    ],
-                  ):SizedBox.shrink(),
+                  AppStrings.ROLE_PERMISSIONS.containsAny([
+                    'Manage Staffs info only',
+                    'Manage BoD & HR accounts'
+                  ])
+                      ? showSpeedDial == false
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.save,
+                                      color: const Color.fromARGB(
+                                          255, 33, 243, 61)),
+                                  onPressed: _updateLaborContract,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.edit, color: Colors.blue),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isEditing = true;
+                                    });
+                                  },
+                                )
+                              ],
+                            )
+                          : SizedBox.shrink()
+                      : SizedBox.shrink(),
                 ],
               ),
             ),
           ),
         ),
-        
       ),
-      
-      fab:
-      
-     showSpeedDial == true
-      ? SpeedDial(
-          elevation: 0,
-          icon: Icons.menu,
-          buttonSize: Size(50, 50),
-          children: [
-            SpeedDialChild(
-              label: "Thêm hợp đồng",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => AddLaborContractScreenKHD2(
-                      laborContracts: widget.laborContracts,
-                      profiles: widget.profiles,
-                    ),
-                  ),
-                ).then((createNewLaborContract) {
-                  if (createNewLaborContract != null) {
-                    setState(() {
-                      laborContracts.add(createNewLaborContract);
-                    });
-                  }
-                });
-              },
-            ),
-          ],
-        )
-      : SizedBox.shrink(), // Không hiển thị gì nếu không thỏa mãn điều kiện
 
+      fab:   AppStrings.ROLE_PERMISSIONS.containsAny([
+                    'Manage Staffs info only',
+                    'Manage BoD & HR accounts'
+                  ])?
+       showSpeedDial == true
+          ? SpeedDial(
+              elevation: 0,
+              icon: Icons.menu,
+              buttonSize: Size(50, 50),
+              children: [
+                SpeedDialChild(
+                  label: "Thêm hợp đồng",
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            AddLaborContractScreenKHD2(
+                          laborContracts: widget.laborContracts,
+                          profiles: widget.profiles,
+                        ),
+                      ),
+                    ).then((createNewLaborContract) {
+                      if (createNewLaborContract != null) {
+                        setState(() {
+                          laborContracts.add(createNewLaborContract);
+                        });
+                      }
+                    });
+                  },
+                ),
+              ],
+            )
+          : SizedBox.shrink()
+          : SizedBox.shrink(), // Không hiển thị gì nếu không thỏa mãn điều kiện
     );
   }
 

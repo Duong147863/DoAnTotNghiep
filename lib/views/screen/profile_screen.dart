@@ -1042,7 +1042,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildDepartmentPositionDropdown(
                           'Chức Vụ - Phòng Ban', roleid!)
                       .p(8)
-                      .w(360),
+                      .w(330),
                 ],
               ),
               Row(
