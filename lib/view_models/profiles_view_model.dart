@@ -10,6 +10,8 @@ class ProfilesViewModel extends ChangeNotifier {
   final ProfilesRepository repository = ProfilesRepository();
 
   List<Profiles> allProfiles = [];
+  List<Profiles> _list = [];
+  List<Profiles> get listProfile => _list;
   List<Profiles> membersDepartment = [];
   List<Profiles> listProfilesByPosition = [];
   bool isChangingPassword = false; // Trạng thái khi đang thay đổi mật khẩu
@@ -127,11 +129,26 @@ class ProfilesViewModel extends ChangeNotifier {
       callback('Failed to add relative: $e');  // Call the callback with error message
     }
   }
-  Future<void> updateProfile(Profiles profile, Function(String) callback) async {
+  // Future<void> updateProfile(Profiles profile, Function(String) callback) async {
+  //   try {
+  //     await repository.updateProfile(profile,callback);
+  //     await membersOfDepartment(profile.profileId);
+  //     await getMembersCountGenderAndMaritalStatus();
+  //   } catch (e) {
+  //     callback('Failed to add relative: $e');  // Call the callback with error message
+  //   }
+  // }
+     Future<void> updateProfile(Profiles profile, Function(String) callback) async {
     try {
       await repository.updateProfile(profile,callback);
       await membersOfDepartment(profile.profileId);
       await getMembersCountGenderAndMaritalStatus();
+      int index =
+          _list.indexWhere((pro) => pro.profileId == profile.profileId);
+      if (index != -1) {
+        _list[index] = profile;
+        notifyListeners();
+      }
     } catch (e) {
       callback('Failed to add relative: $e');  // Call the callback with error message
     }

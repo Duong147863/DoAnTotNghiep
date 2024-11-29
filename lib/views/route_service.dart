@@ -25,13 +25,13 @@ import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
-    case AppRoutes.homeRoute:
-      return MaterialPageRoute(
-          builder: (context) => HomeScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.homeRoute,
-          ));
-    ////
+    // case AppRoutes.homeRoute:
+    //   return MaterialPageRoute(
+    //       builder: (context) => HomeScreen(),
+    //       settings: const RouteSettings(
+    //         name: AppRoutes.homeRoute,
+    //       ));
+    // ////
     case AppRoutes.welcomeRoute:
       return MaterialPageRoute(
           builder: (context) => WelcomeScreen(),
