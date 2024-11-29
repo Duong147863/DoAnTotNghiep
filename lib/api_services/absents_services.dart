@@ -21,6 +21,12 @@ class AbsentsService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
+   Future<http.Response> getAllAbsentsbyRole(String profileId) async {
+    return await http
+        .get(Uri.parse('${AppStrings.baseUrlApi}absents/show/$profileId'), headers: {
+      'Authorization': 'Bearer ${AppStrings.TOKEN}',
+    });
+  }
 
   Future<http.Response> getPersonalAbsents(String profileId) async {
     return await http

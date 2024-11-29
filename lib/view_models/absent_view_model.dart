@@ -9,12 +9,23 @@ class AbsentsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Absents> _list = [];
   List<Absents> get listAbsents => _list;
-  Future<void> addNewAbsent(Absents absents) async {
+  // Future<void> addNewAbsent(Absents absents) async {
+  //   try {
+  //     await repository.addNewAbsent(absents);
+  //     notifyListeners();
+  //   } catch (e) {
+  //     throw Exception('Failed to add absent: $e');
+  //   }
+  // }
+  
+  Future<void> addNewAbsent(
+      Absents absents, Function(String) callback) async {
     try {
-      await repository.addNewAbsent(absents);
-      notifyListeners();
+      await repository.addNewAbsent(
+          absents, callback); // Call the repository method
     } catch (e) {
-      throw Exception('Failed to add absent: $e');
+      callback(
+          'Failed to add relative: $e'); // Call the callback with error message
     }
   }
 
@@ -22,6 +33,16 @@ class AbsentsViewModel extends ChangeNotifier {
     fetchingData = true;
     try {
       _list = await repository.fetchAllAbsents();
+      notifyListeners();
+    } catch (e) {
+      throw Exception('Failed to load data: $e');
+    }
+    fetchingData = false;
+  }
+  Future<void> getAllAbsentsbyRole(String profileId) async {
+    fetchingData = true;
+    try {
+      _list = await repository.getAllAbsentsbyRole(profileId);
       notifyListeners();
     } catch (e) {
       throw Exception('Failed to load data: $e');

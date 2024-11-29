@@ -257,7 +257,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute<void>(
                                     builder: (BuildContext context) =>
-                                        ListAbsentScreen()),
+                                        ListAbsentScreen(
+                                          profiles: widget.profile,
+                                        )),
                               );
                             },
                           ),
@@ -347,7 +349,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     context,
                                     MaterialPageRoute<void>(
                                         builder: (BuildContext context) =>
-                                            ListAbsentScreen()),
+                                            ListAbsentScreen(
+                                              profiles: widget.profile,
+                                            )),
                                   );
                                 },
                               ),
@@ -415,20 +419,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 },
                               ),
                             ]
-                          : [
-                              ListTile(
-                                title: const Text("Nghỉ phép"),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                        builder: (BuildContext context) =>
-                                            ListAbsentScreen(
-                                              profiles: widget.profile,
-                                            )),
-                                  );
-                                },
-                              ),
+                          :  [
+                              SizedBox.shrink(),
                             ]),
             ),
             Align(
@@ -890,7 +882,24 @@ class _HomeScreenState extends State<HomeScreen> {
             //     }),
           ]);
     } else {
-      return UiSpacer.emptySpace();
+      return SpeedDial(
+          elevation: 0,
+          icon: Icons.menu,
+          buttonSize: const Size(50, 50),
+          children: [
+            SpeedDialChild(
+                label: "Thêm nghỉ phép",
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) =>
+                            AddAbsentRequestScreen(
+                          profiles: widget.profile,
+                        ),
+                      ));
+                })
+          ]);
     }
   }
 
