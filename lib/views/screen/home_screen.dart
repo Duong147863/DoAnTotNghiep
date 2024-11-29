@@ -53,6 +53,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+   late Profiles _profile; // Tạo biến để quản lý profile trong state
   final _formKey = GlobalKey<FormState>();
   final _departmentNameController = TextEditingController();
   final _departmentIdController = TextEditingController();
@@ -67,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
   FocusNode _tenCVFocusNode = FocusNode();
   List<Departments> departments = [];
   Departments? selectedDepartment;
+    List<Profiles> profile = [];
   DateTime now = DateTime.now();
   // Lấy ngày đầu và cuối tuần này
   DateTime startOfWeek = DateTime.now()
@@ -88,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadDepartments();
+    _profile=widget.profile!;
     _maPBFocusNode.addListener(() {
       // Kiểm tra khi focus bị mất và validate lại
       if (!_maPBFocusNode.hasFocus) {
@@ -166,7 +169,20 @@ class _HomeScreenState extends State<HomeScreen> {
               formatDatetoJson(endOfWeek), widget.profile!.profileId);
     });
   }
-
+  //   void _handleUpdateProfile(Profiles updatedProfile) {
+  //   setState(() {
+  //     int index = profile
+  //         .indexWhere((pro) => pro.profileId == updatedProfile.profileId);
+  //     if (index != -1) {
+  //       profile[index] = updatedProfile;
+  //     }
+  //   });
+  // }
+    void _handleUpdateProfile(Profiles updatedProfile) {
+    setState(() {
+      _profile = updatedProfile; // Cập nhật Profile trong state
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final profilesViewModel = Provider.of<ProfilesViewModel>(context);
@@ -189,14 +205,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: ()async {
+                     final updatedProfile =  await Navigator.push(
                           context,
-                          MaterialPageRoute<void>(
-                            builder: (BuildContext context) =>
+                          MaterialPageRoute(
+                            builder: (context) =>
                                 ProfileScreen(profile: widget.profile),
                           ),
+                        // )
+                        // .then((updatedProfile) {
+                        //   if (updatedProfile != null) {
+                        //     _handleUpdateProfile(
+                        //         updatedProfile); // Cập nhật lại thông tin
+                        //   }
+                        // }
                         );
+                  if (updatedProfile != null) {
+                _handleUpdateProfile(updatedProfile); // Cập nhật lại dữ liệu
+              }
+
                       },
                       child: CircleAvatar(
                         radius: 30,
@@ -223,7 +250,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.profile!.profileName,
+                     _profile.profileName,
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.white,

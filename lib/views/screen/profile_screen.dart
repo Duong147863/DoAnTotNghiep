@@ -70,7 +70,8 @@ Future<void> _selectDate(BuildContext context, DateTime initialDate,
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  final _profileNameController = TextEditingController();
+  // final _profileNameController = TextEditingController();
+   late TextEditingController _profileNameController;
   final _birthdayController = TextEditingController();
   final _placeOfBirthController = TextEditingController();
   final _identifiNumController = TextEditingController();
@@ -140,7 +141,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   void initState() {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
-    _profileNameController.text = widget.profile!.profileName;
+    // _profileNameController.text = widget.profile!.profileName;
+    _profileNameController = TextEditingController(text: widget.profile!.profileName);
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _birthday = widget.profile!.birthday;
@@ -675,6 +677,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (message == 'Nhân viên đã được cập nhật thành công.') {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
+              // Khởi tạo lại các TextEditingController
+        setState(() {
+          _profileNameController = TextEditingController();
+          // Tạo lại các controller khác...
+        });
           Navigator.pop(context, updatedProfile); // Đóng màn hình
         } else {
           ScaffoldMessenger.of(context)
@@ -683,6 +690,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
+  void _clearFormFields() {
+  _profileNameController.clear();
+  _profileIDController.clear();
+  _placeOfBirthController.clear();
+  _birthdayController.clear();
+  _identifiNumController.clear();
+  _idLicenseDayController.clear();
+  _temporaryAddressController.clear();
+  _currentAddressController.clear();
+  // Clear tất cả các TextEditingController khác nếu cần.
+}
 
   void _deleteProfile() async {
     try {
@@ -1040,13 +1058,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _buildDepartmentPositionDropdown(
                           'Chức Vụ - Phòng Ban', roleid!)
                       .p(8)
-                      .w(360),
+                      .w(330),
                 ],
               ),
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
-                  _buildSalaryDropdown('Mức lương').p(8).w(300),
+                  _buildSalaryDropdown('Mức lương',roleid!).p(8).w(300),
                 ],
               ),
               AppStrings.ROLE_PERMISSIONS.containsAny(
@@ -1629,12 +1647,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     );
   }
+//   Widget _buildDepartmentPositionDropdown(String hint, int userRoleID, String currentUserId, String profileId) {
+//   final bool isOwnProfile = currentUserId == profileId;
 
-  Widget _buildSalaryDropdown(String hint) {
+//   return DropdownButtonFormField<DepartmentPosition>(
+//     value: selectedDepartmentsPosition,
+//     isExpanded: true,
+//     hint: Text(hint),
+//     onChanged: isOwnProfile || userRoleID == 1
+//         ? null // Nếu là profile của chính mình hoặc role không được phép thì vô hiệu hóa
+//         : _isEditing
+//             ? (DepartmentPosition? newValue) {
+//                 setState(() {
+//                   selectedDepartmentsPosition = newValue;
+//                 });
+//               }
+//             : null,
+//     items: departmentsPosition.map((DepartmentPosition dep) {
+//       return DropdownMenuItem<DepartmentPosition>(
+//         value: dep,
+//         child: Text("${dep.positionName!}  -  ${dep.departmentName!}"),
+//       );
+//     }).toList(),
+//     decoration: InputDecoration(
+//       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+//     ),
+//   );
+// }
+
+  Widget _buildSalaryDropdown(String hint, int userRoleID) {
     return DropdownButtonFormField<Salaries>(
       value: selectedSalarys,
       hint: Text(hint),
-      onChanged: _isEditing
+      onChanged:userRoleID == 1? null :_isEditing
           ? (Salaries? newValue) {
               setState(() {
                 selectedSalarys = newValue;

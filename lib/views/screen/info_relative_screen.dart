@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
+import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/models/relatives_model.dart';
 import 'package:nloffice_hrm/view_models/relatives_view_model.dart';
@@ -467,7 +468,10 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
           ]),
         ),
         SizedBox(height: 16),
-        Row(
+        AppStrings.ROLE_PERMISSIONS.containsAny([
+                    'Manage Staffs info only',
+                    'Manage BoD & HR accounts'
+                  ])?Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             IconButton(
@@ -514,7 +518,7 @@ class _InfoRelativeScreenState extends State<InfoRelativeScreen> {
               },
             ),
           ],
-        ),
+        ): SizedBox.shrink(),
       ],
     );
   }
