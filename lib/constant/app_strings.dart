@@ -5,7 +5,7 @@ import 'dart:typed_data';
 class AppStrings {
   AppStrings._();
 
-  static const String baseUrlApi = "http://192.168.1.28:8000/api/v1/";
+  static const String baseUrlApi = "http://192.168.1.9:8000/api/v1/";
 
   static String notificationsKey = "notifications";
   static String SHARED_LOGGED = "USER_IS_LOGGED";

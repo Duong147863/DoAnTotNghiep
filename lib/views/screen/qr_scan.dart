@@ -53,7 +53,7 @@ class _QrScanState extends State<QrScan> {
       child: Column(
         children: [
           Text(
-            "Ca ${widget.currentShift.shiftName}",
+            "Ca ${widget.currentShift.shiftName}\n${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(widget.currentShift.startTime))} - ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(widget.currentShift.endTime))}",
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18),
           ),
