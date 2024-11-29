@@ -212,8 +212,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         final updatedProfile = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProfileScreen(profile: widget.profile),
+                            builder: (context) => ProfileScreen(
+                              profile: widget.profile,
+                              loginUser: widget.profile,// lấy thông tin TK đang đăng nhập
+                            ),
                           ),
                           // )
                           // .then((updatedProfile) {

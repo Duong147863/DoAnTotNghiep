@@ -58,7 +58,7 @@ class _EmployeeListScreenState extends State<EmployeeListScreen> {
                           context,
                           MaterialPageRoute<void>(
                             builder: (BuildContext context) =>
-                                ProfileScreen(profile: profiles[index]),
+                                ProfileScreen(profile: profiles[index],),
                           ),
                         );
                       },

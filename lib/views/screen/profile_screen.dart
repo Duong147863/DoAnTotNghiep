@@ -36,7 +36,6 @@ import 'package:nloffice_hrm/views/screen/add_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_trainingprocesses_screen.dart';
 import 'package:nloffice_hrm/views/screen/add_workingprocess_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_diploma_screen.dart';
-import 'package:nloffice_hrm/views/screen/info_insurance_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_laborcontract_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_relative_screen.dart';
 import 'package:nloffice_hrm/views/screen/info_trainingprocesses_screen.dart';
@@ -48,7 +47,8 @@ import 'package:intl/intl.dart';
 
 class ProfileScreen extends StatefulWidget {
   final Profiles? profile;
-  const ProfileScreen({super.key, this.profile});
+  final Profiles? loginUser; //TK đang đăng nhập
+  const ProfileScreen({super.key, this.profile, this.loginUser});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
