@@ -432,71 +432,68 @@ class _AddProfilePageState extends State<AddProfilePage> {
             ),
             Divider(),
             //Profile id + full name
-            Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _profileIDController,
-                  maxLength: 10,
-                  focusNode: _manvFocusNode,
-                  labelText: 'Mã nhân viên',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    } else if (value.length > 10) {
-                      return 'Mã nhân viên không được vượt quá 10 ký tự';
-                    } else if (!value.startsWith('NV')) {
-                      return 'Mã nhân viên phải bắt đầu bằng "NV"';
-                    } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
-                      return 'Sau "NV" phải là số';
-                    }
-                    return null;
-                  },
-                ).px8().w(150),
-                CustomTextFormField(
-                  focusNode: _hovaTenFocusNode,
-                  textEditingController: _profileNameController,
-                  labelText: 'Họ và tên',
-                  maxLength: 50,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    // Kiểm tra không có khoảng trắng ở cuối tên
-                    if (value.trim() != value) {
-                      return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
-                    }
-                    if (value.length < 4) {
-                      return 'Họ và Tên phải có ít nhất 4 ký tự';
-                    }
-                    // Regex kiểm tra ký tự đặc biệt
-                    final nameRegex = RegExp(
-                        r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
+            CustomTextFormField(
+              textEditingController: _profileIDController,
+              maxLength: 10,
+              focusNode: _manvFocusNode,
+              labelText: 'Mã nhân viên',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Không được để trống';
+                } else if (value.length > 10) {
+                  return 'Mã nhân viên không được vượt quá 10 ký tự';
+                } else if (!value.startsWith('NV')) {
+                  return 'Mã nhân viên phải bắt đầu bằng "NV"';
+                } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
+                  return 'Sau "NV" phải là số';
+                }
+                return null;
+              },
+            ).px8(),
+            CustomTextFormField(
+              focusNode: _hovaTenFocusNode,
+              textEditingController: _profileNameController,
+              labelText: 'Họ và tên',
+              maxLength: 50,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Không được để trống';
+                }
+                // Kiểm tra không có khoảng trắng ở cuối tên
+                if (value.trim() != value) {
+                  return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                }
+                if (value.length < 4) {
+                  return 'Họ và Tên phải có ít nhất 4 ký tự';
+                }
+                // Regex kiểm tra ký tự đặc biệt
+                final nameRegex = RegExp(
+                    r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
 
-                    if (!nameRegex.hasMatch(value)) {
-                      return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
-                    }
-                    // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                    List<String> words = value.split(" ");
-                    for (int i = 0; i < words.length; i++) {
-                      // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                      words[i] = words[i].substring(0, 1).toUpperCase() +
-                          words[i].substring(1).toLowerCase();
-                    }
-                    String capitalizedName = words.join(" ");
+                if (!nameRegex.hasMatch(value)) {
+                  return 'Họ và Tên không hợp lệ. Vui lòng nhập đúng định dạng.';
+                }
+                // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                List<String> words = value.split(" ");
+                for (int i = 0; i < words.length; i++) {
+                  // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                  words[i] = words[i].substring(0, 1).toUpperCase() +
+                      words[i].substring(1).toLowerCase();
+                }
+                String capitalizedName = words.join(" ");
 
-                    // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
-                    if (value != capitalizedName) {
-                      return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
-                    }
+                // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                if (value != capitalizedName) {
+                  return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                }
 
-                    if (!value.isLetter()) {
-                      return 'Tên chỉ gồm chữ';
-                    }
-                    return null;
-                  },
-                ).w(254),
-              ],
-            ).py16(),
+                if (!value.isLetter()) {
+                  return 'Tên chỉ gồm chữ';
+                }
+                return null;
+              },
+            ).px8(),
+
             //Birthday + Place of birth
             Row(
               children: [
@@ -984,56 +981,56 @@ class _AddProfilePageState extends State<AddProfilePage> {
   }
 
   Widget _buildDateStartTime(String label, TextEditingController controller,
-    DateTime initialDate, Function(DateTime) onDateSelected) {
-  return GestureDetector(
-    onTap: () => _selectDate(context, initialDate, (selectedDate) {
-      onDateSelected(selectedDate);
-      setState(() {
-        _startTime = selectedDate;
-        controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
-      });
-    }),
-    child: AbsorbPointer(
-      child: TextFormField(
-        focusNode: _startTimeFocusNode,
-        readOnly: true,
-        style: TextStyle(color: Colors.black),
-        controller: controller,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Nhập ngày bắt đầu';
-          }
-          try {
-            // Parse ngày được nhập
-            DateTime selectedStartTime =
-                DateFormat('dd/MM/yyyy').parse(value);
-
-            // Lấy ngày hiện tại không tính thời gian (00:00:00)
-            DateTime today = DateTime.now();
-            DateTime todayWithoutTime =
-                DateTime(today.year, today.month, today.day);
-
-            // Tính khoảng cách ngày
-            int differenceInDays =
-                todayWithoutTime.difference(selectedStartTime).inDays;
-
-            // Kiểm tra nếu ngày vượt quá 60 ngày trong quá khứ
-            if (differenceInDays > 60) {
-              return 'Ngày bắt đầu không được cách hiện tại quá 60 ngày';
+      DateTime initialDate, Function(DateTime) onDateSelected) {
+    return GestureDetector(
+      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+        onDateSelected(selectedDate);
+        setState(() {
+          _startTime = selectedDate;
+          controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+        });
+      }),
+      child: AbsorbPointer(
+        child: TextFormField(
+          focusNode: _startTimeFocusNode,
+          readOnly: true,
+          style: TextStyle(color: Colors.black),
+          controller: controller,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Nhập ngày bắt đầu';
             }
-          } catch (e) {
-            return 'Định dạng ngày không hợp lệ';
-          }
-          return null; // Hợp lệ nếu không vi phạm điều kiện
-        },
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            try {
+              // Parse ngày được nhập
+              DateTime selectedStartTime =
+                  DateFormat('dd/MM/yyyy').parse(value);
+
+              // Lấy ngày hiện tại không tính thời gian (00:00:00)
+              DateTime today = DateTime.now();
+              DateTime todayWithoutTime =
+                  DateTime(today.year, today.month, today.day);
+
+              // Tính khoảng cách ngày
+              int differenceInDays =
+                  todayWithoutTime.difference(selectedStartTime).inDays;
+
+              // Kiểm tra nếu ngày vượt quá 60 ngày trong quá khứ
+              if (differenceInDays > 60) {
+                return 'Ngày bắt đầu không được cách hiện tại quá 60 ngày';
+              }
+            } catch (e) {
+              return 'Định dạng ngày không hợp lệ';
+            }
+            return null; // Hợp lệ nếu không vi phạm điều kiện
+          },
+          decoration: InputDecoration(
+            labelText: label,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildDateEndTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {

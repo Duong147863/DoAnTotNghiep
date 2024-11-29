@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
   // final _profileNameController = TextEditingController();
-   late TextEditingController _profileNameController;
+  late TextEditingController _profileNameController;
   final _birthdayController = TextEditingController();
   final _placeOfBirthController = TextEditingController();
   final _identifiNumController = TextEditingController();
@@ -142,7 +142,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _profileIDController.text = widget.profile!.profileId;
     // _profileNameController.text = widget.profile!.profileName;
-    _profileNameController = TextEditingController(text: widget.profile!.profileName);
+    _profileNameController =
+        TextEditingController(text: widget.profile!.profileName);
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _birthday = widget.profile!.birthday;
@@ -577,10 +578,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             if (daysBetween > 1080) {
               daysSignedFirstContract =
-                  "Hợp đồng lần 1 kết thúc (quá 36 tháng): $daysBetween ngày";
+                  "Hợp đồng lần 1: (${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)})";
               showLaborContractButton1 = false; // Ẩn nút
             } else {
-              daysSignedFirstContract = "Hợp đồng lần 1: $daysBetween ngày";
+              daysSignedFirstContract =
+                  "Hợp đồng lần 1: (${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)})";
               showLaborContractButton1 = false; // Hiển thị nút
             }
           }
@@ -602,9 +604,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             if (daysBetween > 1080) {
               // Ví dụ: kiểm tra nếu quá 24 tháng (720 ngày)
               daysSignedSecondContract =
-                  "Hợp đồng lần 2 kết thúc (quá 36 tháng): $daysBetween ngày";
+                  "Hợp đồng lần 2: (${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)})";
             } else {
-              daysSignedSecondContract = "Hợp đồng lần 2: $daysBetween ngày";
+              "Hợp đồng lần 2: (${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)})";
             }
           }
         }
@@ -627,12 +629,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
     int workingDays = endTime.difference(startTime).inDays;
 
     if (statusProfile == 0) {
-      if (workingDays <= 60) {
+      if (workingDays <= 30) {
         showLaborContractButton = false; // Ẩn nút
-        return "Đang thử việc: $workingDays ngày";
+        // return "Đang thử việc: $workingDays ngày";
+        return "Thử việc: (${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)})";
       } else {
         showLaborContractButton = true; // Hiển thị nút
-        return "Đã hết hạn ngày thử việc: $workingDays ngày";
+        // return "Đã hết hạn ngày thử việc: $workingDays ngày";
+        return "Thử việc: (${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)})";
       }
     }
     switch (statusProfile) {
@@ -677,11 +681,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (message == 'Nhân viên đã được cập nhật thành công.') {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
-              // Khởi tạo lại các TextEditingController
-        setState(() {
-          _profileNameController = TextEditingController();
-          // Tạo lại các controller khác...
-        });
+          // Khởi tạo lại các TextEditingController
           Navigator.pop(context, updatedProfile); // Đóng màn hình
         } else {
           ScaffoldMessenger.of(context)
@@ -690,17 +690,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     }
   }
-  void _clearFormFields() {
-  _profileNameController.clear();
-  _profileIDController.clear();
-  _placeOfBirthController.clear();
-  _birthdayController.clear();
-  _identifiNumController.clear();
-  _idLicenseDayController.clear();
-  _temporaryAddressController.clear();
-  _currentAddressController.clear();
-  // Clear tất cả các TextEditingController khác nếu cần.
-}
 
   void _deleteProfile() async {
     try {
@@ -771,7 +760,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       : (daysSignedSecondContract != null
                           ? daysSignedSecondContract!
                           : "Chưa có thông tin hợp đồng lần 2"),
-                  style: TextStyle(fontSize: 10),
+                  style: TextStyle(fontSize: 13),
                 ),
           backgroundColor: AppColor.primaryLightColor,
           automaticallyImplyLeading: true,
@@ -792,60 +781,252 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : null, // Nếu nút không được bật, sẽ không thực hiện hành động
                     icon: Icon(Icons.save, color: Colors.white),
                   )
-                : SpeedDial(
-                    elevation: 0,
-                    child: Icon(Icons.menu),
-                    backgroundColor: AppColor.primaryLightColor,
-                    foregroundColor: Colors.white,
-                    direction: SpeedDialDirection.down,
-                    children: [
-                      SpeedDialChild(
-                          child: Icon(Icons.edit_outlined,
-                              color: AppColor.primaryLightColor),
-                          onTap: () {
-                            setState(() {
-                              _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
-                              _isButtonEnabled = true;
-                            });
-                          }),
-                      SpeedDialChild(
-                        child:
-                            Icon(Icons.lock, color: AppColor.primaryLightColor),
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Xác nhận khoá ?'),
-                                content:
-                                    Text('Khoá quyền sử dụng của hồ sơ này?'),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('Huỷ'),
-                                  ),
-                                  AppStrings.ROLE_PERMISSIONS.containsAny([
-                                    'Manage BoD & HR accounts',
-                                    'Manage Staffs info only'
-                                  ])
-                                      ? TextButton(
+                : AppStrings.ROLE_PERMISSIONS.containsAny(
+                        ['Manage BoD & HR accounts', 'Manage Staffs info only'])
+                    ? SpeedDial(
+                        elevation: 0,
+                        direction: SpeedDialDirection.down,
+                        icon: Icons.menu,
+                        backgroundColor: AppColor.primaryLightColor,
+                        foregroundColor: Colors.white,
+                        buttonSize: Size(50, 50),
+                        children: [
+                            SpeedDialChild(
+                                child: Icon(Icons.edit_outlined,
+                                    color: AppColor.primaryLightColor),
+                                onTap: () {
+                                  setState(() {
+                                    _isEditing =
+                                        true; // Chuyển đổi chế độ chỉnh sửa
+                                    _isButtonEnabled = true;
+                                  });
+                                }),
+                            SpeedDialChild(
+                              child: Icon(Icons.lock,
+                                  color: AppColor.primaryLightColor),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('Xác nhận khoá ?'),
+                                      content: Text(
+                                          'Khoá quyền sử dụng của hồ sơ này?'),
+                                      actions: [
+                                        TextButton(
                                           onPressed: () {
                                             Navigator.of(context).pop();
-                                            _deleteProfile();
                                           },
-                                          child: Text('Khoá'),
-                                        )
-                                      : SizedBox.shrink(),
-                                ],
-                              );
-                            },
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                                          child: Text('Huỷ'),
+                                        ),
+                                        AppStrings.ROLE_PERMISSIONS
+                                                .containsAny([
+                                          'Manage BoD & HR accounts',
+                                          'Manage Staffs info only'
+                                        ])
+                                            ? TextButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                  _deleteProfile();
+                                                },
+                                                child: Text('Khoá'),
+                                              )
+                                            : SizedBox.shrink(),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                            SpeedDialChild(
+                                label: "Thêm thân Nhân",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddRelativeScreen(
+                                          profile: widget.profile,
+                                        ),
+                                      )).then((addNewRelative) {
+                                    if (addNewRelative != null) {
+                                      setState(() {
+                                        relatives.add(addNewRelative);
+                                      });
+                                    }
+                                  });
+                                }),
+                            SpeedDialChild(
+                                label: "Thêm bằng cấp",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddDiplomaScreen(
+                                          profile: widget.profile,
+                                        ),
+                                      )).then((createNewDiploma) {
+                                    if (createNewDiploma != null) {
+                                      setState(() {
+                                        diplomas.add(createNewDiploma);
+                                      });
+                                    }
+                                  });
+                                }),
+                            ...[
+                              if (showLaborContractButton && statusProfile == 0)
+                                SpeedDialChild(
+                                  label: "Tạo hợp đồng",
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddLaborContractScreen(
+                                                profiles: widget.profile),
+                                      ),
+                                    ).then((createNewLaborContract) {
+                                      if (createNewLaborContract != null) {
+                                        setState(() {
+                                          laborContracts
+                                              .add(createNewLaborContract);
+                                        });
+                                      }
+                                    });
+                                  },
+                                ),
+                              if (showLaborContractButton1 &&
+                                  statusProfile == 1)
+                                SpeedDialChild(
+                                  label: "Tạo hợp đồng",
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddLaborContractScreen(
+                                                profiles: widget.profile),
+                                      ),
+                                    ).then((createNewLaborContract) {
+                                      if (createNewLaborContract != null) {
+                                        setState(() {
+                                          laborContracts
+                                              .add(createNewLaborContract);
+                                        });
+                                      }
+                                    });
+                                  },
+                                ),
+                            ]
+                          ])
+                    : SpeedDial(
+                        elevation: 0,
+                        icon: Icons.menu,
+                        direction: SpeedDialDirection.down,
+                        backgroundColor: AppColor.primaryLightColor,
+                        foregroundColor: Colors.white,
+                        buttonSize: Size(50, 50),
+                        children: [
+                            SpeedDialChild(
+                                child: Icon(Icons.edit_outlined,
+                                    color: AppColor.primaryLightColor),
+                                onTap: () {
+                                  setState(() {
+                                    _isEditing =
+                                        true; // Chuyển đổi chế độ chỉnh sửa
+                                    _isButtonEnabled = true;
+                                  });
+                                }),
+                            SpeedDialChild(
+                                label: "Thêm quá trình đào tạo",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddTrainingprocessesScreen(
+                                          profiles: widget.profile,
+                                        ),
+                                      )).then((createNewTraining) {
+                                    setState(() {
+                                      trainingProcess.add(createNewTraining);
+                                    });
+                                  });
+                                }),
+                            SpeedDialChild(
+                                label: "Thêm quá trình công tác",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddWorkingprocesScreen(
+                                          profiles: widget.profile,
+                                        ),
+                                      )).then((createNewWorkingprocess) {
+                                    setState(() {
+                                      workingProcesses
+                                          .add(createNewWorkingprocess);
+                                    });
+                                  });
+                                }),
+                          ]),
+            // SpeedDial(
+            //     elevation: 0,
+            //     child: Icon(Icons.menu),
+            //     backgroundColor: AppColor.primaryLightColor,
+            //     foregroundColor: Colors.white,
+            //     direction: SpeedDialDirection.down,
+            //     children: [
+            // SpeedDialChild(
+            //     child: Icon(Icons.edit_outlined,
+            //         color: AppColor.primaryLightColor),
+            //     onTap: () {
+            //       setState(() {
+            //         _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+            //         _isButtonEnabled = true;
+            //       });
+            //     }),
+            // SpeedDialChild(
+            //   child:
+            //       Icon(Icons.lock, color: AppColor.primaryLightColor),
+            //   onTap: () {
+            //     showDialog(
+            //       context: context,
+            //       builder: (BuildContext context) {
+            //         return AlertDialog(
+            //           title: Text('Xác nhận khoá ?'),
+            //           content:
+            //               Text('Khoá quyền sử dụng của hồ sơ này?'),
+            //           actions: [
+            //             TextButton(
+            //               onPressed: () {
+            //                 Navigator.of(context).pop();
+            //               },
+            //               child: Text('Huỷ'),
+            //             ),
+            //             AppStrings.ROLE_PERMISSIONS.containsAny([
+            //               'Manage BoD & HR accounts',
+            //               'Manage Staffs info only'
+            //             ])
+            //                 ? TextButton(
+            //                     onPressed: () {
+            //                       Navigator.of(context).pop();
+            //                       _deleteProfile();
+            //                     },
+            //                     child: Text('Khoá'),
+            //                   )
+            //                 : SizedBox.shrink(),
+            //           ],
+            //         );
+            //       },
+            //     );
+            //   },
+            // ),
+
+            //     ],
+            //   ),
           ]),
       extendBodyBehindAppBar: false,
       body: ListView(children: [
@@ -1064,7 +1245,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
-                  _buildSalaryDropdown('Mức lương',roleid!).p(8).w(300),
+                  _buildSalaryDropdown('Mức lương', roleid!).p(8).w(300),
                 ],
               ),
               AppStrings.ROLE_PERMISSIONS.containsAny(
@@ -1330,133 +1511,130 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ]),
-      fab: AppStrings.ROLE_PERMISSIONS.containsAny(
-              ['Manage BoD & HR accounts', 'Manage Staffs info only'])
-          ? Align(
-              alignment: Alignment.bottomCenter,
-              child: SpeedDial(
-                  elevation: 0,
-                  icon: Icons.menu,
-                  buttonSize: Size(50, 50),
-                  children: [
-                    SpeedDialChild(
-                        label: "Thêm thân Nhân",
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    AddRelativeScreen(
-                                  profile: widget.profile,
-                                ),
-                              )).then((addNewRelative) {
-                            if (addNewRelative != null) {
-                              setState(() {
-                                relatives.add(addNewRelative);
-                              });
-                            }
-                          });
-                        }),
-                    SpeedDialChild(
-                        label: "Thêm bằng cấp",
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    AddDiplomaScreen(
-                                  profile: widget.profile,
-                                ),
-                              )).then((createNewDiploma) {
-                            if (createNewDiploma != null) {
-                              setState(() {
-                                diplomas.add(createNewDiploma);
-                              });
-                            }
-                          });
-                        }),
-                    ...[
-                      if (showLaborContractButton && statusProfile == 0)
-                        SpeedDialChild(
-                          label: "Tạo hợp đồng",
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    AddLaborContractScreen(
-                                        profiles: widget.profile),
-                              ),
-                            ).then((createNewLaborContract) {
-                              if (createNewLaborContract != null) {
-                                setState(() {
-                                  laborContracts.add(createNewLaborContract);
-                                });
-                              }
-                            });
-                          },
-                        ),
-                      if (showLaborContractButton1 && statusProfile == 1)
-                        SpeedDialChild(
-                          label: "Tạo hợp đồng",
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (BuildContext context) =>
-                                    AddLaborContractScreen(
-                                        profiles: widget.profile),
-                              ),
-                            ).then((createNewLaborContract) {
-                              if (createNewLaborContract != null) {
-                                setState(() {
-                                  laborContracts.add(createNewLaborContract);
-                                });
-                              }
-                            });
-                          },
-                        ),
-                    ]
-                  ]),
-            )
-          : SpeedDial(
-              elevation: 0,
-              icon: Icons.menu,
-              buttonSize: Size(50, 50),
-              children: [
-                  SpeedDialChild(
-                      label: "Thêm quá trình đào tạo",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AddTrainingprocessesScreen(
-                                profiles: widget.profile,
-                              ),
-                            )).then((createNewTraining) {
-                          setState(() {
-                            trainingProcess.add(createNewTraining);
-                          });
-                        });
-                      }),
-                  SpeedDialChild(
-                      label: "Thêm quá trình công tác",
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  AddWorkingprocesScreen(
-                                profiles: widget.profile,
-                              ),
-                            )).then((createNewWorkingprocess) {
-                          setState(() {
-                            workingProcesses.add(createNewWorkingprocess);
-                          });
-                        });
-                      }),
-                ]),
+      // fab: AppStrings.ROLE_PERMISSIONS.containsAny(
+      //         ['Manage BoD & HR accounts', 'Manage Staffs info only'])
+      //     ? SpeedDial(
+      //         elevation: 0,
+      //         icon: Icons.menu,
+      //         buttonSize: Size(50, 50),
+      //         children: [
+      //             SpeedDialChild(
+      //                 label: "Thêm thân Nhân",
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (BuildContext context) =>
+      //                             AddRelativeScreen(
+      //                           profile: widget.profile,
+      //                         ),
+      //                       )).then((addNewRelative) {
+      //                     if (addNewRelative != null) {
+      //                       setState(() {
+      //                         relatives.add(addNewRelative);
+      //                       });
+      //                     }
+      //                   });
+      //                 }),
+      //             SpeedDialChild(
+      //                 label: "Thêm bằng cấp",
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (BuildContext context) =>
+      //                             AddDiplomaScreen(
+      //                           profile: widget.profile,
+      //                         ),
+      //                       )).then((createNewDiploma) {
+      //                     if (createNewDiploma != null) {
+      //                       setState(() {
+      //                         diplomas.add(createNewDiploma);
+      //                       });
+      //                     }
+      //                   });
+      //                 }),
+      //             ...[
+      //               if (showLaborContractButton && statusProfile == 0)
+      //                 SpeedDialChild(
+      //                   label: "Tạo hợp đồng",
+      //                   onTap: () {
+      //                     Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (BuildContext context) =>
+      //                             AddLaborContractScreen(
+      //                                 profiles: widget.profile),
+      //                       ),
+      //                     ).then((createNewLaborContract) {
+      //                       if (createNewLaborContract != null) {
+      //                         setState(() {
+      //                           laborContracts.add(createNewLaborContract);
+      //                         });
+      //                       }
+      //                     });
+      //                   },
+      //                 ),
+      //               if (showLaborContractButton1 && statusProfile == 1)
+      //                 SpeedDialChild(
+      //                   label: "Tạo hợp đồng",
+      //                   onTap: () {
+      //                     Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (BuildContext context) =>
+      //                             AddLaborContractScreen(
+      //                                 profiles: widget.profile),
+      //                       ),
+      //                     ).then((createNewLaborContract) {
+      //                       if (createNewLaborContract != null) {
+      //                         setState(() {
+      //                           laborContracts.add(createNewLaborContract);
+      //                         });
+      //                       }
+      //                     });
+      //                   },
+      //                 ),
+      //             ]
+      //           ])
+      //     : SpeedDial(
+      //         elevation: 0,
+      //         icon: Icons.menu,
+      //         buttonSize: Size(50, 50),
+      //         children: [
+      //             SpeedDialChild(
+      //                 label: "Thêm quá trình đào tạo",
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (BuildContext context) =>
+      //                             AddTrainingprocessesScreen(
+      //                           profiles: widget.profile,
+      //                         ),
+      //                       )).then((createNewTraining) {
+      //                     setState(() {
+      //                       trainingProcess.add(createNewTraining);
+      //                     });
+      //                   });
+      //                 }),
+      //             SpeedDialChild(
+      //                 label: "Thêm quá trình công tác",
+      //                 onTap: () {
+      //                   Navigator.push(
+      //                       context,
+      //                       MaterialPageRoute(
+      //                         builder: (BuildContext context) =>
+      //                             AddWorkingprocesScreen(
+      //                           profiles: widget.profile,
+      //                         ),
+      //                       )).then((createNewWorkingprocess) {
+      //                     setState(() {
+      //                       workingProcesses.add(createNewWorkingprocess);
+      //                     });
+      //                   });
+      //                 }),
+      //           ]),
     );
   }
 
@@ -1679,13 +1857,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return DropdownButtonFormField<Salaries>(
       value: selectedSalarys,
       hint: Text(hint),
-      onChanged:userRoleID == 1? null :_isEditing
-          ? (Salaries? newValue) {
-              setState(() {
-                selectedSalarys = newValue;
-              });
-            }
-          : null,
+      onChanged: userRoleID == 1
+          ? null
+          : _isEditing
+              ? (Salaries? newValue) {
+                  setState(() {
+                    selectedSalarys = newValue;
+                  });
+                }
+              : null,
       items: salarys.map((Salaries salary) {
         return DropdownMenuItem<Salaries>(
           value: salary,
@@ -1932,7 +2112,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       workingProcesses: process,
                       profiles: widget.profile,
                       onDelete: _handleDeleteWorkingProcess,
-
                     ),
                   ),
                 );
@@ -2084,7 +2263,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${process.laborContractId} Hợp đồng kí lần ${laborContracts.indexOf(process) + 1}"),
+                    Text(
+                        "${process.laborContractId} Hợp đồng kí lần ${laborContracts.indexOf(process) + 1}"),
                     Row(
                       children: [
                         Text(
