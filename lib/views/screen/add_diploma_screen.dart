@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/diplomas_model.dart';
