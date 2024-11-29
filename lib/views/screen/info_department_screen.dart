@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
@@ -12,6 +13,8 @@ import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
+
+import '../../constant/app_strings.dart';
 
 class DepartmentInfoScreen extends StatefulWidget {
   final Departments? departments;
@@ -84,14 +87,78 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(_departmentIDController.text);
-    print(_departmentNameController.text);
     return BasePage(
       showAppBar: true,
       titletext: widget.departments!.departmentName,
       showLeadingAction: true,
       appBarItemColor: AppColor.offWhite,
       appBarColor: AppColor.primaryLightColor,
+      actions: [
+        _isEditing
+            ? IconButton(
+                enableFeedback: true,
+                onPressed: () {
+                  // Tắt nút sau khi nhấn
+                  setState(() {
+                    _isEditing = false;
+                  });
+                  // Thực hiện hành động
+                  _updateDepartment();
+                }, // Nếu nút không được bật, sẽ không thực hiện hành động
+                icon: Icon(Icons.save, color: Colors.white),
+              )
+            : SpeedDial(
+                elevation: 0,
+                child: Icon(Icons.menu),
+                backgroundColor: AppColor.primaryLightColor,
+                foregroundColor: Colors.white,
+                direction: SpeedDialDirection.down,
+                children: [
+                  SpeedDialChild(
+                      child: Icon(Icons.edit_outlined,
+                          color: AppColor.primaryLightColor),
+                      onTap: () {
+                        setState(() {
+                          _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+                        });
+                      }),
+                  SpeedDialChild(
+                    child: Icon(Icons.lock, color: AppColor.primaryLightColor),
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Xác nhận khoá ?'),
+                            content: Text('Khoá quyền sử dụng của hồ sơ này?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Huỷ'),
+                              ),
+                              AppStrings.ROLE_PERMISSIONS.containsAny([
+                                'Manage BoD & HR accounts',
+                                'Manage Staffs info only'
+                              ])
+                                  ? TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                        _deleteDepartment();
+                                      },
+                                      child: Text('Khoá'),
+                                    )
+                                  : SizedBox.shrink(),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+      ],
       body: Form(
         key: _formKey,
         child: Column(
@@ -176,28 +243,28 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                     });
               }
             }),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.save,
-                      color: const Color.fromARGB(255, 33, 243, 61)),
-                  onPressed: _updateDepartment,
-                ),
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue),
-                  onPressed: () {
-                    setState(() {
-                      _isEditing = true;
-                    });
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete, color: Colors.red),
-                  onPressed: _deleteDepartment,
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     IconButton(
+            //       icon: Icon(Icons.save,
+            //           color: const Color.fromARGB(255, 33, 243, 61)),
+            //       onPressed: _updateDepartment,
+            //     ),
+            //     IconButton(
+            //       icon: Icon(Icons.edit, color: Colors.blue),
+            //       onPressed: () {
+            //         setState(() {
+            //           _isEditing = true;
+            //         });
+            //       },
+            //     ),
+            //     IconButton(
+            //       icon: Icon(Icons.delete, color: Colors.red),
+            //       onPressed: _deleteDepartment,
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

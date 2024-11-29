@@ -105,7 +105,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
       defaultBody: false,
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
-      titletext: "Thêm đơn xin nghỉ việc",
+      titletext: "Thêm đơn xin nghỉ phép",
       appBarColor: AppColor.primaryLightColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),

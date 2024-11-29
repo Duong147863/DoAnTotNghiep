@@ -6,37 +6,37 @@ import 'package:nloffice_hrm/constant/input.styles.dart';
 import 'package:nloffice_hrm/constant/app_text_styles.dart';
 
 class CustomTextFormField extends StatefulWidget {
-  CustomTextFormField({
-    Key? key,
-    this.filled,
-    this.fillColor,
-    this.textEditingController,
-    this.obscureText = false,
-    this.textInputAction = TextInputAction.done,
-    this.keyboardType = TextInputType.text,
-    this.labelText,
-    this.hintText,
-    this.errorText,
-    this.validator,
-    this.onChanged,
-    this.onFieldSubmitted,
-    this.focusNode,
-    this.nextFocusNode,
-    this.isReadOnly = false,
-    this.onTap,
-    this.minLines,
-    this.maxLines,
-    this.suffixIcon,
-    this.prefixIcon,
-    this.underline = false,
-    this.inputFormatters,
-    this.colorHintText,
-    this.enabled,
-    this.decoration,
-    this.style,
-    this.readOnly,
-    this.maxLength
-  }) : super(key: key);
+  CustomTextFormField(
+      {Key? key,
+      this.filled,
+      this.fillColor,
+      this.textEditingController,
+      this.obscureText = false,
+      this.textInputAction = TextInputAction.done,
+      this.keyboardType = TextInputType.text,
+      this.labelText,
+      this.hintText,
+      this.errorText,
+      this.validator,
+      this.onChanged,
+      this.onFieldSubmitted,
+      this.focusNode,
+      this.nextFocusNode,
+      this.isReadOnly = false,
+      this.onTap,
+      this.minLines,
+      this.maxLines,
+      this.suffixIcon,
+      this.prefixIcon,
+      this.underline = false,
+      this.inputFormatters,
+      this.colorHintText,
+      this.enabled,
+      this.decoration,
+      this.style,
+      this.readOnly,
+      this.maxLength})
+      : super(key: key);
 
   //
   final bool? filled;
@@ -45,7 +45,7 @@ class CustomTextFormField extends StatefulWidget {
   final bool obscureText;
   final TextInputAction? textInputAction;
   final TextInputType? keyboardType;
-  final bool? enabled ;
+  final bool? enabled;
   final bool? readOnly;
   //
   final String? labelText;
@@ -90,7 +90,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         hintText: widget.hintText,
         //Chỉnh style hintText
         hintStyle: widget.colorHintText == null
-            ? AppTextStyle.hintStyle()
+            ? AppTextStyle.h3TitleTextStyle()
             : AppTextStyle.hintStyle().copyWith(color: widget.colorHintText),
 
         errorText: widget.errorText,
@@ -119,7 +119,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       controller: widget.textEditingController,
       validator: widget.validator,
       focusNode: widget.focusNode,
-      
+
       onFieldSubmitted: (data) {
         if (widget.onFieldSubmitted != null) {
           widget.onFieldSubmitted!(data);
