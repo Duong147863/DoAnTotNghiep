@@ -147,6 +147,9 @@ class _HomeScreenState extends State<HomeScreen> {
       Provider.of<TimeKeepingViewModel>(context, listen: false)
           .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
               formatDatetoJson(endOfWeek), widget.profile!.profileId);
+      Provider.of<TimeKeepingViewModel>(context, listen: false)
+          .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+              formatDatetoJson(endOfWeek), widget.profile!.profileId);
     });
   }
 
@@ -155,6 +158,9 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       startOfWeek = startOfWeek.add(Duration(days: 7));
       endOfWeek = endOfWeek.add(Duration(days: 7));
+      Provider.of<TimeKeepingViewModel>(context, listen: false)
+          .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+              formatDatetoJson(endOfWeek), widget.profile!.profileId);
       Provider.of<TimeKeepingViewModel>(context, listen: false)
           .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
               formatDatetoJson(endOfWeek), widget.profile!.profileId);
@@ -312,18 +318,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          ListTile(
-                            title: const Text("Dự án"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      const ListProjectScreen(),
-                                ),
-                              );
-                            },
-                          ),
+                          // ListTile(
+                          //   title: const Text("Dự án"),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute<void>(
+                          //         builder: (BuildContext context) =>
+                          //             const ListProjectScreen(),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                           ListTile(
                             title: const Text("Hợp đồng lao động"),
                             onTap: () {
@@ -500,11 +506,10 @@ class _HomeScreenState extends State<HomeScreen> {
       defaultBody: true,
       bodyChildren: [
         const SizedBox(height: 20),
-        AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')
-            // ||
-            //         (now.hour.toInt() >= 22 ||
-            //             now.hour.toInt() <
-            //                 7) // Ẩn nút chấm công nếu ngoài giờ làm việc hoặc là ban giám đốc
+        AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts') ||
+                (now.hour.toInt() >= 22 ||
+                    now.hour.toInt() <
+                        7) // Ẩn nút chấm công nếu ngoài giờ làm việc hoặc là ban giám đốc
             ? UiSpacer.emptySpace()
             : InkWell(
                 onTap: () {
@@ -1010,28 +1015,24 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Consumer<TimeKeepingViewModel>(
                 builder: (context, viewModel, child) {
+              Provider.of<TimeKeepingViewModel>(context, listen: false)
+                  .fetchWorkHours(formatDatetoJson(startOfWeek),
+                      formatDatetoJson(endOfWeek), widget.profile!.profileId);
+              final weekData = viewModel.weekData.entries.toList();
               return SfCartesianChart(
-                title: ChartTitle(text: 'Thống kê số giờ làm việc'),
-                primaryXAxis: CategoryAxis(
+                title: const ChartTitle(text: 'Thống kê số giờ làm việc'),
+                primaryXAxis: const CategoryAxis(
                   majorGridLines: MajorGridLines(width: 0),
                 ),
-                primaryYAxis: NumericAxis(
+                primaryYAxis: const NumericAxis(
                   maximum: 12,
                   interval: 2,
                 ),
                 series: <CartesianSeries<dynamic, dynamic>>[
-                  ColumnSeries<dynamic, dynamic>(
-                    dataSource: [
-                      EmployeeStat('Thứ 2', 2),
-                      EmployeeStat('Thứ 3', 10),
-                      EmployeeStat('Thứ 4', 3),
-                      EmployeeStat('Thứ 5', 8),
-                      EmployeeStat('Thứ 6', 8),
-                      EmployeeStat('Thứ 7', 8),
-                      EmployeeStat('Chủ nhật', 0),
-                    ],
-                    xValueMapper: (dynamic stats, _) => stats.status,
-                    yValueMapper: (dynamic stats, _) => stats.count,
+                  ColumnSeries<MapEntry<String, int>, String>(
+                    dataSource: weekData,
+                    xValueMapper: (data, _) => data.key,
+                    yValueMapper: (data, _) => data.value,
                   ),
                 ],
               );
@@ -1040,10 +1041,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.arrow_back_rounded).onInkTap(_previousWeek),
+                const Icon(Icons.arrow_back_rounded).onInkTap(_previousWeek),
                 Text("Tuần ${formatDatetoUI(startOfWeek)} - ${formatDatetoUI(endOfWeek)}")
                     .px32(),
-                Icon(Icons.arrow_forward_rounded).onInkTap(_nextWeek),
+                const Icon(Icons.arrow_forward_rounded).onInkTap(_nextWeek),
               ],
             ).py4(),
             Consumer<TimeKeepingViewModel>(

@@ -44,6 +44,7 @@ dependencies:
   # qr_code_scanner: ^1.0.0
   mobile_scanner: ^1.0.0
   image_picker: ^1.1.2
+  data_table_2: ^2.5.16
   pdf: ^3.8.4
   sliding_up_panel: ^2.0.0+1
   collection: ^1.17.0

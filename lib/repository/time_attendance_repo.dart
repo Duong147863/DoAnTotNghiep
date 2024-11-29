@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:nloffice_hrm/api_services/time_attendance_service.dart';
 import 'package:nloffice_hrm/models/timekeepings_model.dart';
+import 'package:nloffice_hrm/models/working_hours.dart';
 
 class TimekeepingRepo {
   final TimeAttendanceService service = TimeAttendanceService();
@@ -49,19 +50,13 @@ class TimekeepingRepo {
     }
   }
 
-  Future<Map<String, int>> getWeeklyPersonalWorkHours(
+  Future<List<WorkHours>> getWeeklyPersonalWorkHours(
       String from, String to, String profileID) async {
     final response =
         await service.getWeeklyPersonalWorkHours(from, to, profileID);
-
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      // Trả về số lượng nhân viên đã nghỉ việc và đang làm việc
-      return {
-        'genderMan': data['genderMan'],
-        'genderWoman': data['genderWoman'],
-        'married': data['married'],
-      };
+      List<dynamic> data = jsonDecode(response.body);
+      return data.map((json) => WorkHours.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load members count');
     }
