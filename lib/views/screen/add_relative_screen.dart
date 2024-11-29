@@ -122,7 +122,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     super.dispose();
   }
 
-  void _submit()  {
+  void _submit() {
     if (_formKey.currentState!.validate()) {
       final addNewRelative = Relatives(
         profileId: _profileIDController.text,
@@ -135,18 +135,17 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
         relativesCurrentAddress: _currentAddressRelativeController.text,
         relativeJob: _relativeJobController.text,
       );
-          Provider.of<RelativesViewModel>(context, listen: false)
+      Provider.of<RelativesViewModel>(context, listen: false)
           .addRelative(addNewRelative, (message) {
-          if (message == 'Thân nhân đã được thêm thành công.') {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(message)));
-            Navigator.pop(context,addNewRelative);  // Đóng màn hình
-          } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(message)));
-          }
-        });
-    
+        if (message == 'Thân nhân đã được thêm thành công.') {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+          Navigator.pop(context, addNewRelative); // Đóng màn hình
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
+        }
+      });
     }
   }
 
@@ -236,47 +235,43 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 },
               ).p8(),
               //relationship + relativephone
-              Row(
-                children: [
-                  DropdownButtonFormField<String>(
-                    isExpanded: true,
-                    value: _selectecRelationship,
-                    focusNode: _quanheFocusNode,
-                    items: relationships.map((relat) {
-                      return DropdownMenuItem(
-                        value: relat,
-                        child: Text(relat),
-                      );
-                    }).toList(),
-                    decoration: InputDecoration(
-                      labelText: 'Quan hệ',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectecRelationship =
-                            value; // Cập nhật giá trị được chọn
-                        _relationshipController.text =
-                            value ?? ""; // Gán vào controller
-                      });
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      return null;
-                    },
-                  ).px8().w(160),
-                  _buildDateField('Ngày sinh', _birthdayRelativeController,
-                      _birthdayRelative, (date) {
-                    setState(() {
-                      _birthdayRelative = date;
-                      _birthdayRelativeController.text =
-                          "${_birthdayRelative.toLocal()}".split(' ')[0];
-                    });
-                  }).px(8).w(250),
-                ],
-              ),
+              DropdownButtonFormField<String>(
+                isExpanded: true,
+                value: _selectecRelationship,
+                focusNode: _quanheFocusNode,
+                items: relationships.map((relat) {
+                  return DropdownMenuItem(
+                    value: relat,
+                    child: Text(relat),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Quan hệ',
+                  border: OutlineInputBorder(),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _selectecRelationship = value; // Cập nhật giá trị được chọn
+                    _relationshipController.text =
+                        value ?? ""; // Gán vào controller
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Không được để trống';
+                  }
+                  return null;
+                },
+              ).px8().w(160),
+              _buildDateField(
+                  'Ngày sinh', _birthdayRelativeController, _birthdayRelative,
+                  (date) {
+                setState(() {
+                  _birthdayRelative = date;
+                  _birthdayRelativeController.text =
+                      "${_birthdayRelative.toLocal()}".split(' ')[0];
+                });
+              }).px(8).w(250),
               CustomTextFormField(
                       validator: (value) {
                         if (value == null || value.isEmpty) {

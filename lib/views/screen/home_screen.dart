@@ -53,7 +53,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-   late Profiles _profile; // Tạo biến để quản lý profile trong state
+  late Profiles _profile; // Tạo biến để quản lý profile trong state
   final _formKey = GlobalKey<FormState>();
   final _departmentNameController = TextEditingController();
   final _departmentIdController = TextEditingController();
@@ -66,9 +66,10 @@ class _HomeScreenState extends State<HomeScreen> {
   FocusNode _tenPBFocusNode = FocusNode();
   FocusNode _maCVFocusNode = FocusNode();
   FocusNode _tenCVFocusNode = FocusNode();
+  late TabController _controller;
   List<Departments> departments = [];
   Departments? selectedDepartment;
-    List<Profiles> profile = [];
+  List<Profiles> profile = [];
   DateTime now = DateTime.now();
   // Lấy ngày đầu và cuối tuần này
   DateTime startOfWeek = DateTime.now()
@@ -90,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _loadDepartments();
-    _profile=widget.profile!;
+    _profile = widget.profile!;
     _maPBFocusNode.addListener(() {
       // Kiểm tra khi focus bị mất và validate lại
       if (!_maPBFocusNode.hasFocus) {
@@ -169,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
               formatDatetoJson(endOfWeek), widget.profile!.profileId);
     });
   }
+
   //   void _handleUpdateProfile(Profiles updatedProfile) {
   //   setState(() {
   //     int index = profile
@@ -178,11 +180,12 @@ class _HomeScreenState extends State<HomeScreen> {
   //     }
   //   });
   // }
-    void _handleUpdateProfile(Profiles updatedProfile) {
+  void _handleUpdateProfile(Profiles updatedProfile) {
     setState(() {
       _profile = updatedProfile; // Cập nhật Profile trong state
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final profilesViewModel = Provider.of<ProfilesViewModel>(context);
@@ -205,25 +208,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     GestureDetector(
-                      onTap: ()async {
-                     final updatedProfile =  await Navigator.push(
+                      onTap: () async {
+                        final updatedProfile = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
                                 ProfileScreen(profile: widget.profile),
                           ),
-                        // )
-                        // .then((updatedProfile) {
-                        //   if (updatedProfile != null) {
-                        //     _handleUpdateProfile(
-                        //         updatedProfile); // Cập nhật lại thông tin
-                        //   }
-                        // }
+                          // )
+                          // .then((updatedProfile) {
+                          //   if (updatedProfile != null) {
+                          //     _handleUpdateProfile(
+                          //         updatedProfile); // Cập nhật lại thông tin
+                          //   }
+                          // }
                         );
-                  if (updatedProfile != null) {
-                _handleUpdateProfile(updatedProfile); // Cập nhật lại dữ liệu
-              }
-
+                        if (updatedProfile != null) {
+                          _handleUpdateProfile(
+                              updatedProfile); // Cập nhật lại dữ liệu
+                        }
                       },
                       child: CircleAvatar(
                         radius: 30,
@@ -250,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                     _profile.profileName,
+                      _profile.profileName,
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.white,
@@ -335,18 +338,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          ListTile(
-                            title: const Text("Tuyển dụng"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      const ListHiringsScreen(),
-                                ),
-                              );
-                            },
-                          ),
+                          // ListTile(
+                          //   title: const Text("Tuyển dụng"),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute<void>(
+                          //         builder: (BuildContext context) =>
+                          //             const ListHiringsScreen(),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                           // ListTile(
                           //   title: const Text("Dự án"),
                           //   onTap: () {
@@ -359,18 +362,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           //     );
                           //   },
                           // ),
-                          ListTile(
-                            title: const Text("Hợp đồng lao động"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      const Placeholder(),
-                                ),
-                              );
-                            },
-                          ),
+                          // ListTile(
+                          //   title: const Text("Hợp đồng lao động"),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute<void>(
+                          //         builder: (BuildContext context) =>
+                          //             const Placeholder(),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                         ]
                       : AppStrings.ROLE_PERMISSIONS
                               .contains('Manage Staffs info only')
@@ -427,32 +430,32 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                               ),
-                              ListTile(
-                                title: const Text("Tuyển dụng"),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                          const ListHiringsScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              ListTile(
-                                title: const Text("Hợp đồng lao động"),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (BuildContext context) =>
-                                          const AddLaborContractScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
+                              // ListTile(
+                              //   title: const Text("Tuyển dụng"),
+                              //   onTap: () {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute<void>(
+                              //         builder: (BuildContext context) =>
+                              //             const ListHiringsScreen(),
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
+                              // ListTile(
+                              //   title: const Text("Hợp đồng lao động"),
+                              //   onTap: () {
+                              //     Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute<void>(
+                              //         builder: (BuildContext context) =>
+                              //             const AddLaborContractScreen(),
+                              //       ),
+                              //     );
+                              //   },
+                              // ),
                             ]
-                          :  [
+                          : [
                               SizedBox.shrink(),
                             ]),
             ),
@@ -605,11 +608,6 @@ class _HomeScreenState extends State<HomeScreen> {
               label: "Thêm nhân viên",
               onTap: () {
                 Navigator.of(context).pushNamed(AppRoutes.addprofileRoute);
-              }),
-          SpeedDialChild(
-              label: "Tạo quyết định mới",
-              onTap: () {
-                Navigator.of(context).pushNamed(AppRoutes.decisionListRoute);
               }),
           SpeedDialChild(
               label: "Tạo phòng ban",
@@ -846,16 +844,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   )),
           SpeedDialChild(
-              label: "Thêm ca làm việc",
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (BuildContext context) => const AddShiftsScreen(),
-                  ),
-                );
-              }),
-          SpeedDialChild(
               label: "Thêm mức lương",
               onTap: () {
                 Navigator.push(
@@ -1006,6 +994,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(),
             // _buildEmployeeStats(),
             _buildGetMembersCountGenderAndMaritalStatus(),
+
             // ExpansionPanelList(
             //   expansionCallback: (int panelIndex, bool isExpanded) {
             //     setState(() {
