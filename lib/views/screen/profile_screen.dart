@@ -390,6 +390,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  // void _loadDepartments() async {
+  //   await Provider.of<DeparmentsViewModel>(context, listen: false)
+  //       .getDepartmentsByPosition();
+
+  //   departmentsPosition =
+  //       Provider.of<DeparmentsViewModel>(context, listen: false)
+  //           .getlistdepartmentPosition;
+  //   if (departmentsPosition.isNotEmpty) {
+  //     selectedDepartmentsPosition = departmentsPosition.firstWhere(
+  //         (depandpos) =>
+  //             depandpos.positionId == widget.profile!.positionId &&
+  //             depandpos.departmentID == widget.profile!.departmentId);
+  //   }
+  //   setState(() {
+  //     if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+  //     } else if (AppStrings.ROLE_PERMISSIONS
+  //         .contains('Manage Staffs info only')) {
+  //       departmentsPosition = departmentsPosition
+  //           .where((department) => department.departmentID != 'PB-GĐ')
+  //           .toList();
+  //     }
+  //   });
+  // }
   void _loadDepartments() async {
     await Provider.of<DeparmentsViewModel>(context, listen: false)
         .getDepartmentsByPosition();
@@ -397,14 +420,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     departmentsPosition =
         Provider.of<DeparmentsViewModel>(context, listen: false)
             .getlistdepartmentPosition;
-    if (departmentsPosition.isNotEmpty) {
+
+    if (widget.profile != null && departmentsPosition.isNotEmpty) {
       selectedDepartmentsPosition = departmentsPosition.firstWhere(
-          (depandpos) =>
-              depandpos.positionId == widget.profile!.positionId &&
-              depandpos.departmentID == widget.profile!.departmentId);
+        (depandpos) =>
+            depandpos.positionId == widget.profile!.positionId &&
+            depandpos.departmentID == widget.profile!.departmentId,
+      );
     }
+
     setState(() {
       if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
+        // Logic quản lý tài khoản
       } else if (AppStrings.ROLE_PERMISSIONS
           .contains('Manage Staffs info only')) {
         departmentsPosition = departmentsPosition
@@ -576,13 +603,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             print('Days between (HD-01): $daysBetween'); // Kiểm tra số ngày
 
-            if (daysBetween > 1080) {
+            if (daysBetween < 1080) {
               daysSignedFirstContract =
-                  "Hợp đồng lần 1: (${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)})";
+               "Hợp đồng lần 1: ""${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)}""\ncòn thời hạn:"" $daysBetween ngày";
               showLaborContractButton1 = false; // Ẩn nút
             } else {
               daysSignedFirstContract =
-                  "Hợp đồng lần 1: (${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)})";
+              "Hợp đồng lần 1: ""${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)}""\nhết thời hạn:"" $daysBetween ngày";
               showLaborContractButton1 = false; // Hiển thị nút
             }
           }
@@ -599,25 +626,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 .difference(startTimeSecondContract)
                 .inDays;
 
-            // print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
-
-            if (daysBetween > 1080) {
-              // Ví dụ: kiểm tra nếu quá 24 tháng (720 ngày)
+            print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
+            if (daysBetween < 1080) {
               daysSignedSecondContract =
-                  "Hợp đồng lần 2: (${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)})";
+               "Hợp đồng lần 2: ""${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)}""\ncòn thời hạn:"" $daysBetween ngày";
             } else {
-              "Hợp đồng lần 2: (${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)})";
+              daysSignedSecondContract =  "Hợp đồng lần 2: ""${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)}""\nhết thời hạn:"" $daysBetween ngày";
             }
           }
         }
       } else {
-        // print("Trạng thái không hợp lệ: $statusProfile");
       }
 
       // Cập nhật giao diện
       setState(() {
-        // print(
-        //     'showLaborContractButton1: $showLaborContractButton1'); // Kiểm tra trạng thái nút
       });
     } else {
       print("Danh sách hợp đồng rỗng!");
@@ -632,11 +654,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (workingDays <= 30) {
         showLaborContractButton = false; // Ẩn nút
         // return "Đang thử việc: $workingDays ngày";
-        return "Thử việc: (${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)})";
+       return "Thử việc: ""${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}""\ncòn thời hạn:"" $workingDays ngày";
       } else {
         showLaborContractButton = true; // Hiển thị nút
         // return "Đã hết hạn ngày thử việc: $workingDays ngày";
-        return "Thử việc: (${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)})";
+        return "Thử việc: ""${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}""\nhết thời hạn:"" $workingDays ngày";
       }
     }
     switch (statusProfile) {
@@ -857,6 +879,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   });
                                 }),
                             SpeedDialChild(
+                                label: "Thêm quá trình đào tạo",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddTrainingprocessesScreen(
+                                          profiles: widget.profile,
+                                        ),
+                                      )).then((createNewTraining) {
+                                    setState(() {
+                                      trainingProcess.add(createNewTraining);
+                                    });
+                                  });
+                                }),
+                            SpeedDialChild(
+                                label: "Thêm quá trình công tác",
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) =>
+                                            AddWorkingprocesScreen(
+                                          profiles: widget.profile,
+                                        ),
+                                      )).then((createNewWorkingprocess) {
+                                    setState(() {
+                                      workingProcesses
+                                          .add(createNewWorkingprocess);
+                                    });
+                                  });
+                                }),
+                            SpeedDialChild(
                                 label: "Thêm bằng cấp",
                                 onTap: () {
                                   Navigator.push(
@@ -874,7 +929,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     }
                                   });
                                 }),
-                            ...[
                               if (showLaborContractButton && statusProfile == 0)
                                 SpeedDialChild(
                                   label: "Tạo hợp đồng",
@@ -896,30 +950,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     });
                                   },
                                 ),
-                              if (showLaborContractButton1 &&
-                                  statusProfile == 1)
-                                SpeedDialChild(
-                                  label: "Tạo hợp đồng",
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            AddLaborContractScreen(
-                                                profiles: widget.profile),
-                                      ),
-                                    ).then((createNewLaborContract) {
-                                      if (createNewLaborContract != null) {
-                                        setState(() {
-                                          laborContracts
-                                              .add(createNewLaborContract);
-                                        });
-                                      }
-                                    });
-                                  },
-                                ),
                             ]
-                          ])
+                          )
                     : SpeedDial(
                         elevation: 0,
                         icon: Icons.menu,
@@ -1141,7 +1173,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       // Kiểm tra không có khoảng trắng ở cuối tên
                       if (value.trim() != value) {
-                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                        return 'Không được có khoảng trắng thừa\nở đầu hoặc cuối';
                       }
                       if (value.length < 4) {
                         return 'Họ và Tên phải có ít nhất 4 ký tự';
@@ -1150,10 +1182,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       final nameRegex = RegExp(
                           r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
 
-                      if (!nameRegex.hasMatch(value.trim())) {
-                        return 'Họ và Tên không được chứa ký tự đặc biệt';
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Họ và Tên không hợp lệ. Vui lòng\nnhập đúng định dạng.';
                       }
-
                       // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
                       List<String> words = value.split(" ");
                       for (int i = 0; i < words.length; i++) {
@@ -1165,8 +1196,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
                       if (value != capitalizedName) {
-                        return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                        return 'Chữ cái đầu tiên của mỗi từ phải\n viết hoa. Ví dụ: Nguyễn Bình Dương';
                       }
+
                       if (!value.isLetter()) {
                         return 'Tên chỉ gồm chữ';
                       }
@@ -1237,15 +1269,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   Text('CV-PB:').px(6),
                   _buildDepartmentPositionDropdown(
-                          'Chức Vụ - Phòng Ban', roleid!)
-                      .p(8)
-                      .w(330),
+                    'Chức Vụ - Phòng Ban',
+                    widget.loginUser!.profileId,
+                    widget.profile!.profileId,
+                  ).p(8).w(330),
                 ],
               ),
               Row(
                 children: [
                   Text('Lương cơ bản:').px(8),
-                  _buildSalaryDropdown('Mức lương', roleid!).p(8).w(300),
+                  _buildSalaryDropdown(
+                    'Mức lương',
+                    widget.loginUser!.profileId,
+                    widget.profile!.profileId,
+                  ).p(8).w(300),
                 ],
               ),
               AppStrings.ROLE_PERMISSIONS.containsAny(
@@ -1253,7 +1290,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ? Row(
                       children: [
                         Text('Quyền:').px(8),
-                        _buildRolesDropdown('Quyền').p(8).w(300),
+                        _buildRolesDropdown(
+                          'Quyền',
+                          widget.loginUser!.profileId,
+                          widget.profile!.profileId,
+                        ).p(8).w(300),
                       ],
                     )
                   : SizedBox.shrink(),
@@ -1342,20 +1383,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     keyboardType: TextInputType.number,
                     focusNode: _identifiNumFocusNode,
                     validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      if (value.length != 12) {
-                        return 'Số CCCD/CMND không hợp lệ'; // Thông báo nhập đúng 10 chữ số
-                      }
-                      if (!value.startsWith('0')) {
-                        return 'Số CCCD phải bắt đầu bằng số 0';
-                      }
-                      if (!value.isNumber()) {
-                        return 'Số CCCD chỉ gồm số';
-                      }
-                      return null;
-                    },
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    if (value.length != 12) {
+                      return 'Số CCCD/CMND không\nhợp lệ';
+                    }
+                    if (!value.startsWith('0')) {
+                      return 'Số CCCD phải bắt đầu\nbằng số 0';
+                    }
+                    if (!value.isNumber()) {
+                      return 'Số CCCD chỉ gồm số';
+                    }
+                    return null;
+                  },
                   ).w(200).px8(),
                   _buildDateLicenseDay(
                       'id ngày cấp', _idLicenseDayController, _idLicenseDay,
@@ -1383,10 +1424,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
                       }
-                      // Regex kiểm tra email, bắt buộc phải có đuôi @gmail.com
-                      final emailRegex = RegExp(r'^[\w-\.]+@gmail\.com$');
+                      // Regex kiểm tra email: Phần trước @ phải từ 6-30 ký tự và không có dấu chấm ở đầu/cuối
+                      final emailRegex =
+                          RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
                       if (!emailRegex.hasMatch(value)) {
-                        return 'Email định dạng sai';
+                        return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
+                      }
+                      // Kiểm tra độ dài phần trước @
+                      final localPart = value.split('@')[0];
+                      if (localPart.length < 6 || localPart.length > 30) {
+                        return 'Phần trước @ phải từ 6-30 ký tự';
                       }
                       if (value.length > 254) {
                         return 'Email không được vượt quá 254 ký tự';
@@ -1397,19 +1444,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CustomTextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Không được để trống';
+                              return 'Không được\nđể trống';
                             }
                             if (value.length != 10) {
                               return 'Số điện thoại không hợp lệ';
                             }
                             if (!value.startsWith('0')) {
-                              return 'Số điện thoại phải bắt đầu bằng số 0';
+                             return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
                             }
                             if (!value.isNumber()) {
-                              return 'Số điện thoại chỉ gồm số';
+                              return 'Số điện thoại\nchỉ gồm số';
                             }
                             if (value.startsWith('00')) {
-                              return 'Số điện thoại không được bắt đầu bằng 00';
+                               return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
                             }
                             return null;
                           },
@@ -1511,130 +1558,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ]),
-      // fab: AppStrings.ROLE_PERMISSIONS.containsAny(
-      //         ['Manage BoD & HR accounts', 'Manage Staffs info only'])
-      //     ? SpeedDial(
-      //         elevation: 0,
-      //         icon: Icons.menu,
-      //         buttonSize: Size(50, 50),
-      //         children: [
-      //             SpeedDialChild(
-      //                 label: "Thêm thân Nhân",
-      //                 onTap: () {
-      //                   Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (BuildContext context) =>
-      //                             AddRelativeScreen(
-      //                           profile: widget.profile,
-      //                         ),
-      //                       )).then((addNewRelative) {
-      //                     if (addNewRelative != null) {
-      //                       setState(() {
-      //                         relatives.add(addNewRelative);
-      //                       });
-      //                     }
-      //                   });
-      //                 }),
-      //             SpeedDialChild(
-      //                 label: "Thêm bằng cấp",
-      //                 onTap: () {
-      //                   Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (BuildContext context) =>
-      //                             AddDiplomaScreen(
-      //                           profile: widget.profile,
-      //                         ),
-      //                       )).then((createNewDiploma) {
-      //                     if (createNewDiploma != null) {
-      //                       setState(() {
-      //                         diplomas.add(createNewDiploma);
-      //                       });
-      //                     }
-      //                   });
-      //                 }),
-      //             ...[
-      //               if (showLaborContractButton && statusProfile == 0)
-      //                 SpeedDialChild(
-      //                   label: "Tạo hợp đồng",
-      //                   onTap: () {
-      //                     Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (BuildContext context) =>
-      //                             AddLaborContractScreen(
-      //                                 profiles: widget.profile),
-      //                       ),
-      //                     ).then((createNewLaborContract) {
-      //                       if (createNewLaborContract != null) {
-      //                         setState(() {
-      //                           laborContracts.add(createNewLaborContract);
-      //                         });
-      //                       }
-      //                     });
-      //                   },
-      //                 ),
-      //               if (showLaborContractButton1 && statusProfile == 1)
-      //                 SpeedDialChild(
-      //                   label: "Tạo hợp đồng",
-      //                   onTap: () {
-      //                     Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (BuildContext context) =>
-      //                             AddLaborContractScreen(
-      //                                 profiles: widget.profile),
-      //                       ),
-      //                     ).then((createNewLaborContract) {
-      //                       if (createNewLaborContract != null) {
-      //                         setState(() {
-      //                           laborContracts.add(createNewLaborContract);
-      //                         });
-      //                       }
-      //                     });
-      //                   },
-      //                 ),
-      //             ]
-      //           ])
-      //     : SpeedDial(
-      //         elevation: 0,
-      //         icon: Icons.menu,
-      //         buttonSize: Size(50, 50),
-      //         children: [
-      //             SpeedDialChild(
-      //                 label: "Thêm quá trình đào tạo",
-      //                 onTap: () {
-      //                   Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (BuildContext context) =>
-      //                             AddTrainingprocessesScreen(
-      //                           profiles: widget.profile,
-      //                         ),
-      //                       )).then((createNewTraining) {
-      //                     setState(() {
-      //                       trainingProcess.add(createNewTraining);
-      //                     });
-      //                   });
-      //                 }),
-      //             SpeedDialChild(
-      //                 label: "Thêm quá trình công tác",
-      //                 onTap: () {
-      //                   Navigator.push(
-      //                       context,
-      //                       MaterialPageRoute(
-      //                         builder: (BuildContext context) =>
-      //                             AddWorkingprocesScreen(
-      //                           profiles: widget.profile,
-      //                         ),
-      //                       )).then((createNewWorkingprocess) {
-      //                     setState(() {
-      //                       workingProcesses.add(createNewWorkingprocess);
-      //                     });
-      //                   });
-      //                 }),
-      //           ]),
     );
   }
 
@@ -1739,13 +1662,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             // Kiểm tra ngày sinh đã nhập (dùng controller)
             if (_birthdayController.text.isEmpty) {
-              return 'Cần nhập ngày sinh trước!';
+              return 'Cần nhập ngày\n sinh trước!';
             }
             try {
               DateFormat dateFormat = DateFormat('dd/MM/yyyy');
               DateTime CCCD = dateFormat.parse(value);
               if (CCCD.isAfter(DateTime.now())) {
-                return 'Ngày cấp CCCD phải là ngày trong quá khứ';
+                return 'Ngày cấp CCCD phải là\nngày trong quá khứ';
               }
               // Parse ngày sinh từ _birthdayController
               DateTime birthday = dateFormat.parse(_birthdayController.text);
@@ -1760,7 +1683,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               }
 
               if (ageAtLicense < 14) {
-                return 'Ngày cấp không hợp lệ (CCCD chỉ cấp khi đủ 14 tuổi)';
+                return 'Ngày cấp không hợp lệ\nCCCD chỉ cấp khi đủ\n14 tuổi';
               }
             } catch (e) {
               return 'Ngày không hợp lệ (Định dạng: dd/MM/yyyy)';
@@ -1799,72 +1722,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildDepartmentPositionDropdown(String hint, int userRoleID) {
+  Widget _buildDepartmentPositionDropdown(
+      String hint, String loginUser, String profileId) {
+    final bool isOwnProfile = loginUser == profileId;
+    print(
+        "isOwnProfile: $isOwnProfile, loginUser: $loginUser, profileId: $profileId");
     return DropdownButtonFormField<DepartmentPosition>(
       value: selectedDepartmentsPosition,
       isExpanded: true,
       hint: Text(hint),
-      onChanged: userRoleID == 1
-          ? null
-          : _isEditing
-              ? (DepartmentPosition? newValue) {
-                  setState(() {
-                    selectedDepartmentsPosition = newValue;
-                  });
-                }
+      onChanged:
+          !isOwnProfile // Chỉ cho chỉnh sửa nếu không phải trang cá nhân của chính mình
+              ? (_isEditing
+                  ? (DepartmentPosition? newValue) {
+                      setState(() {
+                        selectedDepartmentsPosition = newValue;
+                      });
+                    }
+                  : null)
               : null,
       items: departmentsPosition.map((DepartmentPosition dep) {
         return DropdownMenuItem<DepartmentPosition>(
           value: dep,
-          child: Text(
-              "${dep.positionName!}  -  ${dep.departmentName!}"), // assuming department has a `name` field
+          child: Text("${dep.positionName!} - ${dep.departmentName!}"),
         );
       }).toList(),
       decoration: InputDecoration(
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        enabled:
+            !isOwnProfile, // Đảm bảo Dropdown không bị vô hiệu hóa nếu không phải trang cá nhân
       ),
     );
   }
-//   Widget _buildDepartmentPositionDropdown(String hint, int userRoleID, String currentUserId, String profileId) {
-//   final bool isOwnProfile = currentUserId == profileId;
 
-//   return DropdownButtonFormField<DepartmentPosition>(
-//     value: selectedDepartmentsPosition,
-//     isExpanded: true,
-//     hint: Text(hint),
-//     onChanged: isOwnProfile || userRoleID == 1
-//         ? null // Nếu là profile của chính mình hoặc role không được phép thì vô hiệu hóa
-//         : _isEditing
-//             ? (DepartmentPosition? newValue) {
-//                 setState(() {
-//                   selectedDepartmentsPosition = newValue;
-//                 });
-//               }
-//             : null,
-//     items: departmentsPosition.map((DepartmentPosition dep) {
-//       return DropdownMenuItem<DepartmentPosition>(
-//         value: dep,
-//         child: Text("${dep.positionName!}  -  ${dep.departmentName!}"),
-//       );
-//     }).toList(),
-//     decoration: InputDecoration(
-//       border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-//     ),
-//   );
-// }
-
-  Widget _buildSalaryDropdown(String hint, int userRoleID) {
+  Widget _buildSalaryDropdown(String hint, String loginUser, String profileId) {
+    final bool isOwnProfile = loginUser == profileId;
     return DropdownButtonFormField<Salaries>(
       value: selectedSalarys,
       hint: Text(hint),
-      onChanged: userRoleID == 1
-          ? null
-          : _isEditing
-              ? (Salaries? newValue) {
-                  setState(() {
-                    selectedSalarys = newValue;
-                  });
-                }
+      onChanged:
+          !isOwnProfile // Chỉ cho chỉnh sửa nếu không phải trang cá nhân của chính mình
+              ? (_isEditing
+                  ? (Salaries? newValue) {
+                      setState(() {
+                        selectedSalarys = newValue;
+                      });
+                    }
+                  : null)
               : null,
       items: salarys.map((Salaries salary) {
         return DropdownMenuItem<Salaries>(
@@ -1880,17 +1784,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   //
 
-  Widget _buildRolesDropdown(String hint) {
+  Widget _buildRolesDropdown(String hint, String loginUser, String profileId) {
+    final bool isOwnProfile = loginUser == profileId;
     return DropdownButtonFormField<Roles>(
       value: selectedRoles,
       hint: Text(hint),
-      onChanged: _isEditing
-          ? (Roles? newValue) {
-              setState(() {
-                selectedRoles = newValue;
-              });
-            }
-          : null,
+      onChanged:
+          !isOwnProfile // Chỉ cho chỉnh sửa nếu không phải trang cá nhân của chính mình
+              ? (_isEditing
+                  ? (Roles? newValue) {
+                      setState(() {
+                        selectedRoles = newValue;
+                      });
+                    }
+                  : null)
+              : null,
       items: roles.map((Roles role) {
         return DropdownMenuItem<Roles>(
           value: role,

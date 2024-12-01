@@ -426,27 +426,34 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _diplomaIDController,
-                    maxLength: 10,
-                    enabled: false,
                     focusNode: _mabangcapFocusNode,
-                    labelText: 'Số hiệu',
+                    enabled: false,
+                    maxLength: 20,
+                    labelText: 'Mã bằng - chứng chỉ',
                     validator: (value) {
+                      // Kiểm tra nếu trường trống
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
-                      } else if (value.length > 10) {
-                        return 'Mã bằng cấp không được vượt quá 10 ký tự';
-                      } else if (!value.startsWith('BC-')) {
-                        return 'Mã bằng cấp phải bắt đầu bằng "BC-"';
-                      } else if (!RegExp(r'^BC-\d+$').hasMatch(value)) {
-                        return 'Sau "BC-" phải là các số, ví dụ: BC-001';
+                      }
+                      if (value.trim() != value) {
+                        return 'Không được có\nkhoảng trắng thừa\nở đầu hoặc cuối';
+                      }
+                      // Kiểm tra độ dài tối thiểu và tối đa
+                      if (value.length < 5 || value.length > 20) {
+                        return 'Mã bằng cấp phải\ncó từ 5 đến 20 ký tự';
+                      }
+                      // Kiểm tra tính hợp lệ của mã bằng cấp theo yêu cầu
+                      final regex = RegExp(r'^[A-Z0-9/-]+$');
+                      if (!regex.hasMatch(value)) {
+                        return 'Mã bằng cấp chỉ\n được chứa chữ cái\nviết hoa, số, dấu\n"-" và "/"';
                       }
                       return null;
                     },
                   ).px8().w(150),
                   CustomTextFormField(
-                    enabled: _isEditing,
                     textEditingController: _diplomaDegreeNameController,
                     maxLength: 150,
+                    enabled: _isEditing,
                     focusNode: _tenbangcapFocusNode,
                     labelText: 'Tên bằng cấp - chứng chỉ',
                     validator: (value) {
@@ -455,20 +462,20 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                       }
                       // Kiểm tra không có khoảng trắng ở cuối tên
                       if (value.trim() != value) {
-                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                        return 'Không được có khoảng trắng\nthừa ở đầu hoặc cuối';
                       }
                       if (value.length < 4) {
-                        return 'Tên bằng cấp phải có ít nhất 4 ký tự';
+                        return 'Tên bằng cấp phải có\n ít nhất 4 ký tự';
                       }
                       String upperCaseName = value.toUpperCase();
                       if (value != upperCaseName) {
-                        return 'Văn bản phải viết hoa hoàn toàn. Ví dụ: BẰNG CỬ NHÂN';
+                        return 'Văn bản phải viết hoa hoàn\ntoàn. Ví dụ: BẰNG CỬ NHÂN';
                       }
                       // Regex kiểm tra ký tự tiếng Việt in hoa và khoảng trắng
                       final nameRegex = RegExp(
                           r"^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+)*$");
                       if (!nameRegex.hasMatch(value)) {
-                        return 'Tên bằng cấp không hợp lệ. Vui lòng nhập đúng định dạng.';
+                        return 'Tên bằng cấp không hợp lệ.\nVui lòng nhập đúng định dạng.';
                       }
 
                       if (!value.isLetter()) {

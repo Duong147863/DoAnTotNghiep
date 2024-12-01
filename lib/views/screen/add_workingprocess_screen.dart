@@ -108,7 +108,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
     }
   }
 
-  Widget _buildDateStartTime(String label, TextEditingController controller,
+   Widget _buildDateStartTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
       onTap: () => _selectDate(context, initialDate, (selectedDate) {
@@ -135,7 +135,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
 
             // Kiểm tra ngày bắt đầu là quá khứ
             if (selectedDate.isAfter(DateTime.now())) {
-              return 'Ngày bắt đầu phải là ngày trong quá khứ';
+              return 'Ngày bắt đầu phải là\nngày trong quá khứ';
             }
 
             // Kiểm tra ngày sinh và tính tuổi
@@ -148,7 +148,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
               }
 
               if (ageAtStartTime < 6) {
-                return 'Nhân viên phải trên 6 tuổi tại thời điểm bắt đầu';
+                return 'Nhân viên phải trên 6\ntuổi tại thời điểm bắt đầu';
               }
             }
 
@@ -163,52 +163,80 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
     );
   }
 
-  Widget _buildDateEndTime(String label, TextEditingController controller,
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, (selectedDate) {
-        onDateSelected(selectedDate);
-        setState(() {
-          _endTime = selectedDate;
-          // Định dạng ngày theo DD/MM/YYYY và gán vào controller
-          controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
-        });
-      }),
-      child: AbsorbPointer(
-        child: TextFormField(
-          readOnly: true,
-          focusNode: _endFocusNode,
-          style: TextStyle(color: Colors.black),
-          controller: controller,
-          validator: (value) {
-            if (value != null && value.isNotEmpty) {
-              try {
-                DateTime selectedEndTime =
-                    DateFormat('dd/MM/yyyy').parse(value);
-                // Kiểm tra xem ngày có trong quá khứ hay không
-                if (selectedEndTime.isAfter(DateTime.now())) {
-                  return 'Ngày kết thúc không thể lớn hơn ngày hiện tại';
+ Widget _buildDateEndTimeWithClearButton(
+    String label,
+    TextEditingController controller,
+    DateTime initialDate,
+    Function(DateTime?) onDateSelected) {
+  return Row(
+    children: [
+      // Trường nhập ngày với GestureDetector
+      Expanded(
+        child: GestureDetector(
+          onTap: () => _selectDate(
+            context,
+            initialDate,
+            (selectedDate) {
+              onDateSelected(selectedDate);
+              setState(() {
+                _endTime = selectedDate;
+                controller.text = selectedDate != null
+                    ? DateFormat('dd/MM/yyyy').format(selectedDate)
+                    : '';
+              });
+            },
+          ),
+          child: AbsorbPointer(
+            child: TextFormField(
+              readOnly: true,
+              focusNode: _endFocusNode,
+              style: TextStyle(color: Colors.black),
+              controller: controller,
+              validator: (value) {
+                if (value != null && value.isNotEmpty) {
+                  try {
+                    DateTime selectedEndTime =
+                        DateFormat('dd/MM/yyyy').parse(value);
+                    // Kiểm tra ngày có lớn hơn hiện tại hay không
+                    if (selectedEndTime.isAfter(DateTime.now())) {
+                      return 'Ngày kết thúc\nkhông thể lớn\nhơn ngày hiện tại';
+                    }
+                    // Kiểm tra khoảng thời gian giữa ngày kết thúc và ngày bắt đầu
+                    if (selectedEndTime.isBefore(_startTime) ||
+                        selectedEndTime.difference(_startTime).inDays < 30) {
+                      return 'Thời gian kết\nthúc phải trên 1\ntháng kể từ\nthời gian bắt đầu';
+                    }
+                  } catch (e) {
+                    return 'Định dạng ngày không hợp lệ';
+                  }
                 }
-                // Nếu ngày kết thúc sớm hơn ngày bắt đầu hoặc chênh lệch nhỏ hơn 30 ngày, thì không hợp lệ
-                if (selectedEndTime.isBefore(_startTime) ||
-                    selectedEndTime.difference(_startTime).inDays < 30) {
-                  return 'End Time phải trong trên 1 tháng kể từ Start Time';
-                }
-              } catch (e) {
-                return 'Định dạng ngày không hợp lệ';
-              }
-            }
-            // Nếu không nhập ngày, cho phép để trống
-            return null;
-          },
-          decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                return null; // Không có lỗi
+              },
+              decoration: InputDecoration(
+                labelText: label,
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
           ),
         ),
       ),
-    );
-  }
+      SizedBox(width: 8), // Khoảng cách giữa TextField và nút xóa
+      // Nút xóa
+      IconButton(
+        onPressed: () {
+          setState(() {
+            controller.clear(); // Xóa nội dung của TextFormField
+         
+          });
+        },
+        icon: Icon(Icons.clear, color: Colors.red),
+        tooltip: 'Xóa ngày',
+      ),
+    ],
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +294,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                       final nameRegex = RegExp(
                           r"^[a-zA-ZÂÃÈÉÊÙÚỦĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẨẫấậẫầãèéêìíòóôõùúăđĩũảơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽỈẹêềứỨếểễệẾỀỂỆỄìỉĩịỊÌIÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỔỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s0-9\-/:]+$");
                       if (!nameRegex.hasMatch(value)) {
-                        return 'Tên quá trình đào tạo không hợp lệ. Vui lòng nhập đúng định dạng.';
+                        return 'Tên quá trình đào tạo không hợp lệ. Vui lòng nhập\nđúng định dạng.';
                       }
                       if (!value.isLetter()) {
                         return 'Tên quá trình đào tạo chỉ gồm chữ';
@@ -295,7 +323,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                       final nameRegex = RegExp(
                           r"^[a-zA-ZÂÃÈÉÊÙÚỦĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẨẫấậẫầãèéêìíòóôõùúăđĩũảơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽỈẹêềứỨếểễệẾỀỂỆỄìỉĩịỊÌIÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỔỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s0-9\-/:]+$");
                       if (!nameRegex.hasMatch(value)) {
-                        return 'Nội dung không hợp lệ. Vui lòng nhập đúng định dạng.';
+                        return 'Nội dung không hợp lệ. Vui lòng nhập\nđúng định dạng.';
                       }
                       return null;
                     },
@@ -305,7 +333,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                     children: [
                       Expanded(
                         child: _buildDateStartTime(
-                          'Start Time',
+                          'Bắt đầu',
                           _startTimeController,
                           _startTime,
                           (date) {
@@ -319,13 +347,13 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                       ),
                       SizedBox(width: 16),
                       Expanded(
-                        child: _buildDateEndTime(
-                          'End Time',
+                        child: _buildDateEndTimeWithClearButton(
+                          'Kết thúc',
                           _endTimeController,
                           _endTime,
                           (date) {
                             setState(() {
-                              _endTime = date;
+                              _endTime = date!;
                               _endTimeController.text =
                                   "${_endTime.toLocal()}".split(' ')[0];
                             });
