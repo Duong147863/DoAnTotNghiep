@@ -203,15 +203,15 @@
                           textEditingController: _laborContractIDController,
                           labelText: 'Mã hợp đồng',
                           maxLength: 10,
-                          validator: (value) {
+                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Không được để trống';
+                              return 'Không được\nđể trống';
                             } else if (value.length > 10) {
-                              return 'Mã hợp đồng không được vượt quá 10 ký tự';
+                              return 'Mã hợp đồng\nkhông được vượt quá 10 ký tự';
                             } else if (!value.startsWith('HD-')) {
-                              return 'Mã hợp đồng phải bắt đầu bằng "HD-"';
+                              return 'Mã hợp đồng\nphải bắt đầu\nbằng "HD-"';
                             } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
-                              return 'Sau "HD-" phải là số';
+                              return 'Sau "HD-" phải\nlà số';
                             }
                             return null;
                           },
@@ -331,19 +331,19 @@
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Vui lòng nhập ngày bắt đầu hợp đồng';
+                return 'Vui lòng nhập ngày bắt\nđầu hợp đồng';
               }
               try {
                 DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
 
                 // Kiểm tra ngày bắt đầu hợp đầu 1 không được trước ngày kết thúc hợp đồng 1
                 if (selectedDate.isBefore(endTimeHopDong1)) {
-                  return 'Ngày bắt đầu hợp đồng phải sau ngày ${DateFormat('dd/MM/yyyy').format(endTimeHopDong1)}';
+                  return 'Ngày bắt đầu hợp đồng\nphải sau ngày''${DateFormat('dd/MM/yyyy').format(endTimeHopDong1)}';
                 }
 
                 // Kiểm tra ngày không được trong quá khứ
                 if (selectedDate.isBefore(DateTime.now())) {
-                  return 'Ngày bắt đầu hợp đồng không được trong quá khứ';
+                  return 'Ngày bắt đầu hợp đồng\n không được trong quá khứ';
                 }
               } catch (e) {
                 return 'Định dạng ngày không hợp lệ';
@@ -383,13 +383,13 @@
               DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
 
               // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
-              if (selectedEndTime.isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
-                return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
+              if (selectedEndTime.isBefore(_startTimeHopDong.add(Duration(days: 365)))) {
+                  return 'Ngày kết thúc phải sau\nngày bắt đầu ít nhất\n1 năm';
               }
 
               // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
               if (selectedEndTime.isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
-                return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
+                  return 'Ngày kết thúc không\nđược vượt quá 36 tháng\nkể từ ngày bắt đầu';
               }
             } catch (e) {
               return 'Định dạng ngày không hợp lệ';

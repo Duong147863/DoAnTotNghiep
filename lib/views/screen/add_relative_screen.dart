@@ -225,7 +225,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
 
                   // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
                   if (value != capitalizedName) {
-                    return 'Chữ cái đầu tiên của mỗi từ phải viết hoa. Ví dụ: Nguyễn Bình Dương';
+                    return 'Chữ cái đầu tiên của mỗi từ phải viết hoa.\nVí dụ: Nguyễn Bình Dương';
                   }
 
                   if (!value.isLetter()) {
@@ -235,101 +235,111 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                 },
               ).p8(),
               //relationship + relativephone
-              DropdownButtonFormField<String>(
-                isExpanded: true,
-                value: _selectecRelationship,
-                focusNode: _quanheFocusNode,
-                items: relationships.map((relat) {
-                  return DropdownMenuItem(
-                    value: relat,
-                    child: Text(relat),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  labelText: 'Quan hệ',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (value) {
-                  setState(() {
-                    _selectecRelationship = value; // Cập nhật giá trị được chọn
-                    _relationshipController.text =
-                        value ?? ""; // Gán vào controller
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Không được để trống';
-                  }
-                  return null;
-                },
-              ).px8().w(160),
-              _buildDateField(
-                  'Ngày sinh', _birthdayRelativeController, _birthdayRelative,
-                  (date) {
-                setState(() {
-                  _birthdayRelative = date;
-                  _birthdayRelativeController.text =
-                      "${_birthdayRelative.toLocal()}".split(' ')[0];
-                });
-              }).px(8).w(250),
-              CustomTextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Không được để trống';
-                        }
-                        if (value.length != 10) {
-                          return 'Số điện thoại không hợp lệ';
-                        }
-                        if (!value.startsWith('0')) {
-                          return 'Số điện thoại phải \n bắt đầu bằng số 0';
-                        }
-                        if (!value.isNumber()) {
-                          return 'Số điện thoại chỉ gồm số';
-                        }
-                        if (value.startsWith('00')) {
-                          return 'Số điện thoại không được bắt đầu bằng 00';
-                        }
-                        return null;
-                      },
-                      textEditingController: _phoneRelativeController,
-                      labelText: 'Điện thoại liên lạc',
-                      maxLines: 1,
-                      maxLength: 10,
-                      focusNode: _sdtFocusNode,
-                      keyboardType: TextInputType.number)
-                  .px8(),
-              InkWell(
-                onTap: () async {
-                  // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                  final selectedAddress = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => AddProvinces(),
+              Row(
+                children: [
+                  DropdownButtonFormField<String>(
+                    isExpanded: true,
+                    value: _selectecRelationship,
+                    focusNode: _quanheFocusNode,
+                    items: relationships.map((relat) {
+                      return DropdownMenuItem(
+                        value: relat,
+                        child: Text(relat),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Quan hệ',
+                      border: OutlineInputBorder(),
                     ),
-                  );
-
-                  if (selectedAddress != null) {
-                    setState(() {
-                      // Cập nhật TextEditingController với địa chỉ được chọn
-                      _nationRelativeController.text = selectedAddress;
-                    });
-                  }
-                },
-                child: AbsorbPointer(
-                  // Ngăn không cho bàn phím mở ra khi nhấn
-                  child: CustomTextFormField(
-                    focusNode: _quequanFocusNode,
-                    textEditingController: _nationRelativeController,
-                    labelText: 'Quê quán',
+                    onChanged: (value) {
+                      setState(() {
+                        _selectecRelationship =
+                            value; // Cập nhật giá trị được chọn
+                        _relationshipController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    },
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
                       }
                       return null;
                     },
-                  ),
-                ),
-              ).p(8),
+                  ).px8().w(160),
+                  _buildDateField('Ngày sinh', _birthdayRelativeController,
+                      _birthdayRelative, (date) {
+                    setState(() {
+                      _birthdayRelative = date;
+                      _birthdayRelativeController.text =
+                          "${_birthdayRelative.toLocal()}".split(' ')[0];
+                    });
+                  }).px(8).w(250),
+                ],
+              ),
+              Row(
+                children: [
+                  CustomTextFormField(
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Không được\nđể trống';
+                            }
+                            if (value.length != 10) {
+                              return 'Số điện thoại\nkhông hợp lệ';
+                            }
+                            if (!value.startsWith('0')) {
+                              return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
+                            }
+                            if (!value.isNumber()) {
+                              return 'Số điện thoại\nchỉ gồm số';
+                            }
+                            if (value.startsWith('00')) {
+                              return 'Số điện thoại\nkhông được\nbắt đầu bằng\n00';
+                            }
+                            return null;
+                          },
+                          textEditingController: _phoneRelativeController,
+                          labelText: 'Điện thoại liên lạc',
+                          maxLines: 1,
+                          maxLength: 10,
+                          focusNode: _sdtFocusNode,
+                          keyboardType: TextInputType.number)
+                      .p(8)
+                      .w(155),
+                  InkWell(
+                    onTap: () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
+
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _nationRelativeController.text = selectedAddress;
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      // Ngăn không cho bàn phím mở ra khi nhấn
+                      child: CustomTextFormField(
+                        focusNode: _quequanFocusNode,
+                        textEditingController: _nationRelativeController,
+                        labelText: 'Quê quán',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ).p(8).w(254),
+                ],
+              ),
+
               //Phone
               CustomTextFormField(
                 textEditingController: _relativeJobController,
@@ -427,7 +437,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                     },
                   ),
                 ),
-              ).p8(),
+              ).px(8),
             ]),
           ),
         ));
@@ -438,7 +448,15 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: GestureDetector(
-        onTap: () => _selectDate(context, initialDate, onDateSelected),
+        onTap: () => _selectDate(context, initialDate, (selectedDate) {
+          onDateSelected(selectedDate);
+          setState(() {
+            _birthdayRelative = selectedDate;
+
+            // Định dạng ngày theo DD/MM/YYYY và gán vào controller
+            controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
+          });
+        }),
         child: AbsorbPointer(
           child: TextFormField(
             readOnly: true,
@@ -448,16 +466,22 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
               if (value == null || value.isEmpty) {
                 return 'Không được để trống';
               }
-              DateTime selectedDate = DateTime.parse(value);
-              DateTime oneYearBeforeNow =
-                  DateTime.now().subtract(Duration(days: 365));
+              try {
+                DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
+                DateTime oneYearBeforeNow =
+                    DateTime.now().subtract(Duration(days: 365));
 
-              if (selectedDate.isAfter(DateTime.now())) {
-                return 'Ngày sinh phải là quá khứ';
-              }
+                // Kiểm tra nếu ngày sau ngày hiện tại
+                if (selectedDate.isAfter(DateTime.now())) {
+                  return 'Ngày phải là ngày trong quá khứ';
+                }
 
-              if (selectedDate.isAfter(oneYearBeforeNow)) {
-                return 'Ngày sinh phải ít nhất trước 1 năm so với hiện tại';
+                // Kiểm tra nếu ngày ít nhất 1 năm trước
+                if (selectedDate.isAfter(oneYearBeforeNow)) {
+                  return 'Ngày phải ít nhất trước 1 năm\n so với hiện tại';
+                }
+              } catch (e) {
+                return 'Định dạng ngày không hợp lệ';
               }
               return null;
             },

@@ -184,20 +184,37 @@ class ProfilesRepository {
     }
   }
 
-  Future<bool> changePassword(String profileID, String currentPassword,
-      String newPassword, String confirmNewPassword) async {
-    try {
-      final response = await service.changePassword(
-          profileID, currentPassword, newPassword, confirmNewPassword);
-      if (response.statusCode == 200) {
-        print("Password change successful");
-        print("Update successful. Response body: ${response.body}");
-        return true;
+  Future<bool> changePassword(
+  String profileID,
+  String currentPassword,
+  String newPassword,
+  String confirmNewPassword,
+  Function(String) callback,
+) async {
+  try {
+    final response = await service.changePassword(
+      profileID,
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
+    );
+
+    if (response.statusCode == 200) {
+      callback('Mật khẩu mới đã được cập nhật thành công.');
+      return true;
+    } else {
+      final responseData = jsonDecode(response.body);
+      if (responseData['message'] != null) {
+        callback(responseData['message']); // Lấy thông báo từ API
       } else {
-        throw Exception('Failed to change password: ${response.statusCode}');
+        callback('Đã xảy ra lỗi không xác định.');
       }
-    } catch (error) {
-      throw Exception('Failed to change password');
+      return false;
     }
+  } catch (e) {
+    callback('Lỗi: $e'); // Xử lý lỗi ngoại lệ
+    return false;
   }
+}
+
 }
