@@ -205,7 +205,20 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                     .membersOfDepartment(widget.departments!.departmentID);
               }
               if (viewModel.fetchingData) {
-                return const Center(child: CircularProgressIndicator());
+                if (viewModel.listMembersOfDepartment.isEmpty) {
+                  return Center(
+                      child: Column(
+                    children: [
+                      const Text(
+                        "Chưa có dữ liệu",
+                        style: TextStyle(fontSize: 16),
+                      ).py16(),
+                      Image.asset("assets/images/no_data.png"),
+                    ],
+                  ));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
               } else {
                 List<Profiles> listMembers = viewModel.listMembersOfDepartment;
                 return CustomListView(
