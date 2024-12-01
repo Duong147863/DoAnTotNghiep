@@ -1,4 +1,3 @@
-import 'package:nloffice_hrm/views/screen/add_department_screen.dart';
 
 class AppRoutes {
   static const welcomeRoute = "welcome_screen";

@@ -40,7 +40,7 @@ class TimekeepingRepo {
     }
   }
 
-  Future<List<dynamic>> getLateEmployees(String from, String to) async {
+  Future<List<Timekeepings>> getLateEmployees(String from, String to) async {
     final response = await service.getLateEmployeesList(from, to);
     if (response.statusCode == 200) {
       final List<dynamic> jsonData = json.decode(response.body);

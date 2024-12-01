@@ -10,11 +10,13 @@ class TimeKeepingViewModel extends ChangeNotifier {
   List<Timekeepings> _listAll = [];
   List<Timekeepings> _list1 = [];
   List<Timekeepings> _listLate = [];
+  List<Timekeepings> _listOT = [];
   bool fetchingData = false;
   bool fetchingWorkHoursStats = false;
   List<Timekeepings> get listAll => _listAll;
   List<Timekeepings> get list1 => _list1;
   List<Timekeepings> get listLate => _listLate;
+  List<Timekeepings> get listOT => _listOT;
 
   Future<void> checkin(Timekeepings trainingprocesses) async {
     try {
@@ -50,10 +52,10 @@ class TimeKeepingViewModel extends ChangeNotifier {
   Future<void> getLateEmployees(String from, String to) async {
     fetchingData = true;
     try {
-      // _listLate = await repository.getLateEmployees(from, to);
+      _listLate = await repository.getLateEmployees(from, to);
       notifyListeners();
     } catch (e) {
-      throw Exception('Failed to load profile info: $e');
+      throw Exception('Failed to load info: $e');
     }
     fetchingData = false;
   }
