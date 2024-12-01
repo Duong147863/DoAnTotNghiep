@@ -51,6 +51,7 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
       }
     });
   }
+
   void _loadRoles() async {
     try {
       await Provider.of<RolesViewModels>(context, listen: false).getAllRoles();
@@ -82,6 +83,7 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     //   return BasePage(
@@ -167,7 +169,6 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
     //                             ),
     //                           ),
     //                         );
-
     //                         // Kiểm tra xem có dữ liệu cập nhật không
     //                         if (updatedAbsent != null) {
     //                           _handleUpdate(updatedAbsent);
@@ -234,7 +235,6 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
     //                             ),
     //                           ),
     //                         );
-
     //                         // Kiểm tra xem có dữ liệu cập nhật không
     //                         if (updatedAbsent != null) {
     //                           _handleUpdate(updatedAbsent);
@@ -245,7 +245,6 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
     //                 }
     //               },
     //             ),
-
     //           ],
     //         ),
     //       ),
@@ -377,7 +376,7 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
   //     },
   //   );
   // }
-   // // Hàm tạo danh sách theo trạng thái
+  // // Hàm tạo danh sách theo trạng thái
   Widget _buildAbsentList(BuildContext context, int status) {
     return Consumer<AbsentsViewModel>(
       builder: (context, viewModel, child) {
@@ -389,7 +388,20 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
 
         // Hiển thị trạng thái đang tải
         if (viewModel.fetchingData) {
-          return const Center(child: CircularProgressIndicator());
+          if (viewModel.listAbsents.isEmpty) {
+            return Center(
+                child: Column(
+              children: [
+                const Text(
+                  "Chưa có dữ liệu",
+                  style: TextStyle(fontSize: 16),
+                ).py16(),
+                Image.asset("assets/images/no_data.png"),
+              ],
+            ));
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
         }
 
         // Lọc danh sách theo trạng thái
@@ -453,5 +465,4 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
       },
     );
   }
-
 }

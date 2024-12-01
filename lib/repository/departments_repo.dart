@@ -19,12 +19,15 @@ class DepartmentsRepository {
       throw Exception('Failed to load data');
     }
   }
-    Future<List<DepartmentPosition>> getDepartmentsByPosition() async {
+
+  Future<List<DepartmentPosition>> getDepartmentsByPosition() async {
     final response = await service.getDepartmentsByPosition();
 
-    if (response.statusCode == 200) {;
-      return List<DepartmentPosition>.from(
-          json.decode(response.body).map((x) => DepartmentPosition.fromJson(x)));
+    if (response.statusCode == 200) {
+      ;
+      return List<DepartmentPosition>.from(json
+          .decode(response.body)
+          .map((x) => DepartmentPosition.fromJson(x)));
     } else {
       throw Exception('Failed to load departmen and position 1');
     }
@@ -47,10 +50,10 @@ class DepartmentsRepository {
     try {
       final response = await service.updateDepartment(department);
       if (response.statusCode == 200) {
-        print("Delete successful. Response body: ${response.body}");
+        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
-          print("Failed to delete Relative: ${response.statusCode}");
+        print("Failed to update: ${response.statusCode}");
         print("Response body: ${response.body}");
         throw Exception('Failed to update department');
       }

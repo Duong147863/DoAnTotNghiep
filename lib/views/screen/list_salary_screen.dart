@@ -27,7 +27,7 @@ class _SalaryListScreenState extends State<SalaryListScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   @override
@@ -77,7 +77,7 @@ class _SalaryListScreenState extends State<SalaryListScreen>
           labelColor: Colors.black, // Màu cho tab đang chọn
           tabs: [
             Tab(text: 'Lương cơ bản'),
-            Tab(text: 'Bảng lương tháng'),
+            // Tab(text: 'Bảng lương tháng'),
           ],
         ),
         Expanded(
@@ -141,11 +141,11 @@ class _SalaryListScreenState extends State<SalaryListScreen>
                   ),
                 ],
               ),
-              CustomListView(
-                  dataSet: [],
-                  itemBuilder: (context, index) {
-                    return Placeholder();
-                  })
+              // CustomListView(
+              //     dataSet: [],
+              //     itemBuilder: (context, index) {
+              //       return Placeholder();
+              //     })
             ],
           ),
         )
