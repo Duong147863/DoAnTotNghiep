@@ -207,12 +207,6 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                 if (ageAtStartTime < 18) {
                   return 'Nhân viên phải ít nhất 18 tuổi khi nhận bằng cấp.';
                 }
-                // Điều kiện ràng buộc dựa trên quốc tịch
-                // if (nation == "Vietnam" && ageAtStartTime < 18) {
-                //   return 'Nhân viên phải ít nhất 18 tuổi khi nhận bằng cấp.';
-                // } else if (nation != "Vietnam" && ageAtStartTime < 16) {
-                //   return 'Nhân viên phải ít nhất 16 tuổi khi nhận bằng cấp.';
-                // }
               }
 
               return null;
@@ -308,18 +302,25 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                 children: [
                   CustomTextFormField(
                     textEditingController: _diplomaIDController,
-                    maxLength: 10,
                     focusNode: _mabangcapFocusNode,
+                    maxLength: 20,
                     labelText: 'Mã bằng - chứng chỉ',
                     validator: (value) {
+                      // Kiểm tra nếu trường trống
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';
-                      } else if (value.length > 10) {
-                        return 'Mã bằng cấp không được vượt quá 10 ký tự';
-                      } else if (!value.startsWith('BC-')) {
-                        return 'Mã bằng cấp phải bắt đầu bằng "BC-"';
-                      } else if (!RegExp(r'^BC-\d+$').hasMatch(value)) {
-                        return 'Sau "BC-" phải là các số, ví dụ: BC-001';
+                      }
+                      if (value.trim() != value) {
+                        return 'Không được có\nkhoảng trắng thừa\nở đầu hoặc cuối';
+                      }
+                      // Kiểm tra độ dài tối thiểu và tối đa
+                      if (value.length < 5 || value.length > 20) {
+                        return 'Mã bằng cấp phải\ncó từ 5 đến 20 ký tự';
+                      }
+                      // Kiểm tra tính hợp lệ của mã bằng cấp theo yêu cầu
+                      final regex = RegExp(r'^[A-Z0-9/-]+$');
+                      if (!regex.hasMatch(value)) {
+                        return 'Mã bằng cấp chỉ\n được chứa chữ cái\nviết hoa, số, dấu\n"-" và "/"';
                       }
                       return null;
                     },
@@ -335,20 +336,20 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                       }
                       // Kiểm tra không có khoảng trắng ở cuối tên
                       if (value.trim() != value) {
-                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                        return 'Không được có khoảng trắng\nthừa ở đầu hoặc cuối';
                       }
                       if (value.length < 4) {
-                        return 'Tên bằng cấp phải có ít nhất 4 ký tự';
+                        return 'Tên bằng cấp phải có\n ít nhất 4 ký tự';
                       }
                       String upperCaseName = value.toUpperCase();
                       if (value != upperCaseName) {
-                        return 'Văn bản phải viết hoa hoàn toàn. Ví dụ: BẰNG CỬ NHÂN';
+                        return 'Văn bản phải viết hoa hoàn\ntoàn. Ví dụ: BẰNG CỬ NHÂN';
                       }
                       // Regex kiểm tra ký tự tiếng Việt in hoa và khoảng trắng
                       final nameRegex = RegExp(
                           r"^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+)*$");
                       if (!nameRegex.hasMatch(value)) {
-                        return 'Tên bằng cấp không hợp lệ. Vui lòng nhập đúng định dạng.';
+                        return 'Tên bằng cấp không hợp lệ.\nVui lòng nhập đúng định dạng.';
                       }
 
                       if (!value.isLetter()) {

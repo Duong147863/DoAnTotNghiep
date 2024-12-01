@@ -8,8 +8,11 @@ class HiringsRepository {
   Future<bool> createNewHirings(Hirings hirings) async {
     final response = await service.createNewHirings(hirings);
     if (response.statusCode == 200 || response.statusCode == 201) {
+      print("Add successful. Response body: ${response.body}");
       return true;
     } else {
+      print("Failed to Add Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
       throw Exception('Failed to add profile: ${response.statusCode}');
     }
   }
@@ -29,8 +32,11 @@ class HiringsRepository {
     try {
       final response = await service.updateHirings(hirings);
       if (response.statusCode == 200) {
+          print("Add successful. Response body: ${response.body}");
         return true;
       } else {
+         print("Failed to Add Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {

@@ -140,27 +140,40 @@ class _AddProvincesState extends State<AddProvinces> {
                     Form(
                       key: _formKey,
                       child: TextFormField(
-                        controller: _addressController,
-                        decoration: const InputDecoration(
-                          labelText: 'Địa chỉ',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLength: 50, // Giới hạn tối đa 50 ký tự
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return null;
-                          }
-                          final nameRegex = RegExp(
-                              r"^[a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s\/\-]+$");
-                          if (!nameRegex.hasMatch(value)) {
-                            return 'Địa chỉ không được chứa ký tự đặc biệt';
-                          }
-                          if (value.length > 50) {
-                            return 'Địa chỉ không được vượt quá 50 ký tự';
-                          }
-                          return null;
-                        },
-                      ),
+  controller: _addressController,
+  decoration: const InputDecoration(
+    labelText: 'Địa chỉ',
+    border: OutlineInputBorder(),
+  ),
+  maxLength: 50, // Giới hạn tối đa 50 ký tự
+  validator: (value) {
+    if (value == null || value.trim().isEmpty) {
+      return null;
+    }
+
+    // Kiểm tra nếu địa chỉ chứa số nhà và tên đường
+    // Số nhà phải có ít nhất một chữ số, và tên đường phải chứa ít nhất một chữ cái
+    final addressRegex = RegExp(r'^\d+\s[a-zA-Z\s]+');
+    if (!addressRegex.hasMatch(value)) {
+      return 'Địa chỉ phải bao gồm số nhà và tên đường';
+    }
+
+    // Kiểm tra không có ký tự đặc biệt không hợp lệ
+    final nameRegex = RegExp(
+      r"^[a-zA-Z0-9ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẵẳặẵÉẾỀỂỆỄêềễệéỆỆÊëẺỆĩíịỉòỏọọụủūăâăấầẩẫậơờởỡợƠƠớửủứửỰữựýỳỵỷỹ\s\/\-]+$"
+    );
+    if (!nameRegex.hasMatch(value)) {
+      return 'Địa chỉ không được chứa ký tự đặc biệt';
+    }
+
+    // Kiểm tra chiều dài địa chỉ không vượt quá 50 ký tự
+    if (value.length > 50) {
+      return 'Địa chỉ không được vượt quá 50 ký tự';
+    }
+
+    return null;
+  },
+),
                     ),
                   const SizedBox(height: 16),
                   // Nút xác nhận

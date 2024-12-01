@@ -340,18 +340,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          // ListTile(
-                          //   title: const Text("Tuyển dụng"),
-                          //   onTap: () {
-                          //     Navigator.push(
-                          //       context,
-                          //       MaterialPageRoute<void>(
-                          //         builder: (BuildContext context) =>
-                          //             const ListHiringsScreen(),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),
+                          ListTile(
+                            title: const Text("Tuyển dụng"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (BuildContext context) =>
+                                      const ListHiringsScreen(),
+                                ),
+                              );
+                            },
+                          ),
                           // ListTile(
                           //   title: const Text("Dự án"),
                           //   onTap: () {
@@ -432,18 +432,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                               ),
-                              // ListTile(
-                              //   title: const Text("Tuyển dụng"),
-                              //   onTap: () {
-                              //     Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute<void>(
-                              //         builder: (BuildContext context) =>
-                              //             const ListHiringsScreen(),
-                              //       ),
-                              //     );
-                              //   },
-                              // ),
+                              ListTile(
+                                title: const Text("Tuyển dụng"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          const ListHiringsScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
                               // ListTile(
                               //   title: const Text("Hợp đồng lao động"),
                               //   onTap: () {
@@ -986,6 +986,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(
                             builder: (context) => DepartmentInfoScreen(
                               departments: departments[index],
+                              profiles: widget.profile,
                             ),
                           ),
                         ));
