@@ -92,6 +92,13 @@
 
     void _submit() {
       if (_formKey.currentState!.validate()) {
+        if (_laborContractImageBase64 == null) {
+        // Hiển thị thông báo lỗi nếu chưa chọn ảnh
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Vui lòng chọn ảnh trước khi gửi!')),
+        );
+        return;
+      }
         final newLaborContact = LaborContracts(
           profiles: profileId!,
           laborContractId: _laborContractIDController.text,
@@ -182,13 +189,13 @@
                           maxLength: 10,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Không được để trống';
+                              return 'Không được\nđể trống';
                             } else if (value.length > 10) {
-                              return 'Mã hợp đồng không được vượt quá 10 ký tự';
+                              return 'Mã hợp đồng\nkhông được vượt quá 10 ký tự';
                             } else if (!value.startsWith('HD-')) {
-                              return 'Mã hợp đồng phải bắt đầu bằng "HD-"';
+                              return 'Mã hợp đồng\nphải bắt đầu\nbằng "HD-"';
                             } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
-                              return 'Sau "HD-" phải là số';
+                              return 'Sau "HD-" phải\nlà số';
                             }
                             return null;
                           },
@@ -308,7 +315,7 @@
             controller: controller,
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return 'Vui lòng nhập ngày bắt đầu hợp đồng';
+                return 'Vui lòng nhập ngày bắt\nđầu hợp đồng';
               }
               try {
                 DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
@@ -316,15 +323,15 @@
                 if (statusProfile != 0) {
                   return 'Hồ sơ không trong trạng thái thử việc để ký hợp đồng lần 1';
                 }
-
+                String formattedDate = DateFormat('dd/MM/yyyy').format(endTimeThuViec);
                 // Kiểm tra ngày bắt đầu hợp đầu 1 không được trước ngày kết thúc thử việc
                 if (selectedDate.isBefore(endTimeThuViec)) {
-                  return 'Ngày bắt đầu hợp đồng phải sau ngày ${DateFormat('dd/MM/yyyy').format(endTimeThuViec)}';
+                  return 'Ngày bắt đầu hợp đồng\nphải sau ngày ''$formattedDate';
                 }
 
                 // Kiểm tra ngày không được trong quá khứ
                 if (selectedDate.isBefore(DateTime.now())) {
-                  return 'Ngày bắt đầu hợp đồng không được trong quá khứ';
+                  return 'Ngày bắt đầu hợp đồng\n không được trong quá khứ';
                 }
               } catch (e) {
                 return 'Định dạng ngày không hợp lệ';
@@ -358,19 +365,19 @@
           validator: (value) {
             // Validator kiểm tra ràng buộc hợp đồng lần 1
             if (value == null || value.isEmpty) {
-              return 'Vui lòng chọn ngày kết thúc hợp đồng';
+              return 'Vui lòng chọn ngày kết\nthúc hợp đồng';
             }
             try {
               DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
 
               // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
-              if (selectedEndTime.isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
-                return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
+              if (selectedEndTime.isBefore(_startTimeHopDong.add(Duration(days: 365)))) {
+                return 'Ngày kết thúc phải sau\nngày bắt đầu ít nhất\n1 năm';
               }
 
               // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
               if (selectedEndTime.isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
-                return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
+                return 'Ngày kết thúc không\nđược vượt quá 36 tháng\nkể từ ngày bắt đầu';
               }
             } catch (e) {
               return 'Định dạng ngày không hợp lệ';

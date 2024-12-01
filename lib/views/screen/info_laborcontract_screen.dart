@@ -253,18 +253,18 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                         textEditingController: _laborContractIDController,
                         labelText: 'Mã hợp đồng',
                         maxLength: 10,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          } else if (value.length > 10) {
-                            return 'Mã hợp đồng không được vượt quá 10 ký tự';
-                          } else if (!value.startsWith('HD-')) {
-                            return 'Mã hợp đồng phải bắt đầu bằng "HD-"';
-                          } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
-                            return 'Sau "HD-" phải là số';
-                          }
-                          return null;
-                        },
+                         validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Không được\nđể trống';
+                            } else if (value.length > 10) {
+                              return 'Mã hợp đồng\nkhông được vượt quá 10 ký tự';
+                            } else if (!value.startsWith('HD-')) {
+                              return 'Mã hợp đồng\nphải bắt đầu\nbằng "HD-"';
+                            } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
+                              return 'Sau "HD-" phải\nlà số';
+                            }
+                            return null;
+                          },
                       ).px8().w(150),
                       CustomTextFormField(
                         textEditingController: _profileNameController,
@@ -379,8 +379,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           ),
         ),
       ),
-
-      fab:   AppStrings.ROLE_PERMISSIONS.containsAny([
+      fab:AppStrings.ROLE_PERMISSIONS.containsAny([
                     'Manage Staffs info only',
                     'Manage BoD & HR accounts'
                   ])?

@@ -199,32 +199,82 @@ class ProfilesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> changePassword(
-    String profileID,
-    String currentPassword,
-    String newPassword,
-    String confirmNewPassword,
-  ) async {
-    isChangingPassword = true; // Đánh dấu bắt đầu thay đổi mật khẩu
-    notifyListeners();
+  // Future<void> changePassword(
+  //   String profileID,
+  //   String currentPassword,
+  //   String newPassword,
+  //   String confirmNewPassword,
+  // ) async {
+  //   isChangingPassword = true; // Đánh dấu bắt đầu thay đổi mật khẩu
+  //   notifyListeners();
 
-    try {
-      bool isSuccess = await repository.changePassword(
-        profileID,
-        currentPassword,
-        newPassword,
-        confirmNewPassword,
-      );
-      if (isSuccess) {
-        // Cập nhật lại trạng thái sau khi thay đổi mật khẩu thành công
-        isChangingPassword = false;
-        notifyListeners();
-      }
-    } catch (e) {
-      // Xử lý lỗi nếu có
+  //   try {
+  //     bool isSuccess = await repository.changePassword(
+  //       profileID,
+  //       currentPassword,
+  //       newPassword,
+  //       confirmNewPassword,
+  //     );
+  //     if (isSuccess) {
+  //       // Cập nhật lại trạng thái sau khi thay đổi mật khẩu thành công
+  //       isChangingPassword = false;
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     // Xử lý lỗi nếu có
+  //     isChangingPassword = false;
+  //     notifyListeners();
+  //     throw Exception('Failed to change password: $e');
+  //   }
+  // }
+  
+  // Future<void> changePassword( String profileID,
+  //   String currentPassword,
+  //   String newPassword,
+  //   String confirmNewPassword, Function(String) callback) async {
+
+  //   try {
+  //    isChangingPassword = true; // Đánh dấu bắt đầu thay đổi mật khẩu
+  //    bool isSuccess= await repository.changePassword(profileID,
+  //       currentPassword,
+  //       newPassword,
+  //       confirmNewPassword,callback); // Call the repository method
+  //        if (isSuccess) {
+  //       // Cập nhật lại trạng thái sau khi thay đổi mật khẩu thành công
+  //       isChangingPassword = false;
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     isChangingPassword = false;
+  //     callback('Failed to add relative: $e');  // Call the callback with error message
+  //   }
+  // }
+  Future<void> changePassword(
+  String profileID,
+  String currentPassword,
+  String newPassword,
+  String confirmNewPassword,
+  Function(String) callback,
+) async {
+  try {
+    isChangingPassword = true;
+    notifyListeners(); // Thông báo trạng thái thay đổi
+
+    bool isSuccess = await repository.changePassword(
+      profileID,
+      currentPassword,
+      newPassword,
+      confirmNewPassword,
+      callback,
+    );
+
+    if (isSuccess) {
       isChangingPassword = false;
-      notifyListeners();
-      throw Exception('Failed to change password: $e');
+      notifyListeners(); // Thông báo hoàn tất
     }
+  } catch (e) {
+    isChangingPassword = false;
+    callback('Lỗi khi đổi mật khẩu: $e'); // Thông báo lỗi
   }
+}
 }

@@ -18,8 +18,8 @@ import '../../constant/app_strings.dart';
 
 class DepartmentInfoScreen extends StatefulWidget {
   final Departments? departments;
-
-  DepartmentInfoScreen({super.key, this.departments});
+  final Profiles? profiles;
+  DepartmentInfoScreen({super.key, this.departments,this.profiles});
 
   @override
   _DepartmentInfoScreenState createState() => _DepartmentInfoScreenState();
@@ -231,7 +231,8 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) =>
-                                ProfileScreen(profile: listMembers[index]),
+                                ProfileScreen(profile: listMembers[index],loginUser: widget.profiles,),
+                              
                           ),
                         ).then((updatedProfile) {
                           if (updatedProfile != null) {
@@ -239,6 +240,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                                 updatedProfile); // Cập nhật lại thông tin
                           }
                         });
+                                  
                       });
                     });
               }

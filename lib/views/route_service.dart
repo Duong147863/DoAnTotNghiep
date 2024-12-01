@@ -56,14 +56,14 @@ Route<dynamic> generateRoute(RouteSettings settings) {
           ));
 
     ///
-    case AppRoutes.profileRoute:
-      return MaterialPageRoute(
-          builder: (context) => const ProfileScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.profileRoute,
-          ));
+    // case AppRoutes.profileRoute:
+    //   return MaterialPageRoute(
+    //       builder: (context) => const ProfileScreen(),
+    //       settings: const RouteSettings(
+    //         name: AppRoutes.profileRoute,
+    //       ));
 
-    ///
+    // ///
     case AppRoutes.absentListRoute:
       return MaterialPageRoute(
           builder: (context) => ListAbsentScreen(),
@@ -152,12 +152,12 @@ Route<dynamic> generateRoute(RouteSettings settings) {
     //       ));
 
     ///
-    case AppRoutes.employeeListRoute:
-      return MaterialPageRoute(
-          builder: (context) => EmployeeListScreen(),
-          settings: const RouteSettings(
-            name: AppRoutes.employeeListRoute,
-          ));
+    // case AppRoutes.employeeListRoute:
+    //   return MaterialPageRoute(
+    //       builder: (context) => EmployeeListScreen(),
+    //       settings: const RouteSettings(
+    //         name: AppRoutes.employeeListRoute,
+    //       ));
 
     ///
     default:

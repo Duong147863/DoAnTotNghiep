@@ -8,7 +8,6 @@ class Hirings{
     this.hiringProfileId,
     required this.profileName,
     required this.birthday,
-    required this.placeOfBirth,
     required this.gender,
     required this.phone,
     this.email,
@@ -23,7 +22,6 @@ class Hirings{
   int? hiringProfileId;
   String profileName;
   DateTime birthday;
-  String placeOfBirth;
   bool gender;
   String phone;
   String ? email;
@@ -40,7 +38,6 @@ class Hirings{
       hiringProfileId: json["hiring_profile_id"],
       profileName: json["profile_name"],
       birthday: DateTime.parse(json["birthday"]),
-      placeOfBirth: json["place_of_birth"],
       gender: json["gender"],
       phone: json["phone"],
       email: json["email"],
@@ -58,7 +55,6 @@ class Hirings{
     map["hiring_profile_id"] = hiringProfileId;
     map["profile_name"] = profileName;
     map["birthday"] = DateFormat("dd-MM-yyyy").format(birthday);
-    map["place_of_birth"] = placeOfBirth;
     map["gender"] = gender;
     map["phone"] = phone;
     map["email"] = email;
