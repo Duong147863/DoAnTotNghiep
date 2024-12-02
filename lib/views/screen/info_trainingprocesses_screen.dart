@@ -27,11 +27,11 @@ class _InfoTrainingprocessesScreenState
     extends State<InfoTrainingprocessesScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  final _trainingprocessesIdController = TextEditingController();
   final _trainingprocessesNameController = TextEditingController();
   final _trainingprocessesContentController = TextEditingController();
   final _startTimeController = TextEditingController();
   final _endTimeController = TextEditingController();
+  int? trainingid;
   bool _isEditing = false;
   DateTime _startTime = DateTime.now();
   DateTime _endTime = DateTime.now();
@@ -43,11 +43,10 @@ class _InfoTrainingprocessesScreenState
   @override
   void initState() {
     super.initState();
+    trainingid = widget.trainingprocesses!.trainingprocessesId;
+    print(trainingid);
     _profileIDController.text = widget.trainingprocesses!.profileId;
-    
     birthdayEmloyment=widget.profiles!.birthday;
-    _trainingprocessesIdController.text =
-        widget.trainingprocesses!.trainingprocessesId.toString();
     _trainingprocessesNameController.text =
         widget.trainingprocesses!.trainingprocessesName;
     _trainingprocessesContentController.text =
@@ -101,9 +100,10 @@ class _InfoTrainingprocessesScreenState
 
   void _updateTrainingProcesses() async {
     if (_formKey.currentState!.validate()) {
+        print(trainingid);
       final updateTrainingProcesses = Trainingprocesses(
         profileId: _profileIDController.text,
-        trainingprocessesId: int.tryParse(_trainingprocessesIdController.text),
+        trainingprocessesId: trainingid,
         trainingprocessesName: _trainingprocessesNameController.text,
         trainingprocessesContent: _trainingprocessesContentController.text,
         startTime: _startTime,

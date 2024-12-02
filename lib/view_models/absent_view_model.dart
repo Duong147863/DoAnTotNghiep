@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nloffice_hrm/models/absents_model.dart';
 import 'package:nloffice_hrm/models/departments_model.dart';
+import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/repository/absent_repo.dart';
 
 class AbsentsViewModel extends ChangeNotifier {
@@ -9,6 +10,8 @@ class AbsentsViewModel extends ChangeNotifier {
   bool fetchingData = false;
   List<Absents> _list = [];
   List<Absents> get listAbsents => _list;
+  List<Profiles> _listpro = [];
+  List<Profiles> get listProfile => _listpro;
   // Future<void> addNewAbsent(Absents absents) async {
   //   try {
   //     await repository.addNewAbsent(absents);

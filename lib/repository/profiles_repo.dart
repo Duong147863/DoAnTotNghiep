@@ -185,23 +185,55 @@ class ProfilesRepository {
   }
 
   Future<bool> changePassword(
+    String profileID,
+    String currentPassword,
+    String newPassword,
+    String confirmNewPassword,
+    Function(String) callback,
+  ) async {
+    try {
+      final response = await service.changePassword(
+        profileID,
+        currentPassword,
+        newPassword,
+        confirmNewPassword,
+      );
+
+      if (response.statusCode == 200) {
+        callback('Mật khẩu mới đã được cập nhật thành công.');
+        return true;
+      } else {
+        final responseData = jsonDecode(response.body);
+        if (responseData['message'] != null) {
+          callback(responseData['message']); // Lấy thông báo từ API
+        } else {
+          callback('Đã xảy ra lỗi không xác định.');
+        }
+        return false;
+      }
+    } catch (e) {
+      callback('Lỗi: $e'); // Xử lý lỗi ngoại lệ
+      return false;
+    }
+  }
+  Future<bool> getPassword(
   String profileID,
-  String currentPassword,
   String newPassword,
   String confirmNewPassword,
   Function(String) callback,
 ) async {
   try {
-    final response = await service.changePassword(
+    final response = await service.getPassword(
       profileID,
-      currentPassword,
       newPassword,
       confirmNewPassword,
     );
 
     if (response.statusCode == 200) {
-      callback('Mật khẩu mới đã được cập nhật thành công.');
+      callback('Mật khẩu đã được đặt lại thành công.');
+      print("Reset successful. Response body: ${response.body}");
       return true;
+      
     } else {
       final responseData = jsonDecode(response.body);
       if (responseData['message'] != null) {
@@ -209,6 +241,8 @@ class ProfilesRepository {
       } else {
         callback('Đã xảy ra lỗi không xác định.');
       }
+        print("Failed to Reset : ${response.statusCode}");
+        print("Response body: ${response.body}");
       return false;
     }
   } catch (e) {
@@ -216,5 +250,4 @@ class ProfilesRepository {
     return false;
   }
 }
-
 }

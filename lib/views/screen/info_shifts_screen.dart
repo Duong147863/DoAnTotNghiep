@@ -97,10 +97,13 @@ class _ShiftInfoScreenState extends State<ShiftInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return BasePage(
-      showAppBar: true,
       titletext: 'Ca làm việc',
+        showAppBar: true,
       showLeadingAction: true,
-      appBarItemColor: AppColor.offWhite,
+      defaultBody: false,
+      appBarItemColor: AppColor.boneWhite,
+      backgroundColor: AppColor.aliceBlue,
+      appBarColor: AppColor.primaryLightColor,
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(

@@ -49,14 +49,19 @@ class TrainingprocessesRepository {
       final response = await service.updateTrainingProcesses(trainingprocesses);
 
       if (response.statusCode == 200) {
+         print("Add successful. Response body: ${response.body}");
         callback(
             'Quá trình đào tạo đã được cập nhật thành công!'); // Thông báo thành công
       } else {
         // Giải mã nội dung phản hồi
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         if (responseData['message'] != null) {
+            print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
           callback(responseData['message']); // Hiển thị thông báo lỗi từ API
         } else {
+            print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
           callback('Đã xảy ra lỗi không xác định'); // Thông báo lỗi chung chung
         }
       }
