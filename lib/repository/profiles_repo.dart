@@ -231,9 +231,7 @@ class ProfilesRepository {
 
     if (response.statusCode == 200) {
       callback('Mật khẩu đã được đặt lại thành công.');
-      print("Reset successful. Response body: ${response.body}");
       return true;
-      
     } else {
       final responseData = jsonDecode(response.body);
       if (responseData['message'] != null) {
@@ -241,8 +239,6 @@ class ProfilesRepository {
       } else {
         callback('Đã xảy ra lỗi không xác định.');
       }
-        print("Failed to Reset : ${response.statusCode}");
-        print("Response body: ${response.body}");
       return false;
     }
   } catch (e) {

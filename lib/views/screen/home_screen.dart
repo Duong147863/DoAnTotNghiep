@@ -34,6 +34,7 @@ import 'package:nloffice_hrm/views/screen/list_project_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_salary_screen.dart';
 import 'package:nloffice_hrm/views/screen/list_shifts_screen.dart';
 import 'package:nloffice_hrm/views/screen/profile_screen.dart';
+import 'package:nloffice_hrm/views/screen/time_attend_table.dart';
 import 'package:nloffice_hrm/views/screen/time_attendance_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -216,7 +217,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           MaterialPageRoute(
                             builder: (context) => ProfileScreen(
                               profile: widget.profile,
-                              loginUser: widget.profile,// lấy thông tin TK đang đăng nhập
+                              loginUser: widget
+                                  .profile, // lấy thông tin TK đang đăng nhập
                             ),
                           ),
                           // )
@@ -288,6 +290,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
                                           InfoEnterpriseScreen()));
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Chấm công"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        TimeAttendanceTable()),
+                              );
                             },
                           ),
                           ListTile(
@@ -1086,7 +1099,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         formatDatetoJson(endOfWeek), widget.profile!.profileId);
               }
               if (viewModel.fetchingData) {
-                return const Center(child: CircularProgressIndicator());
+                if (viewModel.list1.isEmpty) {
+                  return Center(
+                      child: Column(
+                    children: [
+                      const Text(
+                        "Chưa có dữ liệu",
+                        style: TextStyle(fontSize: 16),
+                      ).py16(),
+                      Image.asset("assets/images/no_data.png"),
+                    ],
+                  ));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
               } else {
                 List<Timekeepings> listAttendances = viewModel.list1;
                 return CustomListView(
