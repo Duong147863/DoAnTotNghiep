@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
@@ -60,7 +61,30 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.hirings!.birthday).toString();
     _birthday = widget.hirings!.birthday;
-    _hiringProfileImageBase64 = widget.hirings!.hiringProfileImage;
+    // _hiringProfileImageBase64 = widget.hirings!.hiringProfileImage;
+
+    if (widget.hirings?.hiringProfileImage != null) {
+      try {
+        // Thêm padding nếu cần thiết
+        String paddedBase64 =
+            addBase64Padding(widget.hirings!.hiringProfileImage!);
+
+        // Kiểm tra độ dài chuỗi Base64
+        print("Base64 length: ${paddedBase64.length}");
+
+        // Decode chuỗi Base64
+        base64Decode(paddedBase64);
+
+        // Nếu decode thành công, gán vào biến state
+        _hiringProfileImageBase64 = paddedBase64;
+      } catch (e) {
+        // Xử lý lỗi nếu chuỗi không hợp lệ
+        print("Error decoding Base64 string: $e");
+        _hiringProfileImageBase64 = null;
+      }
+    } else {
+      _hiringProfileImageBase64 = null;
+    }
     _emailController.text = widget.hirings!.email!;
     _phoneController.text = widget.hirings!.phone;
     _nationController.text = widget.hirings!.nation;
@@ -70,6 +94,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
     _workExperienceController.text = widget.hirings!.workExperience;
     _gender = widget.hirings!.gender;
     status = widget.hirings!.hiringStatus;
+     print('Initial status: $status');
     idHiringsController.text = widget.hirings!.hiringProfileId.toString();
     // Focus
     _profileNameFocusNode.addListener(() {
@@ -162,6 +187,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
         );
         return;
       }
+       print('Updated status: $status');
       final updatedHirings = Hirings(
           profileName: _profileNameController.text,
           phone: _phoneController.text,
@@ -193,6 +219,22 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
     }
   }
 
+  String addBase64Padding(String base64) {
+    while (base64.length % 4 != 0) {
+      base64 += '=';
+    }
+    return base64;
+  }
+
+  bool isValidBase64(String base64) {
+    try {
+      base64Decode(base64);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? imageFile = await picker.pickImage(
@@ -200,19 +242,28 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
       maxWidth: 600,
       maxHeight: 600,
     );
+
     if (imageFile != null) {
-      File file = File(imageFile.path);
-      String base64String = await AppStrings.ImagetoBase64(file);
-      setState(() {
-        _hiringProfileImageBase64 = base64String;
-      });
+      try {
+        File file = File(imageFile.path);
+
+        // Nén và encode ảnh thành Base64
+        String base64String = await AppStrings.ImagetoBase64(file);
+
+        // Cập nhật state
+        setState(() {
+          _hiringProfileImageBase64 = base64String;
+        });
+      } catch (e) {
+        print("Error encoding image to Base64: $e");
+      }
     }
   }
 
   Widget _buildDateBirthday(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+      onTap:_isEditing? () => _selectDate(context, initialDate, (selectedDate) {
         onDateSelected(selectedDate);
         setState(() {
           _birthday = selectedDate;
@@ -220,7 +271,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
           // Định dạng ngày theo DD/MM/YYYY và gán vào controller
           controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
         });
-      }),
+      }):null,
       child: AbsorbPointer(
         child: TextFormField(
           focusNode: _birthdayFocusNode,
@@ -381,7 +432,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
       value: selectedDepartmentsPosition,
       hint: Text(hint),
       isExpanded: false,
-      onChanged: (DepartmentPosition? newValue) {
+      onChanged:_isEditing? (DepartmentPosition? newValue) {
         setState(() {
           selectedDepartmentsPosition = newValue;
           // Gán giá trị từ dropdown vào _nationController.text
@@ -390,7 +441,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                 "${newValue.positionName!} - ${newValue.departmentName!}";
           }
         });
-      },
+      }:null,
       items: departmentsPosition.map((DepartmentPosition dep) {
         return DropdownMenuItem<DepartmentPosition>(
           value: dep,
@@ -417,11 +468,14 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
       actions: [
-        IconButton(
+        status==3? SizedBox.shrink()
+        :
+         IconButton(
           icon: Icon(Icons.save, color: const Color.fromARGB(255, 33, 243, 61)),
           onPressed: _updateHirings,
         ),
-        IconButton(
+          status==3? SizedBox.shrink()
+        :IconButton(
           icon: Icon(Icons.edit, color: Colors.blue),
           onPressed: () {
             setState(() {
@@ -439,7 +493,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
           child: Column(
             children: [
               GestureDetector(
-                onTap: _pickImage,
+                onTap:_isEditing? _pickImage:null,
                 child: Container(
                   width: 500, // Kích thước hình vuông
                   height: 500,
@@ -449,8 +503,8 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                     borderRadius: BorderRadius.circular(8), // Bo góc (nếu cần)
                     image: _hiringProfileImageBase64 != null
                         ? DecorationImage(
-                            image: MemoryImage(
-                                base64Decode(_hiringProfileImageBase64!)),
+                            image: MemoryImage(base64Decode(
+                                addBase64Padding(_hiringProfileImageBase64!))),
                             fit: BoxFit.cover,
                           )
                         : null,
@@ -460,8 +514,32 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                       : null,
                 ),
               ).py8(),
+
+              // GestureDetector(
+              //   onTap: _pickImage,
+              //   child: Container(
+              //     width: 500, // Kích thước hình vuông
+              //     height: 500,
+              //     decoration: BoxDecoration(
+              //       color: Colors.grey[300], // Màu nền nếu không có ảnh
+              //       border: Border.all(color: Colors.grey), // Viền (nếu cần)
+              //       borderRadius: BorderRadius.circular(8), // Bo góc (nếu cần)
+              //       image: _hiringProfileImageBase64 != null
+              //           ? DecorationImage(
+              //               image: MemoryImage(
+              //                   base64Decode(_hiringProfileImageBase64!)),
+              //               fit: BoxFit.cover,
+              //             )
+              //           : null,
+              //     ),
+              //     child: _hiringProfileImageBase64 == null
+              //         ? Icon(Icons.add_a_photo, size: 30, color: Colors.grey)
+              //         : null,
+              //   ),
+              // ).py8(),
               // Profile name and Apply For
               CustomTextFormField(
+                   enabled:_isEditing,
                 focusNode: _profileNameFocusNode,
                 textEditingController: _profileNameController,
                 labelText: 'Họ và tên',
@@ -518,7 +596,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                     });
                   }).px8().w(150),
                   InkWell(
-                    onTap: () async {
+                    onTap:_isEditing? () async {
                       // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
                       final selectedAddress = await Navigator.push(
                         context,
@@ -533,7 +611,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                           _nationController.text = selectedAddress;
                         });
                       }
-                    },
+                    }:null,
                     child: AbsorbPointer(
                       // Ngăn không cho bàn phím mở ra khi nhấn
                       child: CustomTextFormField(
@@ -569,6 +647,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                     textEditingController: _emailController,
                     labelText: 'Email',
                     maxLength: 254,
+                       enabled:_isEditing,
                     maxLines: 1,
                     focusNode: _emailFocusNode,
                     validator: (value) {
@@ -613,6 +692,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                     textEditingController: _phoneController,
                     labelText: 'Điện thoại',
                     maxLines: 1,
+                       enabled:_isEditing,
                     maxLength: 10,
                     focusNode: _phoneFocusNode,
                     keyboardType: TextInputType.number,
@@ -622,7 +702,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                 ],
               ).py8(),
               InkWell(
-                onTap: () async {
+                onTap:_isEditing? () async {
                   // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
                   final selectedAddress = await Navigator.push(
                     context,
@@ -637,10 +717,11 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                       _currentAddressController.text = selectedAddress;
                     });
                   }
-                },
+                }:null,
                 child: AbsorbPointer(
                   // Ngăn không cho bàn phím mở ra khi nhấn
                   child: CustomTextFormField(
+                       enabled:_isEditing,
                     focusNode: _thuongtruFocusNode,
                     textEditingController: _currentAddressController,
                     labelText: 'Địa chỉ thường trú',
@@ -658,6 +739,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
               ),
               // Education Level
               CustomTextFormField(
+                   enabled:_isEditing,
                 labelText: "Học vấn",
                 maxLines: 10,
                 maxLength: 1000,
@@ -692,6 +774,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
               ),
 
               CustomTextFormField(
+                enabled:_isEditing,
                 focusNode: _workExperienceFocusNode,
                 maxLength: 1000,
                 textEditingController: _workExperienceController,
@@ -721,21 +804,21 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                   return null;
                 },
               ).px4(),
-              Row(
+               status==3? SizedBox.shrink()
+        :Row(
                 children: [
-                  Text('Status Hirings').px(8),
+                  Text('Duyệt đơn').px(8),
                   _buildDropdownStatusField(
-                'Chọn Status Hirings',
-                status,
-                (value) {
-                  setState(() {
-                    status = value!;
-                  });
-                },
-              ).px(8).w(286),
+                    'Duyệt đơn',
+                    status,
+                    (value) {
+                      setState(() {
+                        status = value!;
+                      });
+                    },
+                  ).px(8).w(286),
                 ],
               ),
-              
             ],
           ),
         ).px8(),

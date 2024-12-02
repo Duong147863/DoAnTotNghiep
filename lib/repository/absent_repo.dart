@@ -78,10 +78,14 @@ class AbsentsRepository {
   }
   Future<bool> updateAbents(Absents asbents) async {
     try {
+      
       final response = await service.updateAbents(asbents);
       if (response.statusCode == 200) {
+        print("Update successful. Response body: ${response.body}");
         return true;
       } else {
+        print("Failed to delete Relative: ${response.statusCode}");
+        print("Response body: ${response.body}");
         throw Exception('Failed to update Trainingprocesses');
       }
     } catch (error) {

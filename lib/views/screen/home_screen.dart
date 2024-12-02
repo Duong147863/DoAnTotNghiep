@@ -121,11 +121,12 @@ class _HomeScreenState extends State<HomeScreen> {
         _formKey.currentState?.validate();
       }
     });
+     
     Provider.of<TimeKeepingViewModel>(context, listen: false)
         .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
             formatDatetoJson(endOfWeek), widget.profile!.profileId);
   }
-
+  
   @override
   void dispose() {
     super.dispose();
@@ -196,6 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: Drawer(
         child: Column(
           children: [
+            
             Container(
               height: 150,
               decoration: const BoxDecoration(
@@ -314,20 +316,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             },
                           ),
-                          ListTile(
-                            title: const Text("Lương"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (BuildContext context) =>
-                                      SalaryListScreen(
-                                    profiles: widget.profile,
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
+                          // ListTile(
+                          //   title: const Text("Lương"),
+                          //   onTap: () {
+                          //     Navigator.push(
+                          //       context,
+                          //       MaterialPageRoute<void>(
+                          //         builder: (BuildContext context) =>
+                          //             SalaryListScreen(
+                          //           profiles: widget.profile,
+                          //         ),
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
                           // ListTile(
                           //   title: const Text("Thân nhân nhân viên"),
                           //   onTap: () {
@@ -858,15 +860,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   )),
-          SpeedDialChild(
-              label: "Thêm mức lương",
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => SalaryAddScreen(),
-                    ));
-              }),
+          // SpeedDialChild(
+          //     label: "Thêm mức lương",
+          //     onTap: () {
+          //       Navigator.push(
+          //           context,
+          //           MaterialPageRoute<void>(
+          //             builder: (BuildContext context) => SalaryAddScreen(),
+          //           ));
+          //     }),
         ],
       );
     } else if (AppStrings.ROLE_PERMISSIONS
@@ -1008,7 +1010,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
             }),
             const Divider(),
-            // _buildEmployeeStats(),
+            _buildEmployeeStats(),
             _buildGetMembersCountGenderAndMaritalStatus(),
 
             // ExpansionPanelList(
