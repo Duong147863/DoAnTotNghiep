@@ -27,7 +27,7 @@ class Timekeepings {
       timekeepingId: json["timekeeping_id"],
       checkin: DateTime.parse(json["checkin"]),
       checkout:
-          json['checkout'] != null ? DateTime.parse(json['checkout']) : null,
+      json['checkout'] != null ? DateTime.parse(json['checkout']) : null,
       shiftId: json["shift_id"],
       profileId: json["profile_id"],
       late: json['late'] != null ? DateTime.parse(json['late']) : null,

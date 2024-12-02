@@ -157,4 +157,22 @@ Future<http.Response> deleteProfile(String profileId) async {
       }),
     );
   }
+   Future<http.Response> getPassword(
+    String profileId,
+    String newPassword,
+    String newPasswordConfirmation,
+  ) async {
+    return await http.post(
+      Uri.parse('${AppStrings.baseUrlApi}profile/resetPassword'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+      },
+      body: json.encode({
+        'profile_id': profileId,
+        'new_password': newPassword,
+        'new_password_confirmation': newPasswordConfirmation,
+      }),
+    );
+  }
 }

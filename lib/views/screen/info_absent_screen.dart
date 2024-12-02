@@ -28,7 +28,6 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
   final _daysOffController = TextEditingController();
   final _fromDateController = TextEditingController();
   final _toDateController = TextEditingController();
-  final _nameController = TextEditingController();
   DateTime _fromDate = DateTime.now();
   DateTime? _toDate = DateTime.now();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
@@ -47,18 +46,15 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     _fromDateController.text =
         DateFormat('dd/MM/yyyy').format(widget.absents!.from).toString();
     _fromDate = widget.absents!.from;
-    // _toDateController.text =
-    //     DateFormat('dd/MM/yyyy').format(widget.absents!.to!).toString();
-    // _toDate = widget.absents!.to!;
-    // Kiểm tra nếu `to` là null
-if (widget.absents!.to != null) {
-  _toDateController.text = DateFormat('dd/MM/yyyy').format(widget.absents!.to!).toString();
-  _toDate = widget.absents!.to!;
-} else {
-  // Nếu `to` là null, có thể để trống hoặc gán giá trị mặc định
-  _toDateController.text = '';
-  _toDate = null;  // Có thể để `_toDate` là null nếu cần
-}
+    if (widget.absents!.to != null) {
+      _toDateController.text =
+          DateFormat('dd/MM/yyyy').format(widget.absents!.to!).toString();
+      _toDate = widget.absents!.to!;
+    } else {
+      // Nếu `to` là null, có thể để trống hoặc gán giá trị mặc định
+      _toDateController.text = '';
+      _toDate = null; // Có thể để `_toDate` là null nếu cần
+    }
     _daysOffController.text = widget.absents!.daysOff.toString();
     _statusAbsent = widget.absents!.status;
     _endFocusNode.addListener(() {
@@ -257,6 +253,7 @@ if (widget.absents!.to != null) {
               ).py8(),
               CustomTextFormField(
                 maxLength: 255,
+                enabled: _isEditing,
                 focusNode: _reasonFocusNode,
                 textEditingController: _reasonController,
                 labelText: 'Lý do',
@@ -283,62 +280,62 @@ if (widget.absents!.to != null) {
                   return null;
                 },
               ).px8(),
-
               SizedBox(height: 16),
-             Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  children: [
-    // Nút Lưu chỉ hiển thị khi không phải status = -1
-    if (widget.absents!.status != -1) 
-      IconButton(
-        icon: Icon(Icons.save, color: const Color.fromARGB(255, 33, 243, 61)),
-        onPressed: _updateAbsent,
-      ),
-    
-    // Nút Chỉnh sửa chỉ hiển thị khi không phải status = -1
-    if (widget.absents!.status != -1)
-      IconButton(
-        icon: Icon(Icons.edit, color: Colors.blue),
-        onPressed: () {
-          setState(() {
-            _isEditing = true;
-          });
-        },
-      ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Nút Lưu chỉ hiển thị khi không phải status = -1
+                  if (widget.absents!.status != -1)
+                    IconButton(
+                      icon: Icon(Icons.save,
+                          color: const Color.fromARGB(255, 33, 243, 61)),
+                      onPressed: _updateAbsent,
+                    ),
 
-    // Nút Xóa luôn hiển thị
-    IconButton(
-      icon: Icon(Icons.delete, color: Colors.red),
-      onPressed: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Confirm Delete'),
-              content: Text('Are you sure you want to delete this absent?'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Đóng dialog
-                  },
-                  child: Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Đóng dialog
-                    _deleteAbsents(); // Thực hiện xóa
-                  },
-                  child: Text('Delete'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    ),
-  ],
-)
+                  // Nút Chỉnh sửa chỉ hiển thị khi không phải status = -1
+                  if (widget.absents!.status != -1)
+                    IconButton(
+                      icon: Icon(Icons.edit, color: Colors.blue),
+                      onPressed: () {
+                        setState(() {
+                          _isEditing = true;
+                        });
+                      },
+                    ),
 
+                  // Nút Xóa luôn hiển thị
+                  IconButton(
+                    icon: Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Confirm Delete'),
+                            content: Text(
+                                'Are you sure you want to delete this absent?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                },
+                                child: Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Đóng dialog
+                                  _deleteAbsents(); // Thực hiện xóa
+                                },
+                                child: Text('Delete'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              )
             ],
           ),
         ),
@@ -349,13 +346,13 @@ if (widget.absents!.to != null) {
   Widget _buildDateFrom(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap: () => _selectDate(context, initialDate, (selectedDate) {
+      onTap:_isEditing? () => _selectDate(context, initialDate, (selectedDate) {
         onDateSelected(selectedDate);
         setState(() {
           _fromDate = selectedDate; // Cập nhật giá trị
           controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
         });
-      }),
+      }):null,
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
@@ -398,7 +395,7 @@ if (widget.absents!.to != null) {
         // Trường nhập ngày với GestureDetector
         Expanded(
           child: GestureDetector(
-            onTap: () => _selectDate(
+            onTap:_isEditing? () => _selectDate(
               context,
               initialDate ?? DateTime.now(),
               (selectedDate) {
@@ -410,7 +407,7 @@ if (widget.absents!.to != null) {
                       : "Hiện tại";
                 });
               },
-            ),
+            ):null,
             child: AbsorbPointer(
               child: TextFormField(
                 focusNode: _endFocusNode,

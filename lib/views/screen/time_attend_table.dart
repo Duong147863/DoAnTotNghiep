@@ -20,7 +20,6 @@ import 'package:velocity_x/velocity_x.dart';
 
 class TimeAttendanceTable extends StatefulWidget {
   Profiles? profiles;
-
   TimeAttendanceTable({super.key, this.profiles});
 
   @override
@@ -49,7 +48,9 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable> {
   String formatDatetoJson(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
   String formatDatetoUI(DateTime date) => DateFormat('dd/MM/yyyy').format(date);
-
+    String formatDateTime(DateTime dateTime) {
+    return DateFormat('dd/MM/yyyy HH:mm:ss').format(dateTime);
+  }
   void _handleSearch(String query) {
     setState(() {
       if (query.isEmpty) {
@@ -162,18 +163,125 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable> {
                   ],
                 ),
                 // TabBarView
+                // Expanded(
+                //   child: TabBarView(
+                //     children: [
+                //       Column(
+                //         children: [],
+                //       ),
+                //       //DANH SÁCH ĐI TRỄ
+                //       Column(
+                //         children: [
+                //           Consumer<TimeKeepingViewModel>(
+                //             builder: (context, viewModel, child) {
+                //               // Tải dữ liệu nếu cần
+                //               if (!viewModel.fetchingData &&
+                //                   viewModel.listLate.isEmpty) {
+                //                 Provider.of<TimeKeepingViewModel>(context,
+                //                         listen: false)
+                //                     .getLateEmployees(
+                //                         formatDatetoJson(startOfWeek),
+                //                         formatDatetoJson(endOfWeek));
+                //               }
+                //               // Hiển thị trạng thái đang tải
+                //               if (viewModel.fetchingData) {
+                //                 if (viewModel.listLate.isEmpty) {
+                //                   return Center(
+                //                       child: Column(
+                //                     children: [
+                //                       const Text(
+                //                         "Chưa có dữ liệu",
+                //                         style: TextStyle(fontSize: 16),
+                //                       ).py16(),
+                //                       Image.asset("assets/images/no_data.png"),
+                //                     ],
+                //                   ));
+                //                 } else {
+                //                   return const Center(
+                //                       child: CircularProgressIndicator());
+                //                 }
+                //               } else {
+                //                 // Danh sách các nhân viên đi trễ
+                //                 List<Timekeepings> listLate =
+                //                     viewModel.listLate;
+                //                 return CustomListView(
+                //                     dataSet: listLate,
+                //                     itemBuilder: (context, index) {
+                //                       return ListTile(
+                //                         title: Text(viewModel
+                //                             .listLate[index].profileId),
+                //                       );
+                //                     });
+                //               }
+                //             },
+                //           )
+                //         ],
+                //       ),
+                //       //DANH SÁCH TĂNG CA
+                //       Column(
+                //         children: [
+                //         ],
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Expanded(
                   child: TabBarView(
                     children: [
-                      Column(
-                        children: [],
+                      // TAB ĐANG LÀM VIỆC
+                      Consumer<TimeKeepingViewModel>(
+                        builder: (context, viewModel, child) {
+                          // Tải dữ liệu nếu cần
+                          if (!viewModel.fetchingData &&
+                              viewModel.listAll.isEmpty) {
+                            Provider.of<TimeKeepingViewModel>(context,
+                                    listen: false)
+                                .getAllCheckInHistory(
+                                    formatDatetoJson(startOfMonth),
+                                    formatDatetoJson(endOfMonth));
+                          }
+
+                          // Hiển thị trạng thái đang tải
+                          if (viewModel.fetchingData) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          // Lọc danh sách theo trạng thái "Đang làm việc"
+                          List<Timekeepings> workingList = viewModel.listAll
+                              .where((timekeeping) => timekeeping.late == null)
+                              .toList();
+
+                          // Kiểm tra danh sách rỗng
+                          if (workingList.isEmpty) {
+                            return const Center(
+                              child: Text("Không có dữ liệu chấm công."),
+                            );
+                          }
+
+                          // Hiển thị danh sách "Đang làm việc"
+                          return ListView.builder(
+                            itemCount: workingList.length,
+                            itemBuilder: (context, index) {
+                              final item = workingList[index];
+                              return Card(
+                                child: ListTile(
+                                  title: Text("Nhân viên: ${item.profileId}"),
+                                  subtitle: Text(
+                                      "Thời gian: ${formatDatetoJson(item.checkin)} - ${formatDatetoJson(item.checkout!)}"),
+                                  trailing: Icon(Icons.access_time,
+                                      color: AppColor.aliceBlue),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                      //DANH SÁCH ĐI TRỄ
+                      // TAB ĐI TRỄ
                       Column(
                         children: [
                           Consumer<TimeKeepingViewModel>(
                             builder: (context, viewModel, child) {
-                              // Tải dữ liệu nếu cần
                               if (!viewModel.fetchingData &&
                                   viewModel.listLate.isEmpty) {
                                 Provider.of<TimeKeepingViewModel>(context,
@@ -182,86 +290,33 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable> {
                                         formatDatetoJson(startOfWeek),
                                         formatDatetoJson(endOfWeek));
                               }
-                              // Hiển thị trạng thái đang tải
                               if (viewModel.fetchingData) {
-                                if (viewModel.listLate.isEmpty) {
-                                  return Center(
-                                      child: Column(
-                                    children: [
-                                      const Text(
-                                        "Chưa có dữ liệu",
-                                        style: TextStyle(fontSize: 16),
-                                      ).py16(),
-                                      Image.asset("assets/images/no_data.png"),
-                                    ],
-                                  ));
-                                } else {
-                                  return const Center(
-                                      child: CircularProgressIndicator());
-                                }
-                              } else {
-                                // Danh sách các nhân viên đi trễ
-                                List<Timekeepings> listLate =
-                                    viewModel.listLate;
-                                return CustomListView(
-                                    dataSet: listLate,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Text(viewModel
-                                            .listLate[index].profileId),
-                                      );
-                                    });
+                                return const Center(
+                                    child: CircularProgressIndicator());
                               }
+                              List<Timekeepings> listLate = viewModel.listLate;
+                              if (listLate.isEmpty) {
+                                return const Center(
+                                  child: Text("Chưa có dữ liệu đi trễ."),
+                                );
+                              }
+                              return ListView.builder(
+                                itemCount: listLate.length,
+                                itemBuilder: (context, index) {
+                                  final lateItem = listLate[index];
+                                  return ListTile(
+                                    title: Text(lateItem.profileId),
+                                  );
+                                },
+                              );
                             },
                           )
                         ],
                       ),
-                      //DANH SÁCH TĂNG CA
+                      // TAB TĂNG CA
                       Column(
                         children: [
-                          // Consumer<TimeKeepingViewModel>(
-                          //   builder: (context, viewModel, child) {
-                          //     // Tải dữ liệu nếu cần
-                          //     if (!viewModel.fetchingData &&
-                          //         viewModel.listAll.isEmpty) {
-                          //       // Provider.of<TimeKeepingViewModel>(context,
-                          //       //         listen: false)
-                          //       //     .;
-                          //     }
-                          //     // Hiển thị trạng thái đang tải
-                          //     if (viewModel.fetchingData) {
-                          //       return const Center(
-                          //           child: CircularProgressIndicator());
-                          //     }
-                          //     // Kiểm tra danh sách rỗng
-                          //     if (viewModel.listLate.isEmpty) {
-                          //       if (viewModel.listLate.isEmpty) {
-                          //         return Center(
-                          //             child: Column(
-                          //           children: [
-                          //             const Text(
-                          //               "Chưa có dữ liệu",
-                          //               style: TextStyle(fontSize: 16),
-                          //             ).py16(),
-                          //             Image.asset("assets/images/no_data.png"),
-                          //           ],
-                          //         ));
-                          //       } else {
-                          //         return const Center(
-                          //             child: CircularProgressIndicator());
-                          //       }
-                          //     }
-                          //     // Danh sách các đi trễ
-                          //     return CustomListView(
-                          //         dataSet: viewModel.listLate,
-                          //         itemBuilder: (context, index) {
-                          //           return ListTile(
-                          //             title: Text(
-                          //                 "${viewModel.listLate[index].profileId}"),
-                          //           );
-                          //         });
-                          //   },
-                          // )
+                          // Thêm logic tăng ca tại đây
                         ],
                       ),
                     ],
