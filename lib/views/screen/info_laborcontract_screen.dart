@@ -62,10 +62,18 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
         .format(widget.laborContracts!.startTime)
         .toString();
     _startTimeHopDong = widget.laborContracts!.startTime;
-    _endTimeHopDongController.text = DateFormat('dd/MM/yyyy')
-        .format(widget.laborContracts!.endTime!)
-        .toString();
-    _endTimeHopDong = widget.laborContracts!.endTime!;
+    // _endTimeHopDongController.text = DateFormat('dd/MM/yyyy')
+    //     .format(widget.laborContracts!.endTime!)
+    //     .toString();
+    // _endTimeHopDong = widget.laborContracts!.endTime!;
+     if (widget.laborContracts!.endTime == null) {
+      _endTimeHopDongController.text = "Vô hạn";
+    } else {
+      _endTimeHopDongController.text = DateFormat('dd/MM/yyyy')
+          .format(widget.laborContracts!.endTime!)
+          .toString();
+      _endTimeHopDong = widget.laborContracts!.endTime!;
+    }
     _laborContractImageBase64 = widget.laborContracts!.image;
 
     checkContractDuration();
@@ -112,34 +120,67 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
 //       });
 //     }
 //   }
+  // void checkContractDuration() {
+  //   // Kiểm tra nếu là hợp đồng lần 1
+  //   if (statusProfile == 1 && _endTimeHopDong != null) {
+  //     int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+  //     print('Days between (HD-01): $daysBetween');
+  //     setState(() {
+  //       // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 1 đã vượt quá 1080 ngày
+  //       // và chưa có hợp đồng lần 2 (statusProfile != 2)
+  //       if (daysBetween > 1080 && widget.profiles!.profileStatus != 2) {
+  //         showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
+  //       } else {
+  //         showSpeedDial = false; // Ẩn nút nếu không thỏa mãn điều kiện
+  //       }
+  //     });
+  //   }
+  //   // Kiểm tra nếu là hợp đồng lần 2
+  //   else if (statusProfile == 2 && _endTimeHopDong != null) {
+  //     int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
+  //     print('Days between (HD-02): $daysBetween');
+  //     setState(() {
+  //       // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 2 đã vượt quá 1080 ngày
+  //       if (daysBetween > 1080) {
+  //         showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
+  //       } else {
+  //         showSpeedDial = false; // Ẩn nút nếu hợp đồng lần 2 chưa hết hạn
+  //       }
+  //     });
+  //   }
+  // }
   void checkContractDuration() {
-    // Kiểm tra nếu là hợp đồng lần 1
-    if (statusProfile == 1 && _endTimeHopDong != null) {
-      int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-      print('Days between (HD-01): $daysBetween');
-      setState(() {
-        // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 1 đã vượt quá 1080 ngày
-        // và chưa có hợp đồng lần 2 (statusProfile != 2)
-        if (daysBetween > 1080 && widget.profiles!.profileStatus != 2) {
-          showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
-        } else {
-          showSpeedDial = false; // Ẩn nút nếu không thỏa mãn điều kiện
+    DateTime currentDate = DateTime.now();
+
+    setState(() {
+      // Mặc định ẩn nút
+      showSpeedDial = false;
+
+      // Kiểm tra hợp đồng lần 1
+      if (statusProfile == 1 && _endTimeHopDong != null) {
+        // Số ngày còn lại từ ngày hiện tại đến ngày hết hạn
+        int remainingDays = _endTimeHopDong.difference(currentDate).inDays;
+
+        print('Hợp đồng lần 1 - Số ngày còn lại: $remainingDays');
+
+        // Hiển thị nút tạo hợp đồng lần 2 nếu đã hết hạn
+        if (remainingDays <= 0 && widget.profiles!.profileStatus != 2) {
+          showSpeedDial = true;
         }
-      });
-    }
-    // Kiểm tra nếu là hợp đồng lần 2
-    else if (statusProfile == 2 && _endTimeHopDong != null) {
-      int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-      print('Days between (HD-02): $daysBetween');
-      setState(() {
-        // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 2 đã vượt quá 1080 ngày
-        if (daysBetween > 1080) {
-          showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
-        } else {
-          showSpeedDial = false; // Ẩn nút nếu hợp đồng lần 2 chưa hết hạn
+      }
+      // Kiểm tra hợp đồng lần 2
+      else if (statusProfile == 2 && _endTimeHopDong != null) {
+        // Số ngày còn lại từ ngày hiện tại đến ngày hết hạn
+        int remainingDays = _endTimeHopDong.difference(currentDate).inDays;
+
+        print('Hợp đồng lần 2 - Số ngày còn lại: $remainingDays');
+
+        // Hiển thị nút tạo hợp đồng lần 3 nếu đã hết hạn
+        if (remainingDays <= 0) {
+          showSpeedDial = true;
         }
-      });
-    }
+      }
+    });
   }
 
   void _updateLaborContract() async {
@@ -206,7 +247,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
       backgroundColor: AppColor.aliceBlue,
       resizeToAvoidBottomInset: true,
       appBarColor: AppColor.primaryLightColor,
-
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -253,18 +293,18 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                         textEditingController: _laborContractIDController,
                         labelText: 'Mã hợp đồng',
                         maxLength: 10,
-                         validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Không được\nđể trống';
-                            } else if (value.length > 10) {
-                              return 'Mã hợp đồng\nkhông được vượt quá 10 ký tự';
-                            } else if (!value.startsWith('HD-')) {
-                              return 'Mã hợp đồng\nphải bắt đầu\nbằng "HD-"';
-                            } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
-                              return 'Sau "HD-" phải\nlà số';
-                            }
-                            return null;
-                          },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được\nđể trống';
+                          } else if (value.length > 10) {
+                            return 'Mã hợp đồng\nkhông được vượt quá 10 ký tự';
+                          } else if (!value.startsWith('HD-')) {
+                            return 'Mã hợp đồng\nphải bắt đầu\nbằng "HD-"';
+                          } else if (!RegExp(r'^HD-\d+$').hasMatch(value)) {
+                            return 'Sau "HD-" phải\nlà số';
+                          }
+                          return null;
+                        },
                       ).px8().w(150),
                       CustomTextFormField(
                         textEditingController: _profileNameController,
@@ -351,7 +391,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                     'Manage Staffs info only',
                     'Manage BoD & HR accounts'
                   ])
-                      ? showSpeedDial == false
+                      ? (showSpeedDial == false && statusProfile != 3)
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
@@ -379,41 +419,40 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           ),
         ),
       ),
-      fab:AppStrings.ROLE_PERMISSIONS.containsAny([
-                    'Manage Staffs info only',
-                    'Manage BoD & HR accounts'
-                  ])?
-       showSpeedDial == true
-          ? SpeedDial(
-              elevation: 0,
-              icon: Icons.menu,
-              buttonSize: Size(50, 50),
-              children: [
-                SpeedDialChild(
-                  label: "Thêm hợp đồng",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) =>
-                            AddLaborContractScreenKHD2(
-                          laborContracts: widget.laborContracts,
-                          profiles: widget.profiles,
-                        ),
-                      ),
-                    ).then((createNewLaborContract) {
-                      if (createNewLaborContract != null) {
-                        setState(() {
-                          laborContracts.add(createNewLaborContract);
+      fab: AppStrings.ROLE_PERMISSIONS.containsAny(
+              ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+          ?
+          showSpeedDial
+              ? SpeedDial(
+                  elevation: 0,
+                  icon: Icons.menu,
+                  buttonSize: Size(50, 50),
+                  children: [
+                    SpeedDialChild(
+                      label: "Thêm hợp đồng",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                AddLaborContractScreenKHD2(
+                              laborContracts: widget.laborContracts,
+                              profiles: widget.profiles,
+                            ),
+                          ),
+                        ).then((createNewLaborContract) {
+                          if (createNewLaborContract != null) {
+                            setState(() {
+                              laborContracts.add(createNewLaborContract);
+                            });
+                          }
                         });
-                      }
-                    });
-                  },
-                ),
-              ],
-            )
-          : SizedBox.shrink()
-          : SizedBox.shrink(), // Không hiển thị gì nếu không thỏa mãn điều kiện
+                      },
+                    ),
+                  ],
+                )
+              : SizedBox.shrink()
+          : SizedBox.shrink(),
     );
   }
 
@@ -482,77 +521,130 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     );
   }
 
+  // Widget _buildDateEndTime(String label, TextEditingController controller,
+  //     DateTime initialDate, Function(DateTime) onDateSelected) {
+  //   return GestureDetector(
+  //     onTap: _isEditing
+  //         ? () => _selectDate(context, initialDate, (selectedDate) {
+  //               onDateSelected(selectedDate);
+  //               setState(() {
+  //                 _endTimeHopDong = selectedDate;
+  //                 controller.text =
+  //                     DateFormat('dd/MM/yyyy').format(selectedDate);
+  //               });
+  //             })
+  //         : null,
+  //     child: AbsorbPointer(
+  //       child: TextFormField(
+  //         readOnly: true,
+  //         focusNode: _endtimeFocusNode,
+  //         style: TextStyle(color: Colors.black),
+  //         controller: controller,
+  //         // validator: (value) {
+  //         //   // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
+  //         //   if (controller.text == "Hiện tại") {
+  //         //     return null; // Không cần kiểm tra
+  //         //   }
+
+  //         //   // Nếu có giá trị nhập vào
+  //         //   if (controller.text.isNotEmpty) {
+  //         //     try {
+  //         //       DateTime selectedEndTime = DateTime.parse(controller.text);
+
+  //         //       // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
+  //         //       if (selectedEndTime.isBefore(_startTimeHopDong) ||
+  //         //           selectedEndTime.difference(_startTimeHopDong).inDays < 30) {
+  //         //         return 'End Time phải trong trên 1 tháng kể từ Start Time';
+  //         //       }
+  //         //     } catch (e) {
+  //         //       return 'Định dạng ngày không hợp lệ';
+  //         //     }
+  //         //   }
+  //         //   return null;
+  //         // },
+  //         validator: (value) {
+  //           // Validator kiểm tra ràng buộc hợp đồng lần 1
+  //           if (value == null || value.isEmpty) {
+  //             return 'Vui lòng chọn ngày kết thúc hợp đồng';
+  //           }
+  //           try {
+  //             DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
+
+  //             // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
+  //             if (selectedEndTime
+  //                 .isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
+  //               return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
+  //             }
+
+  //             // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
+  //             if (selectedEndTime
+  //                 .isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
+  //               return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
+  //             }
+  //           } catch (e) {
+  //             return 'Định dạng ngày không hợp lệ';
+  //           }
+  //           return null; // Hợp lệ
+  //         },
+  //         decoration: InputDecoration(
+  //           labelText: label,
+  //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
   Widget _buildDateEndTime(String label, TextEditingController controller,
-      DateTime initialDate, Function(DateTime) onDateSelected) {
-    return GestureDetector(
-      onTap: _isEditing
-          ? () => _selectDate(context, initialDate, (selectedDate) {
-                onDateSelected(selectedDate);
-                setState(() {
-                  _endTimeHopDong = selectedDate;
-                  controller.text =
-                      DateFormat('dd/MM/yyyy').format(selectedDate);
-                });
-              })
-          : null,
-      child: AbsorbPointer(
-        child: TextFormField(
-          readOnly: true,
-          focusNode: _endtimeFocusNode,
-          style: TextStyle(color: Colors.black),
-          controller: controller,
-          // validator: (value) {
-          //   // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
-          //   if (controller.text == "Hiện tại") {
-          //     return null; // Không cần kiểm tra
-          //   }
+    DateTime initialDate, Function(DateTime) onDateSelected) {
+  return GestureDetector(
+    onTap: (statusProfile == 3 || !_isEditing)
+        ? null // Vô hiệu hóa nếu status == 3
+        : () => _selectDate(context, initialDate, (selectedDate) {
+              onDateSelected(selectedDate);
+              setState(() {
+                _endTimeHopDong = selectedDate;
+                controller.text =
+                    DateFormat('dd/MM/yyyy').format(selectedDate);
+              });
+            }),
+    child: AbsorbPointer(
+      child: TextFormField(
+        readOnly: true,
+        focusNode: _endtimeFocusNode,
+        style: TextStyle(
+          color: statusProfile == 3
+              ? Colors.grey // Đổi màu chữ để phân biệt
+              : Colors.black,
+        ),
+        controller: controller,
+        validator: (value) {
+          // Các điều kiện kiểm tra khác
+          if (value == null || value.isEmpty) {
+            return 'Vui lòng chọn ngày kết thúc hợp đồng';
+          }
+          try {
+            DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
 
-          //   // Nếu có giá trị nhập vào
-          //   if (controller.text.isNotEmpty) {
-          //     try {
-          //       DateTime selectedEndTime = DateTime.parse(controller.text);
-
-          //       // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
-          //       if (selectedEndTime.isBefore(_startTimeHopDong) ||
-          //           selectedEndTime.difference(_startTimeHopDong).inDays < 30) {
-          //         return 'End Time phải trong trên 1 tháng kể từ Start Time';
-          //       }
-          //     } catch (e) {
-          //       return 'Định dạng ngày không hợp lệ';
-          //     }
-          //   }
-          //   return null;
-          // },
-          validator: (value) {
-            // Validator kiểm tra ràng buộc hợp đồng lần 1
-            if (value == null || value.isEmpty) {
-              return 'Vui lòng chọn ngày kết thúc hợp đồng';
+            if (selectedEndTime
+                .isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
+              return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
             }
-            try {
-              DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
 
-              // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
-              if (selectedEndTime
-                  .isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
-                return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
-              }
-
-              // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
-              if (selectedEndTime
-                  .isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
-                return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
-              }
-            } catch (e) {
-              return 'Định dạng ngày không hợp lệ';
+            if (selectedEndTime
+                .isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
+              return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
             }
-            return null; // Hợp lệ
-          },
-          decoration: InputDecoration(
-            labelText: label,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+          } catch (e) {
+            return 'Định dạng ngày không hợp lệ';
+          }
+          return null; // Hợp lệ
+        },
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

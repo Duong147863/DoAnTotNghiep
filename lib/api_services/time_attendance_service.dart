@@ -14,7 +14,7 @@ class TimeAttendanceService {
         },
         body: json.encode(checkinTime.toJson()));
   }
-
+  
   Future<http.Response> getAllCheckinHistory(String from, String to) async {
     return await http.get(
       Uri.parse("${AppStrings.baseUrlApi}checkin/all?from=$from&to=$to"),

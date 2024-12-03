@@ -32,7 +32,8 @@ class Timekeepings {
       profileId: json["profile_id"],
       late: json['late'] != null ? DateTime.parse(json['late']) : null,
       date: DateTime.parse(json["date"]),
-      leavingSoon: json["leaving_soon"],
+      // leavingSoon: json["leaving_soon"],
+      leavingSoon: json['leaving_soon'] != null ? DateTime.parse(json['leaving_soon']) : null,
       status: json["status"],
     );
   }
