@@ -34,6 +34,7 @@ class TimekeepingRepo {
     final response = await service.getAllCheckinHistory(from, to);
     if (response.statusCode == 200) {
       print("Load successful. Response body: ${response.body}");
+      
       final List<dynamic> jsonData = json.decode(response.body);
       return jsonData.map((x) => Timekeepings.fromJson(x)).toList();
     } else {

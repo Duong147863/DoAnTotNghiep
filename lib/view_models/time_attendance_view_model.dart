@@ -12,6 +12,7 @@ class TimeKeepingViewModel extends ChangeNotifier {
   List<Timekeepings> _listLate = [];
   List<Timekeepings> _listOT = [];
   bool fetchingData = false;
+  bool fetchingData1 = false;
   bool fetchingWorkHoursStats = false;
   List<Timekeepings> get listAll => _listAll;
   List<Timekeepings> get list1 => _list1;
@@ -38,16 +39,29 @@ class TimeKeepingViewModel extends ChangeNotifier {
     fetchingData = false;
   }
 
+  // Future<void> getAllCheckInHistory(String from, String to) async {
+  //   fetchingData = true;
+  //   try {
+  //     _listAll = await repository.getAllAttendanceHistory(from, to);
+  //     notifyListeners();
+  //   } catch (e) {
+  //     throw Exception('Failed to load info: $e');
+  //   }
+  //   fetchingData = false;
+  // }
   Future<void> getAllCheckInHistory(String from, String to) async {
-    fetchingData = true;
-    try {
-      _listAll = await repository.getAllAttendanceHistory(from, to);
-      notifyListeners();
-    } catch (e) {
-      throw Exception('Failed to load info: $e');
-    }
-    fetchingData = false;
+  fetchingData1 = true;
+  notifyListeners(); // Thông báo rằng dữ liệu đang được tải
+
+  try {
+    _listAll = await repository.getAllAttendanceHistory(from, to);
+  } catch (e) {
+    throw Exception('Failed to load info: $e');
+  } finally {
+    fetchingData1 = false;
+    notifyListeners(); // Thông báo rằng dữ liệu đã được tải
   }
+}
 
   Future<void> getLateEmployees(String from, String to) async {
     fetchingData = true;

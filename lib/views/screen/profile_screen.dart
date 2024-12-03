@@ -132,6 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   DateTime _endTime = DateTime.now();
   String? daysSignedFirstContract;
   String? daysSignedSecondContract;
+  String? daysSignedThirdContract;
   int? roleid;
   String trialStatusText = "";
   bool showLaborContractButton = true; // Trạng thái hiển thị nút\
@@ -558,8 +559,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
   // void _loadLaborContact() async {
+  //   // Lấy danh sách hợp đồng từ ViewModel
   //   await Provider.of<LaborContactsViewModel>(context, listen: false)
   //       .getLaborContactOf(widget.profile!.profileId);
 
@@ -567,148 +568,206 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //       .listLaborContact;
 
   //   if (laborContracts.isNotEmpty) {
-  //     // Sắp xếp hợp đồng theo start_time để xác định hợp đồng lần 1
+  //     // Sắp xếp danh sách hợp đồng theo start_time để đảm bảo thứ tự đúng
   //     laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-  //     // Lấy hợp đồng lần 1 (phần tử đầu tiên)
-  //     selectedlaborContracts = laborContracts.first;
+  //     if (statusProfile == 1) {
+  //       // Trạng thái profile = 1: Lấy hợp đồng lần 1
+  //       var firstContract = laborContracts[0]; // Hợp đồng lần 1
+  //       if (firstContract != null) {
+  //         DateTime startTimeFirstContract = firstContract.startTime;
+  //         DateTime? endTimeFirstContract = firstContract.endTime;
 
-  //     // Lấy start_time và end_time của hợp đồng lần 1
-  //     DateTime startTimeFirstContract = selectedlaborContracts!.startTime;
-  //     DateTime? endTimeFirstContract = selectedlaborContracts!.endTime;
+  //         if (endTimeFirstContract != null) {
+  //           int daysBetween =
+  //               endTimeFirstContract.difference(startTimeFirstContract).inDays;
 
-  //     // Kiểm tra nếu endTimeFirstContract có null hoặc không hợp lệ
-  //     if (endTimeFirstContract != null) {
-  //       int daysBetween =
-  //           endTimeFirstContract.difference(startTimeFirstContract).inDays;
+  //           print('Days between (HD-01): $daysBetween'); // Kiểm tra số ngày
 
-  //       print('Days between: $daysBetween'); // Kiểm tra số ngày
-
-  //       // Kiểm tra nếu số ngày đã vượt quá 36 tháng (1080 ngày)
-  //       if (daysBetween > 1080) {
-  //         daysSignedFirstContract =
-  //             "Hợp đồng lần 1 kết thúc (quá 36 tháng): $daysBetween ngày";
-  //         showLaborContractButton1 = false; // Hiển thị nút
-  //       } else {
-  //         daysSignedFirstContract = "Hợp đồng lần 1: $daysBetween ngày";
-  //         showLaborContractButton1 = false; // Ẩn nút
+  //           if (daysBetween < 365) {
+  //             daysSignedFirstContract = "Hợp đồng lần 1: "
+  //                 "${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)}"
+  //                 "\ncòn thời hạn:"
+  //                 " $daysBetween ngày";
+  //             showLaborContractButton1 = false; // Ẩn nút
+  //           } else {
+  //             daysSignedFirstContract = "Hợp đồng lần 1: "
+  //                 "${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)}"
+  //                 "\nhết thời hạn:"
+  //                 " $daysBetween ngày";
+  //             showLaborContractButton1 = false; // Hiển thị nút
+  //           }
+  //         }
   //       }
-  //     }
+  //     } else if (statusProfile == 2) {
+  //       // Trạng thái profile = 2: Lấy hợp đồng lần 2
+  //       var secondContract = laborContracts[1]; // Hợp đồng lần 2
+  //       if (secondContract != null) {
+  //         DateTime startTimeSecondContract = secondContract.startTime;
+  //         DateTime? endTimeSecondContract = secondContract.endTime;
+
+  //         if (endTimeSecondContract != null) {
+  //           int daysBetween = endTimeSecondContract
+  //               .difference(startTimeSecondContract)
+  //               .inDays;
+
+  //           print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
+  //           if (daysBetween < 365) {
+  //             daysSignedSecondContract = "Hợp đồng lần 2: "
+  //                 "${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)}"
+  //                 "\ncòn thời hạn:"
+  //                 " $daysBetween ngày";
+  //           } else {
+  //             daysSignedSecondContract = "Hợp đồng lần 2: "
+  //                 "${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)}"
+  //                 "\nhết thời hạn:"
+  //                 " $daysBetween ngày";
+  //           }
+  //         }
+  //       }
+  //     } else {}
+
   //     // Cập nhật giao diện
-  //     setState(() {
-  //       print(
-  //           'showLaborContractButton: $showLaborContractButton1'); // Kiểm tra trạng thái nút
-  //       showLaborContractButton1;
-  //     });
+  //     setState(() {});
+  //   } else {
+  //     print("Danh sách hợp đồng rỗng!");
   //   }
   // }
-  void _loadLaborContact() async {
-    // Lấy danh sách hợp đồng từ ViewModel
-    await Provider.of<LaborContactsViewModel>(context, listen: false)
-        .getLaborContactOf(widget.profile!.profileId);
+ void _loadLaborContact() async {
+  // Lấy danh sách hợp đồng từ ViewModel
+  await Provider.of<LaborContactsViewModel>(context, listen: false)
+      .getLaborContactOf(widget.profile!.profileId);
 
-    laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
-        .listLaborContact;
+  laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
+      .listLaborContact;
 
-    if (laborContracts.isNotEmpty) {
-      // Sắp xếp danh sách hợp đồng theo start_time để đảm bảo thứ tự đúng
-      laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
+  if (laborContracts.isNotEmpty) {
+    // Sắp xếp danh sách hợp đồng theo start_time để đảm bảo thứ tự đúng
+    laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-      if (statusProfile == 1) {
-        // Trạng thái profile = 1: Lấy hợp đồng lần 1
-        var firstContract = laborContracts[0]; // Hợp đồng lần 1
-        if (firstContract != null) {
-          DateTime startTimeFirstContract = firstContract.startTime;
-          DateTime? endTimeFirstContract = firstContract.endTime;
+    DateTime currentDate = DateTime.now();
 
-          if (endTimeFirstContract != null) {
-            int daysBetween =
-                endTimeFirstContract.difference(startTimeFirstContract).inDays;
+    if (statusProfile == 1) {
+      // Trạng thái profile = 1: Lấy hợp đồng lần 1
+      var firstContract = laborContracts[0];
+      if (firstContract != null) {
+        DateTime startTimeFirstContract = firstContract.startTime;
+        DateTime? endTimeFirstContract = firstContract.endTime;
 
-            print('Days between (HD-01): $daysBetween'); // Kiểm tra số ngày
+        if (endTimeFirstContract != null) {
+          int remainingDays =
+              endTimeFirstContract.difference(currentDate).inDays;
 
-            if (daysBetween < 1080) {
-              daysSignedFirstContract = "Hợp đồng lần 1: "
-                  "${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)}"
-                  "\ncòn thời hạn:"
-                  " $daysBetween ngày";
-              showLaborContractButton1 = false; // Ẩn nút
-            } else {
-              daysSignedFirstContract = "Hợp đồng lần 1: "
-                  "${DateFormat('dd/MM/yyyy').format(firstContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(firstContract.endTime!)}"
-                  "\nhết thời hạn:"
-                  " $daysBetween ngày";
-              showLaborContractButton1 = false; // Hiển thị nút
-            }
+          if (remainingDays > 0) {
+            daysSignedFirstContract = "Hợp đồng lần 1: "
+                "${DateFormat('dd/MM/yyyy').format(startTimeFirstContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeFirstContract)}"
+                  "\ncòn thời hạn: ""$remainingDays"" ngày";
+            showLaborContractButton1 = false; // Ẩn nút
+          } else {
+            daysSignedFirstContract = "Hợp đồng lần 1: "
+                "${DateFormat('dd/MM/yyyy').format(startTimeFirstContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeFirstContract)}"
+                "\nđã hết thời hạn";
+            showLaborContractButton1 = true; // Hiển thị nút
           }
         }
-      } else if (statusProfile == 2) {
-        // Trạng thái profile = 2: Lấy hợp đồng lần 2
-        var secondContract = laborContracts[1]; // Hợp đồng lần 2
+      }
+    } else if (statusProfile == 2) {
+      // Trạng thái profile = 2: Lấy hợp đồng lần 2
+      if (laborContracts.length > 1) {
+        var secondContract = laborContracts[1];
         if (secondContract != null) {
           DateTime startTimeSecondContract = secondContract.startTime;
           DateTime? endTimeSecondContract = secondContract.endTime;
 
           if (endTimeSecondContract != null) {
-            int daysBetween = endTimeSecondContract
-                .difference(startTimeSecondContract)
-                .inDays;
+            int remainingDays =
+                endTimeSecondContract.difference(currentDate).inDays;
 
-            print('Days between (HD-03): $daysBetween'); // Kiểm tra số ngày
-            if (daysBetween < 1080) {
+            if (remainingDays > 0) {
               daysSignedSecondContract = "Hợp đồng lần 2: "
-                  "${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)}"
-                  "\ncòn thời hạn:"
-                  " $daysBetween ngày";
+                  "${DateFormat('dd/MM/yyyy').format(startTimeSecondContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeSecondContract)}"
+                  "\ncòn thời hạn: ""$remainingDays"" ngày";
             } else {
               daysSignedSecondContract = "Hợp đồng lần 2: "
-                  "${DateFormat('dd/MM/yyyy').format(secondContract.startTime)} - ${DateFormat('dd/MM/yyyy').format(secondContract.endTime!)}"
-                  "\nhết thời hạn:"
-                  " $daysBetween ngày";
+                  "${DateFormat('dd/MM/yyyy').format(startTimeSecondContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeSecondContract)}"
+                  "\nđã hết thời hạn";
             }
           }
         }
-      } else {}
+      }
+    } else if (statusProfile == 3) {
+      // Trạng thái profile = 3: Lấy hợp đồng lần 3 hoặc hợp đồng vô hạn
+      if (laborContracts.length > 2) {
+        var thirdContract = laborContracts[2];
+        if (thirdContract != null) {
+          DateTime startTimeThirdContract = thirdContract.startTime;
+          DateTime? endTimeThirdContract = thirdContract.endTime;
 
-      // Cập nhật giao diện
-      setState(() {});
-    } else {
-      print("Danh sách hợp đồng rỗng!");
-    }
-  }
+          if (endTimeThirdContract == null) {
+            // Hợp đồng vô hạn
+            daysSignedThirdContract = "Hợp đồng lần 3: "
+                "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - Vô hạn";
+          } else {
+            int remainingDays =
+                endTimeThirdContract.difference(currentDate).inDays;
 
-  String getStatusText(
-      DateTime startTime, DateTime endTime, int statusProfile) {
-    int workingDays = endTime.difference(startTime).inDays;
-
-    if (statusProfile == 0) {
-      if (workingDays <= 30) {
-        showLaborContractButton = false; // Ẩn nút
-        // return "Đang thử việc: $workingDays ngày";
-        return "Thử việc: "
-            "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
-            "\ncòn thời hạn:"
-            " $workingDays ngày";
-      } else {
-        showLaborContractButton = true; // Hiển thị nút
-        // return "Đã hết hạn ngày thử việc: $workingDays ngày";
-        return "Thử việc: "
-            "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
-            "\nhết thời hạn:"
-            " $workingDays ngày";
+            if (remainingDays > 0) {
+              daysSignedThirdContract = "Hợp đồng lần 3: "
+                  "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeThirdContract)}"
+                  "\ncòn thời hạn: $remainingDays ngày";
+            } else {
+              daysSignedThirdContract = "Hợp đồng lần 3: "
+                  "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeThirdContract)}"
+                  "\nđã hết thời hạn";
+            }
+          }
+        }
       }
     }
-    switch (statusProfile) {
-      case 1:
-        return "Hợp đồng ký lần 1";
-      case 2:
-        return "Hợp đồng ký lần 2";
-      case 3:
-        return "Hợp đồng vô thời hạn";
-      default:
-        return "Trạng thái không xác định";
+
+    // Cập nhật giao diện
+    setState(() {});
+  } else {
+    print("Danh sách hợp đồng rỗng!");
+  }
+}
+
+
+
+  String getStatusText(
+  DateTime startTime, 
+  DateTime endTime, 
+  int statusProfile) {
+  DateTime currentDate = DateTime.now();
+  int remainingDays = endTime.difference(currentDate).inDays;
+
+  // Kiểm tra trạng thái thử việc (statusProfile == 0)
+  if (statusProfile == 0) {
+    if (remainingDays > 0) {
+      showLaborContractButton = false; // Ẩn nút
+      return "Thử việc: "
+          "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
+          "\ncòn thời hạn: ""$remainingDays"" ngày";
+    } else {
+      showLaborContractButton = true; // Hiển thị nút
+      return "Thử việc: "
+          "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
+          "\nđã hết hạn";
     }
   }
+
+  // Xử lý các trạng thái hợp đồng khác
+  switch (statusProfile) {
+    case 1:
+      return "Hợp đồng ký lần 1";
+    case 2:
+      return "Hợp đồng ký lần 2";
+    case 3:
+      return "Hợp đồng vô thời hạn";
+    default:
+      return "Trạng thái không xác định";
+  }
+}
 
   void _updateProfile() async {
     if (_formKey.currentState!.validate()) {
@@ -807,20 +866,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
           elevation: 0,
           title: statusProfile == 0
-              ? Text(
-                  getStatusText(_startTime, _endTime, statusProfile!),
-                  style: TextStyle(color: Colors.white, fontSize: 13),
-                )
-              : Text(
-                  statusProfile == 1
-                      ? (daysSignedFirstContract != null
-                          ? daysSignedFirstContract!
-                          : "Chưa có thông tin hợp đồng lần 1")
-                      : (daysSignedSecondContract != null
-                          ? daysSignedSecondContract!
-                          : "Chưa có thông tin hợp đồng lần 2"),
-                  style: TextStyle(fontSize: 13),
-                ),
+    ? Text(
+        getStatusText(_startTime, _endTime, statusProfile!),
+        style: TextStyle(color: Colors.white, fontSize: 13),
+      )
+    : Text(
+        statusProfile == 1
+            ? (daysSignedFirstContract != null
+                ? daysSignedFirstContract!
+                : "Chưa có thông tin hợp đồng lần 1")
+            : statusProfile == 2
+                ? (daysSignedSecondContract != null
+                    ? daysSignedSecondContract!
+                    : "Chưa có thông tin hợp đồng lần 2")
+                : (daysSignedThirdContract != null
+                    ? daysSignedThirdContract!
+                    : "Chưa có thông tin hợp đồng lần 3"),
+        style: TextStyle(fontSize: 13),
+      ),
+
           backgroundColor: AppColor.primaryLightColor,
           automaticallyImplyLeading: true,
           foregroundColor: Colors.white,

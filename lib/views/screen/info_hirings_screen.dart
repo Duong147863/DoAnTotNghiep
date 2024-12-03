@@ -390,7 +390,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
         ),
         items: [
           DropdownMenuItem(value: -1, child: Text('Đã từ chối')),
-          DropdownMenuItem(value: 0, child: Text('Ứng viên mới')),
+          DropdownMenuItem(value: 0, child: Text('Ứng viên')),
           DropdownMenuItem(value: 1, child: Text('Phỏng vấn')),
           DropdownMenuItem(value: 2, child: Text('Đề nghị làm')),
           DropdownMenuItem(value: 3, child: Text('Đã duyệt')),
