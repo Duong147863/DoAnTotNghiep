@@ -31,6 +31,7 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
   final _departmentNameController = TextEditingController();
   bool _isEditing = false;
   List<Profiles> profile = [];
+  List<Profiles> filteredProfiles = []; // Danh sách nhân viên đã lọc
   void initState() {
     super.initState();
     _departmentIDController.text = widget.departments!.departmentID;
@@ -74,7 +75,15 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
       );
     }
   }
-
+    // Hàm lọc danh sách nhân viên
+  void _filterProfiles(String searchText) {
+    setState(() {
+      filteredProfiles = profile.where((member) {
+        return member.profileName.toLowerCase().contains(searchText.toLowerCase()) ||
+               member.profileId.toLowerCase().contains(searchText.toLowerCase());
+      }).toList();
+    });
+  }
   void _handleUpdateProfile(Profiles updatedProfile) {
     setState(() {
       int index = profile
@@ -159,128 +168,195 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                 ],
               ),
       ],
-      body: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _departmentIDController,
-                  labelText: 'Mã Phòng ban',
-                  enabled: false,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập mã phòng ban';
-                    }
-                    return null;
-                  },
-                ).w(150).p4(),
-                CustomTextFormField(
-                  textEditingController: _departmentNameController,
-                  labelText: 'Tên phòng ban',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập tên phòng';
-                    }
-                    final nameRegex = RegExp(
-                        r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
-                    if (!nameRegex.hasMatch(value)) {
-                      return 'Tên phòng ban không được chứa chữ số và ký tự đặc biệt';
-                    }
-                    if (!value.isLetter()) {
-                      return 'Tên phòng ban chỉ gồm chữ';
-                    }
-                    return null;
-                  },
-                  enabled: _isEditing,
-                ).w(245).p4(),
-              ],
-            ),
-            Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
-              if (!viewModel.fetchingData &&
-                  viewModel.listMembersOfDepartment.isEmpty) {
-                Provider.of<ProfilesViewModel>(context, listen: false)
-                    .membersOfDepartment(widget.departments!.departmentID);
-              }
-              if (viewModel.fetchingData) {
-                if (viewModel.listMembersOfDepartment.isEmpty) {
-                  return Center(
-                      child: Column(
-                    children: [
-                      const Text(
-                        "Chưa có dữ liệu",
-                        style: TextStyle(fontSize: 16),
-                      ).py16(),
-                      Image.asset("assets/images/no_data.png"),
-                    ],
-                  ));
-                } else {
-                  return const Center(child: CircularProgressIndicator());
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               // Ô tìm kiếm nhân viên
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Tìm kiếm nhân viên',
+                    prefixIcon: Icon(Icons.search),
+                    border: OutlineInputBorder(),
+                  ),
+                  onChanged: _filterProfiles, // Lọc nhân viên khi có thay đổi
+                ),
+              ),
+              Row(
+                children: [
+                  CustomTextFormField(
+                    textEditingController: _departmentIDController,
+                    labelText: 'Mã Phòng ban',
+                    enabled: false,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập mã phòng ban';
+                      }
+                      return null;
+                    },
+                  ).w(150).p4(),
+                  CustomTextFormField(
+                    textEditingController: _departmentNameController,
+                    labelText: 'Tên phòng ban',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vui lòng nhập tên phòng';
+                      }
+                      final nameRegex = RegExp(
+                          r"^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàảạáâãèéêìíòóôõùúủũuụĂĐĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặÈÉẺẼẸÊềếểễnệjiíìỉĩịÒÓỎÕỌôỒỐỔỖỘơỜỚỞỠỢÙÚỦŨỤƯưừứửữựýỳỷỹỵạọấầẩẫậ\s]+$");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Tên phòng ban không được chứa chữ số và ký tự đặc biệt';
+                      }
+                      if (!value.isLetter()) {
+                        return 'Tên phòng ban chỉ gồm chữ';
+                      }
+                      return null;
+                    },
+                    enabled: _isEditing,
+                  ).w(245).p4(),
+                ],
+              ),
+              // Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
+              //   if (!viewModel.fetchingData &&
+              //       viewModel.listMembersOfDepartment.isEmpty) {
+              //     Provider.of<ProfilesViewModel>(context, listen: false)
+              //         .membersOfDepartment(widget.departments!.departmentID);
+              //   }
+              //   if (viewModel.fetchingData) {
+              //     if (viewModel.listMembersOfDepartment.isEmpty) {
+              //       return Center(
+              //           child: Column(
+              //         children: [
+              //           const Text(
+              //             "Chưa có dữ liệu",
+              //             style: TextStyle(fontSize: 16),
+              //           ).py16(),
+              //           Image.asset("assets/images/no_data.png"),
+              //         ],
+              //       ));
+              //     } else {
+              //       return const Center(child: CircularProgressIndicator());
+              //     }
+              //   } else {
+              //     List<Profiles> listMembers = viewModel.listMembersOfDepartment;
+              //     return CustomListView(
+              //         dataSet: listMembers,
+              //         itemBuilder: (context, index) {
+              //           return CustomCard(
+              //               title: Row(
+              //                 children: [
+              //                   CircleAvatar().px8(),
+              //                   Text(
+              //                     "${listMembers[index].profileId} - ${listMembers[index].profileName}",
+              //                     style: const TextStyle(
+              //                         fontWeight: FontWeight.bold),
+              //                   ),
+              //                 ],
+              //               ),
+              //               subttile: Container(
+              //                 child: Column(
+              //                   children: [],
+              //                 ),
+              //               )).p8().onTap(() async {
+              //             await Navigator.push(
+              //               context,
+              //               MaterialPageRoute(
+              //                 builder: (context) =>
+              //                     ProfileScreen(profile: listMembers[index],loginUser: widget.profiles,),
+                                
+              //               ),
+              //             ).then((updatedProfile) {
+              //               if (updatedProfile != null) {
+              //                 _handleUpdateProfile(
+              //                     updatedProfile); // Cập nhật lại thông tin
+              //               }
+              //             });
+                                    
+              //           });
+              //         });
+              //   }
+              // }),
+              // // Row(
+              // //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              // //   children: [
+              // //     IconButton(
+              // //       icon: Icon(Icons.save,
+              // //           color: const Color.fromARGB(255, 33, 243, 61)),
+              // //       onPressed: _updateDepartment,
+              // //     ),
+              // //     IconButton(
+              // //       icon: Icon(Icons.edit, color: Colors.blue),
+              // //       onPressed: () {
+              // //         setState(() {
+              // //           _isEditing = true;
+              // //         });
+              // //       },
+              // //     ),
+              // //     IconButton(
+              // //       icon: Icon(Icons.delete, color: Colors.red),
+              // //       onPressed: _deleteDepartment,
+              // //     ),
+              // //   ],
+              // // ),
+              Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
+                if (!viewModel.fetchingData &&
+                    viewModel.listMembersOfDepartment.isEmpty) {
+                  Provider.of<ProfilesViewModel>(context, listen: false)
+                      .membersOfDepartment(widget.departments!.departmentID);
                 }
-              } else {
-                List<Profiles> listMembers = viewModel.listMembersOfDepartment;
-                return CustomListView(
-                    dataSet: listMembers,
-                    itemBuilder: (context, index) {
-                      return CustomCard(
-                          title: Row(
-                            children: [
-                              CircleAvatar().px8(),
-                              Text(
-                                "${listMembers[index].profileId} - ${listMembers[index].profileName}",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          subttile: Container(
-                            child: Column(
-                              children: [],
+                if (viewModel.fetchingData) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  List<Profiles> listMembers = viewModel.listMembersOfDepartment;
+                  profile = listMembers; // Lưu danh sách thành viên chưa lọc
+
+                  // Hiển thị danh sách thành viên sau khi lọc
+                  List<Profiles> displayList = filteredProfiles.isEmpty
+                      ? listMembers
+                      : filteredProfiles;
+
+                  return CustomListView(
+                      dataSet: displayList,
+                      itemBuilder: (context, index) {
+                        return CustomCard(
+                            title: Row(
+                              children: [
+                                CircleAvatar().px8(),
+                                Text(
+                                  "${displayList[index].profileId} - ${displayList[index].profileName}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ],
                             ),
-                          )).p8().onTap(() async {
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProfileScreen(profile: listMembers[index],loginUser: widget.profiles,),
-                              
-                          ),
-                        ).then((updatedProfile) {
-                          if (updatedProfile != null) {
-                            _handleUpdateProfile(
-                                updatedProfile); // Cập nhật lại thông tin
-                          }
+                            subttile: Container(
+                              child: Column(
+                                children: [],
+                              ),
+                            )).p8().onTap(() async {
+                          await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProfileScreen(
+                                profile: displayList[index],
+                                loginUser: widget.profiles,
+                              ),
+                            ),
+                          ).then((updatedProfile) {
+                            if (updatedProfile != null) {
+                              _handleUpdateProfile(updatedProfile); // Cập nhật lại thông tin
+                            }
+                          });
                         });
-                                  
                       });
-                    });
-              }
-            }),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: [
-            //     IconButton(
-            //       icon: Icon(Icons.save,
-            //           color: const Color.fromARGB(255, 33, 243, 61)),
-            //       onPressed: _updateDepartment,
-            //     ),
-            //     IconButton(
-            //       icon: Icon(Icons.edit, color: Colors.blue),
-            //       onPressed: () {
-            //         setState(() {
-            //           _isEditing = true;
-            //         });
-            //       },
-            //     ),
-            //     IconButton(
-            //       icon: Icon(Icons.delete, color: Colors.red),
-            //       onPressed: _deleteDepartment,
-            //     ),
-            //   ],
-            // ),
-          ],
+                }
+              }),
+            ],
+          ),
         ),
       ),
     );
