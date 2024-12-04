@@ -24,13 +24,16 @@ import 'package:nloffice_hrm/views/route_service.dart' as router;
 import 'package:nloffice_hrm/views/screen/welcome_screen.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() async {
+  // WidgetsFlutterBinding.ensureInitialized();
   // await NotificationService.clearIrrelevantNotificationChannels();
   // await NotificationService.initializeAwesomeNotification();
   // await NotificationService.listenToActions();
-  // await initializeDateFormatting('vi', null);
-  // Intl.defaultLocale = 'vi';
+  // Khởi tạo dữ liệu locale
+  await initializeDateFormatting('vi', null);
+
+  // Thiết lập locale mặc định
+  Intl.defaultLocale = 'vi';
   // Run app!
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<ProjectsViewModel>(
