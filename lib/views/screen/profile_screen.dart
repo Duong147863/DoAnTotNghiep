@@ -130,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final _startTimeController = TextEditingController();
   final _endTimeController = TextEditingController();
   DateTime _startTime = DateTime.now();
-  DateTime _endTime = DateTime.now();
+  DateTime? _endTime;
   String? daysSignedFirstContract;
   String? daysSignedSecondContract;
   String? daysSignedThirdContract;
@@ -166,6 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _endTime = widget.profile!.endTime!;
     } else {
       _endTimeController.clear(); // Xóa nội dung nếu endTime là nul
+         _endTime = null;  // Đảm bảo rằng _endTime được gán giá trị null
     }
     statusProfile = widget.profile!.profileStatus;
     _nationController.text = widget.profile!.nation;
@@ -398,29 +399,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  // void _loadDepartments() async {
-  //   await Provider.of<DeparmentsViewModel>(context, listen: false)
-  //       .getDepartmentsByPosition();
-
-  //   departmentsPosition =
-  //       Provider.of<DeparmentsViewModel>(context, listen: false)
-  //           .getlistdepartmentPosition;
-  //   if (departmentsPosition.isNotEmpty) {
-  //     selectedDepartmentsPosition = departmentsPosition.firstWhere(
-  //         (depandpos) =>
-  //             depandpos.positionId == widget.profile!.positionId &&
-  //             depandpos.departmentID == widget.profile!.departmentId);
-  //   }
-  //   setState(() {
-  //     if (AppStrings.ROLE_PERMISSIONS.contains('Manage BoD & HR accounts')) {
-  //     } else if (AppStrings.ROLE_PERMISSIONS
-  //         .contains('Manage Staffs info only')) {
-  //       departmentsPosition = departmentsPosition
-  //           .where((department) => department.departmentID != 'PB-GĐ')
-  //           .toList();
-  //     }
-  //   });
-  // }
   void _loadDepartments() async {
     await Provider.of<DeparmentsViewModel>(context, listen: false)
         .getDepartmentsByPosition();
@@ -669,6 +647,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _updateProfile() async {
+    print("endtime $_endTime");
     if (_formKey.currentState!.validate()) {
       final updatedProfile = Profiles(
           profileId: _profileIDController.text,
@@ -765,7 +744,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           elevation: 0,
           title: statusProfile == 0
               ? Text(
-                  getStatusText(_startTime, _endTime, statusProfile!),
+                  getStatusText(_startTime, _endTime!, statusProfile!),
                   style: TextStyle(color: Colors.white, fontSize: 13),
                 )
               : Text(
