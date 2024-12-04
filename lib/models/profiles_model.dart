@@ -93,7 +93,11 @@ class Profiles {
     map["salary_id"] = salaryId;
     map["birthday"] = DateFormat("dd-MM-yyyy").format(birthday);
     map["start_time"] = DateFormat("dd-MM-yyyy").format(startTime!);
-    map["end_time"] = DateFormat("dd-MM-yyyy").format(endTime!);
+    if (endTime != null) {
+        map["end_time"] = DateFormat("dd-MM-yyyy").format(endTime!);
+      } else {
+        map["end_time"] = null;
+      }
     map["position_id"] = positionId;
     map["place_of_birth"] = placeOfBirth;
     map["nation"] = nation;

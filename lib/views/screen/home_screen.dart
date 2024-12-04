@@ -1398,7 +1398,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         EmployeeStat('Nghỉ việc', viewModel.quitCount),
                         EmployeeStat(
                             'Thử việc', viewModel.probationaryEmployeeCount),
-                        EmployeeStat('Hợp đồng vô hạn',
+                        EmployeeStat('Hợp đồng vô thời hạn',
                             viewModel.officialContractsCount),
                         EmployeeStat('Hợp đồng thời hạn',
                             viewModel.temporaryContractsCount),
@@ -1427,7 +1427,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Colors.blue;
                         } else if (stats.status == 'Nghỉ việc') {
                           return Colors.red;
-                        } else if (stats.status == 'Hợp đồng vô hạn') {
+                        } else if (stats.status == 'Hợp đồng vô thời hạn') {
                           return Colors.green;
                         } else if (stats.status == 'Hợp đồng thời hạn') {
                           return Colors.orange;
@@ -1479,7 +1479,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Container(
                           width: 20,
                           height: 20,
-                          color: const Color.fromARGB(255, 235, 229, 229),
+                          color: const Color.fromARGB(255, 243, 79, 175),
                         ),
                         SizedBox(width: 8),
                         Text('Thử việc: ${viewModel.probationaryEmployeeCount}',
@@ -1495,7 +1495,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         SizedBox(width: 8),
                         Text(
-                            'Hợp đồng vô hạn: ${viewModel.officialContractsCount}',
+                            'Hợp đồng vô thời hạn: ${viewModel.officialContractsCount}',
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),

@@ -196,7 +196,9 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                       return null;
                     },
                   ).px8().w(150),
-                  CustomTextFormField(
+                  widget.LOGINprofile!.roleID==1?
+                  SizedBox.shrink()
+                 : CustomTextFormField(
                     enabled: false,
                     textEditingController: _namenguoiduyet,
                     labelText: 'Tên người duyệt',
@@ -210,16 +212,16 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                 ],
               ),
               CustomTextFormField(
-                enabled: false,
-                textEditingController: _name,
-                labelText: 'Tên nhân viên',
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Vui lòng nhập tên nhân viên';
-                  }
-                  return null;
-                },
-              ).p(8),
+              enabled: false,
+              textEditingController: _name,
+              labelText: 'Tên nhân viên',
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Vui lòng nhập tên nhân viên';
+                }
+                return null;
+              },
+            ).p(8),
               AppStrings.ROLE_PERMISSIONS.containsAny(
                       ['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? _buildDropdownField(
@@ -320,18 +322,18 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                 },
               ).px8(),
               SizedBox(height: 16),
-              widget.LOGINprofile!.roleID == 3
-                  ? SizedBox.shrink()
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        // Nút Lưu chỉ hiển thị khi không phải status = -1
-                        if (widget.absents!.status != -1)
-                          IconButton(
-                            icon: Icon(Icons.save,
-                                color: const Color.fromARGB(255, 33, 243, 61)),
-                            onPressed: _updateAbsent,
-                          ),
+              widget.LOGINprofile!.roleID==3 || widget.LOGINprofile!.roleID==1
+              ? SizedBox.shrink()
+              :Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  // Nút Lưu chỉ hiển thị khi không phải status = -1
+                  if (widget.absents!.status != -1)
+                    IconButton(
+                      icon: Icon(Icons.save,
+                          color: const Color.fromARGB(255, 33, 243, 61)),
+                      onPressed: _updateAbsent,
+                    ),
 
                         // Nút Chỉnh sửa chỉ hiển thị khi không phải status = -1
                         if (widget.absents!.status != -1)
@@ -475,14 +477,14 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
         SizedBox(width: 8), // Khoảng cách giữa TextField và nút
         // Nút xóa
         IconButton(
-          onPressed: () {
+          onPressed: _isEditing ?() {
             setState(() {
               _toDateController.clear(); // Xóa nội dung TextFormField
               _toDate =
                   _fromDate; // Đặt lại ngày "toDate" bằng ngày "fromDate" hoặc giá trị mặc định
               _updateDayOff(); // Cập nhật lại số ngày nghỉ
             });
-          },
+          }:null,
           icon: Icon(Icons.clear, color: Colors.red),
           tooltip: 'Xóa nội dung',
         )

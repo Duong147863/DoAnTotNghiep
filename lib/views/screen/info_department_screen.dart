@@ -102,7 +102,40 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
       appBarItemColor: AppColor.offWhite,
       appBarColor: AppColor.primaryLightColor,
       actions: [
-        // Actions như cũ
+        AppStrings.ROLE_PERMISSIONS.containsAny(
+                ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+            ? TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+                  });
+                },
+                icon: Icon(
+                  Icons.edit,
+                  color: AppColor.boneWhite,
+                ),
+                label: Text(
+                  "Sửa",
+                  style: TextStyle(color: AppColor.boneWhite),
+                ),
+              )
+            : SizedBox.shrink(),
+        AppStrings.ROLE_PERMISSIONS.containsAny(
+                ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+            ? TextButton.icon(
+                onPressed: () {
+                  _updateDepartment();
+                },
+                icon: Icon(
+                  Icons.save,
+                  color: AppColor.boneWhite,
+                ),
+                label: Text(
+                  "Save",
+                  style: TextStyle(color: AppColor.boneWhite),
+                ),
+              )
+            : SizedBox.shrink(),
       ],
       body: Form(
         key: _formKey,
