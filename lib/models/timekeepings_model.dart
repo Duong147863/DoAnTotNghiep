@@ -11,6 +11,7 @@ class Timekeepings {
       required this.date,
       this.leavingSoon,
       this.status = 0,
+      this.note,
       this.isExpanded = false});
   int? timekeepingId;
   DateTime checkin;
@@ -21,6 +22,7 @@ class Timekeepings {
   DateTime date;
   DateTime? leavingSoon;
   int status;
+  String? note;
   bool isExpanded;
   factory Timekeepings.fromJson(Map<String, dynamic> json) {
     return Timekeepings(

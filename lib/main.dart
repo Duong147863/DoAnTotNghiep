@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/view_models/absent_view_model.dart';
 import 'package:nloffice_hrm/view_models/assignment_view_model.dart';
 import 'package:nloffice_hrm/view_models/deparments_view_model.dart';
@@ -27,7 +29,8 @@ void main() {
   // await NotificationService.clearIrrelevantNotificationChannels();
   // await NotificationService.initializeAwesomeNotification();
   // await NotificationService.listenToActions();
-
+  // await initializeDateFormatting('vi', null);
+  // Intl.defaultLocale = 'vi';
   // Run app!
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<ProjectsViewModel>(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/models/enterprises_model.dart';
 import 'package:nloffice_hrm/view_models/enterprises_view_model.dart';
@@ -12,6 +13,8 @@ class InfoEnterpriseScreen extends StatefulWidget {
 }
 
 class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
+  bool _isEditing = false;
+
   @override
   void initState() {
     super.initState();
@@ -33,6 +36,27 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
       appBarItemColor: Colors.white,
       backgroundColor: Colors.white,
       titletext: "Thông tin doanh nghiệp",
+      actions: [
+        _isEditing
+            ? IconButton(
+                enableFeedback: true,
+                onPressed: () {
+                  // Tắt nút sau khi nhấn
+                  setState(() {
+                    _isEditing = false;
+                  });
+                  // Thực hiện hành động
+                }, // Nếu nút không được bật, sẽ không thực hiện hành động
+                icon: Icon(Icons.save, color: Colors.white),
+              )
+            : IconButton(
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+                  });
+                },
+                icon: Icon(Icons.edit))
+      ],
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(

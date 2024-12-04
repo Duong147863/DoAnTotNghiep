@@ -359,11 +359,12 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         ),
         items: [
-          DropdownMenuItem(value: false, child: Text('Man')),
-          DropdownMenuItem(value: true, child: Text('Woman')),
+          DropdownMenuItem(value: false, child: Text('Nam')),
+          DropdownMenuItem(value: true, child: Text('Nữ')),
         ],
         onChanged: onChanged,
-        validator: (value) => value == null ? 'Please select a gender' : null,
+        validator: (value) =>
+            value == null ? 'Vui lòng chọn giới tính ứng viên' : null,
       ),
     );
   }
@@ -492,7 +493,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
               ),
       ],
       resizeToAvoidBottomInset: true,
-      titletext: "Thông tin tuyển dụng",
+      titletext: "Thông tin ứng viên",
       appBarColor: AppColor.primaryLightColor,
       body: SingleChildScrollView(
         child: Form(

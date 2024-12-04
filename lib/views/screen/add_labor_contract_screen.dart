@@ -43,6 +43,7 @@
     @override
     void initState() {
       super.initState();
+      
       profileId = widget.profiles!.profileId;
       _profileNameController.text = widget.profiles!.profileName;
       statusProfile = widget.profiles!.profileStatus;
