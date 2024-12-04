@@ -77,6 +77,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
   int? daysDifference; //tổng số ngày của start time - end time
   ///APi lấy Địa chỉ
   String? _selectedNation;
+  bool _passwordVisible = false;
   //Json Địa Chỉ
   late Future<List<Province>> futureProvinces;
   List<Province> provinces = [];
@@ -730,6 +731,20 @@ class _AddProfilePageState extends State<AddProfilePage> {
                     focusNode: _passwordFocusNode,
                     maxLength: 15,
                     textEditingController: _passwordController,
+                    obscureText: !_passwordVisible, 
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Không được để trống';

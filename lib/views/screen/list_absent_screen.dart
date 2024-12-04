@@ -148,93 +148,7 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
       ],
     );
   }
-  // Widget _buildAbsentList(BuildContext context, int status) {
-  //   return Consumer<AbsentsViewModel>(
-  //     builder: (context, viewModel, child) {
-  //       // Tải dữ liệu nếu cần
-  //       if (!viewModel.fetchingData && viewModel.listAbsents.isEmpty) {
-  //         Provider.of<AbsentsViewModel>(context, listen: false)
-  //             .getAllAbsentsbyRole(widget.profiles!.profileId);
-  //       }
 
-  //       // Hiển thị trạng thái đang tải
-  //       if (viewModel.fetchingData) {
-  //         if (viewModel.listAbsents.isEmpty) {
-  //           return Center(
-  //               child: Column(
-  //             children: [
-  //               const Text(
-  //                 "Chưa có dữ liệu",
-  //                 style: TextStyle(fontSize: 16),
-  //               ).py16(),
-  //               Image.asset("assets/images/no_data.png"),
-  //             ],
-  //           ));
-  //         } else {
-  //           return const Center(child: CircularProgressIndicator());
-  //         }
-  //       }
-
-  //       // Lọc danh sách theo trạng thái
-  //       List<Absents> filteredAbsents = viewModel.listAbsents
-  //           .where((absent) => absent.status == status)
-  //           .toList();
-
-  //       // Kiểm tra danh sách rỗng
-  //       if (filteredAbsents.isEmpty) {
-  //         return const Center(
-  //           child: Text("Không có đơn nghỉ ở trạng thái này."),
-  //         );
-  //       }
-  //       // Danh sách các đơn nghỉ việc
-  //       return ListView.builder(
-  //         itemCount: filteredAbsents.length,
-  //         itemBuilder: (context, index) {
-  //           final absent = filteredAbsents[index];
-  //           return Card(
-  //             child: ListTile(
-  //               title: Text("${absent.profileID}"),
-  //               subtitle: Text(
-  //                 status == -1
-  //                     ? "Từ Chối Duyệt"
-  //                     : status == 0
-  //                         ? "Đợi Duyệt"
-  //                         : "Đã Duyệt",
-  //                 style: TextStyle(
-  //                   color: status == -1
-  //                       ? Colors.red
-  //                       : status == 0
-  //                           ? Colors.yellow
-  //                           : Colors.green,
-  //                 ),
-  //               ),
-  //             ),
-  //           ).onInkTap(() async {
-  //             if (status == 1) {
-  //               ScaffoldMessenger.of(context).showSnackBar(
-  //                 const SnackBar(
-  //                     content: Text("Đã duyệt. Không thể chỉnh sửa!")),
-  //               );
-  //               return;
-  //             }
-  //             final updatedAbsent = await Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                 builder: (context) => InfoAbsentScreen(
-  //                   absents: absent,
-  //                   profile: widget.profiles,
-  //                 ),
-  //               ),
-  //             );
-  //             if (updatedAbsent != null) {
-  //               _handleUpdate(updatedAbsent);
-  //             }
-  //           });
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
   Widget _buildAbsentList(BuildContext context, int status) {
     return Consumer<AbsentsViewModel>(
       builder: (context, viewModel, child) {
@@ -320,6 +234,7 @@ class _ListAbsentScreenState extends State<ListAbsentScreen> {
                   builder: (context) => InfoAbsentScreen(
                     absents: absent,
                     profile: widget.profiles,
+                    LOGINprofile: widget.profiles,
                   ),
                 ),
               );

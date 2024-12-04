@@ -24,6 +24,10 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   FocusNode _passwordOldFocusNode = FocusNode();
   FocusNode _newPasswordFocusNode = FocusNode();
   FocusNode _confirmPasswordFocusNode = FocusNode();
+
+  bool _passwordVisible = false;
+    bool _passwordVisible1 = false;
+      bool _passwordVisible2 = false;
   @override
   void initState() {
     super.initState();
@@ -121,9 +125,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ),
                       SizedBox(height: 16),
                       CustomTextFormField(
-                         maxLength: 15,
+                        maxLength: 15,
                         focusNode: _passwordOldFocusNode,
-                        textEditingController: _oldPasswordController,
+                         textEditingController: _oldPasswordController,
+                        obscureText: !_passwordVisible,
+                       
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        ),
                         labelText: 'Mật khẩu hiện tại',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -137,6 +156,21 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         maxLength: 15,
                         focusNode: _newPasswordFocusNode,
                         textEditingController: _newPasswordController,
+                         obscureText: !_passwordVisible1,
+                       
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible1
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible1 = !_passwordVisible1;
+                            });
+                          },
+                        ),
                         labelText: 'Mật khẩu mới',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -155,9 +189,24 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       ).px8(),
                       SizedBox(height: 16),
                       CustomTextFormField(
-                         maxLength: 15,
+                        maxLength: 15,
                         focusNode: _confirmPasswordFocusNode,
                         textEditingController: _confirmPasswordController,
+                         obscureText: !_passwordVisible2,
+                       
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _passwordVisible2
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible2 = !_passwordVisible2;
+                            });
+                          },
+                        ),
                         labelText: 'Xác nhận mật khẩu mới',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
