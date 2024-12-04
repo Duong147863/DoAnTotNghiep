@@ -116,14 +116,6 @@ class _AddLaborContractScreenKHD2State
                 'Ngày bắt đầu hợp đồng không được trước ngày kết thúc hợp đồng trước đó.')));
         return; // Dừng lại nếu không hợp lệ
       }
-
-      // Nếu có hợp đồng trước, kiểm tra thêm ngày kết thúc hợp đồng mới
-      if (_endTimeHopDong.isBefore(_startTimeHopDong)) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-                'Ngày kết thúc hợp đồng không thể trước ngày bắt đầu hợp đồng.')));
-        return; // Dừng lại nếu không hợp lệ
-      }
       if (_laborContractImageBase64 == null) {
         // Hiển thị thông báo lỗi nếu chưa chọn ảnh
         ScaffoldMessenger.of(context).showSnackBar(

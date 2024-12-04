@@ -151,12 +151,12 @@ class _AddProvincesState extends State<AddProvinces> {
       return null;
     }
 
-    // Kiểm tra nếu địa chỉ chứa số nhà và tên đường
-    // Số nhà phải có ít nhất một chữ số, và tên đường phải chứa ít nhất một chữ cái
-    final addressRegex = RegExp(r'^\d+\s[a-zA-Z\s]+');
-    if (!addressRegex.hasMatch(value)) {
-      return 'Địa chỉ phải bao gồm số nhà và tên đường';
-    }
+    // // Kiểm tra nếu địa chỉ chứa số nhà và tên đường
+    // // Số nhà phải có ít nhất một chữ số, và tên đường phải chứa ít nhất một chữ cái
+    // final addressRegex = RegExp(r'^\d+\s[a-zA-Z\s]+');
+    // if (!addressRegex.hasMatch(value)) {
+    //   return 'Địa chỉ phải bao gồm số nhà và tên đường';
+    // }
 
     // Kiểm tra không có ký tự đặc biệt không hợp lệ
     final nameRegex = RegExp(

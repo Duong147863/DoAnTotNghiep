@@ -34,7 +34,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
   final _profileNameController = TextEditingController();
   DateTime _startTimeHopDong = DateTime.now();
   DateTime _endTimeHopDong = DateTime.now();
-  DateTime endTimeThuViec = DateTime.now();
+  DateTime? endTimeThuViec;
   String? _laborContractImageBase64;
   String? profileId;
   int? statusProfile;
@@ -53,7 +53,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
     super.initState();
     profileId = widget.laborContracts!.profiles;
     _profileNameController.text = widget.profiles!.profileName;
-    endTimeThuViec = widget.profiles!.endTime!;
     statusProfile = widget.profiles!.profileStatus;
     //
 
@@ -436,16 +435,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Vui lòng nhập ngày bắt đầu hợp đồng';
-            }
-            try {
-              DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
-
-              // Kiểm tra nếu statusProfile == 0 (thực tập), ngày bắt đầu phải sau ngày kết thúc thực tập
-              if (statusProfile == 1 && selectedDate.isBefore(endTimeThuViec)) {
-                return 'Ngày bắt đầu hợp đồng phải sau ngày kết thúc thử việc';
-              }
-            } catch (e) {
-              return 'Định dạng ngày không hợp lệ';
             }
             return null; // Hợp lệ
           },
