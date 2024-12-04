@@ -29,6 +29,7 @@ class ProfilesViewModel extends ChangeNotifier {
   int genderWoman = 0;
   int officialContractsCount = 0;
   int temporaryContractsCount = 0;
+  int probationaryEmployeeCount = 0;
   int married = 0;
   int unmarried = 0;
   //
@@ -76,6 +77,7 @@ class ProfilesViewModel extends ChangeNotifier {
 
       quitCount = counts['quitCount'] ?? 0;
       activeCount = counts['activeCount'] ?? 0;
+      probationaryEmployeeCount=counts['probationaryEmployee'] ?? 0;
       officialContractsCount=counts['officialContractsCount'] ?? 0;
       temporaryContractsCount=counts['temporaryContractsCount'] ?? 0;
     } catch (e) {
