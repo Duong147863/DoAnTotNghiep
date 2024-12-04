@@ -66,10 +66,10 @@ class _TapBarState extends State<LoginScreen> {
                     filled: true,
                     validator: (value) {
                       if (value.isEmptyOrNull) {
-                        return 'Please enter your email or phone number';
+                        return 'Vui lòng nhập email hoặc số điện thoại của bạn';
                       } else if (isEmail(value!) == false &&
                           SPUtill.isPhoneNumber(value) == false) {
-                        return 'Please enter a valid email or phone number';
+                        return 'Vui lòng nhập email hoặc số điện thoại hợp lệ';
                       }
                       return null;
                     },
@@ -94,9 +94,9 @@ class _TapBarState extends State<LoginScreen> {
                     filled: true,
                     validator: (value) {
                       if (value.isEmptyOrNull) {
-                        return 'Please enter your password';
+                        return 'Vui lòng nhập mật khẩu của bạn';
                       } else if (value!.length < 6) {
-                        return 'Password must be at least 6 characters long';
+                        return 'Mật khẩu phải dài ít nhất 6 ký tự';
                       }
                       return null;
                     },
@@ -132,7 +132,7 @@ class _TapBarState extends State<LoginScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context) =>
+                          builder: (BuildContext context,) =>
                               HomeScreen(profile: userProfile),
                         ),
                       );
@@ -154,7 +154,7 @@ class _TapBarState extends State<LoginScreen> {
                   } catch (e) {
                     print('Error: $e'); // In thông tin lỗi
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Lỗi kết nối $e')),
+                      SnackBar(content: Text('Đăng nhập thất bại. Vui lòng kiểm tra tài khoản và mật khẩu')),
                     );
                   }
                 }

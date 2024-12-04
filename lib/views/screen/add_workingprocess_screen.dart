@@ -108,7 +108,7 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
     }
   }
 
-   Widget _buildDateStartTime(String label, TextEditingController controller,
+  Widget _buildDateStartTime(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
       onTap: () => _selectDate(context, initialDate, (selectedDate) {
@@ -163,80 +163,78 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
     );
   }
 
- Widget _buildDateEndTimeWithClearButton(
-    String label,
-    TextEditingController controller,
-    DateTime initialDate,
-    Function(DateTime?) onDateSelected) {
-  return Row(
-    children: [
-      // Trường nhập ngày với GestureDetector
-      Expanded(
-        child: GestureDetector(
-          onTap: () => _selectDate(
-            context,
-            initialDate,
-            (selectedDate) {
-              onDateSelected(selectedDate);
-              setState(() {
-                _endTime = selectedDate;
-                controller.text = selectedDate != null
-                    ? DateFormat('dd/MM/yyyy').format(selectedDate)
-                    : '';
-              });
-            },
-          ),
-          child: AbsorbPointer(
-            child: TextFormField(
-              readOnly: true,
-              focusNode: _endFocusNode,
-              style: TextStyle(color: Colors.black),
-              controller: controller,
-              validator: (value) {
-                if (value != null && value.isNotEmpty) {
-                  try {
-                    DateTime selectedEndTime =
-                        DateFormat('dd/MM/yyyy').parse(value);
-                    // Kiểm tra ngày có lớn hơn hiện tại hay không
-                    if (selectedEndTime.isAfter(DateTime.now())) {
-                      return 'Ngày kết thúc\nkhông thể lớn\nhơn ngày hiện tại';
-                    }
-                    // Kiểm tra khoảng thời gian giữa ngày kết thúc và ngày bắt đầu
-                    if (selectedEndTime.isBefore(_startTime) ||
-                        selectedEndTime.difference(_startTime).inDays < 30) {
-                      return 'Thời gian kết\nthúc phải trên 1\ntháng kể từ\nthời gian bắt đầu';
-                    }
-                  } catch (e) {
-                    return 'Định dạng ngày không hợp lệ';
-                  }
-                }
-                return null; // Không có lỗi
+  Widget _buildDateEndTimeWithClearButton(
+      String label,
+      TextEditingController controller,
+      DateTime initialDate,
+      Function(DateTime?) onDateSelected) {
+    return Row(
+      children: [
+        // Trường nhập ngày với GestureDetector
+        Expanded(
+          child: GestureDetector(
+            onTap: () => _selectDate(
+              context,
+              initialDate,
+              (selectedDate) {
+                onDateSelected(selectedDate);
+                setState(() {
+                  _endTime = selectedDate;
+                  controller.text = selectedDate != null
+                      ? DateFormat('dd/MM/yyyy').format(selectedDate)
+                      : '';
+                });
               },
-              decoration: InputDecoration(
-                labelText: label,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            child: AbsorbPointer(
+              child: TextFormField(
+                readOnly: true,
+                focusNode: _endFocusNode,
+                style: TextStyle(color: Colors.black),
+                controller: controller,
+                validator: (value) {
+                  if (value != null && value.isNotEmpty) {
+                    try {
+                      DateTime selectedEndTime =
+                          DateFormat('dd/MM/yyyy').parse(value);
+                      // Kiểm tra ngày có lớn hơn hiện tại hay không
+                      if (selectedEndTime.isAfter(DateTime.now())) {
+                        return 'Ngày kết thúc\nkhông thể lớn\nhơn ngày hiện tại';
+                      }
+                      // Kiểm tra khoảng thời gian giữa ngày kết thúc và ngày bắt đầu
+                      if (selectedEndTime.isBefore(_startTime) ||
+                          selectedEndTime.difference(_startTime).inDays < 30) {
+                        return 'Thời gian kết\nthúc phải trên 1\ntháng kể từ\nthời gian bắt đầu';
+                      }
+                    } catch (e) {
+                      return 'Định dạng ngày không hợp lệ';
+                    }
+                  }
+                  return null; // Không có lỗi
+                },
+                decoration: InputDecoration(
+                  labelText: label,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                ),
               ),
             ),
           ),
         ),
-      ),
-      SizedBox(width: 8), // Khoảng cách giữa TextField và nút xóa
-      // Nút xóa
-      IconButton(
-        onPressed: () {
-          setState(() {
-            controller.clear(); // Xóa nội dung của TextFormField
-         
-          });
-        },
-        icon: Icon(Icons.clear, color: Colors.red),
-        tooltip: 'Xóa ngày',
-      ),
-    ],
-  );
-}
-
+        SizedBox(width: 8), // Khoảng cách giữa TextField và nút xóa
+        // Nút xóa
+        IconButton(
+          onPressed: () {
+            setState(() {
+              controller.clear(); // Xóa nội dung của TextFormField
+            });
+          },
+          icon: Icon(Icons.clear, color: Colors.red),
+          tooltip: 'Xóa ngày',
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -328,10 +326,10 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                       return null;
                     },
                   ).px8(),
-                  SizedBox(height: 16),
-                  Row(
+                  Column(
                     children: [
-                      Expanded(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateStartTime(
                           'Bắt đầu',
                           _startTimeController,
@@ -339,14 +337,15 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                           (date) {
                             setState(() {
                               _startTime = date;
+                              // Định dạng ngày theo DD/MM/YYYY
                               _startTimeController.text =
-                                  "${_startTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(date);
                             });
                           },
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
+                      ).px8(),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateEndTimeWithClearButton(
                           'Kết thúc',
                           _endTimeController,
@@ -354,12 +353,13 @@ class _AddWorkingprocesScreenState extends State<AddWorkingprocesScreen> {
                           (date) {
                             setState(() {
                               _endTime = date!;
+                              // Định dạng ngày theo DD/MM/YYYY
                               _endTimeController.text =
-                                  "${_endTime.toLocal()}".split(' ')[0];
+                                  DateFormat('dd/MM/yyyy').format(date);
                             });
                           },
                         ),
-                      ),
+                      ).p(8),
                     ],
                   ),
                   SizedBox(height: 24),

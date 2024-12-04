@@ -298,68 +298,71 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                 ),
               ),
               Divider(),
-              Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _diplomaIDController,
-                    focusNode: _mabangcapFocusNode,
-                    maxLength: 20,
-                    labelText: 'Mã bằng - chứng chỉ',
-                    validator: (value) {
-                      // Kiểm tra nếu trường trống
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      if (value.trim() != value) {
-                        return 'Không được có\nkhoảng trắng thừa\nở đầu hoặc cuối';
-                      }
-                      // Kiểm tra độ dài tối thiểu và tối đa
-                      if (value.length < 5 || value.length > 20) {
-                        return 'Mã bằng cấp phải\ncó từ 5 đến 20 ký tự';
-                      }
-                      // Kiểm tra tính hợp lệ của mã bằng cấp theo yêu cầu
-                      final regex = RegExp(r'^[A-Z0-9/-]+$');
-                      if (!regex.hasMatch(value)) {
-                        return 'Mã bằng cấp chỉ\n được chứa chữ cái\nviết hoa, số, dấu\n"-" và "/"';
-                      }
-                      return null;
-                    },
-                  ).px8().w(150),
-                  CustomTextFormField(
-                    textEditingController: _diplomaDegreeNameController,
-                    maxLength: 150,
-                    focusNode: _tenbangcapFocusNode,
-                    labelText: 'Tên bằng cấp - chứng chỉ',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      // Kiểm tra không có khoảng trắng ở cuối tên
-                      if (value.trim() != value) {
-                        return 'Không được có khoảng trắng\nthừa ở đầu hoặc cuối';
-                      }
-                      if (value.length < 4) {
-                        return 'Tên bằng cấp phải có\n ít nhất 4 ký tự';
-                      }
-                      String upperCaseName = value.toUpperCase();
-                      if (value != upperCaseName) {
-                        return 'Văn bản phải viết hoa hoàn\ntoàn. Ví dụ: BẰNG CỬ NHÂN';
-                      }
-                      // Regex kiểm tra ký tự tiếng Việt in hoa và khoảng trắng
-                      final nameRegex = RegExp(
-                          r"^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+)*$");
-                      if (!nameRegex.hasMatch(value)) {
-                        return 'Tên bằng cấp không hợp lệ.\nVui lòng nhập đúng định dạng.';
-                      }
-
-                      if (!value.isLetter()) {
-                        return 'Tên chỉ gồm chữ';
-                      }
-                      return null;
-                    },
-                  ).w(229),
-                ],
-              ).py16(),
+             
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: CustomTextFormField(
+                      textEditingController: _diplomaIDController,
+                      focusNode: _mabangcapFocusNode,
+                      maxLength: 20,
+                      labelText: 'Mã bằng - chứng chỉ',
+                      validator: (value) {
+                        // Kiểm tra nếu trường trống
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        if (value.trim() != value) {
+                          return 'Không được có\nkhoảng trắng thừa\nở đầu hoặc cuối';
+                        }
+                        // Kiểm tra độ dài tối thiểu và tối đa
+                        if (value.length < 5 || value.length > 20) {
+                          return 'Mã bằng cấp phải\ncó từ 5 đến 20 ký tự';
+                        }
+                        // Kiểm tra tính hợp lệ của mã bằng cấp theo yêu cầu
+                        final regex = RegExp(r'^[A-Z0-9/-]+$');
+                        if (!regex.hasMatch(value)) {
+                          return 'Mã bằng cấp chỉ\n được chứa chữ cái\nviết hoa, số, dấu\n"-" và "/"';
+                        }
+                        return null;
+                      },
+                    ).p(8),
+                  ),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: CustomTextFormField(
+                      textEditingController: _diplomaDegreeNameController,
+                      maxLength: 150,
+                      focusNode: _tenbangcapFocusNode,
+                      labelText: 'Tên bằng cấp - chứng chỉ',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        // Kiểm tra không có khoảng trắng ở cuối tên
+                        if (value.trim() != value) {
+                          return 'Không được có khoảng trắng\nthừa ở đầu hoặc cuối';
+                        }
+                        if (value.length < 4) {
+                          return 'Tên bằng cấp phải có\n ít nhất 4 ký tự';
+                        }
+                        String upperCaseName = value.toUpperCase();
+                        if (value != upperCaseName) {
+                          return 'Văn bản phải viết hoa hoàn\ntoàn. Ví dụ: BẰNG CỬ NHÂN';
+                        }
+                        // Regex kiểm tra ký tự tiếng Việt in hoa và khoảng trắng
+                        final nameRegex = RegExp(
+                            r"^[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+(\s[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẮẰẲẴẶẤẦẨẪẬẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢÙỦŨỤƯỨỪỬỮỰÝỲỶỸỴ]+)*$");
+                        if (!nameRegex.hasMatch(value)) {
+                          return 'Tên bằng cấp không hợp lệ.\nVui lòng nhập đúng định dạng.';
+                        }
+                    
+                        if (!value.isLetter()) {
+                          return 'Tên chỉ gồm chữ';
+                        }
+                        return null;
+                      },
+                    )
+                  ).p(8),
               DropdownButtonFormField<String>(
                 value: _selectecSchool,
                 focusNode: _capboiFocusNode,
@@ -469,7 +472,7 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                       }
                       return null;
                     },
-                  ).w(229),
+                  ).w(175),
                 ],
               ).py16(),
               Row(
@@ -501,18 +504,18 @@ class _AddDiplomaScreenState extends State<AddDiplomaScreen> {
                       }
                       return null;
                     },
-                  ).px8().w(150),
+                  ).px8().w(170),
                   CustomTextFormField(
                     enabled: false,
                     textEditingController: _profileIDController,
-                    labelText: 'Profile ID',
+                    labelText: 'Mã nhân viên',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'please_enter_profile_id';
                       }
                       return null;
                     },
-                  ).w(229),
+                  ).w(140),
                 ],
               ).py16(),
               _buildDateField(

@@ -12,6 +12,7 @@ class LaborContracts {
     required this.laborContractId,
     this.isExpanded=false,
     required this.profiles
+    
   });
 
   String? image;

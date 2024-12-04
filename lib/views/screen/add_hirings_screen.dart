@@ -357,7 +357,7 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
   return DropdownButtonFormField<DepartmentPosition>(
     value: selectedDepartmentsPosition,
     hint: Text(hint),
-    isExpanded: false,
+    isExpanded: true,
     onChanged: (DepartmentPosition? newValue) {
       setState(() {
         selectedDepartmentsPosition = newValue;
@@ -485,50 +485,55 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
               _buildDepartmentPositionDropdown('Vị trí ứng tuyển').p(8),
 
               // Birthday and Place of Birth
-              Row(
-                children: [
-                  _buildDateBirthday(
-                      'Ngày sinh', _birthdayController, _birthday, (date) {
-                    setState(() {
-                      _birthday = date;
-                      _birthdayController.text =
-                          "${_birthday.toLocal()}".split(' ')[0];
-                    });
-                  }).px8().w(150),
-                  InkWell(
-                    onTap: () async {
-                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                      final selectedAddress = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddProvinces(),
+             
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: _buildDateBirthday(
+                        'Ngày sinh', _birthdayController, _birthday, (date) {
+                      setState(() {
+                        _birthday = date;
+                        _birthdayController.text =
+                            "${_birthday.toLocal()}".split(' ')[0];
+                      });
+                    }),
+                  ).p(8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: InkWell(
+                      onTap: () async {
+                        // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                        final selectedAddress = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddProvinces(),
+                          ),
+                        );
+                    
+                        if (selectedAddress != null) {
+                          setState(() {
+                            // Cập nhật TextEditingController với địa chỉ được chọn
+                            _nationController.text = selectedAddress;
+                          });
+                        }
+                      },
+                      child: AbsorbPointer(
+                        // Ngăn không cho bàn phím mở ra khi nhấn
+                        child: CustomTextFormField(
+                          focusNode: _nationFocusNode,
+                          textEditingController: _nationController,
+                          labelText: 'Quê quán',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Không được để trống';
+                            }
+                            return null;
+                          },
                         ),
-                      );
-
-                      if (selectedAddress != null) {
-                        setState(() {
-                          // Cập nhật TextEditingController với địa chỉ được chọn
-                          _nationController.text = selectedAddress;
-                        });
-                      }
-                    },
-                    child: AbsorbPointer(
-                      // Ngăn không cho bàn phím mở ra khi nhấn
-                      child: CustomTextFormField(
-                        focusNode: _nationFocusNode,
-                        textEditingController: _nationController,
-                        labelText: 'Quê quán',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          }
-                          return null;
-                        },
                       ),
                     ),
-                  ).w(230),
-                ],
-              ),
+                  ).p(8),
+            
+             
               // Gender and Nation
               Row(
                 children: [
@@ -541,64 +546,68 @@ class _AddHiringsScreenState extends State<AddHiringsScreen> {
                 ],
               ),
               // Email and Phone
-              Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _emailController,
-                    labelText: 'Email',
-                    maxLength: 254,
-                    maxLines: 1,
-                    focusNode: _emailFocusNode,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      final emailRegex =
-                          RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
-                      if (!emailRegex.hasMatch(value)) {
-                        return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
-                      }
-                      // Kiểm tra độ dài phần trước @
-                      final localPart = value.split('@')[0];
-                      if (localPart.length < 6 || localPart.length > 30) {
-                        return 'Phần trước @ phải từ 6-30 ký tự';
-                      }
-                      if (value.length > 254) {
-                        return 'Email không được vượt quá 254 ký tự';
-                      }
-                      return null;
-                    },
-                  ).px4().w(225),
-                  CustomTextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được\nđể trống';
-                      }
-                      if (value.length != 10) {
-                        return 'Số điện thoại\nkhông hợp lệ';
-                      }
-                      if (!value.startsWith('0')) {
-                        return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
-                      }
-                      if (!value.isNumber()) {
-                        return 'Số điện thoại\nchỉ gồm số';
-                      }
-                      if (value.startsWith('00')) {
-                        return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
-                      }
-                      return null;
-                    },
-                    textEditingController: _phoneController,
-                    labelText: 'Điện thoại',
-                    maxLines: 1,
-                    maxLength: 10,
-                    focusNode: _phoneFocusNode,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        errorMaxLines: 2, errorStyle: TextStyle(fontSize: 12)),
-                  ).w(155),
-                ],
-              ).py8(),
+             
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: CustomTextFormField(
+                      textEditingController: _emailController,
+                      labelText: 'Email',
+                      maxLength: 254,
+                      maxLines: 1,
+                      focusNode: _emailFocusNode,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        final emailRegex =
+                            RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
+                        }
+                        // Kiểm tra độ dài phần trước @
+                        final localPart = value.split('@')[0];
+                        if (localPart.length < 6 || localPart.length > 30) {
+                          return 'Phần trước @ phải từ 6-30 ký tự';
+                        }
+                        if (value.length > 254) {
+                          return 'Email không được vượt quá 254 ký tự';
+                        }
+                        return null;
+                      },
+                    ),
+                  ).p(8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: CustomTextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được\nđể trống';
+                        }
+                        if (value.length != 10) {
+                          return 'Số điện thoại\nkhông hợp lệ';
+                        }
+                        if (!value.startsWith('0')) {
+                          return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
+                        }
+                        if (!value.isNumber()) {
+                          return 'Số điện thoại\nchỉ gồm số';
+                        }
+                        if (value.startsWith('00')) {
+                          return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
+                        }
+                        return null;
+                      },
+                      textEditingController: _phoneController,
+                      labelText: 'Điện thoại',
+                      maxLines: 1,
+                      maxLength: 10,
+                      focusNode: _phoneFocusNode,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          errorMaxLines: 2, errorStyle: TextStyle(fontSize: 12)),
+                    ),
+                  ).p(8),
+              
               InkWell(
                 onTap: () async {
                   // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về

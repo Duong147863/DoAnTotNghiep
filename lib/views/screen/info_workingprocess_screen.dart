@@ -150,7 +150,7 @@ class _InfoWorkingprocessScreenState extends State<InfoWorkingprocessScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: initialDate,
-     firstDate: DateTime(1960),
+      firstDate: DateTime(1960),
       lastDate: DateTime(2100),
     );
     if (picked != null && picked != initialDate) {
@@ -387,39 +387,36 @@ class _InfoWorkingprocessScreenState extends State<InfoWorkingprocessScreen> {
                     },
                   ).px8(),
                   SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildDateStartTime(
-                          'Start Time',
-                          _startTimeController,
-                          _startTime,
-                          (date) {
-                            setState(() {
-                              _startTime = date;
-                              _startTimeController.text =
-                                  DateFormat('dd/MM/yyyy').format(_startTime);
-                            });
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
-                        child: _buildDateEndTimeWithClearButton(
-                          'End Time',
-                          _endTimeController,
-                          _endTime,
-                          (date) {
-                            setState(() {
-                              _endTime = date!;
-                              _endTimeController.text =
-                                  DateFormat('dd/MM/yyyy').format(_endTime);
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: _buildDateStartTime(
+                      'Bắt đầu',
+                      _startTimeController,
+                      _startTime,
+                      (date) {
+                        setState(() {
+                          _startTime = date;
+                          _startTimeController.text =
+                              DateFormat('dd/MM/yyyy').format(_startTime);
+                        });
+                      },
+                    ),
+                  ).p(8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: _buildDateEndTimeWithClearButton(
+                      'Kết thúc',
+                      _endTimeController,
+                      _endTime,
+                      (date) {
+                        setState(() {
+                          _endTime = date!;
+                          _endTimeController.text =
+                              DateFormat('dd/MM/yyyy').format(_endTime);
+                        });
+                      },
+                    ),
+                  ).p(8),
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
