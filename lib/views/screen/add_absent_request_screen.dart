@@ -197,7 +197,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   }
                   // Kiểm tra không có khoảng trắng ở cuối tên
                   if (value.trim() != value) {
-                    return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                    return 'Không được có khoảng trắng thừa ở đầu\nhoặc cuối';
                   }
                   if (value.length < 10) {
                     return 'Lý do phải có ít nhất 10 ký tự';
@@ -206,7 +206,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   final nameRegex = RegExp(
                       r"^[a-zA-ZÂÃÈÉÊÙÚỦĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẨẫấậẫầãèéêìíòóôõùúăđĩũảơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽỈẹêềứỨếểễệẾỀỂỆỄìỉĩịỊÌIÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỔỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s0-9\-/:]+$");
                   if (!nameRegex.hasMatch(value)) {
-                    return 'Lý do không hợp lệ. Vui lòng nhập đúng định dạng.';
+                    return 'Lý do không hợp lệ. Vui lòng nhập đúng\nđịnh dạng.';
                   }
                   if (!value.isLetter()) {
                     return 'Lý do chỉ gồm chữ';
@@ -250,7 +250,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
           controller: controller,
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Vui lòng nhập ngày bắt đầu hợp đồng';
+              return 'Vui lòng nhập ngày\nbắt đầu hợp đồng';
             }
             try {
               DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
@@ -258,7 +258,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
               // Kiểm tra ngày không được trong quá khứ
               if (selectedDate
                   .isBefore(DateTime.now().subtract(Duration(days: 1)))) {
-                return 'Ngày bắt đầu không được trong quá khứ';
+                return 'Ngày bắt đầu không\nđược trong quá khứ';
               }
             } catch (e) {
               return 'Định dạng ngày không hợp lệ';
@@ -293,7 +293,7 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                   _toDate = selectedDate;
                   controller.text = selectedDate != null
                       ? DateFormat('dd/MM/yyyy').format(selectedDate)
-                      : "Hiện tại";
+                      : "";
                 });
               },
             ),
@@ -303,7 +303,21 @@ class _AddAbsentRequestScreenState extends State<AddAbsentRequestScreen> {
                 readOnly: true,
                 style: TextStyle(color: Colors.black),
                 controller: controller,
-                validator: (value) {},
+                  validator: (value) {
+                if (value == null || value.isEmpty) {
+                  // Trường hợp toDate được phép null
+                  return null;
+                }
+                try {
+                  DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
+                  if (_fromDate != null && selectedDate.isBefore(_fromDate)) {
+                    return 'Ngày kết\nthúc không\nđược trước\nngày bắt đầu';
+                  }
+                } catch (e) {
+                  return 'Định dạng ngày không hợp lệ';
+                }
+                return null;
+              },
                 decoration: InputDecoration(
                   labelText: label,
                   border: OutlineInputBorder(

@@ -249,7 +249,7 @@ class _AddTrainingprocessesScreenState
       backgroundColor: AppColor.aliceBlue,
       resizeToAvoidBottomInset: true,
       appBarColor: AppColor.primaryLightColor,
-      titletext: 'Thêm Quá Trình Đạo Tạo',
+      titletext: 'Thêm Quá Trình Đào Tạo',
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,

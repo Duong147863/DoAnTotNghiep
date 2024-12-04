@@ -219,7 +219,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   GestureDetector(
-                    onTap: _pickImage,
+                    onTap: _isEditing? _pickImage :null,
                     child: Center(
                       child: Container(
                         width: 300,
@@ -345,32 +345,32 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                     ],
                   ),
                   SizedBox(height: 24),
-                  AppStrings.ROLE_PERMISSIONS.containsAny([
-                    'Manage Staffs info only',
-                    'Manage BoD & HR accounts'
-                  ])
-                      ? (showSpeedDial == false && statusProfile != 3)
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                IconButton(
-                                  icon: Icon(Icons.save,
-                                      color: const Color.fromARGB(
-                                          255, 33, 243, 61)),
-                                  onPressed: _updateLaborContract,
-                                ),
-                                IconButton(
-                                  icon: Icon(Icons.edit, color: Colors.blue),
-                                  onPressed: () {
-                                    setState(() {
-                                      _isEditing = true;
-                                    });
-                                  },
-                                )
-                              ],
-                            )
-                          : SizedBox.shrink()
-                      : SizedBox.shrink(),
+                  // AppStrings.ROLE_PERMISSIONS.containsAny([
+                  //   'Manage Staffs info only',
+                  //   'Manage BoD & HR accounts'
+                  // ])
+                  //     ? (showSpeedDial == false && statusProfile != 3)
+                  //         ? Row(
+                  //             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //             children: [
+                  //               IconButton(
+                  //                 icon: Icon(Icons.save,
+                  //                     color: const Color.fromARGB(
+                  //                         255, 33, 243, 61)),
+                  //                 onPressed: _updateLaborContract,
+                  //               ),
+                  //               IconButton(
+                  //                 icon: Icon(Icons.edit, color: Colors.blue),
+                  //                 onPressed: () {
+                  //                   setState(() {
+                  //                     _isEditing = true;
+                  //                   });
+                  //                 },
+                  //               )
+                  //             ],
+                  //           )
+                  //         : SizedBox.shrink()
+                  //     : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -433,27 +433,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
           style: TextStyle(color: Colors.black),
           controller: controller,
           focusNode: _starttimeFocusNode,
-          //  validator: (value) {
-          //     if (value == null || value.isEmpty) {
-          //       return 'Vui lòng nhập ngày bắt đầu hợp đồng';
-          //     }
-          //     try {
-          //       DateTime selectedDate = DateFormat('dd/MM/yyyy').parse(value);
-
-          //       // Kiểm tra ngày bắt đầu hợp đầu 1 không được trước ngày kết thúc thử việc
-          //       if (selectedDate.isBefore(endTimeThuViec)) {
-          //         return 'Ngày bắt đầu hợp đồng phải sau ngày ${DateFormat('dd/MM/yyyy').format(endTimeThuViec)}';
-          //       }
-
-          //       // Kiểm tra ngày không được trong quá khứ
-          //       if (selectedDate.isBefore(DateTime.now())) {
-          //         return 'Ngày bắt đầu hợp đồng không được trong quá khứ';
-          //       }
-          //     } catch (e) {
-          //       return 'Định dạng ngày không hợp lệ';
-          //     }
-          //     return null;
-          //   },
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Vui lòng nhập ngày bắt đầu hợp đồng';
@@ -478,80 +457,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
       ),
     );
   }
-
-  // Widget _buildDateEndTime(String label, TextEditingController controller,
-  //     DateTime initialDate, Function(DateTime) onDateSelected) {
-  //   return GestureDetector(
-  //     onTap: _isEditing
-  //         ? () => _selectDate(context, initialDate, (selectedDate) {
-  //               onDateSelected(selectedDate);
-  //               setState(() {
-  //                 _endTimeHopDong = selectedDate;
-  //                 controller.text =
-  //                     DateFormat('dd/MM/yyyy').format(selectedDate);
-  //               });
-  //             })
-  //         : null,
-  //     child: AbsorbPointer(
-  //       child: TextFormField(
-  //         readOnly: true,
-  //         focusNode: _endtimeFocusNode,
-  //         style: TextStyle(color: Colors.black),
-  //         controller: controller,
-  //         // validator: (value) {
-  //         //   // Nếu giá trị là "Hiện tại", bỏ qua kiểm tra định dạng ngày
-  //         //   if (controller.text == "Hiện tại") {
-  //         //     return null; // Không cần kiểm tra
-  //         //   }
-
-  //         //   // Nếu có giá trị nhập vào
-  //         //   if (controller.text.isNotEmpty) {
-  //         //     try {
-  //         //       DateTime selectedEndTime = DateTime.parse(controller.text);
-
-  //         //       // Kiểm tra nếu End Time nằm trong vòng một tháng từ Start Time
-  //         //       if (selectedEndTime.isBefore(_startTimeHopDong) ||
-  //         //           selectedEndTime.difference(_startTimeHopDong).inDays < 30) {
-  //         //         return 'End Time phải trong trên 1 tháng kể từ Start Time';
-  //         //       }
-  //         //     } catch (e) {
-  //         //       return 'Định dạng ngày không hợp lệ';
-  //         //     }
-  //         //   }
-  //         //   return null;
-  //         // },
-  //         validator: (value) {
-  //           // Validator kiểm tra ràng buộc hợp đồng lần 1
-  //           if (value == null || value.isEmpty) {
-  //             return 'Vui lòng chọn ngày kết thúc hợp đồng';
-  //           }
-  //           try {
-  //             DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
-
-  //             // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
-  //             if (selectedEndTime
-  //                 .isBefore(_startTimeHopDong.add(Duration(days: 30)))) {
-  //               return 'Ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng';
-  //             }
-
-  //             // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
-  //             if (selectedEndTime
-  //                 .isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
-  //               return 'Ngày kết thúc không được vượt quá 36 tháng kể từ ngày bắt đầu';
-  //             }
-  //           } catch (e) {
-  //             return 'Định dạng ngày không hợp lệ';
-  //           }
-  //           return null; // Hợp lệ
-  //         },
-  //         decoration: InputDecoration(
-  //           labelText: label,
-  //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildDateEndTime(String label, TextEditingController controller,
     DateTime initialDate, Function(DateTime) onDateSelected) {
   return GestureDetector(
