@@ -192,7 +192,7 @@ class ProfilesViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getProfileInfoByID(int profileID) async {
+  Future<void> getProfileInfoByID(String profileID) async {
     try {
       selectedProfile = await repository.getProfileInfoByID(profileID);
       notifyListeners();

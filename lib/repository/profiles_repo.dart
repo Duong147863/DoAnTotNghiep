@@ -175,7 +175,7 @@ class ProfilesRepository {
     }
   }
 
-  Future<Profiles> getProfileInfoByID(int profileID) async {
+  Future<Profiles> getProfileInfoByID(String profileID) async {
     final response = await service.getProfileInfoByID(profileID);
     if (response.statusCode == 200) {
       return Profiles.fromJson(json.decode(response.body));

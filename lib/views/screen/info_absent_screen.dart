@@ -19,7 +19,8 @@ class InfoAbsentScreen extends StatefulWidget {
   final Profiles? profile;
   final Profiles? LOGINprofile;
 
-  const InfoAbsentScreen({super.key, this.absents, this.profile,this.LOGINprofile});
+  const InfoAbsentScreen(
+      {super.key, this.absents, this.profile, this.LOGINprofile});
 
   @override
   State<InfoAbsentScreen> createState() => _InfoAbsentScreenState();
@@ -50,16 +51,19 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     _profileIDController.text = widget.absents!.profileID;
     _reasonController.text = widget.absents!.reason!;
     // Nếu profileName đã truyền từ widget.profile, gán luôn
-   Provider.of<ProfilesViewModel>(context, listen: false).fetchAllProfiles().then((_) {
-    final profiles = Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
-    final matchingProfile = profiles.firstWhere(
-      (profile) => profile.profileId == widget.absents!.profileID,
-    );
-    setState(() {
-      _name.text = matchingProfile.profileName;
+    Provider.of<ProfilesViewModel>(context, listen: false)
+        .fetchAllProfiles()
+        .then((_) {
+      final profiles =
+          Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
+      final matchingProfile = profiles.firstWhere(
+        (profile) => profile.profileId == widget.absents!.profileID,
+      );
+      setState(() {
+        _name.text = matchingProfile.profileName;
+      });
     });
-  });
-  _namenguoiduyet.text=widget.profile!.profileName;
+    _namenguoiduyet.text = widget.profile!.profileName;
     _fromDateController.text =
         DateFormat('dd/MM/yyyy').format(widget.absents!.from).toString();
     _fromDate = widget.absents!.from;
@@ -97,8 +101,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
         _formKey.currentState?.validate();
       }
     });
-     Provider.of<ProfilesViewModel>(context, listen: false)
-                    .fetchAllProfiles();
+    Provider.of<ProfilesViewModel>(context, listen: false).fetchAllProfiles();
   }
 
   void _updateAbsent() async {
@@ -170,8 +173,8 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
       showLeadingAction: true,
       defaultBody: false,
       appBarItemColor: AppColor.boneWhite,
-      backgroundColor: AppColor.aliceBlue,
-      titletext: "Duyệt và Cập Nhật Đơn Nghỉ Việc",
+      backgroundColor: Colors.white,
+      titletext: "Chi tiết nghỉ phép",
       appBarColor: AppColor.primaryLightColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -207,16 +210,16 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                 ],
               ),
               CustomTextFormField(
-  enabled: false,
-  textEditingController: _name,
-  labelText: 'Tên nhân viên',
-  validator: (value) {
-    if (value == null || value.isEmpty) {
-      return 'Vui lòng nhập tên nhân viên';
-    }
-    return null;
-  },
-).p(8),
+                enabled: false,
+                textEditingController: _name,
+                labelText: 'Tên nhân viên',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Vui lòng nhập tên nhân viên';
+                  }
+                  return null;
+                },
+              ).p(8),
               AppStrings.ROLE_PERMISSIONS.containsAny(
                       ['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? _buildDropdownField(
@@ -317,63 +320,65 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                 },
               ).px8(),
               SizedBox(height: 16),
-              widget.LOGINprofile!.roleID==3
-              ? SizedBox.shrink()
-              :Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // Nút Lưu chỉ hiển thị khi không phải status = -1
-                  if (widget.absents!.status != -1)
-                    IconButton(
-                      icon: Icon(Icons.save,
-                          color: const Color.fromARGB(255, 33, 243, 61)),
-                      onPressed: _updateAbsent,
-                    ),
+              widget.LOGINprofile!.roleID == 3
+                  ? SizedBox.shrink()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        // Nút Lưu chỉ hiển thị khi không phải status = -1
+                        if (widget.absents!.status != -1)
+                          IconButton(
+                            icon: Icon(Icons.save,
+                                color: const Color.fromARGB(255, 33, 243, 61)),
+                            onPressed: _updateAbsent,
+                          ),
 
-                  // Nút Chỉnh sửa chỉ hiển thị khi không phải status = -1
-                  if (widget.absents!.status != -1)
-                    IconButton(
-                      icon: Icon(Icons.edit, color: Colors.blue),
-                      onPressed: () {
-                        setState(() {
-                          _isEditing = true;
-                        });
-                      },
-                    ),
+                        // Nút Chỉnh sửa chỉ hiển thị khi không phải status = -1
+                        if (widget.absents!.status != -1)
+                          IconButton(
+                            icon: Icon(Icons.edit, color: Colors.blue),
+                            onPressed: () {
+                              setState(() {
+                                _isEditing = true;
+                              });
+                            },
+                          ),
 
-                  // Nút Xóa luôn hiển thị
-                  IconButton(
-                    icon: Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Confirm Delete'),
-                            content: Text(
-                                'Are you sure you want to delete this absent?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // Đóng dialog
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop(); // Đóng dialog
-                                  _deleteAbsents(); // Thực hiện xóa
-                                },
-                                child: Text('Delete'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ],
-              )
+                        // Nút Xóa luôn hiển thị
+                        IconButton(
+                          icon: Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Confirm Delete'),
+                                  content: Text(
+                                      'Are you sure you want to delete this absent?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Đóng dialog
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .pop(); // Đóng dialog
+                                        _deleteAbsents(); // Thực hiện xóa
+                                      },
+                                      child: Text('Delete'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      ],
+                    )
             ],
           ),
         ),
