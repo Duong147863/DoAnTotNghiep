@@ -74,7 +74,8 @@ class Profiles {
       positionId: json["position_id"],
       profileImage: json["profile_image"],
       startTime: DateTime.parse(json["start_time"]),
-      endTime: DateTime.parse(json["end_time"]),
+        endTime:
+          json['end_time'] != null ? DateTime.parse(json['end_time']) : null,
     );
   }
   Map<String, dynamic> toJson() {

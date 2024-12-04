@@ -70,8 +70,7 @@ Future<void> _selectDate(BuildContext context, DateTime initialDate,
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
   final _profileIDController = TextEditingController();
-  // final _profileNameController = TextEditingController();
-  late TextEditingController _profileNameController;
+  final _profileNameController = TextEditingController();
   final _birthdayController = TextEditingController();
   final _placeOfBirthController = TextEditingController();
   final _identifiNumController = TextEditingController();
@@ -147,9 +146,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     _loadLaborContact();
     _profileIDController.text = widget.profile!.profileId;
-    // _profileNameController.text = widget.profile!.profileName;
-    _profileNameController =
-        TextEditingController(text: widget.profile!.profileName);
+    _profileNameController.text = widget.profile!.profileName;
     _birthdayController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.birthday).toString();
     _birthday = widget.profile!.birthday;
@@ -698,7 +695,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
           // Khởi tạo lại các TextEditingController
-          Navigator.pop(context, updatedProfile); // Đóng màn hình
         } else {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
@@ -797,6 +793,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             });
                             // Thực hiện hành động
                             _updateProfile();
+                           
                           }
                         : null, // Nếu nút không được bật, sẽ không thực hiện hành động
                     icon: Icon(Icons.save, color: Colors.white),
@@ -917,7 +914,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                         if (value.length < 8 ||
                                                             value.length > 15) {
                                                           return 'Mật khẩu phải từ 8 đến 15 ký tự';
-                                                        }
+                                                        } 
                                                         return null;
                                                       },
                                                     ),
