@@ -132,7 +132,9 @@ class _TapBarState extends State<LoginScreen> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute<void>(
-                          builder: (BuildContext context,) =>
+                          builder: (
+                            BuildContext context,
+                          ) =>
                               HomeScreen(profile: userProfile),
                         ),
                       );
@@ -154,7 +156,9 @@ class _TapBarState extends State<LoginScreen> {
                   } catch (e) {
                     print('Error: $e'); // In thông tin lỗi
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Đăng nhập thất bại. Vui lòng kiểm tra tài khoản và mật khẩu')),
+                      SnackBar(
+                          content: Text(
+                              'Đăng nhập thất bại. Vui lòng kiểm tra tài khoản và mật khẩu')),
                     );
                   }
                 }
