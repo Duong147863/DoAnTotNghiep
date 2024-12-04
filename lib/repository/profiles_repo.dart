@@ -28,6 +28,7 @@ class ProfilesRepository {
         'activeCount': data['activeCount'],
         'officialContractsCount': data['officialContractsCount'],
         'temporaryContractsCount': data['temporaryContractsCount'],
+        'probationaryEmployee': data['probationaryEmployee'],
       };
     } else {
       throw Exception('Failed to load members count');

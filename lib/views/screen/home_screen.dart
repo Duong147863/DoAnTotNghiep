@@ -221,18 +221,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .profile, // lấy thông tin TK đang đăng nhập
                             ),
                           ),
-                          // )
-                          // .then((updatedProfile) {
-                          //   if (updatedProfile != null) {
-                          //     _handleUpdateProfile(
-                          //         updatedProfile); // Cập nhật lại thông tin
-                          //   }
-                          // }
+                          )
+                          .then((updatedProfile) {
+                            if (updatedProfile != null) {
+                              _handleUpdateProfile(
+                                  updatedProfile); // Cập nhật lại thông tin
+                            }
+                          }
                         );
-                        if (updatedProfile != null) {
-                          _handleUpdateProfile(
-                              updatedProfile); // Cập nhật lại dữ liệu
-                        }
+                       
                       },
                       child: CircleAvatar(
                         radius: 30,
@@ -259,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _profile.profileName,
+                      widget.profile!.profileName,
                       style: const TextStyle(
                         fontSize: 18,
                         color: Colors.white,
@@ -1311,7 +1308,8 @@ class _HomeScreenState extends State<HomeScreen> {
             viewModel.activeCount == 0 &&
             viewModel.quitCount == 0 &&
             viewModel.officialContractsCount == 0 &&
-            viewModel.temporaryContractsCount == 0) {
+            viewModel.temporaryContractsCount == 0 &&
+            viewModel.probationaryEmployeeCount==0) {
           viewModel.fetchQuitAndActiveMembersCount();
         }
         return Padding(
@@ -1330,11 +1328,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     PieSeries<EmployeeStat, String>(
                       dataSource: [
                         EmployeeStat('Đang làm việc', viewModel.activeCount),
-                        EmployeeStat('Đã nghỉ việc', viewModel.quitCount),
+                        EmployeeStat('Nghỉ việc', viewModel.quitCount),
+                        EmployeeStat('Thử việc', viewModel.probationaryEmployeeCount),
                         EmployeeStat(
-                            'Chính thức', viewModel.officialContractsCount),
+                            'Hợp đồng vô hạn', viewModel.officialContractsCount),
                         EmployeeStat(
-                            'Thời hạn', viewModel.temporaryContractsCount),
+                            'Hợp đồng thời hạn', viewModel.temporaryContractsCount),
                       ],
                       xValueMapper: (EmployeeStat stats, _) => stats.status,
                       yValueMapper: (EmployeeStat stats, _) => stats.count,
@@ -1358,13 +1357,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       pointColorMapper: (EmployeeStat stats, _) {
                         if (stats.status == 'Đang làm việc') {
                           return Colors.blue;
-                        } else if (stats.status == 'Đã nghỉ việc') {
+                        } else if (stats.status == 'Nghỉ việc') {
                           return Colors.red;
-                        } else if (stats.status == 'Chính thức') {
+                        } else if (stats.status == 'Hợp đồng vô hạn') {
                           return Colors.green;
-                        } else if (stats.status == 'Thời hạn') {
+                        } else if (stats.status == 'Hợp đồng thời hạn') {
                           return Colors.orange;
-                        } else {
+                        } else if(stats.status == 'Thời hạn')
+                        { 
+                          return const Color.fromARGB(255, 235, 229, 229);
+                        }
+                        else{
                           return Colors.grey;
                         }
                       },
@@ -1401,7 +1404,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.red,
                         ),
                         SizedBox(width: 8),
-                        Text('Đã nghỉ việc: ${viewModel.quitCount}',
+                        Text('Nghỉ việc: ${viewModel.quitCount}',
+                            style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                     Row(
+                      children: [
+                        Container(
+                          width: 20,
+                          height: 20,
+                          color: const Color.fromARGB(255, 235, 229, 229),
+                        ),
+                        SizedBox(width: 8),
+                        Text('Thử việc: ${viewModel.probationaryEmployeeCount}',
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -1413,7 +1428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.green,
                         ),
                         SizedBox(width: 8),
-                        Text('Chính thức: ${viewModel.officialContractsCount}',
+                        Text('Hợp đồng vô hạn: ${viewModel.officialContractsCount}',
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -1425,7 +1440,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.orange,
                         ),
                         SizedBox(width: 8),
-                        Text('Thời hạn: ${viewModel.temporaryContractsCount}',
+                        Text('Hợp đồng thời hạn: ${viewModel.temporaryContractsCount}',
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -1501,8 +1516,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               );
+              
       },
     );
+    
   }
 
   Widget _buildDepartmentDropdown(String hint) {
