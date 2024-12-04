@@ -7,7 +7,7 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 class AppStrings {
   AppStrings._();
 
-  static const String baseUrlApi = "http://192.168.1.28:8000/api/v1/";
+  static const String baseUrlApi = "http://192.168.20.251:8000/api/v1/";
 
   static String notificationsKey = "notifications";
   static String SHARED_LOGGED = "USER_IS_LOGGED";
@@ -21,17 +21,17 @@ class AppStrings {
   //   return base64.encode(bytes);
   // }
   static Future<String> ImagetoBase64(File imageFile) async {
-  // Nén ảnh
-  var result = await FlutterImageCompress.compressWithFile(
-    imageFile.absolute.path,
-    minWidth: 600,   // Điều chỉnh kích thước ảnh
-    minHeight: 600,  // Điều chỉnh kích thước ảnh
-    quality: 80,     // Giảm chất lượng để nén dung lượng ảnh
-  );
+    // Nén ảnh
+    var result = await FlutterImageCompress.compressWithFile(
+      imageFile.absolute.path,
+      minWidth: 600, // Điều chỉnh kích thước ảnh
+      minHeight: 600, // Điều chỉnh kích thước ảnh
+      quality: 80, // Giảm chất lượng để nén dung lượng ảnh
+    );
 
-  // Chuyển ảnh nén thành chuỗi Base64
-  String base64String = base64Encode(result!);
+    // Chuyển ảnh nén thành chuỗi Base64
+    String base64String = base64Encode(result!);
 
-  return base64String;
-}
+    return base64String;
+  }
 }

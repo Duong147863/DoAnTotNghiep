@@ -115,13 +115,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       Center(
                         child: Image.asset(
                           "assets/images/password.png",
-                          width: 200,
-                          height: 200,
+                          width: 250,
+                          height: 250,
                         ),
-                      ),
-                      SizedBox(height: 16),
+                      ).p4(),
                       CustomTextFormField(
-                         maxLength: 15,
+                        maxLength: 15,
                         focusNode: _passwordOldFocusNode,
                         textEditingController: _oldPasswordController,
                         labelText: 'Mật khẩu hiện tại',
@@ -131,8 +130,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           }
                           return null;
                         },
-                      ).px8(),
-                      SizedBox(height: 16),
+                      ).p8(),
                       CustomTextFormField(
                         maxLength: 15,
                         focusNode: _newPasswordFocusNode,
@@ -152,10 +150,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           }
                           return null;
                         },
-                      ).px8(),
-                      SizedBox(height: 16),
+                      ).p8(),
                       CustomTextFormField(
-                         maxLength: 15,
+                        maxLength: 15,
                         focusNode: _confirmPasswordFocusNode,
                         textEditingController: _confirmPasswordController,
                         labelText: 'Xác nhận mật khẩu mới',
@@ -168,8 +165,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                           }
                           return null;
                         },
-                      ).px8(),
-                      SizedBox(height: 32),
+                      ).p8(),
                       viewModel.isChangingPassword
                           ? Center(child: CircularProgressIndicator())
                           : ElevatedButton(
@@ -177,6 +173,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               child: Text('Đổi mật khẩu'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColor.primaryLightColor,
+                                foregroundColor: Colors.white,
                                 padding: EdgeInsets.symmetric(vertical: 12),
                                 minimumSize: Size(double.infinity, 44),
                               ),
