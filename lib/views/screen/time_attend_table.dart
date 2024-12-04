@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:googleapis/displayvideo/v2.dart';
+import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
 import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/absents_model.dart';
@@ -382,13 +383,18 @@ class TimeAttendanceTable extends StatefulWidget {
 class _TimeAttendanceTableState extends State<TimeAttendanceTable>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
+  var listFilterTimeTypes = ["", "Ngày", "Tuần", "Tháng"];
   DateTime now = DateTime.now();
   DateTime startOfWeek =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
   DateTime endOfWeek =
       DateTime.now().add(Duration(days: 7 - DateTime.now().weekday));
-
+// Lấy ngày đầu và cuối tháng này
+  DateTime startOfMonth =
+      DateTime(DateTime.now().year, DateTime.now().month, 1);
+  DateTime endOfMonth =
+      DateTime(DateTime.now().year, DateTime.now().month + 1, 1)
+          .subtract(Duration(days: 1));
   String formatDatetoJson(DateTime date) =>
       DateFormat('yyyy-MM-dd').format(date);
   String formatDatetoUI(DateTime? date) =>
@@ -398,7 +404,7 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
     setState(() {
       startOfWeek = startOfWeek.subtract(Duration(days: 7));
       endOfWeek = endOfWeek.subtract(Duration(days: 7));
-      _loadData();
+      _loadWeekData();
     });
   }
 
@@ -406,21 +412,39 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
     setState(() {
       startOfWeek = startOfWeek.add(Duration(days: 7));
       endOfWeek = endOfWeek.add(Duration(days: 7));
-      _loadData();
+      _loadWeekData();
     });
   }
 
-  void _loadData() {
+  void _previousMonth() {
+    setState(() {
+      _loadMonthData();
+    });
+  }
+
+  void _nextMonth() {
+    setState(() {
+      _loadMonthData();
+    });
+  }
+
+  void _loadWeekData() {
     Provider.of<TimeKeepingViewModel>(context, listen: false)
         .getAllCheckInHistory(
             formatDatetoJson(startOfWeek), formatDatetoJson(endOfWeek));
+  }
+
+  void _loadMonthData() {
+    Provider.of<TimeKeepingViewModel>(context, listen: false)
+        .getAllCheckInHistory(
+            formatDatetoJson(startOfMonth), formatDatetoJson(endOfMonth));
   }
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
-    _loadData();
+    _loadWeekData();
   }
 
   @override
@@ -439,6 +463,28 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
             length: 3,
             child: Column(
               children: [
+                DropdownButtonFormField<String>(
+                  value: "Tuần",
+                  onChanged: (String? newValue) {
+                    setState(() {});
+                  },
+                  items: listFilterTimeTypes.map((String dep) {
+                    return DropdownMenuItem<String>(
+                      value: dep,
+                      child:
+                          Text(dep), // assuming department has a `name` field
+                    );
+                  }).toList(),
+                  validator: (value) {
+                    if (value == null) {
+                      return '';
+                    }
+                  },
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                  ),
+                ).p12(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -475,60 +521,67 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
   }
 
   Widget _buildTabContent(BuildContext context, String type) {
-  return Consumer<TimeKeepingViewModel>(
-    builder: (context, viewModel, child) {
-      if (viewModel.fetchingData) {
-        return const Center(child: CircularProgressIndicator());
-      }
+    return Consumer<TimeKeepingViewModel>(
+      builder: (context, viewModel, child) {
+        if (viewModel.fetchingData) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-      List<Timekeepings> dataList;
-      if (type == "working") {
-        // Lọc ra những nhân viên đang làm việc, tức là không có "late" (chưa trễ)
-        dataList = viewModel.listAll.where((item) => item.late == null).toList();
-      } else if (type == "late") {
-        dataList = viewModel.listAll.where((item) => item.late != null).toList();
-      } else {
-        dataList = viewModel.listAll
-            .where((item) => item.leavingSoon != null)
-            .toList();
-      }
+        List<Timekeepings> dataList;
+        if (type == "working") {
+          // Lọc ra những nhân viên đang làm việc, tức là không có "late" (chưa trễ)
+          dataList =
+              viewModel.listAll.where((item) => item.late == null).toList();
+        } else if (type == "late") {
+          dataList =
+              viewModel.listAll.where((item) => item.late != null).toList();
+        } else if (type == "overtime") {
+          dataList = viewModel.listAll
+              .where((item) =>
+                  (DateFormat('EEEE').format(item.date) == "Saturday" ||
+                      DateFormat('EEEE').format(item.date) == "Sunday"))
+              .toList();
+        } else {
+          dataList = viewModel.listAll
+              .where((item) => item.leavingSoon != null)
+              .toList();
+        }
 
-      if (dataList.isEmpty) {
-        return const Center(child: Text("Không có dữ liệu."));
-      }
+        if (dataList.isEmpty) {
+          return const Center(child: Text("Không có dữ liệu."));
+        } else {
+          return ListView.builder(
+            itemCount: dataList.length,
+            itemBuilder: (context, index) {
+              final item = dataList[index];
 
-      return ListView.builder(
-        itemCount: dataList.length,
-        itemBuilder: (context, index) {
-          final item = dataList[index];
-          
-          // Format thời gian checkin và checkout
-          String checkinTime = item.checkin != null
-              ? DateFormat('HH:mm:ss').format(item.checkin!)
-              : "Không có dữ liệu";
-          String checkoutTime = item.checkout != null
-              ? DateFormat('HH:mm:ss').format(item.checkout!)
-              : "Không có dữ liệu";
+              // Format thời gian checkin và checkout
+              String checkinTime = DateFormat('HH:mm:ss').format(item.checkin);
+              String checkoutTime = item.checkout != null
+                  ? DateFormat('HH:mm:ss').format(item.checkout!)
+                  : "Không có dữ liệu";
 
-          return Card(
-            child: ListTile(
-              title: Text("Nhân viên: ${item.profileId}"),
-              subtitle: type == "working"
-                  ? Text("Thời gian làm việc: $checkinTime - $checkoutTime")
-                  : type == "late"
-                      ? Text(
-                          item.late != null
-                              ? "Trễ: ${DateFormat('HH:mm:ss').format(item.late!)} phút"
-                              : "Trễ: Không có dữ liệu",
-                          style: TextStyle(color: Colors.red),
-                        )
-                      : Text("Tăng ca: ${item.leavingSoon} giờ",
-                          style: TextStyle(color: Colors.green)),
-            ),
+              return Card(
+                child: ListTile(
+                  title: Text("Nhân viên: ${item.profileId}"),
+                  subtitle: type == "working"
+                      ? Text("Thời gian làm việc: $checkinTime - $checkoutTime")
+                      : type == "late"
+                          ? Text(
+                              item.late != null
+                                  ? "Trễ: ${DateFormat('HH:mm').format(item.late!)} phút"
+                                  : "Trễ: Không có dữ liệu",
+                              style: TextStyle(color: Colors.red),
+                            )
+                          : Text(
+                              "Tăng ca: ${DateFormat('EEEE, dd/MM/yyyy').format(item.date)}",
+                              style: TextStyle(color: Colors.green)),
+                ),
+              );
+            },
           );
-        },
-      );
-    },
-  );
-}
+        }
+      },
+    );
+  }
 }
