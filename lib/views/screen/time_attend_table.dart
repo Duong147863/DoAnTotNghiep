@@ -1,26 +1,17 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:googleapis/displayvideo/v2.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
-import 'package:nloffice_hrm/constant/app_strings.dart';
-import 'package:nloffice_hrm/models/absents_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
-import 'package:nloffice_hrm/models/roles_model.dart';
 import 'package:nloffice_hrm/models/timekeepings_model.dart';
-import 'package:nloffice_hrm/view_models/absent_view_model.dart';
-import 'package:nloffice_hrm/view_models/roles_view_models.dart';
 import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
-import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
-import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
-import 'package:nloffice_hrm/views/custom_widgets/custom_seach.dart';
-import 'package:nloffice_hrm/views/screen/info_absent_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class TimeAttendanceTable extends StatefulWidget {
-  TimeAttendanceTable({super.key});
+  final Profiles? user;
+  TimeAttendanceTable({super.key, this.user});
 
   @override
   State<TimeAttendanceTable> createState() => _TimeAttendanceTableState();
@@ -111,19 +102,33 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
   }
 
   void _loadDateData() {
-    Provider.of<TimeKeepingViewModel>(context, listen: false)
-        .getAllCheckInHistory(formatDatetoJson(now), formatDatetoJson(now));
+    widget.user!.roleID == 3
+        ? {
+// gọi hàm load dữ liệu theo phòng ban
+          }
+        : Provider.of<TimeKeepingViewModel>(context, listen: false)
+            .getAllCheckInHistory(formatDatetoJson(now), formatDatetoJson(now));
   }
 
   void _loadWeekData() {
-    Provider.of<TimeKeepingViewModel>(context, listen: false)
-        .getAllCheckInHistory(
-            formatDatetoJson(startOfWeek), formatDatetoJson(endOfWeek));
+    widget.user!.roleID == 3
+        ? {
+// gọi hàm load dữ liệu theo phòng ban
+          }
+        : Provider.of<TimeKeepingViewModel>(context, listen: false)
+            .getAllCheckInHistory(
+                formatDatetoJson(startOfWeek), formatDatetoJson(endOfWeek));
   }
 
   void _loadMonthData() {
-    Provider.of<TimeKeepingViewModel>(context, listen: false)
-        .getAllCheckInHistory(formatDatetoJson(DateTime(now.year,now.month,1)), formatDatetoJson(DateTime(now.year,now.month + 1, 1)));
+    widget.user!.roleID == 3
+        ? {
+// gọi hàm load dữ liệu theo phòng ban
+          }
+        : Provider.of<TimeKeepingViewModel>(context, listen: false)
+            .getAllCheckInHistory(
+                formatDatetoJson(DateTime(now.year, now.month, 1)),
+                formatDatetoJson(DateTime(now.year, now.month + 1, 1)));
   }
 
   @override
@@ -185,7 +190,8 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
                       ? [
                           Icon(Icons.arrow_back_rounded)
                               .onInkTap(goToPreviousDay),
-                          Text("Ngày ${formatDatetoUI(now)}").px32(),
+                          Text("${DateFormat.EEEE().format(now)}, ${formatDatetoUI(now)}")
+                              .px32(),
                           Icon(Icons.arrow_forward_rounded)
                               .onInkTap(goToNextDay),
                         ]
