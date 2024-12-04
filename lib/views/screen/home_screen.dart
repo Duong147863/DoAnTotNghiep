@@ -221,15 +221,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .profile, // lấy thông tin TK đang đăng nhập
                             ),
                           ),
-                          )
-                          .then((updatedProfile) {
-                            if (updatedProfile != null) {
-                              _handleUpdateProfile(
-                                  updatedProfile); // Cập nhật lại thông tin
-                            }
+                        ).then((updatedProfile) {
+                          if (updatedProfile != null) {
+                            _handleUpdateProfile(
+                                updatedProfile); // Cập nhật lại thông tin
                           }
-                        );
-                       
+                        });
                       },
                       child: CircleAvatar(
                         radius: 30,
@@ -1361,7 +1358,7 @@ class _HomeScreenState extends State<HomeScreen> {
             viewModel.quitCount == 0 &&
             viewModel.officialContractsCount == 0 &&
             viewModel.temporaryContractsCount == 0 &&
-            viewModel.probationaryEmployeeCount==0) {
+            viewModel.probationaryEmployeeCount == 0) {
           viewModel.fetchQuitAndActiveMembersCount();
         }
         return Padding(
@@ -1381,11 +1378,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       dataSource: [
                         EmployeeStat('Đang làm việc', viewModel.activeCount),
                         EmployeeStat('Nghỉ việc', viewModel.quitCount),
-                        EmployeeStat('Thử việc', viewModel.probationaryEmployeeCount),
                         EmployeeStat(
-                            'Hợp đồng vô hạn', viewModel.officialContractsCount),
-                        EmployeeStat(
-                            'Hợp đồng thời hạn', viewModel.temporaryContractsCount),
+                            'Thử việc', viewModel.probationaryEmployeeCount),
+                        EmployeeStat('Hợp đồng vô thời hạn',
+                            viewModel.officialContractsCount),
+                        EmployeeStat('Hợp đồng thời hạn',
+                            viewModel.temporaryContractsCount),
                       ],
                       xValueMapper: (EmployeeStat stats, _) => stats.status,
                       yValueMapper: (EmployeeStat stats, _) => stats.count,
@@ -1411,15 +1409,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Colors.blue;
                         } else if (stats.status == 'Nghỉ việc') {
                           return Colors.red;
-                        } else if (stats.status == 'Hợp đồng vô hạn') {
+                        } else if (stats.status == 'Hợp đồng vô thời hạn') {
                           return Colors.green;
                         } else if (stats.status == 'Hợp đồng thời hạn') {
                           return Colors.orange;
-                        } else if(stats.status == 'Thời hạn')
-                        { 
+                        } else if (stats.status == 'Thời hạn') {
                           return const Color.fromARGB(255, 235, 229, 229);
-                        }
-                        else{
+                        } else {
                           return Colors.grey;
                         }
                       },
@@ -1460,12 +1456,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),
-                     Row(
+                    Row(
                       children: [
                         Container(
                           width: 20,
                           height: 20,
-                          color: const Color.fromARGB(255, 235, 229, 229),
+                          color: const Color.fromARGB(255, 243, 79, 175),
                         ),
                         SizedBox(width: 8),
                         Text('Thử việc: ${viewModel.probationaryEmployeeCount}',
@@ -1480,7 +1476,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.green,
                         ),
                         SizedBox(width: 8),
-                        Text('Hợp đồng vô hạn: ${viewModel.officialContractsCount}',
+                        Text(
+                            'Hợp đồng vô thời hạn: ${viewModel.officialContractsCount}',
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -1492,7 +1489,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.orange,
                         ),
                         SizedBox(width: 8),
-                        Text('Hợp đồng thời hạn: ${viewModel.temporaryContractsCount}',
+                        Text(
+                            'Hợp đồng thời hạn: ${viewModel.temporaryContractsCount}',
                             style: TextStyle(fontSize: 16)),
                       ],
                     ),
@@ -1568,10 +1566,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               );
-              
       },
     );
-    
   }
 
   Widget _buildDepartmentDropdown(String hint) {
