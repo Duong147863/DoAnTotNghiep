@@ -90,6 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _isButtonEnabled = true;
   bool _passwordVisible = false;
   bool _passwordVisible1 = false;
+
   //
   List<DepartmentPosition> departmentsPosition = [];
   DepartmentPosition? selectedDepartmentsPosition;
@@ -127,6 +128,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   FocusNode _thuongtruFocusNode = FocusNode();
   FocusNode _ngayccdFocusNode = FocusNode();
   FocusNode _nationFocusNode = FocusNode();
+  FocusNode _newPasswordFocusNode = FocusNode();
+  FocusNode _confirmPasswordFocusNode = FocusNode();
   final _startTimeController = TextEditingController();
   final _endTimeController = TextEditingController();
   DateTime _startTime = DateTime.now();
@@ -190,6 +193,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     futureProvinces =
         Provider.of<ProfilesViewModel>(context, listen: false).fetchProvinces();
     loadProvinces();
+    _newPasswordFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_newPasswordFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
+    _confirmPasswordFocusNode.addListener(() {
+      // Kiểm tra khi focus bị mất và validate lại
+      if (!_confirmPasswordFocusNode.hasFocus) {
+        // Thực hiện validate lại khi người dùng rời khỏi trường nhập liệu
+        _formKey.currentState?.validate();
+      }
+    });
     // Focus
     _identifiNumFocusNode.addListener(() {
       // Kiểm tra khi focus bị mất và validate lại
@@ -281,6 +298,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _formKey.currentState?.validate();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _newPasswordFocusNode.dispose();
+    _confirmPasswordFocusNode.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 
   void _resetPassword() async {
@@ -677,6 +703,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         if (message == 'Nhân viên đã được cập nhật thành công.') {
           ScaffoldMessenger.of(context)
               .showSnackBar(SnackBar(content: Text(message)));
+          // Khởi tạo lại các TextEditingController
           Navigator.pop(context, updatedProfile);
         } else {
           ScaffoldMessenger.of(context)
@@ -780,6 +807,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : null, // Nếu nút không được bật, sẽ không thực hiện hành động
                     icon: Icon(Icons.save, color: Colors.white),
                   )
+                // : AppStrings.ROLE_PERMISSIONS
+                //         .contains('Manage your department members only')
+                //     ? SizedBox.shrink()
                 : AppStrings.ROLE_PERMISSIONS.containsAny(
                         ['Manage BoD & HR accounts', 'Manage Staffs info only'])
                     ? SpeedDial(
@@ -844,117 +874,122 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return Dialog(
-                                      child: Container(
-                                        width: 400.0, // Chiều rộng của dialog
-                                        height: 300.0, // Chiều cao của dialog
-                                        padding: EdgeInsets.all(
-                                            20.0), // Padding bên trong
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text('Reset Mật Khẩu'),
-                                            Column(
-                                              children: [
-                                                CustomTextFormField(
-                                                  textEditingController:
-                                                      _newPasswordController,
-                                                  obscureText:
-                                                      !_passwordVisible,
-                                                  prefixIcon: const Icon(
-                                                      Icons.lock_outline),
-                                                  suffixIcon: IconButton(
-                                                    icon: Icon(
-                                                      _passwordVisible
-                                                          ? Icons.visibility
-                                                          : Icons
-                                                              .visibility_off,
+                                    return AlertDialog(
+                                      actions: [
+                                        Container(
+                                          width: 400.0, // Chiều rộng của dialog
+                                          height: 300.0, // Chiều cao của dialog
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text('Reset Mật Khẩu').p12(),
+                                              Column(
+                                                children: [
+                                                  CustomTextFormField(
+                                                    maxLength: 15,
+                                                    focusNode:
+                                                        _newPasswordFocusNode,
+                                                    textEditingController:
+                                                        _newPasswordController,
+                                                    obscureText:
+                                                        !_passwordVisible1,
+                                                    prefixIcon: const Icon(
+                                                        Icons.lock_outline),
+                                                    suffixIcon: IconButton(
+                                                      icon: Icon(
+                                                        _passwordVisible1
+                                                            ? Icons.visibility
+                                                            : Icons
+                                                                .visibility_off,
+                                                      ),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _passwordVisible1 =
+                                                              !_passwordVisible1;
+                                                        });
+                                                      },
                                                     ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _passwordVisible =
-                                                            !_passwordVisible;
-                                                      });
+                                                    labelText: 'Mật khẩu mới',
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Không được để trống';
+                                                      }
+                                                      if (value.length < 8 ||
+                                                          value.length > 15) {
+                                                        return 'Mật khẩu phải từ 8 đến 15 ký tự';
+                                                      }
+                                                      if (!RegExp(
+                                                              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$')
+                                                          .hasMatch(value)) {
+                                                        return 'Mật khẩu phải có chữ hoa, chữ thường, số và ký tự đặc biệt';
+                                                      }
+                                                      return null;
                                                     },
-                                                  ),
-                                                  decoration: InputDecoration(
-                                                      labelText:
-                                                          'Mật khẩu mới'),
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty) {
-                                                      return 'Vui lòng nhập mật khẩu mới';
-                                                    }
-                                                    if (value.length < 8 ||
-                                                        value.length > 15) {
-                                                      return 'Mật khẩu phải từ 8 đến 15 ký tự';
-                                                    }
-                                                    return null;
-                                                  },
-                                                ),
-                                                CustomTextFormField(
-                                                  textEditingController:
-                                                      _confirmPasswordController,
-                                                  obscureText:
-                                                      !_passwordVisible1,
-                                                  prefixIcon: const Icon(
-                                                      Icons.lock_outline),
-                                                  suffixIcon: IconButton(
-                                                    icon: Icon(
-                                                      _passwordVisible1
-                                                          ? Icons.visibility
-                                                          : Icons
-                                                              .visibility_off,
+                                                  ).p8(),
+                                                  CustomTextFormField(
+                                                    maxLength: 15,
+                                                    focusNode:
+                                                        _confirmPasswordFocusNode,
+                                                    textEditingController:
+                                                        _confirmPasswordController,
+                                                    obscureText:
+                                                        !_passwordVisible,
+                                                    prefixIcon: const Icon(
+                                                        Icons.lock_outline),
+                                                    suffixIcon: IconButton(
+                                                      icon: Icon(
+                                                        _passwordVisible
+                                                            ? Icons.visibility
+                                                            : Icons
+                                                                .visibility_off,
+                                                      ),
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          _passwordVisible =
+                                                              !_passwordVisible;
+                                                        });
+                                                      },
                                                     ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        _passwordVisible1 =
-                                                            !_passwordVisible1;
-                                                      });
+                                                    labelText:
+                                                        'Xác nhận mật khẩu mới',
+                                                    validator: (value) {
+                                                      if (value == null ||
+                                                          value.isEmpty) {
+                                                        return 'Không được để trống';
+                                                      }
+                                                      if (value !=
+                                                          _newPasswordController
+                                                              .text) {
+                                                        return 'Mật khẩu xác nhận không khớp';
+                                                      }
+                                                      return null;
                                                     },
+                                                  ).p8(),
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop(); // Đóng dialog
+                                                    },
+                                                    child: Text('Hủy'),
                                                   ),
-                                                  decoration: InputDecoration(
-                                                      labelText:
-                                                          'Xác nhận mật khẩu mới'),
-                                                  validator: (value) {
-                                                    if (value == null ||
-                                                        value.isEmpty) {
-                                                      return 'Vui lòng xác nhận mật khẩu mới';
-                                                    }
-                                                    if (value !=
-                                                        _newPasswordController
-                                                            .text) {
-                                                      return 'Mật khẩu xác nhận không khớp';
-                                                    }
-                                                    return null;
-                                                  },
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: 40,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context)
-                                                        .pop(); // Đóng dialog
-                                                  },
-                                                  child: Text('Hủy'),
-                                                ),
-                                                ElevatedButton(
-                                                  onPressed:
-                                                      _resetPassword, // Hàm xử lý reset mật khẩu
-                                                  child: Text('Lấy mât khẩu'),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                                  ElevatedButton(
+                                                    onPressed:
+                                                        _resetPassword, // Hàm xử lý reset mật khẩu
+                                                    child: Text('Lấy mât khẩu'),
+                                                  ),
+                                                ],
+                                              ).py8(),
+                                            ],
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     );
                                   },
                                 );

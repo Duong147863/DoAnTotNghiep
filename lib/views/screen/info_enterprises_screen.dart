@@ -37,25 +37,25 @@ class _InfoEnterpriseScreenState extends State<InfoEnterpriseScreen> {
       backgroundColor: Colors.white,
       titletext: "Thông tin doanh nghiệp",
       actions: [
-        _isEditing
-            ? IconButton(
-                enableFeedback: true,
-                onPressed: () {
-                  // Tắt nút sau khi nhấn
-                  setState(() {
-                    _isEditing = false;
-                  });
-                  // Thực hiện hành động
-                }, // Nếu nút không được bật, sẽ không thực hiện hành động
-                icon: Icon(Icons.save, color: Colors.white),
-              )
-            : IconButton(
-                onPressed: () {
-                  setState(() {
-                    _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
-                  });
-                },
-                icon: Icon(Icons.edit))
+        // _isEditing
+        //     ? IconButton(
+        //         enableFeedback: true,
+        //         onPressed: () {
+        //           // Tắt nút sau khi nhấn
+        //           setState(() {
+        //             _isEditing = false;
+        //           });
+        //           // Thực hiện hành động
+        //         }, // Nếu nút không được bật, sẽ không thực hiện hành động
+        //         icon: Icon(Icons.save, color: Colors.white),
+        //       )
+        //     : IconButton(
+        //         onPressed: () {
+        //           setState(() {
+        //             _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
+        //           });
+        //         },
+        //         icon: Icon(Icons.edit))
       ],
       body: Padding(
         padding: EdgeInsets.all(16.0),

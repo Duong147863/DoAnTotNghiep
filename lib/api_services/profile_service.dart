@@ -6,15 +6,11 @@ import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileService {
-  Future<http.Response> getProfileInfoByID(int profileID) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(
-      AppStrings.TOKEN,
-    );
+  Future<http.Response> getProfileInfoByID(String profileID) async {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profile/info/$profileID'),
         headers: {
-          'Authorization': 'Bearer $token',
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
 
@@ -38,11 +34,14 @@ class ProfileService {
       'Authorization': 'Bearer ${AppStrings.TOKEN}',
     });
   }
-   Future<http.Response> getMembersCountGenderAndMaritalStatus() async {
-    return await http
-        .get(Uri.parse('${AppStrings.baseUrlApi}profiles/MembersCountGenderAndMaritalStatus'), headers: {
-      'Authorization': 'Bearer ${AppStrings.TOKEN}',
-    });
+
+  Future<http.Response> getMembersCountGenderAndMaritalStatus() async {
+    return await http.get(
+        Uri.parse(
+            '${AppStrings.baseUrlApi}profiles/MembersCountGenderAndMaritalStatus'),
+        headers: {
+          'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        });
   }
 
   Future<http.Response> getAllProfileByPosition(
@@ -54,11 +53,10 @@ class ProfileService {
         });
   }
 
-  Future<http.Response> getDepartmentMembers(
-      String departmentID) async {
+  Future<http.Response> getDepartmentMembers(String departmentID) async {
     return await http.get(
         Uri.parse('${AppStrings.baseUrlApi}profiles/department/$departmentID'),
-       headers: {
+        headers: {
           'Authorization': 'Bearer ${AppStrings.TOKEN}',
         });
   }
@@ -88,21 +86,20 @@ class ProfileService {
           .encode(profile.toJson()), // Chuyển đổi đối tượng Profiles thành JSON
     );
   }
-Future<http.Response> deleteProfile(String profileId) async {
-  return await http.put(
-    Uri.parse('${AppStrings.baseUrlApi}profile/delete'),
-    headers: {
-      'Authorization': 'Bearer ${AppStrings.TOKEN}',
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: json.encode({
-      'profile_id': profileId,
-    }),
-  );
-}
 
-
+  Future<http.Response> deleteProfile(String profileId) async {
+    return await http.put(
+      Uri.parse('${AppStrings.baseUrlApi}profile/delete'),
+      headers: {
+        'Authorization': 'Bearer ${AppStrings.TOKEN}',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: json.encode({
+        'profile_id': profileId,
+      }),
+    );
+  }
 
   Future<http.Response> logout(String token) async {
     return await http.post(
@@ -157,7 +154,8 @@ Future<http.Response> deleteProfile(String profileId) async {
       }),
     );
   }
-   Future<http.Response> getPassword(
+
+  Future<http.Response> getPassword(
     String profileId,
     String newPassword,
     String newPasswordConfirmation,

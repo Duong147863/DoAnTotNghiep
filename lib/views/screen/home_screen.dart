@@ -212,43 +212,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        final updatedProfile = await Navigator.push(
+                        await Provider.of<ProfilesViewModel>(context,
+                                listen: false)
+                            .getProfileInfoByID(widget.profile!.profileId);
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ProfileScreen(
-                              profile: widget.profile,
+                              profile: Provider.of<ProfilesViewModel>(context,
+                                      listen: false)
+                                  .selectedProfile,
                               loginUser: widget
                                   .profile, // lấy thông tin TK đang đăng nhập
                             ),
                           ),
                         ).then((updatedProfile) {
-                          if (updatedProfile != null) {
-                            _handleUpdateProfile(
-                                updatedProfile); // Cập nhật lại thông tin
+                          if (Provider.of<ProfilesViewModel>(context,
+                                      listen: false)
+                                  .selectedProfile !=
+                              null) {
+                            _handleUpdateProfile(Provider.of<ProfilesViewModel>(
+                                    context,
+                                    listen: false)
+                                .selectedProfile!); // Cập nhật lại thông tin
                           }
                         });
                       },
-                      child: CircleAvatar(
-                        radius: 30,
-                        backgroundColor: Colors.white,
-                        child: ClipOval(
-                          child: SizedBox(
-                            width: 60,
-                            height: 60,
-                            child: widget
-                                    .profile!.profileImage.isNotEmptyAndNotNull
-                                ? Image.memory(
-                                    base64Decode(widget.profile!.profileImage!),
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const Icon(Icons.error,
-                                          size: 30, color: Colors.grey);
-                                    },
-                                  )
-                                : const Icon(Icons.person,
-                                    size: 30, color: Colors.grey),
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.white,
+                            child: ClipOval(
+                              child: SizedBox(
+                                width: 60,
+                                height: 60,
+                                child: widget.profile!.profileImage
+                                        .isNotEmptyAndNotNull
+                                    ? Image.memory(
+                                        base64Decode(
+                                            widget.profile!.profileImage!),
+                                        fit: BoxFit.cover,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return const Icon(Icons.error,
+                                              size: 30, color: Colors.grey);
+                                        },
+                                      )
+                                    : const Icon(Icons.person,
+                                        size: 30, color: Colors.grey),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -293,7 +309,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 context,
                                 MaterialPageRoute<void>(
                                     builder: (BuildContext context) =>
-                                        TimeAttendanceTable()),
+                                        TimeAttendanceTable(
+                                          user: widget.profile,
+                                        )),
                               );
                             },
                           ),
