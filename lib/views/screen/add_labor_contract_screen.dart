@@ -114,7 +114,6 @@
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(message)));
             Navigator.pop(context, newLaborContact); // Đóng màn hình
-            Navigator.pop(context, newLaborContact); // Đóng màn hình
           } else {
             ScaffoldMessenger.of(context)
                 .showSnackBar(SnackBar(content: Text(message)));
@@ -244,7 +243,7 @@
                             }
                             return null;
                           },
-                        ).w(200),
+                        ).w(170),
                       ],
                     ),
                     SizedBox(height: 16),

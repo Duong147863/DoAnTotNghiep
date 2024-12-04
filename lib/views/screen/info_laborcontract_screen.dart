@@ -104,51 +104,6 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
       }
     });
   }
-
-// // Hàm kiểm tra thời gian hợp đồng
-//   void checkContractDuration() {
-//     if (_endTimeHopDong != null) {
-//       int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-//       print('Days between: $daysBetween');
-//       setState(() {
-//         if (daysBetween > 1080) {
-//           showSpeedDial = true; // Mở SpeedDial nếu quá 1080 ngày
-//         } else {
-//           showSpeedDial =
-//               false; // Ẩn SpeedDial nếu còn ít hơn hoặc bằng 1080 ngày
-//         }
-//       });
-//     }
-//   }
-  // void checkContractDuration() {
-  //   // Kiểm tra nếu là hợp đồng lần 1
-  //   if (statusProfile == 1 && _endTimeHopDong != null) {
-  //     int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-  //     print('Days between (HD-01): $daysBetween');
-  //     setState(() {
-  //       // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 1 đã vượt quá 1080 ngày
-  //       // và chưa có hợp đồng lần 2 (statusProfile != 2)
-  //       if (daysBetween > 1080 && widget.profiles!.profileStatus != 2) {
-  //         showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
-  //       } else {
-  //         showSpeedDial = false; // Ẩn nút nếu không thỏa mãn điều kiện
-  //       }
-  //     });
-  //   }
-  //   // Kiểm tra nếu là hợp đồng lần 2
-  //   else if (statusProfile == 2 && _endTimeHopDong != null) {
-  //     int daysBetween = _endTimeHopDong.difference(_startTimeHopDong).inDays;
-  //     print('Days between (HD-02): $daysBetween');
-  //     setState(() {
-  //       // Mở nút tạo hợp đồng lần 2 nếu hợp đồng lần 2 đã vượt quá 1080 ngày
-  //       if (daysBetween > 1080) {
-  //         showSpeedDial = true; // Mở nút tạo hợp đồng lần 2
-  //       } else {
-  //         showSpeedDial = false; // Ẩn nút nếu hợp đồng lần 2 chưa hết hạn
-  //       }
-  //     });
-  //   }
-  // }
   void checkContractDuration() {
     DateTime currentDate = DateTime.now();
 
@@ -182,6 +137,9 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
       }
     });
   }
+
+
+
 
   void _updateLaborContract() async {
     if (_formKey.currentState!.validate()) {
@@ -348,7 +306,7 @@ class _InfoLaborcontractScreenState extends State<InfoLaborcontractScreen> {
                           }
                           return null;
                         },
-                      ).w(200),
+                      ).w(170),
                     ],
                   ),
                   SizedBox(height: 16),

@@ -273,7 +273,7 @@ class _AddTrainingprocessesScreenState
                       }
                       return null;
                     },
-                  ).px8(),
+                  ).p(8),
                   SizedBox(height: 16),
                   CustomTextFormField(
                     maxLength: 255,
@@ -303,8 +303,8 @@ class _AddTrainingprocessesScreenState
                       }
                       return null;
                     },
-                  ).px8(),
-                  SizedBox(height: 16),
+                  ).p(8),
+
                   CustomTextFormField(
                     maxLength: 255,
                     focusNode: _contentFocusNode,
@@ -329,11 +329,12 @@ class _AddTrainingprocessesScreenState
                       }
                       return null;
                     },
-                  ).px8(),
-                  SizedBox(height: 16),
-                  Row(
+                  ).p(8),
+              
+                  Column(
                     children: [
-                      Expanded(
+                      Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateStartTime(
                           'Bắt đầu',
                           _startTimeController,
@@ -347,9 +348,10 @@ class _AddTrainingprocessesScreenState
                             });
                           },
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
+                      ).px8(),
+                    
+                      Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateEndTimeWithClearButton(
                           'Kết thúc',
                           _endTimeController,
@@ -363,7 +365,7 @@ class _AddTrainingprocessesScreenState
                             });
                           },
                         ),
-                      ),
+                      ).p(8),
                     ],
                   ),
                   SizedBox(height: 24),

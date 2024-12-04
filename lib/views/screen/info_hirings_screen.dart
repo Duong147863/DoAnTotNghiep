@@ -435,7 +435,7 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
     return DropdownButtonFormField<DepartmentPosition>(
       value: selectedDepartmentsPosition,
       hint: Text(hint),
-      isExpanded: false,
+      isExpanded: true,
       onChanged: _isEditing
           ? (DepartmentPosition? newValue) {
               setState(() {
@@ -474,23 +474,23 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
       appBarItemColor: AppColor.boneWhite,
       backgroundColor: AppColor.aliceBlue,
       actions: [
-        // status == 3
-        //     ? SizedBox.shrink()
-        //     : IconButton(
-        //         icon: Icon(Icons.save,
-        //             color: const Color.fromARGB(255, 33, 243, 61)),
-        //         onPressed: _updateHirings,
-        //       ),
-        // status == 3
-        //     ? SizedBox.shrink()
-        //     : IconButton(
-        //         icon: Icon(Icons.edit, color: Colors.blue),
-        //         onPressed: () {
-        //           setState(() {
-        //             _isEditing = true;
-        //           });
-        //         },
-        //       ),
+        status == 3
+            ? SizedBox.shrink()
+            : IconButton(
+                icon: Icon(Icons.save,
+                    color: const Color.fromARGB(255, 33, 243, 61)),
+                onPressed: _updateHirings,
+              ),
+        status == 3
+            ? SizedBox.shrink()
+            : IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue),
+                onPressed: () {
+                  setState(() {
+                    _isEditing = true;
+                  });
+                },
+              ),
       ],
       resizeToAvoidBottomInset: true,
       titletext: "Thông tin ứng viên",
@@ -522,30 +522,6 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                       : null,
                 ),
               ).py8(),
-
-              // GestureDetector(
-              //   onTap: _pickImage,
-              //   child: Container(
-              //     width: 500, // Kích thước hình vuông
-              //     height: 500,
-              //     decoration: BoxDecoration(
-              //       color: Colors.grey[300], // Màu nền nếu không có ảnh
-              //       border: Border.all(color: Colors.grey), // Viền (nếu cần)
-              //       borderRadius: BorderRadius.circular(8), // Bo góc (nếu cần)
-              //       image: _hiringProfileImageBase64 != null
-              //           ? DecorationImage(
-              //               image: MemoryImage(
-              //                   base64Decode(_hiringProfileImageBase64!)),
-              //               fit: BoxFit.cover,
-              //             )
-              //           : null,
-              //     ),
-              //     child: _hiringProfileImageBase64 == null
-              //         ? Icon(Icons.add_a_photo, size: 30, color: Colors.grey)
-              //         : null,
-              //   ),
-              // ).py8(),
-              // Profile name and Apply For
               CustomTextFormField(
                 enabled: _isEditing,
                 focusNode: _profileNameFocusNode,
@@ -590,55 +566,60 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                   return null;
                 },
               ).p(8),
-              _buildDepartmentPositionDropdown('Vị trí ứng tuyển').p(8),
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDepartmentPositionDropdown('Vị trí ứng tuyển')).p(8),
 
               // Birthday and Place of Birth
-              Row(
-                children: [
-                  _buildDateBirthday(
-                      'Ngày sinh', _birthdayController, _birthday, (date) {
-                    setState(() {
-                      _birthday = date;
-                      _birthdayController.text =
-                          "${_birthday.toLocal()}".split(' ')[0];
-                    });
-                  }).px8().w(150),
-                  InkWell(
-                    onTap: _isEditing
-                        ? () async {
-                            // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                            final selectedAddress = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddProvinces(),
-                              ),
-                            );
-
-                            if (selectedAddress != null) {
-                              setState(() {
-                                // Cập nhật TextEditingController với địa chỉ được chọn
-                                _nationController.text = selectedAddress;
-                              });
-                            }
-                          }
-                        : null,
-                    child: AbsorbPointer(
-                      // Ngăn không cho bàn phím mở ra khi nhấn
-                      child: CustomTextFormField(
-                        focusNode: _nationFocusNode,
-                        textEditingController: _nationController,
-                        labelText: 'Quê quán',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ).w(230),
-                ],
+              
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDateBirthday(
+                    'Ngày sinh', _birthdayController, _birthday, (date) {
+                  setState(() {
+                    _birthday = date;
+                    _birthdayController.text =
+                        "${_birthday.toLocal()}".split(' ')[0];
+                  });
+                }).p(8),
               ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: InkWell(
+                  onTap: _isEditing
+                      ? () async {
+                          // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                          final selectedAddress = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddProvinces(),
+                            ),
+                          );
+                
+                          if (selectedAddress != null) {
+                            setState(() {
+                              // Cập nhật TextEditingController với địa chỉ được chọn
+                              _nationController.text = selectedAddress;
+                            });
+                          }
+                        }
+                      : null,
+                  child: AbsorbPointer(
+                    // Ngăn không cho bàn phím mở ra khi nhấn
+                    child: CustomTextFormField(
+                      focusNode: _nationFocusNode,
+                      textEditingController: _nationController,
+                      labelText: 'Quê quán',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ),
+              ).p(8),
               // Gender and Nation
               Row(
                 children: [
@@ -651,66 +632,70 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                 ],
               ),
               // Email and Phone
-              Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _emailController,
-                    labelText: 'Email',
-                    maxLength: 254,
-                    enabled: _isEditing,
-                    maxLines: 1,
-                    focusNode: _emailFocusNode,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      final emailRegex =
-                          RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
-                      if (!emailRegex.hasMatch(value)) {
-                        return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
-                      }
-                      // Kiểm tra độ dài phần trước @
-                      final localPart = value.split('@')[0];
-                      if (localPart.length < 6 || localPart.length > 30) {
-                        return 'Phần trước @ phải từ 6-30 ký tự';
-                      }
-                      if (value.length > 254) {
-                        return 'Email không được vượt quá 254 ký tự';
-                      }
-                      return null;
-                    },
-                  ).px4().w(225),
-                  CustomTextFormField(
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được\nđể trống';
-                      }
-                      if (value.length != 10) {
-                        return 'Số điện thoại\nkhông hợp lệ';
-                      }
-                      if (!value.startsWith('0')) {
-                        return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
-                      }
-                      if (!value.isNumber()) {
-                        return 'Số điện thoại\nchỉ gồm số';
-                      }
-                      if (value.startsWith('00')) {
-                        return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
-                      }
-                      return null;
-                    },
-                    textEditingController: _phoneController,
-                    labelText: 'Điện thoại',
-                    maxLines: 1,
-                    enabled: _isEditing,
-                    maxLength: 10,
-                    focusNode: _phoneFocusNode,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                        errorMaxLines: 2, errorStyle: TextStyle(fontSize: 12)),
-                  ).w(155),
-                ],
-              ).py8(),
+        
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: CustomTextFormField(
+                      textEditingController: _emailController,
+                      labelText: 'Email',
+                      maxLength: 254,
+                      enabled: _isEditing,
+                      maxLines: 1,
+                      focusNode: _emailFocusNode,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        final emailRegex =
+                            RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
+                        }
+                        // Kiểm tra độ dài phần trước @
+                        final localPart = value.split('@')[0];
+                        if (localPart.length < 6 || localPart.length > 30) {
+                          return 'Phần trước @ phải từ 6-30 ký tự';
+                        }
+                        if (value.length > 254) {
+                          return 'Email không được vượt quá 254 ký tự';
+                        }
+                        return null;
+                      },
+                    ),
+                  ).p(8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: CustomTextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được\nđể trống';
+                        }
+                        if (value.length != 10) {
+                          return 'Số điện thoại\nkhông hợp lệ';
+                        }
+                        if (!value.startsWith('0')) {
+                          return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
+                        }
+                        if (!value.isNumber()) {
+                          return 'Số điện thoại\nchỉ gồm số';
+                        }
+                        if (value.startsWith('00')) {
+                          return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
+                        }
+                        return null;
+                      },
+                      textEditingController: _phoneController,
+                      labelText: 'Điện thoại',
+                      maxLines: 1,
+                      enabled: _isEditing,
+                      maxLength: 10,
+                      focusNode: _phoneFocusNode,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          errorMaxLines: 2, errorStyle: TextStyle(fontSize: 12)),
+                    ),
+                  ).p(8),
+               
               InkWell(
                 onTap: _isEditing
                     ? () async {
@@ -816,22 +801,18 @@ class _InfoHiringsScreenState extends State<InfoHiringsScreen> {
                   return null;
                 },
               ).px4(),
-              status == 3
-                  ? SizedBox.shrink()
-                  : Row(
-                      children: [
-                        Text('Duyệt đơn').px(8),
-                        _buildDropdownStatusField(
-                          'Duyệt đơn',
-                          status,
-                          (value) {
-                            setState(() {
-                              status = value!;
-                            });
-                          },
-                        ).px(8).w(286),
-                      ],
-                    ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDropdownStatusField(
+                  'Duyệt đơn',
+                  status,
+                  (value) {
+                    setState(() {
+                      status = value!;
+                    });
+                  },
+                ).px(8).w(286),
+              ),
             ],
           ),
         ).px8(),

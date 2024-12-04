@@ -384,6 +384,9 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   var listFilterTimeTypes = ["", "Ngày", "Tuần", "Tháng"];
+  TextEditingController _searchController =
+      TextEditingController(); // Controller cho trường tìm kiếm
+  String searchQuery = ""; // Biến lưu trữ giá trị tìm kiếm
   DateTime now = DateTime.now();
   DateTime startOfWeek =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
@@ -494,6 +497,23 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
                     Icon(Icons.arrow_forward_rounded).onInkTap(_nextWeek),
                   ],
                 ).p12(),
+                // Thêm trường tìm kiếm
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      labelText: "Tìm kiếm theo Mã NV",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value; // Cập nhật giá trị tìm kiếm
+                      });
+                    },
+                  ),
+                ),
                 TabBar(
                   controller: _tabController,
                   tabs: const [

@@ -483,7 +483,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                       }
                       return null;
                     },
-                  ).w(229),
+                  ).w(160),
                 ],
               ).py16(),
               DropdownButtonFormField<String>(
@@ -604,7 +604,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                       }
                       return null;
                     },
-                  ).w(229),
+                  ).w(178),
                 ],
               ).py16(),
               Row(
@@ -649,7 +649,7 @@ class _InfoDiplomaScreenState extends State<InfoDiplomaScreen> {
                       }
                       return null;
                     },
-                  ).w(229),
+                  ).w(178),
                 ],
               ).py16(),
               _buildDateField(

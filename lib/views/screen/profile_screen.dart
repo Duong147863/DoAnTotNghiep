@@ -163,27 +163,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _endTimeController.text =
         DateFormat('dd/MM/yyyy').format(widget.profile!.endTime!).toString();
     _endTime = widget.profile!.endTime!;
-    //     // Tính số ngày làm việc
-    // int workingDays = _endTime.difference(_startTime).inDays;
-
-    // // Kiểm tra xem có hiển thị nút tạo hợp đồng không
-    // if (statusProfile == 0 && workingDays > 60) {
-    //   showLaborContractButton = true; // Hiển thị nút
-    // } else {
-    //   showLaborContractButton = false; // Ẩn nút
-    // }
-    // // Tính số ngày làm việc
-    // int workingDays = _endTime.difference(_startTime).inDays;
-
-    // // Kiểm tra trạng thái thử việc
-    // if (statusProfile == 0) {
-    //   if (workingDays <= 60) {
-    //     trialStatusText = "Đang thử việc ($workingDays ngày)";
-    //   } else {
-    //     trialStatusText = "Đã hết hạn ngày thử việc ($workingDays ngày)";
-    //   }
-    // }
-
     statusProfile = widget.profile!.profileStatus;
     _nationController.text = widget.profile!.nation;
     _selectedNation = widget.profile!.nation;
@@ -297,6 +276,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _formKey.currentState?.validate();
       }
     });
+    _loadLaborContact();
   }
 
   void _resetPassword() async {
@@ -633,141 +613,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //     print("Danh sách hợp đồng rỗng!");
   //   }
   // }
- void _loadLaborContact() async {
-  // Lấy danh sách hợp đồng từ ViewModel
-  await Provider.of<LaborContactsViewModel>(context, listen: false)
-      .getLaborContactOf(widget.profile!.profileId);
+  void _loadLaborContact() async {
+    // Lấy danh sách hợp đồng từ ViewModel
+    await Provider.of<LaborContactsViewModel>(context, listen: false)
+        .getLaborContactOf(widget.profile!.profileId);
 
-  laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
-      .listLaborContact;
+    laborContracts = Provider.of<LaborContactsViewModel>(context, listen: false)
+        .listLaborContact;
 
-  if (laborContracts.isNotEmpty) {
-    // Sắp xếp danh sách hợp đồng theo start_time để đảm bảo thứ tự đúng
-    laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
+    if (laborContracts.isNotEmpty) {
+      // Sắp xếp danh sách hợp đồng theo start_time để đảm bảo thứ tự đúng
+      laborContracts.sort((a, b) => a.startTime.compareTo(b.startTime));
 
-    DateTime currentDate = DateTime.now();
+      DateTime currentDate = DateTime.now();
 
-    if (statusProfile == 1) {
-      // Trạng thái profile = 1: Lấy hợp đồng lần 1
-      var firstContract = laborContracts[0];
-      if (firstContract != null) {
-        DateTime startTimeFirstContract = firstContract.startTime;
-        DateTime? endTimeFirstContract = firstContract.endTime;
+      if (statusProfile == 1) {
+        // Trạng thái profile = 1: Lấy hợp đồng lần 1
+        var firstContract = laborContracts[0];
+        if (firstContract != null) {
+          DateTime startTimeFirstContract = firstContract.startTime;
+          DateTime? endTimeFirstContract = firstContract.endTime;
 
-        if (endTimeFirstContract != null) {
-          int remainingDays =
-              endTimeFirstContract.difference(currentDate).inDays;
-
-          if (remainingDays > 0) {
-            daysSignedFirstContract = "Hợp đồng lần 1: "
-                "${DateFormat('dd/MM/yyyy').format(startTimeFirstContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeFirstContract)}"
-                  "\ncòn thời hạn: ""$remainingDays"" ngày";
-            showLaborContractButton1 = false; // Ẩn nút
-          } else {
-            daysSignedFirstContract = "Hợp đồng lần 1: "
-                "${DateFormat('dd/MM/yyyy').format(startTimeFirstContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeFirstContract)}"
-                "\nđã hết thời hạn";
-            showLaborContractButton1 = true; // Hiển thị nút
-          }
-        }
-      }
-    } else if (statusProfile == 2) {
-      // Trạng thái profile = 2: Lấy hợp đồng lần 2
-      if (laborContracts.length > 1) {
-        var secondContract = laborContracts[1];
-        if (secondContract != null) {
-          DateTime startTimeSecondContract = secondContract.startTime;
-          DateTime? endTimeSecondContract = secondContract.endTime;
-
-          if (endTimeSecondContract != null) {
+          if (endTimeFirstContract != null) {
             int remainingDays =
-                endTimeSecondContract.difference(currentDate).inDays;
+                endTimeFirstContract.difference(currentDate).inDays;
 
             if (remainingDays > 0) {
-              daysSignedSecondContract = "Hợp đồng lần 2: "
-                  "${DateFormat('dd/MM/yyyy').format(startTimeSecondContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeSecondContract)}"
-                  "\ncòn thời hạn: ""$remainingDays"" ngày";
+              daysSignedFirstContract = "Hợp đồng lần 1: "
+                  "${DateFormat('dd/MM/yyyy').format(startTimeFirstContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeFirstContract)}"
+                  "\ncòn thời hạn: "
+                  "$remainingDays"
+                  " ngày";
+              showLaborContractButton1 = false; // Ẩn nút
             } else {
-              daysSignedSecondContract = "Hợp đồng lần 2: "
-                  "${DateFormat('dd/MM/yyyy').format(startTimeSecondContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeSecondContract)}"
+              daysSignedFirstContract = "Hợp đồng lần 1: "
+                  "${DateFormat('dd/MM/yyyy').format(startTimeFirstContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeFirstContract)}"
                   "\nđã hết thời hạn";
+              showLaborContractButton1 = true; // Hiển thị nút
             }
           }
         }
-      }
-    } else if (statusProfile == 3) {
-      // Trạng thái profile = 3: Lấy hợp đồng lần 3 hoặc hợp đồng vô hạn
-      if (laborContracts.length > 2) {
-        var thirdContract = laborContracts[2];
-        if (thirdContract != null) {
-          DateTime startTimeThirdContract = thirdContract.startTime;
-          DateTime? endTimeThirdContract = thirdContract.endTime;
+      } else if (statusProfile == 2) {
+        // Trạng thái profile = 2: Lấy hợp đồng lần 2
+        if (laborContracts.length > 1) {
+          var secondContract = laborContracts[1];
+          if (secondContract != null) {
+            DateTime startTimeSecondContract = secondContract.startTime;
+            DateTime? endTimeSecondContract = secondContract.endTime;
 
-          if (endTimeThirdContract == null) {
-            // Hợp đồng vô hạn
-            daysSignedThirdContract = "Hợp đồng lần 3: "
-                "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - Vô hạn";
-          } else {
-            int remainingDays =
-                endTimeThirdContract.difference(currentDate).inDays;
+            if (endTimeSecondContract != null) {
+              int remainingDays =
+                  endTimeSecondContract.difference(currentDate).inDays;
 
-            if (remainingDays > 0) {
-              daysSignedThirdContract = "Hợp đồng lần 3: "
-                  "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeThirdContract)}"
-                  "\ncòn thời hạn: $remainingDays ngày";
-            } else {
-              daysSignedThirdContract = "Hợp đồng lần 3: "
-                  "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeThirdContract)}"
-                  "\nđã hết thời hạn";
+              if (remainingDays > 0) {
+                daysSignedSecondContract = "Hợp đồng lần 2: "
+                    "${DateFormat('dd/MM/yyyy').format(startTimeSecondContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeSecondContract)}"
+                    "\ncòn thời hạn: "
+                    "$remainingDays"
+                    " ngày";
+              } else {
+                daysSignedSecondContract = "Hợp đồng lần 2: "
+                    "${DateFormat('dd/MM/yyyy').format(startTimeSecondContract)} - ${DateFormat('dd/MM/yyyy').format(endTimeSecondContract)}"
+                    "\nđã hết thời hạn";
+              }
             }
           }
         }
-      }
-    }
+      } else if (statusProfile == 3) {
+        // Trạng thái profile = 3: Lấy hợp đồng lần 3 hoặc hợp đồng vô hạn
+        if (laborContracts.length > 2) {
+          var thirdContract = laborContracts[2];
+          if (thirdContract != null) {
+            DateTime startTimeThirdContract = thirdContract.startTime;
+            DateTime? endTimeThirdContract = thirdContract.endTime;
 
-    // Cập nhật giao diện
-    setState(() {});
-  } else {
-    print("Danh sách hợp đồng rỗng!");
+            if (endTimeThirdContract == null) {
+              // Hợp đồng vô hạn
+              daysSignedThirdContract = "Hợp đồng lần 3: "
+                  "${DateFormat('dd/MM/yyyy').format(startTimeThirdContract)} - Vô hạn";
+            }
+            //
+          }
+        }
+      }
+
+      // Cập nhật giao diện
+      setState(() {});
+    } else {}
   }
-}
-
-
 
   String getStatusText(
-  DateTime startTime, 
-  DateTime endTime, 
-  int statusProfile) {
-  DateTime currentDate = DateTime.now();
-  int remainingDays = endTime.difference(currentDate).inDays;
+      DateTime startTime, DateTime endTime, int statusProfile) {
+    DateTime currentDate = DateTime.now();
+    int remainingDays = endTime.difference(currentDate).inDays;
 
-  // Kiểm tra trạng thái thử việc (statusProfile == 0)
-  if (statusProfile == 0) {
-    if (remainingDays > 0) {
-      showLaborContractButton = false; // Ẩn nút
-      return "Thử việc: "
-          "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
-          "\ncòn thời hạn: ""$remainingDays"" ngày";
-    } else {
-      showLaborContractButton = true; // Hiển thị nút
-      return "Thử việc: "
-          "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
-          "\nđã hết hạn";
+    // Kiểm tra trạng thái thử việc (statusProfile == 0)
+    if (statusProfile == 0) {
+      if (remainingDays > 0) {
+        showLaborContractButton = false; // Ẩn nút
+        return "Thử việc: "
+            "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
+            "\ncòn thời hạn: "
+            "$remainingDays"
+            " ngày";
+      } else {
+        showLaborContractButton = true; // Hiển thị nút
+        return "Thử việc: "
+            "${DateFormat('dd/MM/yyyy').format(startTime)} - ${DateFormat('dd/MM/yyyy').format(endTime)}"
+            "\nđã hết hạn";
+      }
+    }
+
+    // Xử lý các trạng thái hợp đồng khác
+    switch (statusProfile) {
+      case 1:
+        return "Hợp đồng ký lần 1";
+      case 2:
+        return "Hợp đồng ký lần 2";
+      case 3:
+        return "Hợp đồng vô thời hạn";
+      default:
+        return "Trạng thái không xác định";
     }
   }
-
-  // Xử lý các trạng thái hợp đồng khác
-  switch (statusProfile) {
-    case 1:
-      return "Hợp đồng ký lần 1";
-    case 2:
-      return "Hợp đồng ký lần 2";
-    case 3:
-      return "Hợp đồng vô thời hạn";
-    default:
-      return "Trạng thái không xác định";
-  }
-}
 
   void _updateProfile() async {
     if (_formKey.currentState!.validate()) {
@@ -866,25 +834,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
           elevation: 0,
           title: statusProfile == 0
-    ? Text(
-        getStatusText(_startTime, _endTime, statusProfile!),
-        style: TextStyle(color: Colors.white, fontSize: 13),
-      )
-    : Text(
-        statusProfile == 1
-            ? (daysSignedFirstContract != null
-                ? daysSignedFirstContract!
-                : "Chưa có thông tin hợp đồng lần 1")
-            : statusProfile == 2
-                ? (daysSignedSecondContract != null
-                    ? daysSignedSecondContract!
-                    : "Chưa có thông tin hợp đồng lần 2")
-                : (daysSignedThirdContract != null
-                    ? daysSignedThirdContract!
-                    : "Chưa có thông tin hợp đồng lần 3"),
-        style: TextStyle(fontSize: 13),
-      ),
-
+              ? Text(
+                  getStatusText(_startTime, _endTime, statusProfile!),
+                  style: TextStyle(color: Colors.white, fontSize: 13),
+                )
+              : Text(
+                  statusProfile == 1
+                      ? (daysSignedFirstContract != null
+                          ? daysSignedFirstContract!
+                          : "Chưa có thông tin hợp đồng lần 1")
+                      : statusProfile == 2
+                          ? (daysSignedSecondContract != null
+                              ? daysSignedSecondContract!
+                              : "Chưa có thông tin hợp đồng lần 2")
+                          : (daysSignedThirdContract != null
+                              ? daysSignedThirdContract!
+                              : "Chưa có thông tin hợp đồng lần 3"),
+                  style: TextStyle(fontSize: 13),
+                ),
           backgroundColor: AppColor.primaryLightColor,
           automaticallyImplyLeading: true,
           foregroundColor: Colors.white,
@@ -1019,7 +986,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                               ],
                                             ),
-                                            SizedBox(height: 40,),
+                                            SizedBox(
+                                              height: 40,
+                                            ),
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
@@ -1131,6 +1100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       setState(() {
                                         laborContracts
                                             .add(createNewLaborContract);
+                                        _loadLaborContact(); // Làm mới dữ liệu'
                                       });
                                     }
                                   });
@@ -1189,61 +1159,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   });
                                 }),
                           ]),
-            // SpeedDial(
-            //     elevation: 0,
-            //     child: Icon(Icons.menu),
-            //     backgroundColor: AppColor.primaryLightColor,
-            //     foregroundColor: Colors.white,
-            //     direction: SpeedDialDirection.down,
-            //     children: [
-            // SpeedDialChild(
-            //     child: Icon(Icons.edit_outlined,
-            //         color: AppColor.primaryLightColor),
-            //     onTap: () {
-            //       setState(() {
-            //         _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
-            //         _isButtonEnabled = true;
-            //       });
-            //     }),
-            // SpeedDialChild(
-            //   child:
-            //       Icon(Icons.lock, color: AppColor.primaryLightColor),
-            //   onTap: () {
-            //     showDialog(
-            //       context: context,
-            //       builder: (BuildContext context) {
-            //         return AlertDialog(
-            //           title: Text('Xác nhận khoá ?'),
-            //           content:
-            //               Text('Khoá quyền sử dụng của hồ sơ này?'),
-            //           actions: [
-            //             TextButton(
-            //               onPressed: () {
-            //                 Navigator.of(context).pop();
-            //               },
-            //               child: Text('Huỷ'),
-            //             ),
-            //             AppStrings.ROLE_PERMISSIONS.containsAny([
-            //               'Manage BoD & HR accounts',
-            //               'Manage Staffs info only'
-            //             ])
-            //                 ? TextButton(
-            //                     onPressed: () {
-            //                       Navigator.of(context).pop();
-            //                       _deleteProfile();
-            //                     },
-            //                     child: Text('Khoá'),
-            //                   )
-            //                 : SizedBox.shrink(),
-            //           ],
-            //         );
-            //       },
-            //     );
-            //   },
-            // ),
-
-            //     ],
-            //   ),
           ]),
       extendBodyBehindAppBar: false,
       body: ListView(children: [
@@ -1389,87 +1304,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       }
                       return null;
                     },
-                  ).w(254),
+                  ).w(200),
                 ],
               ).py16(),
               // Birthday + Place of birth
-              Row(
-                children: [
-                  _buildDateField('Ngày sinh', _birthdayController, _birthday,
-                      (date) {
-                    setState(() {
-                      _birthday = date;
-                      _birthdayController.text =
-                          DateFormat('dd/MM/yyyy').format(_birthday);
-                    });
-                  }).px(8).w(150),
-                  InkWell(
-                    onTap: _isEditing
-                        ? () async {
-                            // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                            final selectedAddress = await Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AddProvinces(),
-                              ),
-                            );
 
-                            if (selectedAddress != null) {
-                              setState(() {
-                                // Cập nhật TextEditingController với địa chỉ được chọn
-                                _placeOfBirthController.text = selectedAddress;
-                              });
-                            }
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDateField(
+                    'Ngày sinh', _birthdayController, _birthday, (date) {
+                  setState(() {
+                    _birthday = date;
+                    _birthdayController.text =
+                        DateFormat('dd/MM/yyyy').format(_birthday);
+                  });
+                }),
+              ).p(8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: InkWell(
+                  onTap: _isEditing
+                      ? () async {
+                          // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                          final selectedAddress = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddProvinces(),
+                            ),
+                          );
+
+                          if (selectedAddress != null) {
+                            setState(() {
+                              // Cập nhật TextEditingController với địa chỉ được chọn
+                              _placeOfBirthController.text = selectedAddress;
+                            });
                           }
-                        : null,
-                    child: AbsorbPointer(
-                      // Ngăn không cho bàn phím mở ra khi nhấn
-                      child: CustomTextFormField(
-                        focusNode: _noisinhFocusNode,
-                        textEditingController: _placeOfBirthController,
-                        labelText: 'Nơi sinh',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          }
-                          return null;
-                        },
-                      ),
+                        }
+                      : null,
+                  child: AbsorbPointer(
+                    // Ngăn không cho bàn phím mở ra khi nhấn
+                    child: CustomTextFormField(
+                      focusNode: _noisinhFocusNode,
+                      textEditingController: _placeOfBirthController,
+                      labelText: 'Nơi sinh',
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Không được để trống';
+                        }
+                        return null;
+                      },
                     ),
-                  ).w(254),
-                ],
-              ),
-              // AppStrings.ROLE_PERMISSIONS.containsAny(
-              //         ['Manage Staffs info only', 'Manage BoD & HR accounts'])
-              //     ? Row(
-              //         children: [
-              //           Text('CV-PB:').px(6),
-              //           _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban', roleid!)
-              //               .p(8)
-              //               .w(360),
-              //         ],
-              //       )
-              //     : SizedBox.shrink(),
-              Row(
-                children: [
-                  Text('CV-PB:').px(6),
-                  _buildDepartmentPositionDropdown(
-                    'Chức Vụ - Phòng Ban',
-                    widget.loginUser!.profileId,
-                    widget.profile!.profileId,
-                  ).p(8).w(330),
-                ],
-              ),
-              Row(
-                children: [
-                  Text('Lương cơ bản:').px(8),
-                  _buildSalaryDropdown(
-                    'Mức lương',
-                    widget.loginUser!.profileId,
-                    widget.profile!.profileId,
-                  ).p(8).w(300),
-                ],
-              ),
+                  ),
+                ),
+              ).p(8),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDepartmentPositionDropdown(
+                  'Chức Vụ - Phòng Ban',
+                  widget.loginUser!.profileId,
+                  widget.profile!.profileId,
+                ),
+              ).p(8),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildSalaryDropdown(
+                  'Mức lương',
+                  widget.loginUser!.profileId,
+                  widget.profile!.profileId,
+                ),
+              ).p(8),
+
               AppStrings.ROLE_PERMISSIONS.containsAny(
                       ['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? Row(
@@ -1559,102 +1465,109 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
               // ID number + license day
-              Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _identifiNumController,
-                    labelText: 'Số CCCD/CMND',
-                    maxLength: 12,
-                    keyboardType: TextInputType.number,
-                    focusNode: _identifiNumFocusNode,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
-                      }
-                      if (value.length != 12) {
-                        return 'Số CCCD/CMND không\nhợp lệ';
-                      }
-                      if (!value.startsWith('0')) {
-                        return 'Số CCCD phải bắt đầu\nbằng số 0';
-                      }
-                      if (!value.isNumber()) {
-                        return 'Số CCCD chỉ gồm số';
-                      }
-                      return null;
-                    },
-                  ).w(200).px8(),
-                  _buildDateLicenseDay(
-                      'id ngày cấp', _idLicenseDayController, _idLicenseDay,
-                      (date) {
-                    setState(() {
-                      _idLicenseDay = date;
-                      _idLicenseDayController.text =
-                          DateFormat('dd/MM/yyyy').format(_idLicenseDay);
-                    });
-                  }).w(184),
-                ],
-              ).py8(),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomTextFormField(
+                  enabled: _isEditing,
+                  textEditingController: _identifiNumController,
+                  labelText: 'Số CCCD/CMND',
+                  maxLength: 12,
+                  keyboardType: TextInputType.number,
+                  focusNode: _identifiNumFocusNode,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    if (value.length != 12) {
+                      return 'Số CCCD/CMND không\nhợp lệ';
+                    }
+                    if (!value.startsWith('0')) {
+                      return 'Số CCCD phải bắt đầu\nbằng số 0';
+                    }
+                    if (!value.isNumber()) {
+                      return 'Số CCCD chỉ gồm số';
+                    }
+                    return null;
+                  },
+                ),
+              ).p(8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDateLicenseDay(
+                    'id ngày cấp', _idLicenseDayController, _idLicenseDay,
+                    (date) {
+                  setState(() {
+                    _idLicenseDay = date;
+                    _idLicenseDayController.text =
+                        DateFormat('dd/MM/yyyy').format(_idLicenseDay);
+                  });
+                }),
+              ).p(8),
 
               //Email + phone
-              Row(
-                children: [
-                  CustomTextFormField(
-                    textEditingController: _emailController,
-                    labelText: 'Email',
-                    enabled: _isEditing,
-                    maxLength: 254,
-                    maxLines: 1,
-                    focusNode: _emailFocusNode,
+
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomTextFormField(
+                  textEditingController: _emailController,
+                  labelText: 'Email',
+                  enabled: _isEditing,
+                  maxLength: 254,
+                  maxLines: 1,
+                  focusNode: _emailFocusNode,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Không được để trống';
+                    }
+                    // Regex kiểm tra email: Phần trước @ phải từ 6-30 ký tự và không có dấu chấm ở đầu/cuối
+                    final emailRegex =
+                        RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
+                    if (!emailRegex.hasMatch(value)) {
+                      return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
+                    }
+                    // Kiểm tra độ dài phần trước @
+                    final localPart = value.split('@')[0];
+                    if (localPart.length < 6 || localPart.length > 30) {
+                      return 'Phần trước @ phải từ 6-30 ký tự';
+                    }
+                    if (value.length > 254) {
+                      return 'Email không được vượt quá 254 ký tự';
+                    }
+                    return null;
+                  },
+                ),
+              ).p(8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: CustomTextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Không được để trống';
+                        return 'Không được\nđể trống';
                       }
-                      // Regex kiểm tra email: Phần trước @ phải từ 6-30 ký tự và không có dấu chấm ở đầu/cuối
-                      final emailRegex =
-                          RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
-                      if (!emailRegex.hasMatch(value)) {
-                        return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
+                      if (value.length != 10) {
+                        return 'Số điện thoại không hợp lệ';
                       }
-                      // Kiểm tra độ dài phần trước @
-                      final localPart = value.split('@')[0];
-                      if (localPart.length < 6 || localPart.length > 30) {
-                        return 'Phần trước @ phải từ 6-30 ký tự';
+                      if (!value.startsWith('0')) {
+                        return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
                       }
-                      if (value.length > 254) {
-                        return 'Email không được vượt quá 254 ký tự';
+                      if (!value.isNumber()) {
+                        return 'Số điện thoại\nchỉ gồm số';
+                      }
+                      if (value.startsWith('00')) {
+                        return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
                       }
                       return null;
                     },
-                  ).px4().w(258),
-                  CustomTextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Không được\nđể trống';
-                            }
-                            if (value.length != 10) {
-                              return 'Số điện thoại không hợp lệ';
-                            }
-                            if (!value.startsWith('0')) {
-                              return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
-                            }
-                            if (!value.isNumber()) {
-                              return 'Số điện thoại\nchỉ gồm số';
-                            }
-                            if (value.startsWith('00')) {
-                              return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
-                            }
-                            return null;
-                          },
-                          textEditingController: _phoneController,
-                          labelText: 'Điện thoại',
-                          maxLines: 1,
-                          maxLength: 10,
-                          focusNode: _phoneFocusNode,
-                          enabled: _isEditing,
-                          keyboardType: TextInputType.number)
-                      .w(145),
-                ],
-              ).py(8),
+                    textEditingController: _phoneController,
+                    labelText: 'Điện thoại',
+                    maxLines: 1,
+                    maxLength: 10,
+                    focusNode: _phoneFocusNode,
+                    enabled: _isEditing,
+                    keyboardType: TextInputType.number),
+              ).p(8),
+
               //Thường trú
               InkWell(
                 onTap: _isEditing
@@ -2347,6 +2260,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           },
           body: Padding(
             padding: const EdgeInsets.all(16.0),
+            
             child: Card(
               color: Colors.green.shade50,
               elevation: 2,
