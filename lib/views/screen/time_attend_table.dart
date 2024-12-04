@@ -382,7 +382,9 @@ class TimeAttendanceTable extends StatefulWidget {
 class _TimeAttendanceTableState extends State<TimeAttendanceTable>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
+  TextEditingController _searchController =
+      TextEditingController(); // Controller cho trường tìm kiếm
+  String searchQuery = ""; // Biến lưu trữ giá trị tìm kiếm
   DateTime now = DateTime.now();
   DateTime startOfWeek =
       DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
@@ -448,6 +450,23 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
                     Icon(Icons.arrow_forward_rounded).onInkTap(_nextWeek),
                   ],
                 ).p12(),
+                // Thêm trường tìm kiếm
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      labelText: "Tìm kiếm theo Mã NV",
+                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.search),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value; // Cập nhật giá trị tìm kiếm
+                      });
+                    },
+                  ),
+                ),
                 TabBar(
                   controller: _tabController,
                   tabs: const [
@@ -475,21 +494,28 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
   }
 
   Widget _buildTabContent(BuildContext context, String type) {
-  return Consumer<TimeKeepingViewModel>(
-    builder: (context, viewModel, child) {
+    return Consumer<TimeKeepingViewModel>(builder: (context, viewModel, child) {
       if (viewModel.fetchingData) {
         return const Center(child: CircularProgressIndicator());
       }
 
       List<Timekeepings> dataList;
       if (type == "working") {
-        // Lọc ra những nhân viên đang làm việc, tức là không có "late" (chưa trễ)
-        dataList = viewModel.listAll.where((item) => item.late == null).toList();
+        dataList =
+            viewModel.listAll.where((item) => item.checkin != null).toList();
       } else if (type == "late") {
-        dataList = viewModel.listAll.where((item) => item.late != null).toList();
+        dataList =
+            viewModel.listAll.where((item) => item.late != null).toList();
       } else {
         dataList = viewModel.listAll
             .where((item) => item.leavingSoon != null)
+            .toList();
+      }
+
+      // Lọc theo mã nhân viên (profileId)
+      if (searchQuery.isNotEmpty) {
+        dataList = dataList
+            .where((item) => item.profileId.contains(searchQuery))
             .toList();
       }
 
@@ -501,34 +527,26 @@ class _TimeAttendanceTableState extends State<TimeAttendanceTable>
         itemCount: dataList.length,
         itemBuilder: (context, index) {
           final item = dataList[index];
-          
-          // Format thời gian checkin và checkout
-          String checkinTime = item.checkin != null
-              ? DateFormat('HH:mm:ss').format(item.checkin!)
-              : "Không có dữ liệu";
-          String checkoutTime = item.checkout != null
-              ? DateFormat('HH:mm:ss').format(item.checkout!)
-              : "Không có dữ liệu";
-
           return Card(
             child: ListTile(
               title: Text("Nhân viên: ${item.profileId}"),
               subtitle: type == "working"
-                  ? Text("Thời gian làm việc: $checkinTime - $checkoutTime")
+                  ? Text(
+                      "Thời gian làm việc: ${DateFormat('HH:mm:ss').format(item.checkin)} - ${DateFormat('HH:mm:ss').format(item.checkout!)}",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 22, 163, 228)),
+                    )
                   : type == "late"
                       ? Text(
-                          item.late != null
-                              ? "Trễ: ${DateFormat('HH:mm:ss').format(item.late!)} phút"
-                              : "Trễ: Không có dữ liệu",
-                          style: TextStyle(color: Colors.red),
-                        )
-                      : Text("Tăng ca: ${item.leavingSoon} giờ",
+                          "Trễ: ${DateFormat('HH:mm:ss').format(item.late!)} phút",
+                          style: TextStyle(color: Colors.red))
+                      : Text(
+                          "Tăng ca: ${DateFormat('HH:mm:ss').format(item.leavingSoon!)} giờ",
                           style: TextStyle(color: Colors.green)),
             ),
           );
         },
       );
-    },
-  );
-}
+    });
+  }
 }

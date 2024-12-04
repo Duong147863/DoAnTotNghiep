@@ -432,450 +432,446 @@ class _AddProfilePageState extends State<AddProfilePage> {
             ),
             Divider(),
             // //Profile id + full name
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomTextFormField(
-                  textEditingController: _profileIDController,
-                  maxLength: 10,
-                  focusNode: _manvFocusNode,
-                  labelText: 'Mã nhân viên',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được\nđể trống';
-                    } else if (value.length > 10) {
-                      return 'Mã nhân viên\nkhông được vượt quá 10 ký tự';
-                    } else if (!value.startsWith('NV')) {
-                      return 'Mã nhân viên\nphải bắt đầu\nbằng"NV"';
-                    } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
-                      return 'Sau "NV"\nphải là số';
-                    }
-                    return null;
-                  },
-                ).px8().w(150),
-                CustomTextFormField(
-                  focusNode: _hovaTenFocusNode,
-                  textEditingController: _profileNameController,
-                  labelText: 'Họ và tên',
-                  maxLength: 50,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    // Kiểm tra không có khoảng trắng ở cuối tên
-                    if (value.trim() != value) {
-                      return 'Không được có khoảng trắng thừa\nở đầu hoặc cuối';
-                    }
-                    if (value.length < 4) {
-                      return 'Họ và Tên phải có ít nhất 4 ký tự';
-                    }
-                    // Regex kiểm tra ký tự đặc biệt
-                    final nameRegex = RegExp(
-                        r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomTextFormField(
+                    textEditingController: _profileIDController,
+                    maxLength: 10,
+                    focusNode: _manvFocusNode,
+                    labelText: 'Mã nhân viên',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được\nđể trống';
+                      } else if (value.length > 10) {
+                        return 'Mã nhân viên\nkhông được vượt quá 10 ký tự';
+                      } else if (!value.startsWith('NV')) {
+                        return 'Mã nhân viên\nphải bắt đầu\nbằng"NV"';
+                      } else if (!RegExp(r'^NV\d+$').hasMatch(value)) {
+                        return 'Sau "NV"\nphải là số';
+                      }
+                      return null;
+                    },
+                  ),
+                ).p(8),
+                // Họ và tên
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomTextFormField(
+                    focusNode: _hovaTenFocusNode,
+                    textEditingController: _profileNameController,
+                    labelText: 'Họ và tên',
+                    maxLength: 50,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      // Kiểm tra không có khoảng trắng ở cuối tên
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa\nở đầu hoặc cuối';
+                      }
+                      if (value.length < 4) {
+                        return 'Họ và Tên phải có ít nhất 4 ký tự';
+                      }
+                      // Regex kiểm tra ký tự đặc biệt
+                      final nameRegex = RegExp(
+                          r"^[a-zA-ZÂÃÈÉÊÙÚĂĐŨƠÀÁẠÃàáạãâầấậẤẦẪẬÂẫấậẫầãèéêìíòóôõùúăđĩũơƯĂẮẰẲẴẶẤẦẨẪẬắằẳẵặéèẻẽẹêềếểễệẾỀỆỄíìỉĩịỊÌÍĨÒÓÕỌòóỏõọôồÔỒỘỐỖÔốổỗộơờớởỡợùúủÙÚỤUŨũụưừứửỪỰỮỨữựýỳỷỹỵ\s]+$");
 
-                    if (!nameRegex.hasMatch(value)) {
-                      return 'Họ và Tên không hợp lệ. Vui lòng\nnhập đúng định dạng.';
-                    }
-                    // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                    List<String> words = value.split(" ");
-                    for (int i = 0; i < words.length; i++) {
-                      // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
-                      words[i] = words[i].substring(0, 1).toUpperCase() +
-                          words[i].substring(1).toLowerCase();
-                    }
-                    String capitalizedName = words.join(" ");
+                      if (!nameRegex.hasMatch(value)) {
+                        return 'Họ và Tên không hợp lệ. Vui lòng\nnhập đúng định dạng.';
+                      }
+                      // Kiểm tra và chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                      List<String> words = value.split(" ");
+                      for (int i = 0; i < words.length; i++) {
+                        // Chuyển chữ cái đầu tiên của mỗi từ thành chữ hoa
+                        words[i] = words[i].substring(0, 1).toUpperCase() +
+                            words[i].substring(1).toLowerCase();
+                      }
+                      String capitalizedName = words.join(" ");
 
-                    // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
-                    if (value != capitalizedName) {
-                      return 'Chữ cái đầu tiên của mỗi từ phải viết\n hoa. Ví dụ: Nguyễn Bình Dương';
-                    }
+                      // Kiểm tra xem tên có đúng định dạng hay không (chữ cái đầu tiên mỗi từ viết hoa)
+                      if (value != capitalizedName) {
+                        return 'Chữ cái đầu tiên của mỗi từ phải viết\n hoa. Ví dụ: Nguyễn Bình Dương';
+                      }
 
-                    if (!value.isLetter()) {
-                      return 'Tên chỉ gồm chữ';
-                    }
-                    return null;
-                  },
-                ).w(254),
-              ],
-            ).py16(),
-            Row(
-              children: [
-                //Birthday + Place of birth
-                _buildDateBirthday('Ngày sinh', _birthdayController, _birthday,
-                    (date) {
-                  setState(() {
-                    _birthday = date;
-                    _birthdayController.text =
-                        DateFormat('dd/MM/yyyy').format(date);
-                  });
-                }).px(8).w(150),
-                InkWell(
-                  onTap: () async {
-                    // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                    final selectedAddress = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddProvinces(),
+                      if (!value.isLetter()) {
+                        return 'Tên chỉ gồm chữ';
+                      }
+                      return null;
+                    },
+                  ),
+                ).p(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildDateBirthday(
+                      'Ngày sinh', _birthdayController, _birthday, (date) {
+                    setState(() {
+                      _birthday = date;
+                      _birthdayController.text =
+                          DateFormat('dd/MM/yyyy').format(date);
+                    });
+                  }),
+                ).p(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: InkWell(
+                    onTap: () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _placeOfBirthController.text = selectedAddress;
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      // Ngăn không cho bàn phím mở ra khi nhấn
+                      child: CustomTextFormField(
+                        focusNode: _noisinhFocusNode,
+                        textEditingController: _placeOfBirthController,
+                        labelText: 'Nơi sinh',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          return null;
+                        },
                       ),
-                    );
-                    if (selectedAddress != null) {
-                      setState(() {
-                        // Cập nhật TextEditingController với địa chỉ được chọn
-                        _placeOfBirthController.text = selectedAddress;
-                      });
-                    }
-                  },
-                  child: AbsorbPointer(
-                    // Ngăn không cho bàn phím mở ra khi nhấn
-                    child: CustomTextFormField(
-                      focusNode: _noisinhFocusNode,
-                      textEditingController: _placeOfBirthController,
-                      labelText: 'Nơi sinh',
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Không được để trống';
-                        }
-                        return null;
-                      },
                     ),
                   ),
-                ).w(254),
-              ],
-            ),
-
-            Row(
-              children: [
-                Text('Chọn').px(8),
-                _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
-                    .p(8)
-                    .w(360),
-              ],
-            ),
-            Row(
-              children: [
-                Text('Lương cơ bản:').px(8),
-                _buildSalaryDropdown(
-                  'Mức lương',
-                ).p(8).w(300),
-              ],
-            ),
-            Row(children: [
-              Text('Giới tính').px(8),
-              _buildDropdownField('Chọn giới tính', _gender, (value) {
-                setState(() {
-                  _gender = value!;
-                });
-              }).p(8).w(130),
-            ]),
-            //Gender + Marriage
-            Row(
-              children: [
-                Text('Hôn nhân').px8(),
-                Radio(
-                  value: true,
-                  groupValue: _marriage,
-                  onChanged: (value) {
-                    setState(() {
-                      _marriage = value!;
-                    });
-                  },
+                ).p(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildDepartmentPositionDropdown('Chức Vụ - Phòng Ban')
+                      .p(8),
                 ),
-                Text('Đã kết hôn'),
-                Radio(
-                  value: false,
-                  groupValue: _marriage,
-                  onChanged: (value) {
-                    setState(() {
-                      _marriage = value!;
-                    });
-                  },
-                ),
-                Text('Chưa kết hôn'),
-              ],
-            ),
-            // ID number + license day
-            Row(
-              children: [
-                CustomTextFormField(
-                  maxLength: 12,
-                  textEditingController: _identifiNumController,
-                  labelText: 'Số CCCD/CMND',
-                  keyboardType: TextInputType.number,
-                  focusNode: _identifiNumFocusNode,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    if (value.length != 12) {
-                      return 'Số CCCD/CMND không\nhợp lệ';
-                    }
-                    if (!value.startsWith('0')) {
-                      return 'Số CCCD phải bắt đầu\nbằng số 0';
-                    }
-                    if (!value.isNumber()) {
-                      return 'Số CCCD chỉ gồm số';
-                    }
-                    return null;
-                  },
-                ).w(200).px8(),
-                _buildDateLicenseDay(
-                    'Ngày cấp', _idLicenseDayController, _idLicenseDay, (date) {
-                  setState(() {
-                    _idLicenseDay = date;
-                    _idLicenseDayController.text =
-                        DateFormat('dd/MM/yyyy').format(date);
-                  });
-                }).w(184),
-              ],
-            ).py8(),
-
-            //Nation
-            DropdownButtonFormField<String>(
-              value: _selectedNation,
-              focusNode: _nationFocusNode,
-              items: NationNames.map((nation) {
-                return DropdownMenuItem(
-                  value: nation,
-                  child: Text(nation),
-                );
-              }).toList(),
-              decoration: InputDecoration(
-                labelText: 'Quốc tịch',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  _selectedNation = value; // Cập nhật giá trị được chọn
-                  _nationController.text = value ?? ""; // Gán vào controller
-                });
-              },
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Không được để trống';
-                }
-                return null;
-              },
-            ).p(8),
-            //Email + phone
-            Row(
-              children: [
-                CustomTextFormField(
-                  textEditingController: _emailController,
-                  labelText: 'Email',
-                  maxLength: 254,
-                  maxLines: 1,
-                  focusNode: _emailFocusNode,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    final emailRegex =
-                        RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
-                    if (!emailRegex.hasMatch(value)) {
-                      return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
-                    }
-                    // Kiểm tra độ dài phần trước @
-                    final localPart = value.split('@')[0];
-                    if (localPart.length < 6 || localPart.length > 30) {
-                      return 'Phần trước @ phải từ 6-30 ký tự';
-                    }
-                    if (value.length > 254) {
-                      return 'Email không được vượt quá 254 ký tự';
-                    }
-                    return null;
-                  },
-                ).px4().w(258),
-                CustomTextFormField(
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được\nđể trống';
-                    }
-                    if (value.length != 10) {
-                      return 'Số điện thoại\nkhông hợp lệ';
-                    }
-                    if (!value.startsWith('0')) {
-                      return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
-                    }
-                    if (!value.isNumber()) {
-                      return 'Số điện thoại\nchỉ gồm số';
-                    }
-                    if (value.startsWith('00')) {
-                      return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
-                    }
-                    return null;
-                  },
-                  textEditingController: _phoneController,
-                  labelText: 'Điện thoại',
-                  maxLines: 1,
-                  maxLength: 10,
-                  focusNode: _phoneFocusNode,
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      errorMaxLines: 2, errorStyle: TextStyle(fontSize: 12)),
-                ).w(145),
-              ],
-            ).py(8),
-            //Password
-            CustomTextFormField(
-              labelText: "Mật khẩu",
-              focusNode: _passwordFocusNode,
-              maxLength: 15,
-              textEditingController: _passwordController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Không được để trống';
-                }
-                if (value.trim() != value) {
-                  return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
-                }
-                // Kiểm tra độ dài mật khẩu (từ 8 đến 15 ký tự)
-                if (value.length < 8 || value.length > 15) {
-                  return 'Mật khẩu phải từ 8 đến 15 ký tự';
-                }
-                // Kiểm tra mật khẩu có ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt
-                if (!RegExp(
-                        r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$')
-                    .hasMatch(value)) {
-                  return 'Mật khẩu phải bao gồm chữ cái viết hoa, chữ cái viết\nthường, số và ký tự đặc biệt';
-                }
-                return null;
-              },
-            ).p8(),
-            //Thường trú
-            InkWell(
-              onTap: () async {
-                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                final selectedAddress = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProvinces(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildSalaryDropdown(
+                    'Mức lương',
                   ),
-                );
-
-                if (selectedAddress != null) {
-                  setState(() {
-                    // Cập nhật TextEditingController với địa chỉ được chọn
-                    _currentAddressController.text = selectedAddress;
-                  });
-                }
-              },
-              child: AbsorbPointer(
-                // Ngăn không cho bàn phím mở ra khi nhấn
-                child: CustomTextFormField(
-                  focusNode: _thuongtruFocusNode,
-                  textEditingController: _currentAddressController,
-                  labelText: 'Địa chỉ thường trú',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ).p8(),
-
-            //Tạm trú
-            InkWell(
-              onTap: () async {
-                // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                final selectedAddress = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AddProvinces(),
-                  ),
-                );
-
-                if (selectedAddress != null) {
-                  setState(() {
-                    // Cập nhật TextEditingController với địa chỉ được chọn
-                    _temporaryAddressController.text = selectedAddress;
-                  });
-                }
-              },
-              child: AbsorbPointer(
-                // Ngăn không cho bàn phím mở ra khi nhấn
-                child: CustomTextFormField(
-                  focusNode: _tamtruFocusNode,
-                  textEditingController: _temporaryAddressController,
-                  labelText: 'Địa chỉ tạm trú',
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Không được để trống';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-            ).p8(),
-            SizedBox(height: 20),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     _buildDateStartTime(
-            //       'Ngày bắt đầu thử việc',
-            //       _startTimeController,
-            //       _startTime,
-            //       (date) {
-            //         setState(() {
-            //           _startTime = date;
-            //           _startTimeController.text =
-            //               "${_startTime.toLocal()}".split(' ')[0];
-            //         });
-            //       },
-            //     ).p(8).w(184),
-            //     SizedBox(width: 16),
-            //     _buildDateEndTime(
-            //       'Ngày kết thúc bắt việc',
-            //       _endTimeController,
-            //       _endTime,
-            //       (date) {
-            //         setState(() {
-            //           _endTime = date;
-            //           _endTimeController.text =
-            //               "${_endTime.toLocal()}".split(' ')[0];
-            //         });
-            //       },
-            //     ).p(8).w(184),
-            //   ],
-            // ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildDateStartTime(
-                  'Ngày bắt đầu\nthử việc',
-                  _startTimeController,
-                  _startTime,
-                  (date) {
+                ).p(8),
+                Row(children: [
+                  Text('Giới tính').px(8),
+                  _buildDropdownField('Chọn giới tính', _gender, (value) {
                     setState(() {
-                      _startTime = date;
-                      _startTimeController.text =
-                          "${_startTime.toLocal()}".split(' ')[0];
-                      _calculateDaysDifference(); // Tính số ngày khi ngày bắt đầu thay đổi
+                      _gender = value!;
                     });
-                  },
-                ).p(8).w(150),
-                if (daysDifference != null)
-                  Text(
-                    'Tổng ngày: $daysDifference',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                  }).p(8).w(130),
+                ]),
+                //Gender + Marriage
+                Row(
+                  children: [
+                    Text('Hôn nhân').px8(),
+                    Radio(
+                      value: true,
+                      groupValue: _marriage,
+                      onChanged: (value) {
+                        setState(() {
+                          _marriage = value!;
+                        });
+                      },
+                    ),
+                    Text('Đã kết hôn'),
+                    Radio(
+                      value: false,
+                      groupValue: _marriage,
+                      onChanged: (value) {
+                        setState(() {
+                          _marriage = value!;
+                        });
+                      },
+                    ),
+                    Text('Chưa kết hôn'),
+                  ],
+                ),
+                // ID number + license day
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomTextFormField(
+                    maxLength: 12,
+                    textEditingController: _identifiNumController,
+                    labelText: 'Số CCCD/CMND',
+                    keyboardType: TextInputType.number,
+                    focusNode: _identifiNumFocusNode,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      if (value.length != 12) {
+                        return 'Số CCCD/CMND không\nhợp lệ';
+                      }
+                      if (!value.startsWith('0')) {
+                        return 'Số CCCD phải bắt đầu\nbằng số 0';
+                      }
+                      if (!value.isNumber()) {
+                        return 'Số CCCD chỉ gồm số';
+                      }
+                      return null;
+                    },
                   ),
-                _buildDateEndTime(
-                  'Ngày kết thúc\nthử việc',
-                  _endTimeController,
-                  _endTime,
-                  (date) {
+                ).px(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildDateLicenseDay(
+                      'Ngày cấp', _idLicenseDayController, _idLicenseDay,
+                      (date) {
                     setState(() {
-                      _endTime = date;
-                      _endTimeController.text =
-                          "${_endTime.toLocal()}".split(' ')[0];
-                      _calculateDaysDifference(); // Tính số ngày khi ngày kết thúc thay đổi
+                      _idLicenseDay = date;
+                      _idLicenseDayController.text =
+                          DateFormat('dd/MM/yyyy').format(date);
                     });
-                  },
-                ).p(8).w(150),
+                  }),
+                ).px(8),
+                //Nation
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedNation,
+                    focusNode: _nationFocusNode,
+                    items: NationNames.map((nation) {
+                      return DropdownMenuItem(
+                        value: nation,
+                        child: Text(nation),
+                      );
+                    }).toList(),
+                    decoration: InputDecoration(
+                      labelText: 'Quốc tịch',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedNation = value; // Cập nhật giá trị được chọn
+                        _nationController.text =
+                            value ?? ""; // Gán vào controller
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      return null;
+                    },
+                  ),
+                ).p(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomTextFormField(
+                    textEditingController: _emailController,
+                    labelText: 'Email',
+                    maxLength: 254,
+                    maxLines: 1,
+                    focusNode: _emailFocusNode,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      final emailRegex =
+                          RegExp(r'^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*@gmail\.com$');
+                      if (!emailRegex.hasMatch(value)) {
+                        return 'Email phải đúng định dạng\nvà có đuôi @gmail.com';
+                      }
+                      // Kiểm tra độ dài phần trước @
+                      final localPart = value.split('@')[0];
+                      if (localPart.length < 6 || localPart.length > 30) {
+                        return 'Phần trước @ phải từ 6-30 ký tự';
+                      }
+                      if (value.length > 254) {
+                        return 'Email không được vượt quá 254 ký tự';
+                      }
+                      return null;
+                    },
+                  ),
+                ).p(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomTextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được\nđể trống';
+                      }
+                      if (value.length != 10) {
+                        return 'Số điện thoại\nkhông hợp lệ';
+                      }
+                      if (!value.startsWith('0')) {
+                        return 'Số điện thoại\nphải bắt đầu\nbằng số 0';
+                      }
+                      if (!value.isNumber()) {
+                        return 'Số điện thoại\nchỉ gồm số';
+                      }
+                      if (value.startsWith('00')) {
+                        return 'Số điện thoại\nkhông được\nbắt đầu bằng 00';
+                      }
+                      return null;
+                    },
+                    textEditingController: _phoneController,
+                    labelText: 'Điện thoại',
+                    maxLines: 1,
+                    maxLength: 10,
+                    focusNode: _phoneFocusNode,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        errorMaxLines: 2, errorStyle: TextStyle(fontSize: 12)),
+                  ),
+                ).p(8),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: CustomTextFormField(
+                    labelText: "Mật khẩu",
+                    focusNode: _passwordFocusNode,
+                    maxLength: 15,
+                    textEditingController: _passwordController,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Không được để trống';
+                      }
+                      if (value.trim() != value) {
+                        return 'Không được có khoảng trắng thừa ở đầu hoặc cuối';
+                      }
+                      // Kiểm tra độ dài mật khẩu (từ 8 đến 15 ký tự)
+                      if (value.length < 8 || value.length > 15) {
+                        return 'Mật khẩu phải từ 8 đến 15 ký tự';
+                      }
+                      // Kiểm tra mật khẩu có ít nhất một chữ cái viết hoa, một chữ cái viết thường, một số và một ký tự đặc biệt
+                      if (!RegExp(
+                              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$')
+                          .hasMatch(value)) {
+                        return 'Mật khẩu phải bao gồm chữ cái viết hoa, chữ cái viết\nthường, số và ký tự đặc biệt';
+                      }
+                      return null;
+                    },
+                  ),
+                ).p8(),
+                //Thường trú
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: InkWell(
+                    onTap: () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
+
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _currentAddressController.text = selectedAddress;
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      // Ngăn không cho bàn phím mở ra khi nhấn
+                      child: CustomTextFormField(
+                        focusNode: _thuongtruFocusNode,
+                        textEditingController: _currentAddressController,
+                        labelText: 'Địa chỉ thường trú',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                ).p8(),
+
+                //Tạm trú
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: InkWell(
+                    onTap: () async {
+                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                      final selectedAddress = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddProvinces(),
+                        ),
+                      );
+
+                      if (selectedAddress != null) {
+                        setState(() {
+                          // Cập nhật TextEditingController với địa chỉ được chọn
+                          _temporaryAddressController.text = selectedAddress;
+                        });
+                      }
+                    },
+                    child: AbsorbPointer(
+                      // Ngăn không cho bàn phím mở ra khi nhấn
+                      child: CustomTextFormField(
+                        focusNode: _tamtruFocusNode,
+                        textEditingController: _temporaryAddressController,
+                        labelText: 'Địa chỉ tạm trú',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Không được để trống';
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                ).p8(),
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: _buildDateStartTime(
+                        'Ngày bắt đầu\nthử việc',
+                        _startTimeController,
+                        _startTime,
+                        (date) {
+                          setState(() {
+                            _startTime = date;
+                            _startTimeController.text =
+                                "${_startTime.toLocal()}".split(' ')[0];
+                            _calculateDaysDifference(); // Tính số ngày khi ngày bắt đầu thay đổi
+                          });
+                        },
+                      ),
+                    ).p(8),
+                    if (daysDifference != null)
+                      Text(
+                        'Tổng ngày: $daysDifference',
+                        style: TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.bold),
+                      ).p(8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: _buildDateEndTime(
+                        'Ngày kết thúc\nthử việc',
+                        _endTimeController,
+                        _endTime,
+                        (date) {
+                          setState(() {
+                            _endTime = date;
+                            _endTimeController.text =
+                                "${_endTime.toLocal()}".split(' ')[0];
+                            _calculateDaysDifference(); // Tính số ngày khi ngày kết thúc thay đổi
+                          });
+                        },
+                      ),
+                    ).p(8),
+                  ],
+                ),
+
                 SizedBox(width: 16),
-                // Hiển thị số ngày thử việc
               ],
             ),
+
+            // Hiển thị số ngày thử việc
           ]),
         )));
   }

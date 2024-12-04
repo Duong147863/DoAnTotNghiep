@@ -45,20 +45,15 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
       final updatedDeparment = Departments(
           departmentID: _departmentIDController.text,
           departmentName: _departmentNameController.text);
-      try {
+      
         await Provider.of<DeparmentsViewModel>(context, listen: false)
             .updateDepartment(updatedDeparment);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Department Updated successfully!')),
+          SnackBar(content: Text('Phòng ban đã được cập nhật thành công')),
         );
         // Navigator.pop(context, updatedDeparment);
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to Update Department: $e')),
-        );
-      }
-    }
+      } 
   }
 
   void _deleteDepartment() async {
@@ -131,40 +126,6 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                           _isEditing = true; // Chuyển đổi chế độ chỉnh sửa
                         });
                       }),
-                  SpeedDialChild(
-                    child: Icon(Icons.lock, color: AppColor.primaryLightColor),
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Xác nhận khoá ?'),
-                            content: Text('Khoá quyền sử dụng của hồ sơ này?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                                child: Text('Huỷ'),
-                              ),
-                              AppStrings.ROLE_PERMISSIONS.containsAny([
-                                'Manage BoD & HR accounts',
-                                'Manage Staffs info only'
-                              ])
-                                  ? TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                        _deleteDepartment();
-                                      },
-                                      child: Text('Khoá'),
-                                    )
-                                  : SizedBox.shrink(),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
                 ],
               ),
       ],
@@ -217,91 +178,9 @@ class _DepartmentInfoScreenState extends State<DepartmentInfoScreen> {
                       return null;
                     },
                     enabled: _isEditing,
-                  ).w(245).p4(),
+                  ).w(200),
                 ],
               ),
-              // Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
-              //   if (!viewModel.fetchingData &&
-              //       viewModel.listMembersOfDepartment.isEmpty) {
-              //     Provider.of<ProfilesViewModel>(context, listen: false)
-              //         .membersOfDepartment(widget.departments!.departmentID);
-              //   }
-              //   if (viewModel.fetchingData) {
-              //     if (viewModel.listMembersOfDepartment.isEmpty) {
-              //       return Center(
-              //           child: Column(
-              //         children: [
-              //           const Text(
-              //             "Chưa có dữ liệu",
-              //             style: TextStyle(fontSize: 16),
-              //           ).py16(),
-              //           Image.asset("assets/images/no_data.png"),
-              //         ],
-              //       ));
-              //     } else {
-              //       return const Center(child: CircularProgressIndicator());
-              //     }
-              //   } else {
-              //     List<Profiles> listMembers = viewModel.listMembersOfDepartment;
-              //     return CustomListView(
-              //         dataSet: listMembers,
-              //         itemBuilder: (context, index) {
-              //           return CustomCard(
-              //               title: Row(
-              //                 children: [
-              //                   CircleAvatar().px8(),
-              //                   Text(
-              //                     "${listMembers[index].profileId} - ${listMembers[index].profileName}",
-              //                     style: const TextStyle(
-              //                         fontWeight: FontWeight.bold),
-              //                   ),
-              //                 ],
-              //               ),
-              //               subttile: Container(
-              //                 child: Column(
-              //                   children: [],
-              //                 ),
-              //               )).p8().onTap(() async {
-              //             await Navigator.push(
-              //               context,
-              //               MaterialPageRoute(
-              //                 builder: (context) =>
-              //                     ProfileScreen(profile: listMembers[index],loginUser: widget.profiles,),
-                                
-              //               ),
-              //             ).then((updatedProfile) {
-              //               if (updatedProfile != null) {
-              //                 _handleUpdateProfile(
-              //                     updatedProfile); // Cập nhật lại thông tin
-              //               }
-              //             });
-                                    
-              //           });
-              //         });
-              //   }
-              // }),
-              // // Row(
-              // //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              // //   children: [
-              // //     IconButton(
-              // //       icon: Icon(Icons.save,
-              // //           color: const Color.fromARGB(255, 33, 243, 61)),
-              // //       onPressed: _updateDepartment,
-              // //     ),
-              // //     IconButton(
-              // //       icon: Icon(Icons.edit, color: Colors.blue),
-              // //       onPressed: () {
-              // //         setState(() {
-              // //           _isEditing = true;
-              // //         });
-              // //       },
-              // //     ),
-              // //     IconButton(
-              // //       icon: Icon(Icons.delete, color: Colors.red),
-              // //       onPressed: _deleteDepartment,
-              // //     ),
-              // //   ],
-              // // ),
               Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
                 if (!viewModel.fetchingData &&
                     viewModel.listMembersOfDepartment.isEmpty) {

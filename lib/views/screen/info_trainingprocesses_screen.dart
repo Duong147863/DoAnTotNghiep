@@ -387,12 +387,11 @@ class _InfoTrainingprocessesScreenState
                       return null;
                     },
                   ).px8(),
-                  SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
+                  
+                      Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateStartTime(
-                          'Start Time',
+                          'Bắt đầu',
                           _startTimeController,
                           _startTime,
                           (date) {
@@ -403,11 +402,12 @@ class _InfoTrainingprocessesScreenState
                             });
                           },
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
+                      ).p(8),
+                    
+                      Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateEndTimeWithClearButton(
-                          'End Time',
+                          'Kết thúc',
                           _endTimeController,
                           _endTime,
                           (date) {
@@ -418,9 +418,8 @@ class _InfoTrainingprocessesScreenState
                             });
                           },
                         ),
-                      ),
-                    ],
-                  ),
+                      ).p(8),
+                   
                   SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
