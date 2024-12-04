@@ -482,21 +482,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     },
                                   ),
-                                ]
-                              : [
                                   ListTile(
-                                    title: const Text("Nghỉ phép"),
+                                    title: const Text("Chấm công"),
                                     onTap: () {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute<void>(
                                             builder: (BuildContext context) =>
-                                                ListAbsentScreen(
-                                                  profiles: widget.profile,
+                                                TimeAttendanceTable(
+                                                  user: widget.profile,
                                                 )),
                                       );
                                     },
                                   ),
+                                ]
+                              : [
+                                  SizedBox.shrink(),
                                 ]),
             ),
             Align(
@@ -1102,6 +1103,40 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }),
             Divider().py8(),
+            Text(
+              "Lịch sử chấm công của bạn",
+              style: TextStyle(fontSize: 20),
+            ),
+            // DropdownButtonFormField<String>( //Filter
+            //       hint: const Text("Lọc theo"),
+            //       value: selectedType,
+            //       onChanged: (String? newValue) {
+            //         setState(() {
+            //           selectedType = newValue!;
+            //           selectedType == "Ngày"
+            //               ? {_loadDateData()}
+            //               : selectedType == "Tuần"
+            //                   ? {_loadWeekData()}
+            //                   : {_loadMonthData()};
+            //         });
+            //       },
+            //       items: listFilterTimeTypes.map((String dep) {
+            //         return DropdownMenuItem<String>(
+            //           value: dep,
+            //           child:
+            //               Text(dep), // assuming department has a `name` field
+            //         );
+            //       }).toList(),
+            //       validator: (value) {
+            //         if (value == null) {
+            //           return '';
+            //         }
+            //       },
+            //       decoration: InputDecoration(
+            //         border: OutlineInputBorder(
+            //             borderRadius: BorderRadius.circular(10)),
+            //       ),
+            //     ).p12().wTwoThird(context),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -1159,7 +1194,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }),
             Divider(),
             Text(
-              "Danh sách nhân viên phòng ban.",
+              "Danh sách nhân viên phòng ban",
               style: TextStyle(fontSize: 20),
             ),
             Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
@@ -1250,6 +1285,10 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             }),
             Divider().py8(),
+            Text(
+              "Lịch sử chấm công của bạn",
+              style: TextStyle(fontSize: 20),
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
