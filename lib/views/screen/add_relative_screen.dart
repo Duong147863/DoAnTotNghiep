@@ -266,19 +266,7 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                       return null;
                     },
                   ).px8().w(160),
-                  _buildDateField('Ngày sinh', _birthdayRelativeController,
-                      _birthdayRelative, (date) {
-                    setState(() {
-                      _birthdayRelative = date;
-                      _birthdayRelativeController.text =
-                          "${_birthdayRelative.toLocal()}".split(' ')[0];
-                    });
-                  }).px(8).w(250),
-                ],
-              ),
-              Row(
-                children: [
-                  CustomTextFormField(
+                    CustomTextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Không được\nđể trống';
@@ -304,42 +292,57 @@ class _AddRelativeScreenState extends State<AddRelativeScreen> {
                           focusNode: _sdtFocusNode,
                           keyboardType: TextInputType.number)
                       .p(8)
-                      .w(155),
-                  InkWell(
-                    onTap: () async {
-                      // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
-                      final selectedAddress = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddProvinces(),
-                        ),
-                      );
-
-                      if (selectedAddress != null) {
-                        setState(() {
-                          // Cập nhật TextEditingController với địa chỉ được chọn
-                          _nationRelativeController.text = selectedAddress;
-                        });
-                      }
-                    },
-                    child: AbsorbPointer(
-                      // Ngăn không cho bàn phím mở ra khi nhấn
-                      child: CustomTextFormField(
-                        focusNode: _quequanFocusNode,
-                        textEditingController: _nationRelativeController,
-                        labelText: 'Quê quán',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Không được để trống';
-                          }
-                          return null;
-                        },
-                      ),
-                    ),
-                  ).p(8).w(254),
+                      .w(200),
+                 
                 ],
               ),
-
+               Padding(
+                   padding: const EdgeInsets.symmetric(vertical: 8.0),
+                 child: _buildDateField('Ngày sinh', _birthdayRelativeController,
+                        _birthdayRelative, (date) {
+                      setState(() {
+                        _birthdayRelative = date;
+                        _birthdayRelativeController.text =
+                            "${_birthdayRelative.toLocal()}".split(' ')[0];
+                      });
+                    }),
+               ).p(8),
+              
+                  Padding(
+                       padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: InkWell(
+                      onTap: () async {
+                        // Điều hướng đến trang AddProvinces và nhận dữ liệu trả về
+                        final selectedAddress = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddProvinces(),
+                          ),
+                        );
+                    
+                        if (selectedAddress != null) {
+                          setState(() {
+                            // Cập nhật TextEditingController với địa chỉ được chọn
+                            _nationRelativeController.text = selectedAddress;
+                          });
+                        }
+                      },
+                      child: AbsorbPointer(
+                        // Ngăn không cho bàn phím mở ra khi nhấn
+                        child: CustomTextFormField(
+                          focusNode: _quequanFocusNode,
+                          textEditingController: _nationRelativeController,
+                          labelText: 'Quê quán',
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Không được để trống';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                    ),
+                  ).p(8),
               //Phone
               CustomTextFormField(
                 textEditingController: _relativeJobController,

@@ -28,6 +28,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
   final _daysOffController = TextEditingController();
   final _fromDateController = TextEditingController();
   final _toDateController = TextEditingController();
+  final _name = TextEditingController();
   DateTime _fromDate = DateTime.now();
   DateTime? _toDate = DateTime.now();
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
@@ -43,6 +44,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     idAbsent = widget.absents!.ID;
     _profileIDController.text = widget.absents!.profileID;
     _reasonController.text = widget.absents!.reason!;
+    _name.text = widget.profile!.profileName;
     _fromDateController.text =
         DateFormat('dd/MM/yyyy').format(widget.absents!.from).toString();
     _fromDate = widget.absents!.from;
@@ -174,57 +176,63 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                       return null;
                     },
                   ).px8().w(150),
-                  AppStrings.ROLE_PERMISSIONS.containsAny([
-                    'Manage Staffs info only',
-                    'Manage BoD & HR accounts'
-                  ])
-                      ? _buildDropdownField(
-                          'Duyệt đơn',
-                          _statusAbsent!,
-                          (value) {
-                            setState(() {
-                              _statusAbsent = value!;
-                            });
-                          },
-                        ).w(220)
-                      : SizedBox.shrink(),
+                  CustomTextFormField(
+                    enabled: false,
+                    textEditingController: _name,
+                    labelText: 'Tên người duyệt',
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'please_enter_profile_id'.tr();
+                      }
+                      return null;
+                    },
+                  ).px8().w(170),
                 ],
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildDateFrom(
-                      'Từ ngày',
-                      _fromDateController,
-                      _fromDate,
-                      (date) {
+              AppStrings.ROLE_PERMISSIONS.containsAny(
+                      ['Manage Staffs info only', 'Manage BoD & HR accounts'])
+                  ? _buildDropdownField(
+                      'Duyệt đơn',
+                      _statusAbsent!,
+                      (value) {
                         setState(() {
-                          _fromDate = date;
-                          _fromDateController.text =
-                              DateFormat('dd/MM/yyyy').format(_fromDate);
-                          _updateDayOff(); // Cập nhật lại dayoff khi chọn ngày "From"
+                          _statusAbsent = value!;
                         });
                       },
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: _buildDateToWithClearButton(
-                      'Đến ngày',
-                      _toDateController,
-                      _toDate,
-                      (date) {
-                        setState(() {
-                          _toDate = date!;
-                          _toDateController.text =
-                              DateFormat('dd/MM/yyyy').format(_toDate!);
-                          _updateDayOff(); // Cập nhật lại dayoff khi chọn ngày "To"
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ).py8(),
+                    ).p(8)
+                  : SizedBox.shrink(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDateFrom(
+                  'Từ ngày',
+                  _fromDateController,
+                  _fromDate,
+                  (date) {
+                    setState(() {
+                      _fromDate = date;
+                      _fromDateController.text =
+                          DateFormat('dd/MM/yyyy').format(_fromDate);
+                      _updateDayOff(); // Cập nhật lại dayoff khi chọn ngày "From"
+                    });
+                  },
+                ),
+              ).p(8),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: _buildDateToWithClearButton(
+                  'Đến ngày',
+                  _toDateController,
+                  _toDate,
+                  (date) {
+                    setState(() {
+                      _toDate = date!;
+                      _toDateController.text =
+                          DateFormat('dd/MM/yyyy').format(_toDate!);
+                      _updateDayOff(); // Cập nhật lại dayoff khi chọn ngày "To"
+                    });
+                  },
+                ),
+              ).p(8),
               CustomTextFormField(
                 enabled: false,
                 textEditingController: _daysOffController,
@@ -346,13 +354,16 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
   Widget _buildDateFrom(String label, TextEditingController controller,
       DateTime initialDate, Function(DateTime) onDateSelected) {
     return GestureDetector(
-      onTap:_isEditing? () => _selectDate(context, initialDate, (selectedDate) {
-        onDateSelected(selectedDate);
-        setState(() {
-          _fromDate = selectedDate; // Cập nhật giá trị
-          controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
-        });
-      }):null,
+      onTap: _isEditing
+          ? () => _selectDate(context, initialDate, (selectedDate) {
+                onDateSelected(selectedDate);
+                setState(() {
+                  _fromDate = selectedDate; // Cập nhật giá trị
+                  controller.text =
+                      DateFormat('dd/MM/yyyy').format(selectedDate);
+                });
+              })
+          : null,
       child: AbsorbPointer(
         child: TextFormField(
           readOnly: true,
@@ -395,19 +406,21 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
         // Trường nhập ngày với GestureDetector
         Expanded(
           child: GestureDetector(
-            onTap:_isEditing? () => _selectDate(
-              context,
-              initialDate ?? DateTime.now(),
-              (selectedDate) {
-                onDateSelected(selectedDate);
-                setState(() {
-                  _toDate = selectedDate;
-                  controller.text = selectedDate != null
-                      ? DateFormat('dd/MM/yyyy').format(selectedDate)
-                      : "Hiện tại";
-                });
-              },
-            ):null,
+            onTap: _isEditing
+                ? () => _selectDate(
+                      context,
+                      initialDate ?? DateTime.now(),
+                      (selectedDate) {
+                        onDateSelected(selectedDate);
+                        setState(() {
+                          _toDate = selectedDate;
+                          controller.text = selectedDate != null
+                              ? DateFormat('dd/MM/yyyy').format(selectedDate)
+                              : "Hiện tại";
+                        });
+                      },
+                    )
+                : null,
             child: AbsorbPointer(
               child: TextFormField(
                 focusNode: _endFocusNode,
@@ -486,6 +499,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: DropdownButtonFormField<int>(
         value: currentValue,
+        isExpanded: true,
         decoration: InputDecoration(
           labelStyle: TextStyle(color: Colors.black),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),

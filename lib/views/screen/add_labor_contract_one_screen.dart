@@ -278,13 +278,13 @@ class _AddLaborContractScreenKHD2State
                           }
                           return null;
                         },
-                      ).w(200),
+                      ).w(170),
                     ],
                   ),
                   SizedBox(height: 16),
-                  Row(
-                    children: [
-                      Expanded(
+                 
+                      Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateStartTime(
                           'Thời hạn hợp đồng từ:',
                           _startTimeHopDongController,
@@ -298,9 +298,10 @@ class _AddLaborContractScreenKHD2State
                             });
                           },
                         ),
-                      ),
-                      SizedBox(width: 16),
-                      Expanded(
+                      ).p(8),
+              
+                      Padding(
+                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: _buildDateEndTimeWithClearButton(
                           'Đến',
                           _endTimeHopDongController,
@@ -313,9 +314,8 @@ class _AddLaborContractScreenKHD2State
                             });
                           },
                         ),
-                      ),
-                    ],
-                  ),
+                      ).p(8),
+                  
                   SizedBox(height: 24),
                   Center(
                     child: ElevatedButton(
