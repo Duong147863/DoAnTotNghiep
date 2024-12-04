@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:googleapis/cloudsearch/v1.dart';
 import 'package:googleapis/gmail/v1.dart';
 import 'package:intl/intl.dart';
 import 'package:nloffice_hrm/constant/app_color.dart';
@@ -7,6 +8,7 @@ import 'package:nloffice_hrm/constant/app_strings.dart';
 import 'package:nloffice_hrm/models/absents_model.dart';
 import 'package:nloffice_hrm/models/profiles_model.dart';
 import 'package:nloffice_hrm/view_models/absent_view_model.dart';
+import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +17,9 @@ import 'package:velocity_x/velocity_x.dart';
 class InfoAbsentScreen extends StatefulWidget {
   final Absents? absents;
   final Profiles? profile;
-  const InfoAbsentScreen({super.key, this.absents, this.profile});
+  final Profiles? LOGINprofile;
+
+  const InfoAbsentScreen({super.key, this.absents, this.profile,this.LOGINprofile});
 
   @override
   State<InfoAbsentScreen> createState() => _InfoAbsentScreenState();
@@ -28,6 +32,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
   final _daysOffController = TextEditingController();
   final _fromDateController = TextEditingController();
   final _toDateController = TextEditingController();
+  final _namenguoiduyet = TextEditingController();
   final _name = TextEditingController();
   DateTime _fromDate = DateTime.now();
   DateTime? _toDate = DateTime.now();
@@ -44,7 +49,17 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
     idAbsent = widget.absents!.ID;
     _profileIDController.text = widget.absents!.profileID;
     _reasonController.text = widget.absents!.reason!;
-    _name.text = widget.profile!.profileName;
+    // Nếu profileName đã truyền từ widget.profile, gán luôn
+   Provider.of<ProfilesViewModel>(context, listen: false).fetchAllProfiles().then((_) {
+    final profiles = Provider.of<ProfilesViewModel>(context, listen: false).listProfiles;
+    final matchingProfile = profiles.firstWhere(
+      (profile) => profile.profileId == widget.absents!.profileID,
+    );
+    setState(() {
+      _name.text = matchingProfile.profileName;
+    });
+  });
+  _namenguoiduyet.text=widget.profile!.profileName;
     _fromDateController.text =
         DateFormat('dd/MM/yyyy').format(widget.absents!.from).toString();
     _fromDate = widget.absents!.from;
@@ -82,6 +97,8 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
         _formKey.currentState?.validate();
       }
     });
+     Provider.of<ProfilesViewModel>(context, listen: false)
+                    .fetchAllProfiles();
   }
 
   void _updateAbsent() async {
@@ -178,7 +195,7 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                   ).px8().w(150),
                   CustomTextFormField(
                     enabled: false,
-                    textEditingController: _name,
+                    textEditingController: _namenguoiduyet,
                     labelText: 'Tên người duyệt',
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -189,6 +206,17 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                   ).px8().w(170),
                 ],
               ),
+              CustomTextFormField(
+  enabled: false,
+  textEditingController: _name,
+  labelText: 'Tên nhân viên',
+  validator: (value) {
+    if (value == null || value.isEmpty) {
+      return 'Vui lòng nhập tên nhân viên';
+    }
+    return null;
+  },
+).p(8),
               AppStrings.ROLE_PERMISSIONS.containsAny(
                       ['Manage Staffs info only', 'Manage BoD & HR accounts'])
                   ? _buildDropdownField(
@@ -289,7 +317,9 @@ class _InfoAbsentScreenState extends State<InfoAbsentScreen> {
                 },
               ).px8(),
               SizedBox(height: 16),
-              Row(
+              widget.LOGINprofile!.roleID==3
+              ? SizedBox.shrink()
+              :Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   // Nút Lưu chỉ hiển thị khi không phải status = -1
