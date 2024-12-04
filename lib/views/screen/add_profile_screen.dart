@@ -388,6 +388,44 @@ class _AddProfilePageState extends State<AddProfilePage> {
       onDateSelected(picked);
     }
   }
+void _showWarningDialog() {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(
+          "Xác nhận lưu thông tin",
+          style: TextStyle(color: AppColor.darkThemeColor),
+        ),
+        content: Text(
+          "Bạn có chắc chắn muốn lưu thông tin không?\nVui lòng kiểm tra kỹ trước khi xác nhận.",
+          style: TextStyle(color: AppColor.darkThemeColor),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Đóng dialog
+            },
+            child: Text(
+              "Hủy",
+              style: TextStyle(color: AppColor.darkThemeColor),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Đóng dialog
+              _submit(); // Gọi hàm lưu
+            },
+            child: Text(
+              "Xác nhận",
+              style: TextStyle(color: AppColor.primaryDarkColor),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -400,7 +438,7 @@ class _AddProfilePageState extends State<AddProfilePage> {
         actions: [
           TextButton.icon(
             onPressed: () {
-              _submit();
+              _showWarningDialog();
             },
             icon: Icon(
               Icons.save_outlined,

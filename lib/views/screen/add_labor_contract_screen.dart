@@ -134,7 +134,33 @@
         onDateSelected(picked);
       }
     }
-
+    void _showConfirmationDialog() {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Không cho phép người dùng đóng dialog bằng cách nhấn ngoài
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Kiểm tra lại dữ liệu'),
+        content: Text('Vui lòng kiểm tra tất cả thông tin trước khi tạo hợp đồng.'),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Hủy'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Đóng dialog khi nhấn Hủy
+            },
+          ),
+          TextButton(
+            child: Text('Xác nhận'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Đóng dialog khi nhấn Xác nhận
+              _submit(); // Gọi hàm submit để tiếp tục tạo hợp đồng
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
     @override
     Widget build(BuildContext context) {
       return BasePage(
@@ -285,7 +311,7 @@
                     Center(
                       child: ElevatedButton(
                         onPressed: () {
-                          _submit();
+                          _showConfirmationDialog();
                         },
                         child: Text('Tạo hợp đồng'),
                       ),
