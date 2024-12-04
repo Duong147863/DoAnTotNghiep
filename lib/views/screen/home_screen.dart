@@ -16,6 +16,7 @@ import 'package:nloffice_hrm/view_models/profiles_view_model.dart';
 import 'package:nloffice_hrm/view_models/projects_view_model.dart';
 import 'package:nloffice_hrm/view_models/time_attendance_view_model.dart';
 import 'package:nloffice_hrm/views/custom_widgets/base_page.dart';
+import 'package:nloffice_hrm/views/custom_widgets/custom_card.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_grid_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/custom_list_view.dart';
 import 'package:nloffice_hrm/views/custom_widgets/ui_spacer.dart';
@@ -471,9 +472,25 @@ class _HomeScreenState extends State<HomeScreen> {
                               //   },
                               // ),
                             ]
+                          : AppStrings.ROLE_PERMISSIONS
+                              .contains('Manage your department members only')
+                          ?
+                           [ListTile(
+                                title: const Text("Nghỉ phép"),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute<void>(
+                                        builder: (BuildContext context) =>
+                                            ListAbsentScreen(
+                                              profiles: widget.profile,
+                                            )),
+                                  );
+                                },
+                              ), ]
                           : [
                               SizedBox.shrink(),
-                            ]),
+                          ]),
             ),
             Align(
               alignment: FractionalOffset.bottomCenter,
@@ -818,11 +835,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                   const SizedBox(height: 10.0),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                    child: _buildDepartmentDropdown('Chọn phòng ban')
-                                        ,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: _buildDepartmentDropdown(
+                                        'Chọn phòng ban'),
                                   ),
-                                     
                                   const SizedBox(height: 16.0),
                                   ElevatedButton(
                                     onPressed: () {
@@ -1047,6 +1064,153 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       );
+    } else if (AppStrings.ROLE_PERMISSIONS
+        .contains('Manage your department members only')) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Consumer<TimeKeepingViewModel>(
+                builder: (context, viewModel, child) {
+              Provider.of<TimeKeepingViewModel>(context, listen: false)
+                  .fetchWorkHours(formatDatetoJson(startOfWeek),
+                      formatDatetoJson(endOfWeek), widget.profile!.profileId);
+              final weekData = viewModel.weekData.entries.toList();
+              return SfCartesianChart(
+                title: const ChartTitle(text: 'Thống kê số giờ làm việc'),
+                primaryXAxis: const CategoryAxis(
+                  majorGridLines: MajorGridLines(width: 0),
+                ),
+                primaryYAxis: const NumericAxis(
+                  maximum: 12,
+                  interval: 2,
+                ),
+                series: <CartesianSeries<dynamic, dynamic>>[
+                  ColumnSeries<MapEntry<String, int>, String>(
+                    dataSource: weekData,
+                    xValueMapper: (data, _) => data.key,
+                    yValueMapper: (data, _) => data.value,
+                  ),
+                ],
+              );
+            }),
+            Divider().py8(),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.arrow_back_rounded).onInkTap(_previousWeek),
+                Text("Tuần ${formatDatetoUI(startOfWeek)} - ${formatDatetoUI(endOfWeek)}")
+                    .px32(),
+                const Icon(Icons.arrow_forward_rounded).onInkTap(_nextWeek),
+              ],
+            ).py4(),
+            Consumer<TimeKeepingViewModel>(
+                builder: (context, viewModel, child) {
+              //Lịch sử chấm công cá nhân nhân viên
+              if (!viewModel.fetchingData && viewModel.list1.isEmpty) {
+                Provider.of<TimeKeepingViewModel>(context, listen: false)
+                    .getProfileCheckInHistory(formatDatetoJson(startOfWeek),
+                        formatDatetoJson(endOfWeek), widget.profile!.profileId);
+              }
+              if (viewModel.fetchingData) {
+                if (viewModel.list1.isEmpty) {
+                  return Center(
+                      child: Column(
+                    children: [
+                      const Text(
+                        "Chưa có dữ liệu",
+                        style: TextStyle(fontSize: 16),
+                      ).py16(),
+                      Image.asset("assets/images/no_data.png"),
+                    ],
+                  ));
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              } else {
+                List<Timekeepings> listAttendances = viewModel.list1;
+                return CustomListView(
+                    dataSet: listAttendances,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        color: listAttendances[index].checkout == null
+                            ? Colors.red
+                            : Colors.greenAccent,
+                        child: Column(
+                          children: [
+                            Text(
+                                "Ca: ${listAttendances[index].shiftId} - ${formatDatetoUI(listAttendances[index].date)} "),
+                            Text(
+                                "Vào: ${MaterialLocalizations.of(context).formatTimeOfDay(TimeOfDay.fromDateTime(listAttendances[index].checkin))} - ${listAttendances[index].checkout?.hour ?? "00"}:${listAttendances[index].checkout?.minute ?? "00"} PM"),
+                            Text(
+                                "Trễ: ${listAttendances[index].late?.hour ?? "0"}h${listAttendances[index].late?.minute.toInt() ?? "0"}p"),
+                          ],
+                        ),
+                      );
+                    });
+              }
+            }),
+            Divider(),
+            Text(
+              "Danh sách nhân viên phòng ban.",
+              style: TextStyle(fontSize: 20),
+            ),
+            Consumer<ProfilesViewModel>(builder: (context, viewModel, child) {
+              if (!viewModel.fetchingData &&
+                  viewModel.listMembersOfDepartment.isEmpty) {
+                Provider.of<ProfilesViewModel>(context, listen: false)
+                    .membersOfDepartment(widget.profile!.departmentId!);
+              }
+              if (viewModel.fetchingData) {
+                return const Center(child: CircularProgressIndicator());
+              } else {
+                List<Profiles> listMembers = viewModel.listMembersOfDepartment;
+                profile = listMembers; // Lưu danh sách thành viên chưa lọc
+
+                // Hiển thị danh sách thành viên sau khi lọc
+                List<Profiles> displayList =
+                    profile.isEmpty ? listMembers : profile;
+
+                return CustomListView(
+                    dataSet: displayList,
+                    itemBuilder: (context, index) {
+                      return CustomCard(
+                          title: Row(
+                            children: [
+                              CircleAvatar().px8(),
+                              Text(
+                                "${displayList[index].profileId} - ${displayList[index].profileName}",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          subttile: Container(
+                            child: Column(
+                              children: [],
+                            ),
+                          )).p8().onTap(() async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(
+                              profile: displayList[index],
+                              loginUser: widget.profile,
+                            ),
+                          ),
+                        ).then((updatedProfile) {
+                          if (updatedProfile != null) {
+                            _handleUpdateProfile(
+                                updatedProfile); // Cập nhật lại thông tin
+                          }
+                        });
+                      });
+                    });
+              }
+            }),
+          ],
+        ),
+      );
     } else {
       //GIAO DIỆN NHÂN VIÊN
       //Biểu đồ số giờ làm việc tuần này
@@ -1103,7 +1267,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       const Text(
                         "Chưa có dữ liệu",
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 20),
                       ).py16(),
                       Image.asset("assets/images/no_data.png"),
                     ],
@@ -1276,72 +1440,70 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildGetMembersCountGenderAndMaritalStatus() {
-  return Consumer<ProfilesViewModel>(
-    builder: (context, viewModel, child) {
-      if (!viewModel.fetchingGenderStats &&
-          viewModel.genderMan == 0 &&
-          viewModel.genderWoman == 0 &&
-          viewModel.married == 0 &&
-          viewModel.unmarried == 0) {
-        viewModel.getMembersCountGenderAndMaritalStatus();
-      }
-      return viewModel.fetchingGenderStats
-          ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(
-                  majorGridLines: MajorGridLines(width: 0),
-                  labelStyle: TextStyle(fontSize: 10),
-               
-                  labelRotation: 0, // Xoay nhãn trục X
-                  maximumLabelWidth: 80, // Đảm bảo nhãn không bị cắt
-                ),
-                title: const ChartTitle(
-                    text: 'Thống kê giới tính và tình trạng hôn nhân'),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: <CartesianSeries<dynamic, dynamic>>[
-                  ColumnSeries<dynamic, dynamic>(
-                  
-                    dataSource: [
-                      EmployeeStat('Nam', viewModel.genderMan),
-                      EmployeeStat('Nữ', viewModel.genderWoman),
-                      EmployeeStat('Đã kết hôn', viewModel.married),
-                      EmployeeStat('Chưa kết hôn', viewModel.unmarried),
-                    ],
-                    xValueMapper: (dynamic stats, _) => stats.status,
-                    yValueMapper: (dynamic stats, _) => stats.count,
-                    dataLabelSettings: DataLabelSettings(
-                      isVisible: true,
-                      labelPosition: ChartDataLabelPosition.outside,
-                      textStyle: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    pointColorMapper: (dynamic stats, _) {
-                      switch (stats.status) {
-                        case 'Nam':
-                          return const Color.fromARGB(255, 17, 206, 231);
-                        case 'Nữ':
-                          return const Color.fromARGB(255, 23, 219, 16);
-                        case 'Đã kết hôn':
-                          return const Color.fromARGB(255, 245, 229, 15);
-                        case 'Chưa kết hôn':
-                          return const Color.fromARGB(255, 56, 23, 204);
-                        default:
-                          return Colors.grey;
-                      }
-                    },
-                  ),
-                ],
-              ),
-            );
-    },
-  );
-}
+    return Consumer<ProfilesViewModel>(
+      builder: (context, viewModel, child) {
+        if (!viewModel.fetchingGenderStats &&
+            viewModel.genderMan == 0 &&
+            viewModel.genderWoman == 0 &&
+            viewModel.married == 0 &&
+            viewModel.unmarried == 0) {
+          viewModel.getMembersCountGenderAndMaritalStatus();
+        }
+        return viewModel.fetchingGenderStats
+            ? Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SfCartesianChart(
+                  primaryXAxis: CategoryAxis(
+                    majorGridLines: MajorGridLines(width: 0),
+                    labelStyle: TextStyle(fontSize: 10),
 
+                    labelRotation: 0, // Xoay nhãn trục X
+                    maximumLabelWidth: 80, // Đảm bảo nhãn không bị cắt
+                  ),
+                  title: const ChartTitle(
+                      text: 'Thống kê giới tính và tình trạng hôn nhân'),
+                  tooltipBehavior: TooltipBehavior(enable: true),
+                  series: <CartesianSeries<dynamic, dynamic>>[
+                    ColumnSeries<dynamic, dynamic>(
+                      dataSource: [
+                        EmployeeStat('Nam', viewModel.genderMan),
+                        EmployeeStat('Nữ', viewModel.genderWoman),
+                        EmployeeStat('Đã kết hôn', viewModel.married),
+                        EmployeeStat('Chưa kết hôn', viewModel.unmarried),
+                      ],
+                      xValueMapper: (dynamic stats, _) => stats.status,
+                      yValueMapper: (dynamic stats, _) => stats.count,
+                      dataLabelSettings: DataLabelSettings(
+                        isVisible: true,
+                        labelPosition: ChartDataLabelPosition.outside,
+                        textStyle: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      pointColorMapper: (dynamic stats, _) {
+                        switch (stats.status) {
+                          case 'Nam':
+                            return const Color.fromARGB(255, 17, 206, 231);
+                          case 'Nữ':
+                            return const Color.fromARGB(255, 23, 219, 16);
+                          case 'Đã kết hôn':
+                            return const Color.fromARGB(255, 245, 229, 15);
+                          case 'Chưa kết hôn':
+                            return const Color.fromARGB(255, 56, 23, 204);
+                          default:
+                            return Colors.grey;
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              );
+      },
+    );
+  }
 
   Widget _buildDepartmentDropdown(String hint) {
     return DropdownButtonFormField<Departments>(
