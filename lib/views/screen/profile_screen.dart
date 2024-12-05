@@ -786,7 +786,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : (daysSignedThirdContract != null
                               ? daysSignedThirdContract!
                               : "Chưa có thông tin hợp đồng lần 3"),
-                  style: TextStyle(fontSize: 13),
+                  style: TextStyle(fontSize: 11.5),
                 ),
           backgroundColor: AppColor.primaryLightColor,
           automaticallyImplyLeading: true,

@@ -353,12 +353,12 @@
                 String formattedDate = DateFormat('dd/MM/yyyy').format(endTimeThuViec);
                 // Kiểm tra ngày bắt đầu hợp đầu 1 không được trước ngày kết thúc thử việc
                 if (selectedDate.isBefore(endTimeThuViec)) {
-                  return 'Ngày bắt đầu hợp đồng\nphải sau ngày ''$formattedDate';
+                  return 'Ngày bắt đầu hợp\nđồng phải sau\nngày ''$formattedDate';
                 }
 
                 // Kiểm tra ngày không được trong quá khứ
                 if (selectedDate.isBefore(DateTime.now())) {
-                  return 'Ngày bắt đầu hợp đồng\n không được trong quá khứ';
+                  return 'Ngày bắt đầu hợp\nđồng không được\ntrong quá khứ';
                 }
               } catch (e) {
                 return 'Định dạng ngày không hợp lệ';
@@ -392,19 +392,19 @@
           validator: (value) {
             // Validator kiểm tra ràng buộc hợp đồng lần 1
             if (value == null || value.isEmpty) {
-              return 'Vui lòng chọn ngày kết\nthúc hợp đồng';
+              return 'Vui lòng chọn ngày\nkết thúc hợp đồng';
             }
             try {
               DateTime selectedEndTime = DateFormat('dd/MM/yyyy').parse(value);
 
               // Kiểm tra ngày kết thúc phải sau ngày bắt đầu ít nhất 1 tháng
               if (selectedEndTime.isBefore(_startTimeHopDong.add(Duration(days: 365)))) {
-                return 'Ngày kết thúc phải sau\nngày bắt đầu ít nhất\n1 năm';
+                return 'Ngày kết thúc phải\nsau ngày bắt đầu ít\n nhất 1 năm';
               }
 
               // Kiểm tra ngày kết thúc không được vượt quá 36 tháng từ ngày bắt đầu
               if (selectedEndTime.isAfter(_startTimeHopDong.add(Duration(days: 36 * 30)))) {
-                return 'Ngày kết thúc không\nđược vượt quá 36 tháng\nkể từ ngày bắt đầu';
+                return 'Ngày kết thúc không\nđược vượt quá 36\ntháng kể từ\nngày bắt đầu';
               }
             } catch (e) {
               return 'Định dạng ngày không hợp lệ';
